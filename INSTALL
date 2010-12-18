@@ -12,6 +12,11 @@ Simple install procedure
 Note: if you have downloaded sources using Git, there will be no
 configure script, you need to run autogen.sh in PLib's top dir.
 
+Building PLib on Windows
+========================
+You can build PLib on Windows using Microsoft Visual Studio 2008 (and newer).
+See build-aux/win32/vs9 for solution and project files.
+
 Requirements
 ============
 

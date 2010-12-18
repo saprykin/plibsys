@@ -2,5 +2,30 @@
 PLib is a C library with some helpful routines, especially for IPC.
 Do not confuse with PLIB which is using for game and 3D development.
 
+PLib is a cross-platform library, it was tested on the following
+platforms:
+
+* GNU/Linux
+* Solaris 2.5.1
+* Windows (XP, 7)
+* QNX 6.4.1
+
+It should also work on other *nix systems (e.g. Mac OS X), but it
+wasn't tested yet.
+
+PLib gives you:
+
+* System-wide semaphores: POSIX, System V and Win32
+* System-wide shared memory: POSIX, System V and Win32
+* Basic threads support: POSIX, Solaris and Win32
+* Mutexes: POSIX, Solaris and Win32
+* Hash functions: MD5, SHA-1, GOST (R 34.11-94)
+* Socket support (UDP, TCP)
+* Some others useful routines
+
+
 ======= Patches ========
-You can send patches directly to my email: xelfium@gmail.com (Alexander Saprykin).
+You can send patches directly to my email:
++-----------------------------------------+
+| xelfium@gmail.com (Alexander Saprykin). |
++-----------------------------------------+
