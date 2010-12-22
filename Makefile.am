@@ -6,6 +6,8 @@ configexecinclude_DATA = plibconfig.h
 
 uninstall-local:
 	rm -f $(DESTDIR)$(configexecincludedir)/plibconfig.h
+	rm -rf $(DESTDIR)$(libdir)/plib
+	rm -rf $(DESTDIR)$(includedir)/plib
 
 CONFIGURE_DEPENDENCIES = m4/acplib.m4
 
@@ -13,11 +15,18 @@ CONFIGURE_DEPENDENCIES = m4/acplib.m4
 # build PLib on any platform
 EXTRA_DIST =	\
 	HACKING				\
+	autogen.sh			\
 	plib.pc.in			\
 	plib-uninstalled.pc.in		\
 	plibconfig.h.win32		\
+	Doxyfile.in			\
 	build-aux/win32/vs9/plib.sln	\
 	build-aux/win32/vs9/plib.vcproj
+
+doxygen-docs:
+if DOXYGEN_DOCS_ENABLED
+	@doxygen_prog@ ./Doxyfile
+endif
 
 BUILT_SOURCES = stamp-pc-h
 plibconfig.h: stamp-pc-h
@@ -32,5 +41,8 @@ pkgconfig_DATA = plib.pc
 
 $(pkgconfig_DATA): config.status
 
-DISTCLEANFILES = plibconfig.h stamp-pc-h
+DISTCLEANFILES = plibconfig.h stamp-pc-h 
+
+distclean-local:
+	cd $(top_builddir) && rm -rf doc
 

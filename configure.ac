@@ -71,37 +71,47 @@ AC_CANONICAL_HOST
 
 AC_MSG_CHECKING([for platform])
 case $host in
-  *-*-linux*)
-    plib_os_native=linux
-    ;;
-  *-*-qnx*)
-    plib_os_native=qnx
-    ;;
-  *-*-solaris*)
-    plib_os_native=solaris
-    ;;
+	*-*-linux*)
+	plib_os_native=linux
+	;;
+	*-*-qnx*)
+	plib_os_native=qnx
+	;;
+	*-*-solaris*)
+	plib_os_native=solaris
+	;;
 esac
 AC_MSG_RESULT([$plib_os_native])
 
 dnl Configuration arguments
 AC_ARG_ENABLE(threads,
-              [AC_HELP_STRING([--enable-threads],
-                              [turn on basic thread support [default=yes]
+	      [AC_HELP_STRING([--enable-threads],
+			      [turn on basic thread support [default=yes]
 			       ([=no] will override --with-threads)])],,
-              [enable_threads=yes])
+	      [enable_threads=yes])
 
 AC_ARG_ENABLE(ipc,
-              [AC_HELP_STRING([--enable-ipc],
-                              [turn on basic IPC support [default=yes]
+	      [AC_HELP_STRING([--enable-ipc],
+			      [turn on basic IPC support [default=yes]
 			       ([=no] will override --with-ipc)])],,
-              [enable_ipc=yes])
+	      [enable_ipc=yes])
+
+AC_ARG_ENABLE(doxygen-docs,
+	      [AC_HELP_STRING([--enable-doxygen-docs],
+			     [build DOXYGEN documentation (requires Doxygen) [default=auto]])],
+	      [enable_doxygen_docs=$enableval],
+	      [enable_doxygen_docs=auto])
 
 if test "x$enable_threads" != "xyes"; then
-  enable_threads=no
+	enable_threads=no
 fi
 
 if test "x$enable_ipc" != "xyes"; then
-  enable_ipc=no
+	enable_ipc=no
+fi
+
+if [test "x$enable_doxygen_docs" != "xyes"] || [test "x$enable_doxygen_docs" != "xauto"]; then
+	enable_doxygen_doc=no
 fi
 
 dnl Check programs and stuff
@@ -746,6 +756,34 @@ AC_SUBST(P_IPC_LIBS)
 AC_MSG_CHECKING(IPC related libraries)
 AC_MSG_RESULT($P_IPC_LIBS)
 
+dnl Doxygen documentation
+AC_PATH_PROG(doxygen_prog, doxygen, no)
+AC_MSG_CHECKING([whether to build Doxygen documentation])
+
+if test x$doxygen_prog = xno; then
+	have_doxygen=no
+else
+	have_doxygen=yes
+fi
+
+if test x$enable_doxygen_docs = xauto; then
+	if test x$have_doxygen = xno; then
+		enable_doxygen_docs=no
+	else
+		enable_doxygen_docs=yes
+	fi
+fi
+
+if test x$enable_doxygen_docs = xyes; then
+	if test x$have_doxygen = xno; then
+		AC_MSG_ERROR([Building Doxygen docs explicitly required, but Doxygen not found.])
+	fi
+fi
+
+AM_CONDITIONAL(DOXYGEN_DOCS_ENABLED, test x$enable_doxygen_docs = xyes)
+AC_SUBST(DOXYGEN_PROG)
+AC_MSG_RESULT($enable_doxygen_docs)
+
 AC_CONFIG_COMMANDS([plibconfig.h],
 [
 	outfile=plibconfig.h-tmp
@@ -1025,6 +1063,6 @@ else
 fi
 ])
 
-AC_CONFIG_FILES([Makefile src/Makefile plib.pc plib-uninstalled.pc])
+AC_CONFIG_FILES([Makefile src/Makefile plib.pc plib-uninstalled.pc Doxyfile])
 AC_OUTPUT
 

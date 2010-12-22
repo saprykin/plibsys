@@ -17,6 +17,11 @@ Building PLib on Windows
 You can build PLib on Windows using Microsoft Visual Studio 2008 (and newer).
 See build-aux/win32/vs9 for solution and project files.
 
+Building documentation
+======================
+To build Doxygen documentation in HTML format you need installed doxygen.
+Simply type 'make doxygen-docs' and they will be generated in 'doc' folder.
+
 Requirements
 ============
 

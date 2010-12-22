@@ -1,6 +1,10 @@
 # for all subdirectories
+Doxyfile
 Makefile.in
 Makefile
+doc
+m4
+plibconfig.h
 .libs
 .deps
 *.o
@@ -11,6 +15,7 @@ Makefile
 *.gcno
 *.gcda
 *.gcov
+*.tar.gz
 
 # autofoo stuff here
 compile
