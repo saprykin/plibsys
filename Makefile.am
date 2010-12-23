@@ -23,10 +23,26 @@ EXTRA_DIST =	\
 	build-aux/win32/vs9/plib.sln	\
 	build-aux/win32/vs9/plib.vcproj
 
+BUILT_EXTRA_DIST = \
+	ChangeLog
+
 doxygen-docs:
 if DOXYGEN_DOCS_ENABLED
 	@doxygen_prog@ ./Doxyfile
 endif
+
+ChangeLog:
+	$(AM_V_GEN) if test -d "$(srcdir)/.git"; then \
+	  (GIT_DIR=$(top_srcdir)/.git ./build-aux/missing --run git log --stat) | fmt --split-only > $@.tmp \
+	  && mv -f $@.tmp $@ \
+	  || ($(RM) $@.tmp; \
+	      echo Failed to generate ChangeLog, your ChangeLog may be outdated >&2; \
+	      (test -f $@ || echo git-log is required to generate this file >> $@)); \
+	else \
+	  test -f $@ || \
+	  (echo A git checkout and git-log is required to generate ChangeLog >&2 && \
+	  echo A git checkout and git-log is required to generate this file >> $@); \
+	fi
 
 BUILT_SOURCES = stamp-pc-h
 plibconfig.h: stamp-pc-h
@@ -45,4 +61,6 @@ DISTCLEANFILES = plibconfig.h stamp-pc-h
 
 distclean-local:
 	cd $(top_builddir) && rm -rf doc
+
+.PHONY: ChangeLog
 
