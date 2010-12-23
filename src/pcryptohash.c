@@ -27,6 +27,7 @@
 #include "psha1.h"
 
 #include <stdio.h>
+#include <string.h>
 
 /* Keep in sync with hash algorithms */
 #define P_MAX_HASH_LENGTH	32
@@ -146,7 +147,7 @@ p_crypto_hash_get_digest (PCryptoHash *hash, puchar *buf, psize *len)
 	if (hash == NULL || buf == NULL || len == NULL)
 		return;
 
-	if (hash->hash_len < len) {
+	if (hash->hash_len < *len) {
 		*len = 0;
 		return;
 	}
