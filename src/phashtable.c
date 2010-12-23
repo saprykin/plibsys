@@ -25,6 +25,11 @@
 
 #include <stdlib.h>
 
+struct _PHashTable {
+	PHashTableNode **table;
+	psize size;
+};
+
 struct _PHashTableNode {
 	PHashTableNode *next;
 	ppointer key;
@@ -120,7 +125,7 @@ p_hash_table_lookup (PHashTable *table, ppointer key)
 	if (table == NULL)
 		return NULL;
 
-	return ((node = find_node (table, key)) == NULL) ? NULL : node->value;
+	return ((node = find_node (table, key)) == NULL) ? (ppointer) -1 : node->value;
 }
 
 P_LIB_API PList *
