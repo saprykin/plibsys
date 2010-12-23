@@ -284,13 +284,12 @@ p_sha1_update (PHashSHA1		*ctx,
 }
 
 P_LIB_API void
-p_sha1_finish (PHashSHA1	*ctx,
-	       puchar		output[20])
+p_sha1_finish (PHashSHA1	*ctx)
 {
 	puint32		high, low;
 	pint		left, last;
 
-	if (ctx == NULL || output == NULL)
+	if (ctx == NULL)
 		return;
 
 	left = ctx->len_low & 0x3F;
@@ -310,9 +309,15 @@ p_sha1_finish (PHashSHA1	*ctx,
 	sha1_process (ctx, ctx->buf.buf_w);
 
 	sha1_swap_bytes (ctx->hash, 5);
-	memcpy (output, ctx->hash, 20);
+}
 
-	p_sha1_reset (ctx);
+P_LIB_API const puchar *
+p_sha1_digest (PHashSHA1 *ctx)
+{
+	if (ctx == NULL)
+		return NULL;
+
+	return (const puchar *) ctx->hash;
 }
 
 P_LIB_API void
