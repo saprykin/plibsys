@@ -200,7 +200,7 @@ p_md5_new (void)
 P_LIB_API void
 p_md5_update (PHashMD5			*ctx,
 	      const puchar		*data,
-	      pint			len)
+	      pssize			len)
 {
 	puint32	left, to_fill;
 
@@ -238,14 +238,12 @@ p_md5_update (PHashMD5			*ctx,
 }
 
 P_LIB_API void
-p_md5_finish (PHashMD5		*ctx,
-	      puchar		output[16])
+p_md5_finish (PHashMD5		*ctx)
 {
 	puint32		high, low;
 	pint		left, last;
 
-
-	if (ctx == NULL || output == NULL)
+	if (ctx == NULL)
 		return;
 
 	left = ctx->len_low & 0x3F;
@@ -265,9 +263,15 @@ p_md5_finish (PHashMD5		*ctx,
 	md5_process (ctx, ctx->buf.buf_w);
 
 	md5_swap_bytes (ctx->hash, 4);
-	memcpy (output, ctx->hash, 16);
+}
 
-	p_md5_reset (ctx);
+P_LIB_API const puchar *
+p_md5_digest (PHashMD5 *ctx)
+{
+	if (ctx == NULL)
+		return NULL;
+
+	return (const puchar *) ctx->hash;
 }
 
 P_LIB_API void

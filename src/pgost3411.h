@@ -34,11 +34,11 @@ P_BEGIN_DECLS
 P_LIB_API PHashGOST3411 *	p_gost3411_new		(void);
 P_LIB_API void			p_gost3411_update	(PHashGOST3411		*ctx,
 							 const puchar		*data,
-							 pint			len);
-P_LIB_API void			p_gost3411_finish	(PHashGOST3411		*ctx,
-							 puchar			output[32]);
-P_LIB_API void			p_gost3411_reset	(PHashGOST3411 *ctx);
-P_LIB_API void			p_gost3411_free		(PHashGOST3411 *ctx);
+							 pssize			len);
+P_LIB_API void			p_gost3411_finish	(PHashGOST3411		*ctx);
+P_LIB_API const puchar *	p_gost3411_digest	(PHashGOST3411		*ctx);
+P_LIB_API void			p_gost3411_reset	(PHashGOST3411		*ctx);
+P_LIB_API void			p_gost3411_free		(PHashGOST3411		*ctx);
 
 P_END_DECLS
 

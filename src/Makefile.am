@@ -5,6 +5,7 @@ AM_CPPFLAGS = \
 lib_LTLIBRARIES = libplib.la
 
 libplib_la_SOURCES =	\
+	pcryptohash.c	\
 	pfile.c		\
 	pgost3411.c	\
 	phashtable.c	\
@@ -20,23 +21,26 @@ plibincludedir=$(includedir)/plib
 plibinclude_HEADERS =   \
 	ptypes.h	\
 	pmacros.h	\
+	pcryptohash.h	\
 	pfile.h		\
-	pgost3411.h	\
 	phashtable.h	\
 	plib.h		\
 	plist.h		\
 	pmem.h		\
-	pmd5.h		\
 	pmutex.h	\
 	pprocess.h	\
 	pnetwork.h	\
 	psemaphore.h	\
-	psha1.h		\
 	pshmbuffer.h	\
 	psocket.h	\
 	psocketaddress.h\
 	puthread.h	\
 	pshm.h
+
+noinst_HEADERS = 	\
+	pgost3411.h	\
+	pmd5.h		\
+	psha1.h
 
 if HAVE_IPC
 libplib_la_SOURCES +=	\

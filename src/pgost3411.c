@@ -24,10 +24,10 @@
 #include <stdlib.h>
 
 struct _PHashGOST3411 {
-	puint32		buf[8];
-	puint32		hash[8];
-	puint32		len[8];
-	puint32		sum[8];
+	puint32		buf[8];  /* Buffer to handle incoming data. */
+	puint32		hash[8]; /* State of calculated hash.       */
+	puint32		len[8];  /* Length of hashed data, in bits. */
+	puint32		sum[8];  /* 256-bit sum of hashed data.     */
 };
 
 static void gost3411_swap_bytes (puint32 *data, puint words);
@@ -369,6 +369,14 @@ static void gost3411_process (PHashGOST3411	*ctx,
 		     ^ V[3]			^ V[4]		^ V[5];
 }
 
+/**
+ * @brief Creates new GOST context for hash generating.
+ * @return #PHashGOST3411 structure, free it with p_gost3411_free().
+ *
+ * Use this function to initialize new GOST hash context. After
+ * initializing you can calculate hash using p_gost3411_update() and
+ * p_gost3411_finish() functions.
+ */
 P_LIB_API PHashGOST3411 *
 p_gost3411_new	(void)
 {
@@ -385,7 +393,7 @@ p_gost3411_new	(void)
 P_LIB_API void
 p_gost3411_update (PHashGOST3411	*ctx,
 		   const puchar		*data,
-		   pint		len)
+		   pssize		len)
 {
 	puint32	left, to_fill, len256[8];
 
@@ -427,12 +435,11 @@ p_gost3411_update (PHashGOST3411	*ctx,
 }
 
 P_LIB_API void
-p_gost3411_finish (PHashGOST3411	*ctx,
-		   puchar		output[32])
+p_gost3411_finish (PHashGOST3411	*ctx)
 {
 	puint32		left, last;
 
-	if (ctx == NULL || output == NULL)
+	if (ctx == NULL)
 		return;
 
 	left = ctx->len[0] & 0xFF;
@@ -448,10 +455,15 @@ p_gost3411_finish (PHashGOST3411	*ctx,
 	gost3411_process (ctx, ctx->sum);
 
 	gost3411_swap_bytes (ctx->hash, 8);
+}
 
-	memcpy (output, ctx->hash, 32);
+P_LIB_API const puchar *
+p_gost3411_digest (PHashGOST3411 *ctx)
+{
+	if (ctx == NULL)
+		return NULL;
 
-	p_gost3411_reset (ctx);
+	return (const puchar *) ctx->hash;
 }
 
 P_LIB_API void

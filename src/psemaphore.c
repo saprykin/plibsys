@@ -21,7 +21,7 @@
 
 #include "pmem.h"
 #include "psemaphore.h"
-#include "psha1.h"
+#include "pcryptohash.h"
 
 #include <stdlib.h>
 #include <string.h>
@@ -116,9 +116,8 @@ p_ipc_unix_get_ftok_key (const pchar *file_name)
 pchar *
 p_ipc_get_platform_key (const pchar *name, pboolean posix)
 {
-	PHashSHA1	*sha1;
-	puchar		sha1_buf[20];
-	pchar		buf[41];
+	PCryptoHash	*sha1;
+	pchar		*hash_str;
 	puint		i;
 
 #ifndef P_OS_WIN
@@ -128,28 +127,29 @@ p_ipc_get_platform_key (const pchar *name, pboolean posix)
 	if (name == NULL)
 		return NULL;
 
-	if ((sha1 = p_sha1_new ()) == NULL)
+	if ((sha1 = p_crypto_hash_new (P_CRYPTO_HASH_TYPE_SHA1)) == NULL)
 		return NULL;
 
-	p_sha1_update (sha1, (puchar *) name, strlen (name));
-	p_sha1_finish (sha1, sha1_buf);
-	p_sha1_free (sha1);
+	p_crypto_hash_update (sha1, (const puchar *) name, strlen (name));
 
-	for (i = 0; i < 20; ++i)
-		sprintf (buf + (i * 2), "%02x", (puint) sha1_buf[i]);
+	hash_str = p_crypto_hash_get_string (sha1);
+	p_crypto_hash_free (sha1);
 
-	buf[40] = '\0';
+	if (hash_str == NULL)
+		return NULL;
 
 #ifdef P_OS_WIN
-	return strdup (buf);
+	return hash_str;
 #else
 	if (posix) {
 		/* POSIX semaphores which are named kinda like '/semname' */
-		if ((path_name = p_malloc0 (sizeof (buf) + 2)) == NULL)
+		if ((path_name = p_malloc0 (sizeof (hash_str) + 2)) == NULL) {
+			p_free (hash_str);
 			return NULL;
+		}
 
 		strcpy (path_name, "/");
-		strcat (path_name, buf);
+		strcat (path_name, hash_str);
 	} else {
 		tmp_path = p_ipc_unix_get_temp_dir ();
 
@@ -158,13 +158,15 @@ p_ipc_get_platform_key (const pchar *name, pboolean posix)
 
 		if ((path_name) == NULL) {
 			p_free (tmp_path);
+			p_free (hash_str);
 			return NULL;
 		}
 
 		strcpy (path_name, tmp_path);
-		strcat (path_name, buf);
+		strcat (path_name, hash_str);
 
 		p_free (tmp_path);
+		p_free (hash_str);
 	}
 
 		return path_name;
