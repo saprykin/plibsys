@@ -17,6 +17,12 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA.
  */
 
+/**
+ * @file pfile.h
+ * @brief File related functions
+ * @author Alexander Saprykin
+ */
+
 #if !defined (__PLIB_H_INSIDE__) && !defined (PLIB_COMPILATION)
 #  error "Header files shouldn't be included directly, consider using <plib.h> instead."
 #endif
@@ -26,6 +32,10 @@
 
 #include <pmacros.h>
 
+/**
+ * @def P_DIR_SEPARATOR
+ * @brief Defines directory separator.
+ */
 #ifdef P_OS_WIN
 #  define P_DIR_SEPARATOR "\\"
 #else
