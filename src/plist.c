@@ -109,11 +109,11 @@ p_list_last (PList *list)
 	return cur;
 }
 
-P_LIB_API pint
+P_LIB_API psize
 p_list_length (PList *list)
 {
 	PList	*cur;
-	pint	ret;
+	psize	ret;
 
 	if (!list)
 		return 0;
