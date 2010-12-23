@@ -27,6 +27,8 @@
 #include <pmacros.h>
 #include <psocketaddress.h>
 
+P_BEGIN_DECLS
+
 typedef enum _PSocketProtocol {
 	P_SOCKET_PROTOCOL_UNKNOWN		= -1,
 	P_SOCKET_PROTOCOL_DEFAULT		= 0,
@@ -111,6 +113,8 @@ P_LIB_API pboolean		p_socket_shutdown		(PSocket		*socket,
 								 pboolean		shutdown_write);
 P_LIB_API void			p_socket_free			(PSocket 		*socket);
 P_LIB_API PSocketError		p_socket_get_last_error		(PSocket		*socket);
+
+P_END_DECLS
 
 #endif /* __PSOCKET_H__ */
 
