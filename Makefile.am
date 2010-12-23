@@ -61,6 +61,21 @@ DISTCLEANFILES = plibconfig.h stamp-pc-h
 
 distclean-local:
 	cd $(top_builddir) && rm -rf doc
+	if test $(srcdir) = .; then :; else \
+	    rm -f $(BUILT_EXTRA_DIST); \
+	fi
 
-.PHONY: ChangeLog
+.PHONY: snapshot ChangeLog
+
+snapshot:
+	$(MAKE) dist distdir=$(PACKAGE)-snap`date +"%Y%m%d"`
+
+snapcheck:
+	$(MAKE) distcheck distdir=$(PACKAGE)-snap`date +"%Y%m%d"`
+
+dist-hook: $(BUILT_EXTRA_DIST)
+	files='$(BUILT_EXTRA_DIST)'; \
+	for f in $$files; do \
+	  if test -f $$f; then d=.; else d=$(srcdir); fi; \
+	  rm -f $(distdir)/$$f && cp $$d/$$f $(distdir) || exit 1; done
 
