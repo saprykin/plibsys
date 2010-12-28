@@ -125,7 +125,7 @@ AM_PROG_LIBTOOL
 
 dnl Check header files
 AC_HEADER_STDC
-AC_CHECK_HEADERS([stdio.h fcntl.h sys/socket.h netinet/in.h signal.h errno.h arpa/inet.h sched.h])
+AC_CHECK_HEADERS([stdio.h fcntl.h sys/socket.h netinet/in.h signal.h errno.h arpa/inet.h sched.h sys/poll.h])
 AC_CHECK_HEADERS([float.h limits.h values.h])
 
 dnl Check for types
@@ -200,7 +200,7 @@ AC_MSG_RESULT($have_inet_funcs)
 AM_CONDITIONAL(NEED_NETWORK_FUNCTIONS, [test "$have_inet_funcs" = no])
 
 dnl Check for some functions
-AC_CHECK_FUNCS([memmove nanosleep])
+AC_CHECK_FUNCS([memmove nanosleep poll])
 
 dnl Check for bytesex stuff
 AC_C_BIGENDIAN
