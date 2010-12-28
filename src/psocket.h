@@ -61,6 +61,11 @@ typedef enum _PSocketType {
 	P_SOCKET_TYPE_SEQPACKET			= 3
 } PSocketType;
 
+typedef enum _PSocketDirection {
+	P_SOCKET_DIRECTION_SND			= 0,
+	P_SOCKET_DIRECTION_RCV			= 1
+} PSocketDirection;
+
 typedef struct _PSocket PSocket;
 
 P_LIB_API pboolean		p_socket_init_once		(void);
@@ -102,7 +107,7 @@ P_LIB_API pssize		p_socket_receive_from		(PSocket 		*socket,
 								 psize			buflen);
 P_LIB_API pssize		p_socket_send			(PSocket		*socket,
 								 const pchar		*buffer,
-								 psize			bufsize);
+								 psize			buflen);
 P_LIB_API pssize		p_socket_send_to		(PSocket		*socket,
 								 PSocketAddress		*address,
 								 const pchar		*buffer,
@@ -113,6 +118,9 @@ P_LIB_API pboolean		p_socket_shutdown		(PSocket		*socket,
 								 pboolean		shutdown_write);
 P_LIB_API void			p_socket_free			(PSocket 		*socket);
 P_LIB_API PSocketError		p_socket_get_last_error		(PSocket		*socket);
+P_LIB_API pboolean		p_socket_set_buffer_size	(PSocket		*socket,
+								 PSocketDirection	dir,
+								 psize			size);
 
 P_END_DECLS
 

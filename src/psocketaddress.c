@@ -17,11 +17,20 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA.
  */
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
 #include "pmem.h"
 #include "psocketaddress.h"
 
 #include <stdlib.h>
 #include <string.h>
+
+/* Just to shut-up Sun compiler */
+#ifdef HAVE_ARPA_INET_H
+#include <arpa/inet.h>
+#endif
 
 #ifndef INET_ADDRSTRLEN
 #  define INET_ADDRSTRLEN 16

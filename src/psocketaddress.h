@@ -37,11 +37,6 @@
 #include <netinet/in.h>
 #endif
 
-/* Just to shut-up Sun compiler */
-#ifdef HAVE_ARPA_INET_H
-#include <arpa/inet.h>
-#endif
-
 typedef enum _PSocketFamily {
 	P_SOCKET_FAMILY_UNKNOWN = 0,
 #ifdef AF_INET6

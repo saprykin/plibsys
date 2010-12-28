@@ -71,20 +71,20 @@ typedef double		pdouble;
 	((puint16) (((puint16) (val)) >> 8) | ((puint16) (val)) << 8))
 
 #define PUINT32_SWAP_BYTES(val) ((puint32) (			\
-	((puint32) (val)) >> 24 |				\
-	(((puint32) (val)) << 8) & ((puint32) 0x00FF0000U) |	\
-	(((puint32) (val)) >> 8) & ((puint32) 0x0000FF00U) |	\
-	((puint32) (val)) << 24))
+	(((puint32) (val)) >> 24) |				\
+	((((puint32) (val)) << 8) & ((puint32) 0x00FF0000U)) |	\
+	((((puint32) (val)) >> 8) & ((puint32) 0x0000FF00U)) |	\
+	(((puint32) (val)) << 24)))
 
 #define PUINT64_SWAP_BYTES(val) ((puint64) (				\
-	((puint64) (val))  >> 56 |					\
-	(((puint64) (val)) << 40) & ((puint64) 0x00FF000000000000U) |	\
-	(((puint64) (val)) << 24) & ((puint64) 0x0000FF0000000000U) |	\
-	(((puint64) (val)) <<  8) & ((puint64) 0x000000FF00000000U) |	\
-	(((puint64) (val)) >>  8) & ((puint64) 0x00000000FF000000U) |	\
-	(((puint64) (val)) >> 24) & ((puint64) 0x0000000000FF0000U) |	\
-	(((puint64) (val)) >> 40) & ((puint64) 0x000000000000FF00U) |	\
-	((puint64) (val))  << 56))
+	(((puint64) (val))  >> 56)) |					\
+	((((puint64) (val)) << 40) & ((puint64) 0x00FF000000000000U)) |	\
+	((((puint64) (val)) << 24) & ((puint64) 0x0000FF0000000000U)) |	\
+	((((puint64) (val)) <<  8) & ((puint64) 0x000000FF00000000U)) |	\
+	((((puint64) (val)) >>  8) & ((puint64) 0x00000000FF000000U)) |	\
+	((((puint64) (val)) >> 24) & ((puint64) 0x0000000000FF0000U)) |	\
+	((((puint64) (val)) >> 40) & ((puint64) 0x000000000000FF00U)) |	\
+	(((puint64) (val))  << 56)))
 
 /* Functions, similar to ?_TO_? functions */
 #define PINT16_FROM_LE(val)	(PINT16_TO_LE (val))

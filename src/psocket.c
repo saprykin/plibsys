@@ -30,6 +30,7 @@
 #include <errno.h>
 #include <unistd.h>
 #include <signal.h>
+#include <sys/poll.h>
 #else
 #include <winsock2.h>
 #include <windows.h>
@@ -54,6 +55,9 @@ struct _PSocket {
 	puint		closed		: 1;
 	puint		connected	: 1;
 	puint		listening	: 1;
+#ifdef P_OS_WIN
+	WSAEVENT	events;
+#endif
 };
 
 #ifndef SHUT_RD
@@ -483,7 +487,7 @@ set_socket_details_from_fd (PSocket *socket)
 	}
 
 	optlen = sizeof bool_val;
-	if (getsockopt (fd, SOL_SOCKET, SO_KEEPALIVE, (void *)&bool_val, &optlen) == 0)  {
+	if (getsockopt (fd, SOL_SOCKET, SO_KEEPALIVE, (void *) &bool_val, &optlen) == 0)  {
 #ifndef P_OS_WIN
 		/* Experimentation indicates that the SO_KEEPALIVE value is
 		 * actually a char on Windows, even if documentation claims it
@@ -552,9 +556,19 @@ p_socket_new_from_fd (pint fd)
 	if (set_fd_blocking (ret->fd, FALSE) != 0)
 		set_socket_error (ret);
 
+	p_socket_set_listen_backlog (ret, P_SOCKET_DEFAULT_BACKLOG);
+	
 	ret->blocking = FALSE;
 	ret->inited = TRUE;
-	ret->listen_backlog = P_SOCKET_DEFAULT_BACKLOG;
+
+#ifdef P_OS_WIN
+	if ((ret->events = WSACreateEvent ()) == WSA_INVALID_EVENT) {
+		P_ERROR ("PSocket: WSACreateEvent failed");
+		p_socket_close (ret);
+		p_socket_free (ret);
+		return NULL;
+	}
+#endif
 
 	return ret;
 }
@@ -613,9 +627,37 @@ p_socket_new (PSocketFamily	family,
 		fcntl (fd, F_SETFD, flags);
 	}
 #endif
-
-	if ((ret = p_socket_new_from_fd (fd)) == NULL)
+	
+	if ((ret = p_malloc0 (sizeof (PSocket))) == NULL) {
+		P_ERROR ("PSocket: failed to allocate memory");
+#ifndef P_OS_WIN
+		close (fd);
+#else
+		closesocket (fd);
+#endif
 		return NULL;
+	}
+
+	if (set_fd_blocking (fd, FALSE) != 0)
+		set_socket_error (ret);
+
+	ret->fd = fd;
+	ret->blocking = FALSE;
+	ret->family = family;
+	ret->protocol = protocol;
+	ret->type = type;
+	ret->inited = TRUE;
+
+	p_socket_set_listen_backlog (ret, P_SOCKET_DEFAULT_BACKLOG);
+
+#ifdef P_OS_WIN
+	if ((ret->events = WSACreateEvent ()) == WSA_INVALID_EVENT) {
+		P_ERROR ("PSocket: WSACreateEvent failed");
+		p_socket_close (ret);
+		p_socket_free (ret);
+		return NULL;
+	}
+#endif
 
 	return ret;
 }
@@ -969,7 +1011,11 @@ p_socket_receive (PSocket	*socket,
 		  pchar		*buffer,
 		  psize		buflen)
 {
-	pssize		ret;
+	pssize			ret;
+	pint			evret, timeout;
+#ifndef P_OS_WIN
+	struct pollfd		pfd;
+#endif
 
 	if (!socket || !buffer)
 		return -1;
@@ -977,21 +1023,55 @@ p_socket_receive (PSocket	*socket,
 	if (!check_socket (socket))
 		return -1;
 
+	timeout = (socket->blocking) ? 250 : 1;
+
+#ifdef P_OS_WIN
+	WSAResetEvent (socket->events);
+	WSAEventSelect (socket->fd, socket->events, FD_READ);
+
 	while (TRUE) {
-		if ((ret = recv (socket->fd, buffer, buflen, 0)) < 0) {
-#ifndef P_OS_WIN
-			if (get_socket_errno () == EINTR)
-				continue;
-#endif
-			P_ERROR ("PSocket: failed to receive data");
-
+		evret = WSAWaitForMultipleEvents (1, (const HANDLE*) &socket->events, TRUE, timeout, FALSE);
+		
+		if (evret == WSA_WAIT_FAILED) {
+			ret = -1;
 			set_socket_error (socket);
-
-			return -1;
+			P_ERROR ("PSocket: WSAWaitForMultipleEvents failed");
+			break;
+		} else if (evret == WSA_WAIT_TIMEOUT) {
+			if (!socket->blocking) {
+				set_socket_error (socket);
+				ret = -1;
+				break;
+			}
+		} else if (evret == WSA_WAIT_EVENT_0) {
+			ret = recv (socket->fd, buffer, buflen, 0);
+			break;
 		}
-
-		break;
 	}
+#else
+	pfd.fd = socket->fd;
+	pfd.events = POLLIN;
+	pfd.revents = 0;
+
+	while (TRUE) {
+		evret = poll (&pfd, 1, timeout);
+
+		if (evret == 1) {
+			ret = recv (socket->fd, buffer, buflen, 0);
+			break;
+		} else if (evret == 0) {
+			if (!socket->blocking) {
+				set_socket_error (socket);
+				ret = -1;
+				break;
+			}
+		} else if (evret == -1 && errno != EINTR) {
+			set_socket_error (socket);
+			ret = -1;
+			break;
+		}
+	}
+#endif
 
 	return ret;
 }
@@ -1005,6 +1085,10 @@ p_socket_receive_from (PSocket		*socket,
 	struct sockaddr_storage sa;
 	pssize			ret;
 	socklen_t		optlen;
+	pint			evret, timeout;
+#ifndef P_OS_WIN
+	struct pollfd		pfd;
+#endif
 
 	if (!socket || !address || !buffer)
 		return -1;
@@ -1013,55 +1097,127 @@ p_socket_receive_from (PSocket		*socket,
 		return -1;
 
 	optlen = sizeof (sa);
+	timeout = (socket->blocking) ? 250 : 1;
+
+#ifdef P_OS_WIN
+	WSAResetEvent (socket->events);
+	WSAEventSelect (socket->fd, socket->events, FD_READ);
 
 	while (TRUE) {
-		if ((ret = recvfrom (socket->fd, buffer, buflen, 0, (struct sockaddr *) &sa, &optlen)) < 0) {
-#ifndef P_OS_WIN
-			if (get_socket_errno () == EINTR)
-				continue;
-#endif
-			P_ERROR ("PSocket: failed to receive data");
-
+		evret = WSAWaitForMultipleEvents (1, (const HANDLE*) &socket->events, TRUE, timeout, FALSE);
+		
+		if (evret == WSA_WAIT_FAILED) {
+			ret = -1;
 			set_socket_error (socket);
-
-			return -1;
+			P_ERROR ("PSocket: WSAWaitForMultipleEvents failed");
+			break;
+		} else if (evret == WSA_WAIT_TIMEOUT) {
+			if (!socket->blocking) {
+				set_socket_error (socket);
+				ret = -1;
+				break;
+			}
+		} else if (evret == WSA_WAIT_EVENT_0) {
+			ret = recvfrom (socket->fd, buffer, buflen, 0, (struct sockaddr *) &sa, &optlen);
+			break;
 		}
-
-		break;
 	}
+#else
+	pfd.fd = socket->fd;
+	pfd.events = POLLOUT;
+	pfd.revents = 0;
 
-	*address = p_socket_address_new_from_native (&sa, optlen);
+	while (TRUE) {
+		evret = poll (&pfd, 1, timeout);
+
+		if (evret == 1) {
+			ret = recvfrom (socket->fd, buffer, buflen, 0, (struct sockaddr *) &sa, &optlen);
+			break;
+		} else if (evret == 0) {
+			if (!socket->blocking) {
+				set_socket_error (socket);
+				ret = -1;
+				break;
+			}
+		} else if (evret == -1 && errno != EINTR) {
+			set_socket_error (socket);
+			ret = -1;
+			break;
+		}
+	}
+#endif
+
+	if (ret > 0)
+		*address = p_socket_address_new_from_native (&sa, optlen);
+	
 	return ret;
 }
 
 P_LIB_API pssize
 p_socket_send (PSocket		*socket,
 	       const pchar	*buffer,
-	       psize		bufsize)
+	       psize		buflen)
 {
-	pssize ret;
+	pssize			ret;
+	pint			evret, timeout;
+#ifndef P_OS_WIN
+	struct pollfd		pfd;
+#endif
 
 	if (!socket || !buffer)
 		return -1;
 
 	if (!check_socket (socket))
 		return -1;
+	timeout = (socket->blocking) ? 250 : 1;
+
+#ifdef P_OS_WIN
+	WSAResetEvent (socket->events);
+	WSAEventSelect (socket->fd, socket->events, FD_WRITE);
 
 	while (TRUE) {
-		if ((ret = send (socket->fd, buffer, bufsize, P_SOCKET_DEFAULT_SEND_FLAGS)) < 0) {
-#ifndef P_OS_WIN
-			if (get_socket_errno () == EINTR)
-				continue;
-#endif
-			P_ERROR ("PSocket: failed to send data");
-
+		evret = WSAWaitForMultipleEvents (1, (const HANDLE*) &socket->events, TRUE, timeout, FALSE);
+		
+		if (evret == WSA_WAIT_FAILED) {
+			ret = -1;
 			set_socket_error (socket);
-
-			return -1;
+			P_ERROR ("PSocket: WSAWaitForMultipleEvents failed");
+			break;
+		} else if (evret == WSA_WAIT_TIMEOUT) {
+			if (!socket->blocking) {
+				set_socket_error (socket);
+				ret = -1;
+				break;
+			}
+		} else if (evret == WSA_WAIT_EVENT_0) {
+			ret = send (socket->fd, buffer, buflen, P_SOCKET_DEFAULT_SEND_FLAGS);
+			break;
 		}
-
-		break;
 	}
+#else
+	pfd.fd = socket->fd;
+	pfd.events = POLLOUT;
+	pfd.revents = 0;
+
+	while (TRUE) {
+		evret = poll (&pfd, 1, timeout);
+
+		if (evret == 1) {
+			ret = send (socket->fd, buffer, buflen, P_SOCKET_DEFAULT_SEND_FLAGS);
+			break;
+		} else if (evret == 0) {
+			if (!socket->blocking) {
+				set_socket_error (socket);
+				ret = -1;
+				break;
+			}
+		} else if (evret == -1 && errno != EINTR) {
+			set_socket_error (socket);
+			ret = -1;
+			break;
+		}
+	}
+#endif
 
 	return ret;
 }
@@ -1075,6 +1231,10 @@ p_socket_send_to (PSocket		*socket,
 	struct sockaddr_storage	sa;
 	pssize			ret;
 	psize			optlen;
+	pint			timeout, evret;
+#ifndef P_OS_WIN
+	struct pollfd		pfd;
+#endif
 
 	if (!socket || !address || !buffer)
 		return -1;
@@ -1086,22 +1246,55 @@ p_socket_send_to (PSocket		*socket,
 		return -1;
 
 	optlen = p_socket_address_get_native_size (address);
+	timeout = (socket->blocking) ? 250 : 1;
+
+#ifdef P_OS_WIN
+	WSAResetEvent (socket->events);
+	WSAEventSelect (socket->fd, socket->events, FD_WRITE);
 
 	while (TRUE) {
-		if ((ret = sendto (socket->fd, buffer, buflen, 0, (struct sockaddr *) &sa, optlen)) < 0) {
-#ifndef P_OS_WIN
-			if (get_socket_errno () == EINTR)
-				continue;
-#endif
-			P_ERROR ("PSocket: failed to send data");
-
+		evret = WSAWaitForMultipleEvents (1, (const HANDLE*) &socket->events, TRUE, timeout, FALSE);
+		
+		if (evret == WSA_WAIT_FAILED) {
+			ret = -1;
 			set_socket_error (socket);
-
-			return -1;
+			P_ERROR ("PSocket: WSAWaitForMultipleEvents failed");
+			break;
+		} else if (evret == WSA_WAIT_TIMEOUT) {
+			if (!socket->blocking) {
+				set_socket_error (socket);
+				ret = -1;
+				break;
+			}
+		} else if (evret == WSA_WAIT_EVENT_0) {
+			ret = sendto (socket->fd, buffer, buflen, 0, (struct sockaddr *) &sa, optlen);
+			break;
 		}
-
-		break;
 	}
+#else
+	pfd.fd = socket->fd;
+	pfd.events = POLLOUT;
+	pfd.revents = 0;
+
+	while (TRUE) {
+		evret = poll (&pfd, 1, timeout);
+
+		if (evret == 1) {
+			ret = sendto (socket->fd, buffer, buflen, 0, (struct sockaddr *) &sa, optlen);
+			break;
+		} else if (evret == 0) {
+			if (!socket->blocking) {
+				set_socket_error (socket);
+				ret = -1;
+				break;
+			}
+		} else if (evret == -1 && errno != EINTR) {
+			set_socket_error (socket);
+			ret = -1;
+			break;
+		}
+	}
+#endif
 
 	return ret;
 }
@@ -1199,6 +1392,12 @@ p_socket_free (PSocket *socket)
 	if (!socket)
 		return;
 
+#ifdef P_OS_WIN
+	if (socket->events)
+		WSACloseEvent (socket->events);
+#endif
+
+	p_socket_close (socket);
 	p_free (socket);
 }
 
@@ -1211,3 +1410,17 @@ p_socket_get_last_error (PSocket *socket)
 	return socket->error;
 }
 
+P_LIB_API pboolean
+p_socket_set_buffer_size (PSocket		*socket,
+			  PSocketDirection	dir,
+			  psize			size)
+{
+	pint	optval;
+
+	if (socket == NULL)
+		return FALSE;
+
+	optval = (dir == P_SOCKET_DIRECTION_RCV) ? SO_RCVBUF : SO_SNDBUF;
+
+	return setsockopt (socket->fd, SOL_SOCKET, optval, (const char *) &size, sizeof (size)) == 0;
+}
