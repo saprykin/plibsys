@@ -116,7 +116,7 @@ P_LIB_API pchar *
 p_crypto_hash_get_string (PCryptoHash *hash)
 {
 	pchar		*ret;
-	pint		i;
+	puint		i;
 	const puchar	*digest;
 
 	if (hash == NULL)

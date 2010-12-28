@@ -125,7 +125,7 @@ p_hash_table_lookup (PHashTable *table, ppointer key)
 	if (table == NULL)
 		return NULL;
 
-	return ((node = find_node (table, key)) == NULL) ? (ppointer) -1 : node->value;
+	return ((node = find_node (table, key)) == NULL) ? (ppointer) (-1) : node->value;
 }
 
 P_LIB_API PList *

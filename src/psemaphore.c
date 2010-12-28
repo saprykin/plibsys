@@ -118,7 +118,6 @@ p_ipc_get_platform_key (const pchar *name, pboolean posix)
 {
 	PCryptoHash	*sha1;
 	pchar		*hash_str;
-	puint		i;
 
 #ifndef P_OS_WIN
 	pchar		*path_name, *tmp_path;
