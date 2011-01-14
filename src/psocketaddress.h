@@ -75,6 +75,7 @@ P_LIB_API pchar *		p_socket_address_get_address		(PSocketAddress *addr);
 P_LIB_API puint16		p_socket_address_get_port		(PSocketAddress *addr);
 P_LIB_API pboolean		p_socket_address_is_any			(PSocketAddress *addr);
 P_LIB_API pboolean		p_socket_address_is_loopback		(PSocketAddress *addr);
+P_LIB_API void			p_socket_address_free			(PSocketAddress	*addr);
 
 #endif /* __PSOCKETADDRESS_H__ */
 

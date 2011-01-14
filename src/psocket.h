@@ -68,8 +68,6 @@ typedef enum _PSocketDirection {
 
 typedef struct _PSocket PSocket;
 
-P_LIB_API pboolean		p_socket_init_once		(void);
-P_LIB_API void			p_socket_close_once		(void);
 P_LIB_API PSocket *		p_socket_new_from_fd		(pint 			fd);
 P_LIB_API PSocket *		p_socket_new 			(PSocketFamily		family,
 								 PSocketType		type,

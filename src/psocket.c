@@ -1,5 +1,8 @@
 /* 
  * 17.09.2010
+ * Copyright (C) 2008 Christian Kellner, Samuel Cormier-Iijima
+ * Copyright (C) 2009 Codethink Limited
+ * Copyright (C) 2009 Red Hat, Inc
  * Copyright (C) 2010 Alexander Saprykin <xelfium@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -15,12 +18,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA.
- */
-
-/*
- * Some of ideas and code were taken from GLib, see gsocket.c for
- * copyright details and more information. Almost all orginal comments
- * are saved.
  */
 
 /* TODO: handle SIGPIPE signal */
@@ -504,8 +501,8 @@ set_socket_details_from_fd (PSocket *socket)
 		socket->keepalive = FALSE;
 }
 
-P_LIB_API pboolean
-p_socket_init_once (void)
+pboolean
+_p_socket_init_once (void)
 {
 #ifdef P_OS_WIN
 	WORD	ver_req;
@@ -529,8 +526,8 @@ p_socket_init_once (void)
 	return TRUE;
 }
 
-P_LIB_API void
-p_socket_close_once (void)
+void
+_p_socket_close_once (void)
 {
 #ifdef P_OS_WIN
 	WSACleanup ();

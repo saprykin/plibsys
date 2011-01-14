@@ -372,3 +372,12 @@ p_socket_address_is_loopback (PSocketAddress *addr)
 #endif
 }
 
+P_LIB_API void
+p_socket_address_free (PSocketAddress *addr)
+{
+	if (addr == NULL)
+		return;
+
+	free (addr);
+}
+
