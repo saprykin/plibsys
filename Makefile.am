@@ -19,6 +19,7 @@ EXTRA_DIST =	\
 	plib.pc.in			\
 	plib-uninstalled.pc.in		\
 	plibconfig.h.win32		\
+	config.h.win32			\
 	Doxyfile.in			\
 	build-aux/win32/vs9/plib.sln	\
 	build-aux/win32/vs9/plib.vcproj

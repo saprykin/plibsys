@@ -10,6 +10,7 @@ libplib_la_SOURCES =	\
 	pgost3411.c	\
 	phashtable.c	\
 	plist.c		\
+	pmain.c		\
 	pmem.c		\
 	pmd5.c		\
 	pprocess.c	\
@@ -19,6 +20,7 @@ libplib_la_SOURCES =	\
 
 plibincludedir=$(includedir)/plib
 plibinclude_HEADERS =   \
+	patomic.h	\
 	ptypes.h	\
 	pmacros.h	\
 	pcryptohash.h	\
@@ -26,6 +28,7 @@ plibinclude_HEADERS =   \
 	phashtable.h	\
 	plib.h		\
 	plist.h		\
+	pmain.h		\
 	pmem.h		\
 	pmutex.h	\
 	pprocess.h	\
@@ -41,6 +44,14 @@ noinst_HEADERS = 	\
 	pgost3411.h	\
 	pmd5.h		\
 	psha1.h
+
+if HAVE_GCC_BUILTINS_FOR_ATOMIC_OPERATIONS
+libplib_la_SOURCES += \
+	patomic-gcc.c
+else
+libplib_la_SOURCES += \
+	patomic.c
+endif
 
 if HAVE_IPC
 libplib_la_SOURCES +=	\

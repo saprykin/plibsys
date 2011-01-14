@@ -289,6 +289,115 @@ else
 	AC_MSG_ERROR([*** pkg-config too old; version 0.16 or better required.])
 fi
 
+dnl p_atomic_* tests for gcc
+AC_MSG_CHECKING([whether to use assembler code for atomic operations])
+
+plib_cv_gcc_has_builtin_atomic_operations=no
+if test x"$GCC" = xyes; then
+	AC_MSG_CHECKING([whether GCC supports build-in atomic intrinsics])
+	AC_TRY_LINK([],
+		    [int i;
+	 	     __sync_synchronize ();
+		     __sync_bool_compare_and_swap (&i, 0, 1);
+		     __sync_fetch_and_add (&i, 1);
+		    ],
+		    [plib_cv_gcc_has_builtin_atomic_operations=yes],
+		    [plib_cv_gcc_has_builtin_atomic_operations=no])
+
+	AC_MSG_RESULT($plib_cv_gcc_has_builtin_atomic_operations)
+	if test $plib_cv_gcc_has_builtin_atomic_operations = yes; then
+		plib_memory_barrier_needed=yes
+	else
+		case $host_cpu in
+		i386)
+			AC_MSG_RESULT([none])
+			plib_memory_barrier_needed=no
+		;;
+		i?86)
+			AC_MSG_RESULT([i486])
+			AC_DEFINE_UNQUOTED(P_ATOMIC_I486, 1, [i486 atomic implementation])
+			plib_memory_barrier_needed=no
+		;;
+		sparc*)
+			SPARCV9_WARNING="Try to rerun configure with CFLAGS='-mcpu=v9',
+				 when you are using a sparc with v9 instruction set (most
+				 sparcs nowadays). This will make the code for atomic
+				 operations much faster. The resulting code will not run
+				 on very old sparcs though."
+			AC_LINK_IFELSE([AC_LANG_SOURCE([[
+					main () {
+						int tmp1, tmp2, tmp3;
+						__asm__ __volatile__("casx [%2], %0, %1"
+							: "=&r" (tmp1), "=&r" (tmp2) : "r" (&tmp3));
+					}]])],
+			AC_MSG_RESULT([sparcv9])
+			AC_DEFINE_UNQUOTED(P_ATOMIC_SPARCV9, 1, [sparcv9 atomic implementation]),
+			AC_MSG_RESULT([no])
+			AC_MSG_WARN([[$SPARCV9_WARNING]]))
+			plib_memory_barrier_needed=yes
+		;;
+		alpha*)
+			AC_MSG_RESULT([alpha])
+			AC_DEFINE_UNQUOTED(P_ATOMIC_ALPHA, 1, [alpha atomic implementation])
+			plib_memory_barrier_needed=yes
+		;;
+		x86_64)
+			AC_MSG_RESULT([x86_64])
+			AC_DEFINE_UNQUOTED(P_ATOMIC_X86_64, 1, [x86_64 atomic implementation])
+			plib_memory_barrier_needed=no
+		;;
+		powerpc*)
+			AC_MSG_RESULT([powerpc])
+			AC_DEFINE_UNQUOTED(P_ATOMIC_POWERPC, 1, [powerpc atomic implementation])
+			plib_memory_barrier_needed=yes
+			AC_MSG_CHECKING([whether asm supports numbered local labels])
+			AC_TRY_COMPILE(
+					,[
+					__asm__ __volatile__ ("1:       nop\n"
+							      "         bne-    1b")
+					 ],[
+					  AC_DEFINE_UNQUOTED(ASM_NUMERIC_LABELS, 1, [define if asm blocks can use numeric local labels])
+					  AC_MSG_RESULT([yes])
+					 ],[
+					  AC_MSG_RESULT([no])
+					 ])
+		;;
+		ia64)
+			AC_MSG_RESULT([ia64])
+			AC_DEFINE_UNQUOTED(P_ATOMIC_IA64, 1, [ia64 atomic implementation])
+			plib_memory_barrier_needed=yes
+		;;
+		s390|s390x)
+			AC_MSG_RESULT([s390])
+			AC_DEFINE_UNQUOTED(P_ATOMIC_S390, 1, [s390 atomic implementation])
+			plib_memory_barrier_needed=no
+		;;
+		arm*)
+			AC_MSG_RESULT([arm])
+			AC_DEFINE_UNQUOTED(P_ATOMIC_ARM, 1, [arm atomic implementation])
+			plib_memory_barrier_needed=no
+		;;
+		crisv32*|etraxfs*)
+			AC_MSG_RESULT([crisv32])
+			AC_DEFINE_UNQUOTED(P_ATOMIC_CRISV32, 1, [crisv32 atomic implementation])
+			plib_memory_barrier_needed=no
+		;;
+		cris*|etrax*)
+			AC_MSG_RESULT([cris])
+			AC_DEFINE_UNQUOTED(P_ATOMIC_CRIS, 1, [cris atomic implementation])
+			plib_memory_barrier_needed=no
+		;;
+		*)
+			AC_MSG_RESULT([none])
+			plib_memory_barrier_needed=yes
+		;;
+		esac
+	fi
+fi
+
+AM_CONDITIONAL(HAVE_GCC_BUILTINS_FOR_ATOMIC_OPERATIONS,
+	       [test $plib_cv_gcc_has_builtin_atomic_operations = yes])
+
 dnl Check configure arguments
 AC_ARG_WITH(threads,
 	    [AC_HELP_STRING([--with-threads=@<:@none/posix/solaris@:>@],
@@ -756,6 +865,13 @@ AC_SUBST(P_IPC_LIBS)
 AC_MSG_CHECKING(IPC related libraries)
 AC_MSG_RESULT($P_IPC_LIBS)
 
+dnl Check for socket calls libs
+AC_SEARCH_LIBS([socket], [socket])
+if test "x$ac_cv_search_socket" != xno && test "x$ac_cv_search_socket" != x"none required"; then
+	P_SOCKET_LIBS="$ac_cv_search_socket"
+fi
+AC_SUBST(P_SOCKET_LIBS)
+
 dnl Doxygen documentation
 AC_PATH_PROG(doxygen_prog, doxygen, no)
 AC_MSG_CHECKING([whether to build Doxygen documentation])
@@ -872,8 +988,8 @@ _______EOF
 #define PPOINTER_TO_INT(p)	((pint)  ${plib_ppi_cast} (p))
 #define PPOINTER_TO_UINT(p)	((puint) ${plib_ppui_cast} (p))
 
-#define PINT_TO_POINTER(i)	((gpointer) ${plib_ppi_cast} (i))
-#define PUINT_TO_POINTER(u)	((gpointer) ${plib_ppui_cast} (u))
+#define PINT_TO_POINTER(i)	((ppointer) ${plib_ppi_cast} (i))
+#define PUINT_TO_POINTER(u)	((ppointer) ${plib_ppui_cast} (u))
 
 typedef signed $plib_intptr_type_define pintptr;
 typedef unsigned $plib_intptr_type_define puintptr;
@@ -898,10 +1014,15 @@ _______EOF
 struct sockaddr_storage {
 	unsigned short int ss_family;
 	__ss_aligntype __ss_align;
-	char __ss_padding[_SS_PADSIZE];
+	char __ss_padding[[_SS_PADSIZE]];
 };
 
 _______EOF
+	fi
+
+	if test x"$p_memory_barrier_needed" != xno; then
+		echo >>$outfile
+		echo "#define P_ATOMIC_OP_MEMORY_BARRIER_NEEDED 1" >>$outfile
 	fi
 
 	p_bit_sizes="16 32 64"
@@ -989,6 +1110,8 @@ plib_long=$ac_cv_sizeof_long
 pintbits=`expr $ac_cv_sizeof_int \* 8`
 plongbits=`expr $ac_cv_sizeof_long \* 8`
 psizebits=`expr $ac_cv_sizeof_size_t \* 8`
+
+p_memory_barrier_needed="$plib_memory_barrier_needed"
 
 case $ac_cv_sizeof_void_p in
 $ac_cv_sizeof_int)
