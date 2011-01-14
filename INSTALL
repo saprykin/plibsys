@@ -15,7 +15,12 @@ configure script, you need to run autogen.sh in PLib's top dir.
 Building PLib on Windows
 ========================
 You can build PLib on Windows using Microsoft Visual Studio 2008 (and newer).
-See build-aux/win32/vs9 for solution and project files.
+See build-aux/win32 directory for solutions and project files. Currently there
+are vs9 and vs10 solutions. You can choose any of them.
+Before building:
+  - rename plibconfig.h.win32 (in top directory) into the plibconfig.h
+  - rename config.h.win32 (in top directory) into the config.h
+After that you can run PLib building procedure.
 
 Building documentation
 ======================
