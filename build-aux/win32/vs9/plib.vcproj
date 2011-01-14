@@ -180,7 +180,10 @@
 			>
 			<File
 				RelativePath="..\..\..\src\patomic.c"
-
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\pcryptohash.c"
 				>
 			</File>
 			<File
@@ -201,7 +204,6 @@
 			</File>
 			<File
 				RelativePath="..\..\..\src\pmain.c"
-
 				>
 			</File>
 			<File
@@ -267,8 +269,11 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
+				RelativePath="..\..\..\src\pcryptohash.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\src\patomic.h"
-
 				>
 			</File>
 			<File
@@ -297,7 +302,6 @@
 			</File>
 			<File
 				RelativePath="..\..\..\src\pmain.h"
-
 				>
 			</File>
 			<File
