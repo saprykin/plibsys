@@ -23,6 +23,7 @@
 #define __PLIB_H_INSIDE__
 
 #include "plibconfig.h"
+#include "patomic.h"
 #include "pfile.h"
 #include "pgost3411.h"
 #include "phashtable.h"
