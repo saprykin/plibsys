@@ -34,7 +34,7 @@
 
 P_BEGIN_DECLS
 
-pgint		p_atomic_int_exchange_and_add		(volatile pint		*atomic,
+pint		p_atomic_int_exchange_and_add		(volatile pint		*atomic,
 							 pint			val);
 void		p_atomic_int_add			(volatile pint		*atomic,
 							 pint			val);

@@ -72,7 +72,7 @@ p_atomic_int_compare_and_exchange (volatile pint	*atomic,
 }
 
 /*
- * The same code as above, as on i386 gpointer is 32 bit as well.
+ * The same code as above, as on i386 ppointer is 32 bit as well.
  * Duplicating the code here seems more natural than casting the
  * arguments and calling the former function.
  */
@@ -108,7 +108,7 @@ p_atomic_pointer_compare_and_exchange (volatile ppointer	*atomic,
 				       ppointer			oldval, 
 				       ppointer			newval)
 {
-	gpointer result;
+	ppointer result;
 	__asm__ __volatile__ ("cas [%4], %2, %0"
 			      : "=r" (result), "=m" (*atomic)
 			      : "r" (oldval), "m" (*atomic), "r" (atomic),
@@ -121,8 +121,8 @@ p_atomic_pointer_compare_and_exchange (volatile ppointer	*atomic,
 				       ppointer			oldval, 
 				       ppointer			newval)
 {
-	gpointer result;
-	gpointer *a = atomic;
+	ppointer result;
+	ppointer *a = atomic;
 	__asm__ __volatile__ ("casx [%4], %2, %0"
 			      : "=r" (result), "=m" (*a)
 			      : "r" (oldval), "m" (*a), "r" (a),
@@ -140,8 +140,8 @@ p_atomic_pointer_compare_and_exchange (volatile ppointer	*atomic,
 /* Adapted from CVS version 1.3 of glibc's sysdeps/alpha/bits/atomic.h */
 #    define ATOMIC_INT_CMP_XCHG(atomic, oldval, newval)				\
 	({ 									\
-		gint __result;							\
-		gint __prev;							\
+		pint __result;							\
+		pint __prev;							\
 		__asm__ __volatile__ (						\
 			"       mb\n"						\
 			"1:     ldl_l   %0,%2\n"				\
@@ -192,8 +192,8 @@ p_atomic_pointer_compare_and_exchange (volatile ppointer	*atomic,
 				       ppointer			oldval, 
 				       ppointer			newval)
 {
-	gint result;
-	gpointer prev;
+	pint result;
+	ppointer prev;
 	__asm__ __volatile__ (
 		"       mb\n"
 		"1:     ldq_l   %0,%2\n"
@@ -1062,7 +1062,7 @@ ppointer
 
 void
 (p_atomic_pointer_set) (volatile ppointer	*atomic,
-			pointer			newval)
+				ppointer			newval)
 {
 	p_atomic_pointer_set (atomic, newval);
 }
