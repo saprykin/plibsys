@@ -97,11 +97,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\src\patomic.c" />
     <ClCompile Include="..\..\..\src\pcryptohash.c" />
     <ClCompile Include="..\..\..\src\pfile.c" />
     <ClCompile Include="..\..\..\src\pgost3411.c" />
     <ClCompile Include="..\..\..\src\phashtable.c" />
     <ClCompile Include="..\..\..\src\plist.c" />
+    <ClCompile Include="..\..\..\src\pmain.c" />
     <ClCompile Include="..\..\..\src\pmd5.c" />
     <ClCompile Include="..\..\..\src\pmem.c" />
     <ClCompile Include="..\..\..\src\pmutex-win.c" />
@@ -118,6 +120,7 @@
     <ClCompile Include="..\..\..\src\puthread.c" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\src\patomic.h" />
     <ClInclude Include="..\..\..\src\pcryptohash.h" />
     <ClInclude Include="..\..\..\src\pfile.h" />
     <ClInclude Include="..\..\..\src\pgost3411.h" />
@@ -125,6 +128,7 @@
     <ClInclude Include="..\..\..\src\plib.h" />
     <ClInclude Include="..\..\..\src\plist.h" />
     <ClInclude Include="..\..\..\src\pmacros.h" />
+    <ClInclude Include="..\..\..\src\pmain.h" />
     <ClInclude Include="..\..\..\src\pmd5.h" />
     <ClInclude Include="..\..\..\src\pmem.h" />
     <ClInclude Include="..\..\..\src\pmutex.h" />
