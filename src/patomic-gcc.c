@@ -63,6 +63,11 @@ _p_atomic_thread_init (void)
 {
 }
 
+void
+_p_atomic_thread_shutdown (void)
+{
+}
+
 pint
 (p_atomic_int_get) (volatile pint *atomic)
 {

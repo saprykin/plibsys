@@ -1021,25 +1021,6 @@ p_atomic_int_add (volatile pint	*atomic,
 }
 #endif /* ATOMIC_INT_CMP_XCHG */
 
-void 
-_p_atomic_thread_init (void)
-{
-#ifdef DEFINE_WITH_MUTEXES
-	p_atomic_mutex = p_mutex_new ();
-#endif /* DEFINE_WITH_MUTEXES */
-}
-
-void 
-_p_atomic_thread_shutdown (void)
-{
-#ifdef DEFINE_WITH_MUTEXES
-	if (p_atomic_mutex != NULL) {
-		p_mutex_free (p_atomic_mutex);
-		p_atomic_mutex = NULL;
-	}
-#endif /* DEFINE_WITH_MUTEXES */
-}
-
 #ifndef P_ATOMIC_OP_MEMORY_BARRIER_NEEDED
 pint
 (p_atomic_int_get) (volatile pint *atomic)
@@ -1074,5 +1055,24 @@ p_atomic_memory_barrier (void)
 #ifdef P_ATOMIC_MEMORY_BARRIER
 	P_ATOMIC_MEMORY_BARRIER;	
 #endif
+}
+
+void 
+_p_atomic_thread_init (void)
+{
+#ifdef DEFINE_WITH_MUTEXES
+	p_atomic_mutex = p_mutex_new ();
+#endif /* DEFINE_WITH_MUTEXES */
+}
+
+void 
+_p_atomic_thread_shutdown (void)
+{
+#ifdef DEFINE_WITH_MUTEXES
+	if (p_atomic_mutex != NULL) {
+		p_mutex_free (p_atomic_mutex);
+		p_atomic_mutex = NULL;
+	}
+#endif /* DEFINE_WITH_MUTEXES */
 }
 
