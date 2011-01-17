@@ -23,6 +23,7 @@
 
 #include "pmem.h"
 #include "psocketaddress.h"
+#include "pstring.h"
 
 #include <stdlib.h>
 #include <string.h>
@@ -321,7 +322,7 @@ p_socket_address_get_address (PSocketAddress *addr)
 #  endif /* AF_INET6 */
 #endif /* P_OS_WIN */
 
-	return strdup (buffer);
+	return p_strdup (buffer);
 }
 
 P_LIB_API puint16

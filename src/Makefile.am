@@ -16,7 +16,8 @@ libplib_la_SOURCES =	\
 	pprocess.c	\
 	psha1.c		\
 	psocket.c	\
-	psocketaddress.c
+	psocketaddress.c\
+	pstring.c
 
 plibincludedir=$(includedir)/plib
 plibinclude_HEADERS =   \
@@ -34,11 +35,12 @@ plibinclude_HEADERS =   \
 	pprocess.h	\
 	pnetwork.h	\
 	psemaphore.h	\
+	pshm.h		\
 	pshmbuffer.h	\
 	psocket.h	\
 	psocketaddress.h\
-	puthread.h	\
-	pshm.h
+	pstring.h	\
+	puthread.h
 
 noinst_HEADERS = 	\
 	pgost3411.h	\

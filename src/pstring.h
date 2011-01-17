@@ -1,6 +1,6 @@
 /* 
- * 20.11.2010
- * Copyright (C) 2010 Alexander Saprykin <xelfium@gmail.com>
+ * 14.01.2011
+ * Copyright (C) 2011 Alexander Saprykin <xelfium@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,33 +17,20 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA.
  */
 
-#ifndef __PLIB_H__
-#define __PLIB_H__
+#if !defined (__PLIB_H_INSIDE__) && !defined (PLIB_COMPILATION)
+#  error "Header files shouldn't be included directly, consider using <plib.h> instead."
+#endif
 
-#define __PLIB_H_INSIDE__
+#ifndef __PSTRING_H__
+#define __PSTRING_H__
 
-#include "plibconfig.h"
-#include "patomic.h"
-#include "pfile.h"
-#include "pgost3411.h"
-#include "phashtable.h"
-#include "plist.h"
-#include "pmacros.h"
-#include "pmain.h"
-#include "pmd5.h"
-#include "pmem.h"
-#include "pmutex.h"
-#include "pnetwork.h"
-#include "pprocess.h"
-#include "psemaphore.h"
-#include "psha1.h"
-#include "pshm.h"
-#include "pshmbuffer.h"
-#include "psocket.h"
-#include "psocketaddress.h"
-#include "pstring.h"
-#include "ptypes.h"
-#include "puthread.h"
+#include <pmacros.h>
+#include <ptypes.h>
 
-#endif /* __PLIB_H__ */
+P_BEGIN_DECLS
 
+P_LIB_API pchar *	p_strdup (pchar *str);
+
+P_END_DECLS
+
+#endif /* __PSTRING_H__ */

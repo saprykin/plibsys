@@ -47,18 +47,18 @@ p_ipc_unix_get_temp_dir (void)
 
 #ifdef P_tmpdir
 	if (strlen (P_tmpdir) > 0)
-		str = strdup (P_tmpdir);
+		str = p_strdup (P_tmpdir);
 	else
-		return strdup ("/tmp/");
+		return p_strdup ("/tmp/");
 #else
 	const pchar *tmp_env;
 
 	tmp_env = getenv ("TMPDIR");
 
 	if (tmp_env != NULL)
-		str = strdup (tmp_env);
+		str = p_strdup (tmp_env);
 	else
-		return strdup ("/tmp/");
+		return p_strdup ("/tmp/");
 #endif /* P_tmpdir */
 
 	/* Now we need to ensure that we have only one trailing slash */
