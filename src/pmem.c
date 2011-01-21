@@ -114,3 +114,4 @@ p_mem_set_vtable (PMemVTable *table)
 
 	return TRUE;
 }
+
