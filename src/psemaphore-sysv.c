@@ -32,7 +32,17 @@
 #include <sys/types.h>
 #include <sys/ipc.h>
 
+#ifndef P_OS_WIN
+extern pchar *	p_ipc_unix_get_temp_dir		(void);
+extern pint	p_ipc_unix_create_key_file	(const pchar		*file_name);
+extern pint	p_ipc_unix_get_ftok_key		(const pchar		*file_name);
+#endif
+
+extern pchar *	p_ipc_get_platform_key		(const pchar		*name,
+						 pboolean		posix);
+
 #define P_SEM_SUFFIX		"_p_sem_object"
+#define P_SEM_ERROR_BUF_SIZE	255
 
 struct sembuf sem_lock = {0, -1, SEM_UNDO};
 struct sembuf sem_unlock = {0, 1, SEM_UNDO};

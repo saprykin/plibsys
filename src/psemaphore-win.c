@@ -27,6 +27,7 @@
 #include <windows.h>
 
 #define P_SEM_SUFFIX		"_p_sem_object"
+#define P_SEM_ERROR_BUF_SIZE	255
 
 typedef HANDLE psem_hdl;
 #define P_SEM_INVALID_HDL	NULL
