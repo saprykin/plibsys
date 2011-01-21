@@ -26,11 +26,11 @@
  * processes within the system. PLib supports different semaphore implementations: System V,
  * POSIX and Win32. PLib is compiled using one of them (depend which of implementations
  * are available on target system). Windows IPC system different from Unix one: Windows doesn't
- * own IPC objects (processes own them), while Unix systems does. Because of that Unix IPC
+ * own IPC objects (processes own them), while Unix systems do. Because of that Unix IPC
  * objects can survive application crash: semaphore can be opened in locked state if it was
  * locked during application crash. Use third argument as P_SEM_ACCESS_CREATE in p_semaphore_new()
  * to reset semaphore value while openning it. This argument is ignored on Windows. System V
- * semaphores are more resistance to crashes (leaving in locked state) than POSIX ones.
+ * semaphores are more resistant to crashes (leaving in locked state) than POSIX ones.
  * #PSemaphore is quite heavy structure, so consider using #PMutex for thread synchronization
  * instead (if possible). 
  */
@@ -81,8 +81,31 @@ typedef struct _PSemaphore PSemaphore;
 P_LIB_API PSemaphore *	p_semaphore_new 	(const pchar		*name,
 						 pint			init_val,
 						 PSemaphoreAccessMode	mode);
+
+/**
+ * @brief Acquires semaphore.
+ * @param sem #PSemaphore to acquire.
+ * @return TRUE in case of success, FALSE otherwise.
+ * @since 0.0.1
+ */
 P_LIB_API pboolean	p_semaphore_acquire 	(PSemaphore		*sem);
+
+/**
+ * @brief Releases semaphore.
+ * @param sem #PSemaphore to release.
+ * @return TRUE in case of success, FALSE otherwise.
+ * @since 0.0.1
+ */
 P_LIB_API pboolean	p_semaphore_release	(PSemaphore		*sem);
+
+/**
+ * @brief Frees semaphore object.
+ * @param sem #PSemaphore to free.
+ * @since 0.0.1
+ *
+ * It doesn't release acquired semaphore, be careful to not to make deadlock
+ * while removing locked semaphore.
+ */
 P_LIB_API void		p_semaphore_free	(PSemaphore		*sem);
 
 P_END_DECLS
