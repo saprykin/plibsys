@@ -17,6 +17,12 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA.
  */
 
+/**
+ * @file pprocess.h
+ * @brief Process related routines
+ * @author Alexander Saprykin
+ */
+
 #if !defined (__PLIB_H_INSIDE__) && !defined (PLIB_COMPILATION)
 #  error "Header files shouldn't be included directly, consider using <plib.h> instead."
 #endif
@@ -29,7 +35,19 @@
 
 P_BEGIN_DECLS
 
+/**
+ * @brief Gets PID of calling process.
+ * @return PID of the currently calling process.
+ * @since 0.0.1
+ */
 P_LIB_API puint32	p_process_get_current_pid	(void);
+
+/**
+ * @brief Checks wheather process with given PID is running or not.
+ * @param pid PID to check for.
+ * @return TRUE if process with given PID exists and is running, FALSE otherwise.
+ * @since 0.0.1
+ */
 P_LIB_API pboolean	p_process_is_running		(puint32 pid);
 
 P_END_DECLS
