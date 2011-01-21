@@ -33,6 +33,15 @@
 #include <sys/types.h>
 #include <sys/ipc.h>
 
+#ifndef P_OS_WIN
+extern pchar *	p_ipc_unix_get_temp_dir		(void);
+extern pint	p_ipc_unix_create_key_file	(const pchar		*file_name);
+extern pint	p_ipc_unix_get_ftok_key		(const pchar		*file_name);
+#endif
+
+extern pchar *	p_ipc_get_platform_key		(const pchar		*name,
+						 pboolean		posix);
+
 #define P_SHM_SUFFIX		"_p_shm_object"
 
 typedef pint pshm_hdl;

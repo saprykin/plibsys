@@ -29,6 +29,9 @@
 #include <winsock2.h>
 #include <windows.h>
 
+extern pchar *	p_ipc_get_platform_key		(const pchar		*name,
+						 pboolean		posix);
+
 typedef HANDLE pshm_hdl;
 #define P_SHM_INVALID_HDL	NULL
 

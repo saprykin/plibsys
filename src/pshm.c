@@ -20,7 +20,6 @@
 /* TODO: error report system */
 
 #include "pshm.h"
-#include "psemaphore.h"
 
 #include <stdlib.h>
 #include <string.h>
