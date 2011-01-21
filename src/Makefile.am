@@ -26,26 +26,23 @@ plibinclude_HEADERS =   \
 	pmacros.h	\
 	pcryptohash.h	\
 	pfile.h		\
+	pgost3411.h	\
 	phashtable.h	\
 	plib.h		\
 	plist.h		\
 	pmain.h		\
+	pmd5.h		\
 	pmem.h		\
 	pmutex.h	\
 	pprocess.h	\
-	pnetwork.h	\
 	psemaphore.h	\
+	psha1.h		\
 	pshm.h		\
 	pshmbuffer.h	\
 	psocket.h	\
 	psocketaddress.h\
 	pstring.h	\
 	puthread.h
-
-noinst_HEADERS = 	\
-	pgost3411.h	\
-	pmd5.h		\
-	psha1.h
 
 if HAVE_GCC_BUILTINS_FOR_ATOMIC_OPERATIONS
 libplib_la_SOURCES += \
@@ -87,11 +84,6 @@ libplib_la_SOURCES +=		\
 	pmutex-solaris.c
 endif
 endif
-endif
-
-if NEED_NETWORK_FUNCTIONS
-libplib_la_SOURCES += \
-	pnetwork.c
 endif
 
 libplib_la_CFLAGS = \

@@ -33,7 +33,6 @@
 #include "pmd5.h"
 #include "pmem.h"
 #include "pmutex.h"
-#include "pnetwork.h"
 #include "pprocess.h"
 #include "psemaphore.h"
 #include "psha1.h"

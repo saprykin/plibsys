@@ -174,31 +174,6 @@ if test "x$have_socklen_t" = xno; then
 	AC_MSG_RESULT($plib_socklen_type)
 fi
 
-dnl Test program for inet_ntop () and inet_pton () functions
-m4_define([plib_net_funcs_test],
-	[#include <stdlib.h>
-	 #include <arpa/inet.h> 
-	 int main ()
-	 {	
-	 	struct in_addr sin_addr;
-		char str[[INET_ADDRSTRLEN]];
-		inet_pton (AF_INET, "127.0.0.1", &sin_addr);
-		inet_ntop (AF_INET, &sin_addr, str, INET_ADDRSTRLEN);
-		return 0;
-	 }
-])
-
-AC_TRY_RUN(AC_LANG_SOURCE([plib_net_funcs_test]),
-	   have_inet_funcs=yes,
-	   have_inet_funcs=no,
-	   [AC_LINK_IFELSE([AC_LANG_SOURCE([plib_net_funcs_test])],
-			   have_inet_funcs=yes,
-			   have_inet_funcs=no)])
-
-AC_MSG_CHECKING(for inet_ntop and inet_pton functions)
-AC_MSG_RESULT($have_inet_funcs)
-AM_CONDITIONAL(NEED_NETWORK_FUNCTIONS, [test "$have_inet_funcs" = no])
-
 dnl Check for some functions
 AC_CHECK_FUNCS([memmove nanosleep poll])
 
