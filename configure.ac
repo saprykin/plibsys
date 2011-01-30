@@ -546,8 +546,10 @@ if test x"$have_threads" != xno; then
 							   plib_flag_works=no)])
 				CFLAGS="$plib_save_CFLAGS"
 				if test $plib_flag_works = yes; then
-					P_UTHREAD_CFLAGS=-$flag
-					P_UTHREAD_LIBS=-$flag
+					if test x"$flag" != x; then
+						P_UTHREAD_CFLAGS=-$flag
+						P_UTHREAD_LIBS=-$flag
+					fi
 				break;
 				fi
 			done
