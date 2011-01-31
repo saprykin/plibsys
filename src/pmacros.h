@@ -39,12 +39,12 @@
 /* Sun Solaris */
 #elif defined(__sun) || defined(sun)
 #  define P_OS_SOLARIS
-/* QNX */
-#elif defined(__QNX__)
-#  define P_OS_QNX
 /* QNX6 */
 #elif defined(__QNXNTO__)
 #  define P_OS_QNX6
+/* QNX */
+#elif defined(__QNX__)
+#  define P_OS_QNX
 #endif
 
 #ifdef P_OS_WIN64
