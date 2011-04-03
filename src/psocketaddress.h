@@ -37,6 +37,8 @@
 #include <netinet/in.h>
 #endif
 
+P_BEGIN_DECLS
+
 typedef enum _PSocketFamily {
 	P_SOCKET_FAMILY_UNKNOWN = 0,
 #ifdef AF_INET6
@@ -76,6 +78,8 @@ P_LIB_API puint16		p_socket_address_get_port		(PSocketAddress *addr);
 P_LIB_API pboolean		p_socket_address_is_any			(PSocketAddress *addr);
 P_LIB_API pboolean		p_socket_address_is_loopback		(PSocketAddress *addr);
 P_LIB_API void			p_socket_address_free			(PSocketAddress	*addr);
+
+P_END_DECLS
 
 #endif /* __PSOCKETADDRESS_H__ */
 

@@ -379,6 +379,6 @@ p_socket_address_free (PSocketAddress *addr)
 	if (addr == NULL)
 		return;
 
-	free (addr);
+	p_free (addr);
 }
 
