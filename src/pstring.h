@@ -29,7 +29,7 @@
 
 P_BEGIN_DECLS
 
-P_LIB_API pchar *	p_strdup (pchar *str);
+P_LIB_API pchar *	p_strdup (const pchar *str);
 
 P_END_DECLS
 

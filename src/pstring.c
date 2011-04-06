@@ -23,7 +23,7 @@
 #include "pmem.h"
 
 P_LIB_API pchar *
-p_strdup (pchar *str)
+p_strdup (const pchar *str)
 {
 	pchar	*ret;
 	psize	len;
@@ -31,14 +31,12 @@ p_strdup (pchar *str)
 	if (str == NULL)
 		return NULL;
 
-	len = strlen (str);
-	if ((ret = p_malloc (len + 1)) == NULL)
+	len = strlen (str) + 1;
+	if ((ret = p_malloc (len)) == NULL)
 		return NULL;
 
-	while (*str != '\0')
-		*ret++ = *str++;
+	memcpy (ret, str, len);
 
-	*ret = '\0';
-	return (ret - len);
+	return ret;
 }
 
