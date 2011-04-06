@@ -18,10 +18,7 @@
  */
 
 /* TODO: conditional variables */
-/* TODO: priorities */
-/* TODO: once routines */
 /* TODO: barriers */
-/* TODO: _full version of create func */
 
 #include "pmem.h"
 #include "puthread.h"
@@ -36,15 +33,36 @@
 typedef HANDLE puthread_hdl;
 
 struct _PUThread {
-	puthread_hdl hdl;
-	pboolean joinable;
+	puthread_hdl		hdl;
+	pboolean		joinable;
+	PUThreadPriority	prio;
 };
 
-P_LIB_API PUThread *
-p_uthread_create (PUThreadFunc func, ppointer data, pboolean joinable)
-{
-	PUThread *ret;
+static int p_uthread_priority_map[P_UTHREAD_PRIORITY_HIGHEST + 1];
 
+void
+_p_uthread_init (void)
+{
+	p_uthread_priority_map[P_UTHREAD_PRIORITY_LOWEST]	= THREAD_PRIORITY_LOW;
+	p_uthread_priority_map[P_UTHREAD_PRIORITY_LOW]		= THREAD_PRIORITY_BELOW_NORMAL;
+	p_uthread_priority_map[P_UTHREAD_PRIORITY_NORMAL]	= THREAD_PRIORITY_NORMAL;
+	p_uthread_priority_map[P_UTHREAD_PRIORITY_HIGH]		= THREAD_PRIORITY_ABOVE_NORMAL;
+	p_uthread_priority_map[P_UTHREAD_PRIORITY_HIGHEST]	= THREAD_PRIORITY_HIGH;
+}
+
+void
+_p_uthread_shutdown (void)
+{
+}
+
+P_LIB_API PUThread *
+p_uthread_create_full (PUThreadFunc	func,
+		       ppointer		data,
+		       pboolean		joinable,
+		       PUThreadPriority	prio)
+{
+	PUThread	*ret;
+	
 	if (!func)
 		return NULL;
 
@@ -60,7 +78,19 @@ p_uthread_create (PUThreadFunc func, ppointer data, pboolean joinable)
 	}
 
 	ret->joinable = joinable;
+
+	p_uthread_set_priority (ret, prio);
+
 	return ret;
+}
+
+P_LIB_API PUThread *
+p_uthread_create (PUThreadFunc		func,
+		  ppointer		data,
+		  pboolean		joinable)
+{
+	/* All checks will be inside */
+	return p_uthread_create_full (func, data, joinable, P_UTHREAD_PRIORITY_NORMAL);
 }
 
 P_LIB_API void
@@ -105,5 +135,27 @@ P_LIB_API void
 p_uthread_yield (void)
 {
 	Sleep (0);
+}
+
+P_LIB_API pint
+p_uthread_set_priority (PUThread		*thread,
+			PUThreadPriority	prio)
+{
+	if (thread == NULL)
+		return -1;
+
+	if (prio > P_UTHREAD_PRIORITY_HIGHEST || prio < P_UTHREAD_PRIORITY_LOWEST) {
+		P_WARNING ("PUThread: trying to assign wrong thread priority");
+		prio = P_UTHREAD_PRIORITY_NORMAL;
+	}
+
+	if (!SetThreadPriority (thread->hdl, p_uthread_priority_map[prio])) {
+		P_ERROR ("PUThread: failed to set priority");
+		return -1;
+	}
+
+	thread->prio = prio;
+
+	return 0;
 }
 

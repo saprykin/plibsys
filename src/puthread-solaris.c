@@ -20,10 +20,7 @@
 /* Threads for Sun Solaris */
 
 /* TODO: conditional variables */
-/* TODO: priorities */
-/* TODO: once routines */
 /* TODO: barriers */
-/* TODO: _full version of create func */
 
 #include "pmem.h"
 #include "puthread.h"
@@ -37,12 +34,26 @@
 typedef thread_t puthread_hdl;
 
 struct _PUThread {
-	puthread_hdl	hdl;
-	pboolean	joinable;
+	puthread_hdl		hdl;
+	pboolean		joinable;
+	PUThreadPriotiry	prio;
 };
 
+void
+_p_uthread_init (void)
+{
+}
+
+void
+_p_uthread_shutdown (void)
+{
+}
+
 P_LIB_API PUThread *
-p_uthread_create (PUThreadFunc func, ppointer data, pboolean joinable)
+p_uthread_create_full (PUThreadFunc	func,
+		       ppointer		data,
+		       pboolean		joinable,
+		       PUThreadPriority prio)
 {
 	PUThread	*ret;
 	pint32		flags;
@@ -67,9 +78,19 @@ p_uthread_create (PUThreadFunc func, ppointer data, pboolean joinable)
 		return NULL;
 	}
 
-	ret->joinable = joinable;
+	ret->joinable	= joinable;
+	ret->prio	= prio;
 
 	return ret;
+}
+
+P_LIB_API PUThread *
+p_uthread_create (PUThreadFunc		func,
+		  ppointer		data,
+		  pboolean		joinable)
+{
+	/* All checks will be inside */
+	return p_uthread_create_full (func, data, joinable, P_UTHREAD_PRIORITY_NORMAL);
 }
 
 P_LIB_API void
@@ -108,5 +129,16 @@ P_LIB_API void
 p_uthread_yield (void)
 {
 	thr_yield ();
+}
+
+P_LIB_API pint
+p_uthread_set_priority (PUThread		*thread,
+		        PUThreadPriority	prio)
+{
+	P_WARNING ("PUThread: priorities for bound threads are not implemented in Solaris");
+
+	thread->prio = prio;
+
+	return 0
 }
 

@@ -18,10 +18,7 @@
  */
 
 /* TODO: conditional variables */
-/* TODO: priorities */
-/* TODO: once routines */
 /* TODO: barriers */
-/* TODO: _full version of create func */
 
 #include "puthread.h"
 

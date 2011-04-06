@@ -23,10 +23,12 @@
 #include "pmem.h"
 #include "pmain.h"
 
-extern _p_atomic_thread_init		(void);
-extern _p_atomic_thread_shutdown	(void);
-extern _p_socket_init_once		(void);
-extern _p_socket_close_once		(void);
+extern void _p_atomic_thread_init	(void);
+extern void _p_atomic_thread_shutdown	(void);
+extern void _p_socket_init_once		(void);
+extern void _p_socket_close_once	(void);
+extern void _p_uthread_init		(void);
+extern void _p_uthread_shutdown		(void);
 
 static pboolean plib_inited = FALSE;
 
@@ -40,6 +42,7 @@ p_lib_init (void)
 	
 	_p_atomic_thread_init ();
 	_p_socket_init_once ();
+	_p_uthread_init ();
 }
 
 P_LIB_API void
@@ -52,5 +55,6 @@ p_lib_shutdown (void)
 
 	_p_atomic_thread_shutdown ();
 	_p_socket_close_once ();
+	_p_uthread_shutdown ();
 }
 

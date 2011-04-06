@@ -27,19 +27,34 @@
 #include <pmacros.h>
 #include <ptypes.h>
 
+P_BEGIN_DECLS
+
 typedef ppointer (*PUThreadFunc) (ppointer arg);
 
 typedef struct _PUThread PUThread;
 
-P_BEGIN_DECLS
+typedef enum _PUThreadPriority {
+	P_UTHREAD_PRIORITY_LOWEST	= 0,
+	P_UTHREAD_PRIORITY_LOW		= 1,
+	P_UTHREAD_PRIORITY_NORMAL	= 2,
+	P_UTHREAD_PRIORITY_HIGH		= 3,
+	P_UTHREAD_PRIORITY_HIGHEST	= 4
+} PUThreadPriority;
 
-P_LIB_API PUThread *		p_uthread_create	(PUThreadFunc	func,
-							 ppointer	data,
-							 pboolean	joinable);
-P_LIB_API P_NO_RETURN void	p_uthread_exit		(pint		code);
-P_LIB_API pint			p_uthread_join		(PUThread	*thread);
-P_LIB_API void			p_uthread_free		(PUThread	*thread);
-P_LIB_API pint			p_uthread_sleep		(puint32	msec);
+P_LIB_API PUThread *		p_uthread_create_full	(PUThreadFunc		func,
+							 ppointer		data,
+							 pboolean		joinable,
+							 PUThreadPriority	prio);
+
+P_LIB_API PUThread *		p_uthread_create	(PUThreadFunc		func,
+							 ppointer		data,
+							 pboolean		joinable);
+P_LIB_API P_NO_RETURN void	p_uthread_exit		(pint			code);
+P_LIB_API pint			p_uthread_join		(PUThread		*thread);
+P_LIB_API void			p_uthread_free		(PUThread		*thread);
+P_LIB_API pint			p_uthread_sleep		(puint32		msec);
+P_LIB_API pint			p_uthread_set_priority	(PUThread		*thread,
+							 PUThreadPriority	prio);
 
 P_END_DECLS
 
