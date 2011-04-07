@@ -22,6 +22,7 @@
 #include "pmem.h"
 #include "psemaphore.h"
 #include "pcryptohash.h"
+#include "pstring.h"
 
 #include <stdlib.h>
 #include <string.h>
