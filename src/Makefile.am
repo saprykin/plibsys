@@ -76,12 +76,14 @@ libplib_la_SOURCES += \
 if HAVE_POSIX_THREADS
 libplib_la_SOURCES +=		\
 	puthread-posix.c	\
-	pmutex-posix.c
+	pmutex-posix.c		\
+	pcondvariable-posix.c
 else
 if HAVE_SOLARIS_THREADS
 libplib_la_SOURCES +=		\
 	puthread-solaris.c	\
-	pmutex-solaris.c
+	pmutex-solaris.c	\
+	pcondvariable-solaris.c
 endif
 endif
 endif
@@ -94,6 +96,7 @@ libplib_la_LDFLAGS = \
 	-version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE)
 
 EXTRA_DIST =			\
+	pcondvariable-win.c	\
 	pmutex-win.c		\
 	psemaphore-win.c	\
 	pshm-win.c		\

@@ -24,6 +24,7 @@
 
 #include "plibconfig.h"
 #include "patomic.h"
+#include "pcondvariable.h"
 #include "pfile.h"
 #include "pgost3411.h"
 #include "phashtable.h"
