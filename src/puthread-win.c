@@ -43,11 +43,11 @@ static int p_uthread_priority_map[P_UTHREAD_PRIORITY_HIGHEST + 1];
 void
 _p_uthread_init (void)
 {
-	p_uthread_priority_map[P_UTHREAD_PRIORITY_LOWEST]	= THREAD_PRIORITY_LOW;
+	p_uthread_priority_map[P_UTHREAD_PRIORITY_LOWEST]	= THREAD_PRIORITY_LOWEST;
 	p_uthread_priority_map[P_UTHREAD_PRIORITY_LOW]		= THREAD_PRIORITY_BELOW_NORMAL;
 	p_uthread_priority_map[P_UTHREAD_PRIORITY_NORMAL]	= THREAD_PRIORITY_NORMAL;
 	p_uthread_priority_map[P_UTHREAD_PRIORITY_HIGH]		= THREAD_PRIORITY_ABOVE_NORMAL;
-	p_uthread_priority_map[P_UTHREAD_PRIORITY_HIGHEST]	= THREAD_PRIORITY_HIGH;
+	p_uthread_priority_map[P_UTHREAD_PRIORITY_HIGHEST]	= THREAD_PRIORITY_HIGHEST;
 }
 
 void

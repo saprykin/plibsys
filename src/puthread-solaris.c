@@ -36,7 +36,7 @@ typedef thread_t puthread_hdl;
 struct _PUThread {
 	puthread_hdl		hdl;
 	pboolean		joinable;
-	PUThreadPriotiry	prio;
+	PUThreadPriority	prio;
 };
 
 void
@@ -139,6 +139,6 @@ p_uthread_set_priority (PUThread		*thread,
 
 	thread->prio = prio;
 
-	return 0
+	return 0;
 }
 
