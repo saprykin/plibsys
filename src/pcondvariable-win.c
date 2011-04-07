@@ -17,6 +17,11 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA.
  */
 
+/* Taken from "Strategies for Implementing POSIX Condition Variables on Win32"
+ * by Douglas C. Schmidt and Irfan Pyarali.
+ * See: http://www.cse.wustl.edu/~schmidt/win32-cv-1.html
+ */
+
 #include "pmem.h"
 #include "pcondvariable.h"
 
