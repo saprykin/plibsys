@@ -20,6 +20,17 @@
 /* Hash table organized like this: table[hash key]->[list with values]
  * Note: this implementation is not intended to use on huge loads */
 
+/**
+ * @file pmain.h
+ * @brief PLib initialization/shutdown
+ * @author Alexander Saprykin
+ *
+ * In order to use PLib correctly you must initialize it once per
+ * application using p_lib_init() routine. It will initialize required
+ * resources, mutexes and other stuff. On exit you should free used
+ * resources by calling p_lib_shutdown() routine.
+ */
+
 #if !defined (__PLIB_H_INSIDE__) && !defined (PLIB_COMPILATION)
 #  error "Header files shouldn't be included directly, consider using <plib.h> instead."
 #endif
@@ -31,7 +42,17 @@
 
 P_BEGIN_DECLS
 
+/**
+ * @brief Initializes PLib resources.
+ * @since 0.0.1
+ */
 P_LIB_API void	p_lib_init	(void);
+
+/**
+ * @brief Frees PLib resources. You shouldn't use PLib routines
+ * after calling this one.
+ * @since 0.0.1
+ */
 P_LIB_API void	p_lib_shutdown	(void);
 
 P_END_DECLS
