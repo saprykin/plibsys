@@ -66,7 +66,7 @@ typedef enum _PSemaphoreAccessMode {
 typedef struct _PSemaphore PSemaphore;
 
 /**
- * @brief Creates new #PSemaphore object
+ * @brief Creates new #PSemaphore object.
  * @param name Semaphore name.
  * @param init_val Initial semaphore value.
  * @param mode Creation mode.
