@@ -57,7 +57,7 @@ P_BEGIN_DECLS
 /**
  * @brief Creates new #PShm object.
  * @param name Shared memory name.
- * @param size Size of the memory segment, can't be changed later.
+ * @param size Size of the memory segment in bytes, can't be changed later.
  * @param perms Memory segment permissions, see #PShmAccessPerms.
  * @return Pointer to newly created #PShm object in case of success, NULL otherwise.
  * @since 0.0.1
