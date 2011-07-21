@@ -24,6 +24,7 @@ plibinclude_HEADERS =   \
 	patomic.h	\
 	ptypes.h	\
 	pmacros.h	\
+	pcondvariable.h	\
 	pcryptohash.h	\
 	pfile.h		\
 	pgost3411.h	\
