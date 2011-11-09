@@ -17,6 +17,15 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA.
  */
 
+/**
+ * @file pmacros.h
+ * @brief Miscellaneous macros 
+ * @author Alexander Saprykin
+ *
+ * Contains useful macros for detecting host OS, compiler, etc.
+ */
+
+
 #if !defined (__PLIB_H_INSIDE__) && !defined (PLIB_COMPILATION)
 #  error "Header files shouldn't be included directly, consider using <plib.h> instead."
 #endif
