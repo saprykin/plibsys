@@ -17,6 +17,49 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA.
  */
 
+/**
+ * @file psocket.h
+ * @brief Socket implementation
+ * @author Alexander Saprykin
+ *
+ * #PSocket is a socket implementation which supports INET and INET6 families,
+ * TCP and UDP protocols. It's fast and non-blocking by default. Note that before
+ * using #PSocket API you must call p_lib_init() in order to initialize system
+ * resources (on UNIX this will do nothing, but on Windows this routine is required),
+ * and p_lib_shutdown() after #PSocket API usage. Commonly first routine called on
+ * the program's start, and second one is before application termination. Here is an
+ * example of #PSocket usage:
+ * @code
+ * PSocketAddress *addr;
+ * PSocket	  *sock;
+ * 
+ * p_lib_init();
+ * ...
+ * if ((addr = p_socket_address_new("127.0.0.1", 5432)) == NULL) {
+ *	...
+ * }
+ * 
+ * if ((sock = p_socket_new(P_SOCKET_FAMILY_INET, P_SOCKET_TYPE_DATAGRAM, P_SOCKET_PROTOCOL_UDP)) == NULL) {
+ *	p_socket_address_free(addr);
+ *	...
+ * }
+ *
+ * if (!p_socket_bind (sock, addr, FALSE)) {
+ *	p_socket_address_free(addr);
+ *	p_socket_free(sock);
+ *	...
+ * }
+ *
+ * ...
+ * p_socket_address_free(addr);
+ * p_socket_close(sock);
+ * p_socket_free(sock);
+ * p_lib_shutdown();
+ * @endcode
+ * Here was created UDP socket, which then was binded to localhost address and port 5432.
+ * Do not forget to close socket and free memory after its usage.
+ */
+
 #if !defined (__PLIB_H_INSIDE__) && !defined (PLIB_COMPILATION)
 #  error "Header files shouldn't be included directly, consider using <plib.h> instead."
 #endif
@@ -29,41 +72,45 @@
 
 P_BEGIN_DECLS
 
+/** Socket protocols specified by IANA  */
 typedef enum _PSocketProtocol {
-	P_SOCKET_PROTOCOL_UNKNOWN		= -1,
-	P_SOCKET_PROTOCOL_DEFAULT		= 0,
-	P_SOCKET_PROTOCOL_TCP			= 6,
-	P_SOCKET_PROTOCOL_UDP			= 17
+	P_SOCKET_PROTOCOL_UNKNOWN		= -1,	/**< Unknown protocol.	*/
+	P_SOCKET_PROTOCOL_DEFAULT		= 0,	/**< Default protocol.	*/
+	P_SOCKET_PROTOCOL_TCP			= 6,	/**< TCP protocol.	*/
+	P_SOCKET_PROTOCOL_UDP			= 17	/**< UDP protocol.	*/
 } PSocketProtocol;
 
+/** Socket errors */
 typedef enum _PSocketError {
-	P_SOCKET_ERROR_NONE			= 0,
-	P_SOCKET_ERROR_NO_RESOURCES		= 1,
-	P_SOCKET_ERROR_NOT_AVAILABLE		= 2,
-	P_SOCKET_ERROR_ACCESS_DENIED		= 3,
-	P_SOCKET_ERROR_CONNECTED		= 4,
-	P_SOCKET_ERROR_CONNECTING		= 5,
-	P_SOCKET_ERROR_ABORTED			= 6,
-	P_SOCKET_ERROR_INVALID_ARGUMENT		= 7,
-	P_SOCKET_ERROR_NOT_SUPPORTED		= 8,
-	P_SOCKET_ERROR_TIMED_OUT		= 9,
-	P_SOCKET_ERROR_WOULD_BLOCK		= 10,
-	P_SOCKET_ERROR_ADDRESS_IN_USE		= 11,
-	P_SOCKET_ERROR_CONNECTION_REFUSED	= 12,
-	P_SOCKET_ERROR_NOT_CONNECTED		= 13,
-	P_SOCKET_ERROR_FAILED			= 14
+	P_SOCKET_ERROR_NONE			= 0,	/**< No error.					*/
+	P_SOCKET_ERROR_NO_RESOURCES		= 1,	/**< OS hasn't enough resources.		*/
+	P_SOCKET_ERROR_NOT_AVAILABLE		= 2,	/**< Resource isn't available.			*/
+	P_SOCKET_ERROR_ACCESS_DENIED		= 3,	/**< Access denied.				*/
+	P_SOCKET_ERROR_CONNECTED		= 4,	/**< Already connected.				*/
+	P_SOCKET_ERROR_CONNECTING		= 5,	/**< Connection in progress.			*/
+	P_SOCKET_ERROR_ABORTED			= 6,	/**< Operation aborted.				*/
+	P_SOCKET_ERROR_INVALID_ARGUMENT		= 7,	/**< Invalid argument specified.		*/
+	P_SOCKET_ERROR_NOT_SUPPORTED		= 8,	/**< Operation not supported.			*/
+	P_SOCKET_ERROR_TIMED_OUT		= 9,	/**< Operation timed out.			*/
+	P_SOCKET_ERROR_WOULD_BLOCK		= 10,	/**< Operation cannot be completed immediatly.	*/
+	P_SOCKET_ERROR_ADDRESS_IN_USE		= 11,	/**< Address is already under usage.		*/
+	P_SOCKET_ERROR_CONNECTION_REFUSED	= 12,	/**< Connection refused.			*/
+	P_SOCKET_ERROR_NOT_CONNECTED		= 13,	/**< Connection required first.			*/
+	P_SOCKET_ERROR_FAILED			= 14	/**< General error.				*/
 } PSocketError;
 
+/** Socket types */
 typedef enum _PSocketType {
-	P_SOCKET_TYPE_UNKNOWN			= 0,
-	P_SOCKET_TYPE_STREAM			= 1,
-	P_SOCKET_TYPE_DATAGRAM			= 2,
-	P_SOCKET_TYPE_SEQPACKET			= 3
+	P_SOCKET_TYPE_UNKNOWN			= 0,	/**< Unknown type.	*/
+	P_SOCKET_TYPE_STREAM			= 1,	/**< Stream type.	*/
+	P_SOCKET_TYPE_DATAGRAM			= 2,	/**< Datagram type.	*/
+	P_SOCKET_TYPE_SEQPACKET			= 3	/**< SeqPacket type.	*/
 } PSocketType;
 
+/** Socket direction for data operations */
 typedef enum _PSocketDirection {
-	P_SOCKET_DIRECTION_SND			= 0,
-	P_SOCKET_DIRECTION_RCV			= 1
+	P_SOCKET_DIRECTION_SND			= 0,	/**< Send direction.	*/
+	P_SOCKET_DIRECTION_RCV			= 1	/**< Receive direction.	*/
 } PSocketDirection;
 
 typedef struct _PSocket PSocket;
