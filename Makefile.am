@@ -1,5 +1,4 @@
 SUBDIRS = src
-ACLOCAL_AMFLAGS = -I m4
 
 configexecincludedir = $(libdir)/plib/include
 configexecinclude_DATA = plibconfig.h
