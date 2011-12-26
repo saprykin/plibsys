@@ -41,6 +41,9 @@ struct _PSemaphore {
 	pint			init_val;
 };
 
+extern pchar *	p_ipc_get_platform_key		(const pchar		*name,
+						 pboolean		posix);
+
 static pboolean create_handle (PSemaphore *sem);
 static void clean_handle (PSemaphore *sem);
 
