@@ -39,6 +39,16 @@ typedef unsigned int	puint32;
 typedef signed int	pssize;
 typedef unsigned int	psize;
 
+#define PINT16_MODIFIER	"h"
+#define PINT16_FORMAT	"hi"
+#define PUINT16_FORMAT	"hu"
+#define PINT32_MODIFIER	""
+#define PINT32_FORMAT	"i"
+#define PUINT32_FORMAT	"u"
+#define PINT64_MODIFIER	"I64"
+#define PINT64_FORMAT	"I64i"
+#define PUINT64_FORMAT	"I64u"
+
 #ifdef P_CC_MSVC
 typedef signed __int64		pint64;
 typedef unsigned __int64	puint64;
@@ -48,6 +58,9 @@ typedef unsigned long long	puint64;
 #endif
 
 typedef pint64 poffset;
+
+#define POFFSET_MODIFIER	PINT64_MODIFIER
+#define POFFSET_FORMAT		PINT64_FORMAT
 
 #ifdef P_OS_WIN64
 
@@ -63,6 +76,10 @@ typedef signed long long	pssize;
 typedef unsigned long long	psize;
 #endif
 
+#define PSIZE_MODIFIER		"I64"
+#define PSSIZE_FORMAT		"I64d"
+#define PSIZE_FORMAT		"I64u"
+
 #define P_MAXSIZE		P_MAXUINT64
 #define P_MINSSIZE		P_MININT64
 #define P_MAXSSIZE		P_MAXINT64
@@ -75,6 +92,10 @@ typedef unsigned long long	psize;
 
 typedef signed int		pssize;
 typedef unsigned int		psize;
+
+#define PSIZE_MODIFIER		""
+#define PSSIZE_FORMAT		"i"
+#define PSIZE_FORMAT		"u"
 
 #define P_MAXSIZE		P_MAXUINT
 #define P_MINSSIZE		P_MININT
@@ -94,6 +115,10 @@ typedef unsigned int		psize;
 typedef signed int		pintptr;
 typedef unsigned int		puintptr;
 
+#define PINTPTR_MODIFIER	""
+#define PINTPTR_FORMAT		"i"
+#define PUINTPTR_FORMAT		"u"
+
 #else
 
 #define PPOINTER_TO_INT(p)	((pint)  (pint64) (p))
@@ -109,6 +134,10 @@ typedef unsigned long long	puintptr;
 typedef signed __int64		pintptr;
 typedef unsigned __int64	puintptr;
 #endif
+
+#define PINTPTR_MODIFIER	"I64"
+#define PINTPTR_FORMAT		"I64i"
+#define PUINTPTR_FORMAT		"I64u"
 
 #endif
 
