@@ -150,6 +150,44 @@ else
 	])
 fi
 
+if test x$ac_cv_sizeof_long_long = x8; then
+	# long long is a 64 bit integer.
+	AC_MSG_CHECKING(for format to printf and scanf a puint64)
+	AC_CACHE_VAL(plib_cv_long_long_format,[
+		for format in ll q I64; do
+		  AC_TRY_RUN([#include <stdio.h>  
+			int main()
+			{
+				long long b, a = -0x3AFAFAFAFAFAFAFALL;
+				char buffer[1000];
+				sprintf (buffer, "%${format}u", a);
+  				sscanf (buffer, "%${format}u", &b);
+				exit (b!=a);
+			}
+			],
+			[plib_cv_long_long_format=${format}
+			break],
+			[],[:])
+		done])
+	if test -n "$plib_cv_long_long_format"; then
+		AC_MSG_RESULT(%${plib_cv_long_long_format}u)
+		AC_DEFINE(HAVE_LONG_LONG_FORMAT, 1, [define if system printf can print long long])
+		if test x"$plib_cv_long_long_format" = xI64; then
+		    AC_DEFINE(HAVE_INT64_AND_I64, 1, [define to support printing 64-bit integers with format I64])
+		fi
+        else
+		AC_MSG_RESULT(none)
+        fi
+elif test x$ac_cv_sizeof___int64 = x8; then
+	# __int64 is a 64 bit integer.
+	AC_MSG_CHECKING(for format to printf and scanf a puint64)
+	# We know this is MSVCRT.DLL, and what the formats are
+	plib_cv_long_long_format=I64
+	AC_MSG_RESULT(%${plib_cv_long_long_format}u)
+        AC_DEFINE(HAVE_LONG_LONG_FORMAT, 1, [define if system printf can print long long])
+	AC_DEFINE(HAVE_INT64_AND_I64, 1, [define to support printing 64-bit integers with format I64])
+fi
+
 AC_CHECK_TYPES([socklen_t], have_socklen_t=yes, have_socklen_t=no, [#include <sys/socket.h>])
 AC_CHECK_TYPES([struct sockaddr_storage], have_sockaddr_storage=yes, have_sockaddr_storage=no, [#include <sys/socket.h>])
 
@@ -936,6 +974,10 @@ _______EOF
 	  cat >>$outfile <<_______EOF
 typedef signed $pint16	pint16;
 typedef unsigned $pint16 puint16;
+#define PINT16_MODIFIER		$pint16_modifier
+#define PINT16_FORMAT		$pint16_format
+#define PUINT16_FORMAT		$puint16_format
+
 _______EOF
 	fi
 
@@ -944,6 +986,9 @@ _______EOF
 	  cat >>$outfile <<_______EOF
 typedef signed $pint32 pint32;
 typedef unsigned $pint32 puint32;
+#define PINT32_MODIFIER		$pint32_modifier
+#define PINT32_FORMAT		$pint32_format
+#define PUINT32_FORMAT		$puint32_format
 _______EOF
 	fi
 
@@ -952,11 +997,36 @@ typedef signed $pint64 pint64;
 typedef unsigned $pint64 puint64;
 _______EOF
 
+
+	if test x$pint64_format != x ; then
+	  cat >>$outfile <<_______EOF
+#define PINT64_MODIFIER		$pint64_modifier
+#define PINT64_FORMAT		$pint64_format
+#define PUINT64_FORMAT		$puint64_format
+_______EOF
+        else
+	  cat >>$outfile <<_______EOF
+#undef PINT64_MODIFIER
+#undef PINT64_FORMAT
+#undef PUINT64_FORMAT
+_______EOF
+        fi           
+
+
         cat >>$outfile <<_______EOF
 typedef signed $plib_size_type_define pssize;
 typedef unsigned $plib_size_type_define psize;
+#define PSIZE_MODIFIER		$psize_modifier
+#define PSSIZE_FORMAT		$pssize_format
+#define PSIZE_FORMAT		$psize_format
 
 typedef pint64 poffset;
+#define POFFSET_MODIFIER	PINT64_MODIFIER
+#define POFFSET_FORMAT		PINT64_FORMAT
+
+#define P_MAXSIZE		P_MAXU$plib_msize_type
+#define P_MINSSIZE		P_MIN$plib_msize_type
+#define P_MAXSSIZE		P_MAX$plib_msize_type
 
 #define PLIB_SIZEOF_VOID_P	$plib_void_p
 #define PLIB_SIZEOF_LONG	$plib_long
@@ -974,6 +1044,10 @@ _______EOF
 
 typedef signed $plib_intptr_type_define pintptr;
 typedef unsigned $plib_intptr_type_define puintptr;
+
+#define PINTPTR_MODIFIER      $pintptr_modifier
+#define PINTPTR_FORMAT        $pintptr_format
+#define PUINTPTR_FORMAT       $puintptr_format
 
 _______EOF
 	else
@@ -1044,43 +1118,103 @@ _______EOF
 	fi
 ],[
 
+
 case 2 in
 $ac_cv_sizeof_short)		
 	pint16=short
+	gint16_modifier='"h"'
+	pint16_format='"hi"'
+	puint16_format='"hu"'
 	;;
 $ac_cv_sizeof_int)		
 	pint16=int
+	pint16_modifier='""'
+	pint16_format='"i"'
+	pint16_format='"u"'
 	;;
 esac
 
 case 4 in
 $ac_cv_sizeof_short)		
 	pint32=short
+	pint32_modifier='"h"'
+	pint32_format='"hi"'
+	puint32_format='"hu"'
 	;;
 $ac_cv_sizeof_int)		
 	pint32=int
+	pint32_modifier='""'
+	pint32_format='"i"'
+	puint32_format='"u"'
 	;;
 $ac_cv_sizeof_long)		
 	pint32=long
+	pint32_modifier='"l"'
+	pint32_format='"li"'
+	puint32_format='"lu"'
 	;;
 esac
 
 case 8 in
 $ac_cv_sizeof_int)
 	pint64=int
+	pint64_modifier='""'
+	pint64_format='"i"'
+	puint64_format='"u"'
 	;;
 $ac_cv_sizeof_long)
 	pint64=long
+	pint64_modifier='"l"'
+	pint64_format='"li"'
+	puint64_format='"lu"'
 	;;
 $ac_cv_sizeof_long_long)
 	pint64='long long'
+	if test -n "$plib_cv_long_long_format"; then
+		pint64_modifier='"'$plib_cv_long_long_format'"'
+		pint64_format='"'$plib_cv_long_long_format'i"'
+		puint64_format='"'$plib_cv_long_long_format'u"'
+	fi
 	;;
 $ac_cv_sizeof___int64)
 	pint64='__int64'
+	if test -n "$plib_cv_long_long_format"; then
+		pint64_modifier='"'$plib_cv_long_long_format'"'
+		pint64_format='"'$plib_cv_long_long_format'i"'
+		puint64_format='"'$plib_cv_long_long_format'u"'
+	fi
 	;;
 esac
 
 plib_size_type_define="$plib_size_type"
+
+case "$plib_size_type" in
+short)
+	psize_modifier='"h"'
+	psize_format='"hu"'
+	pssize_format='"hi"'
+	plib_msize_type='SHRT'
+	;;
+int)
+	psize_modifier='""'
+	psize_format='"u"'
+	pssize_format='"i"'
+	plib_msize_type='INT'
+	;;
+long)
+	psize_modifier='"l"'
+	psize_format='"lu"'
+	pssize_format='"li"'
+	plib_msize_type='LONG'
+	;;
+"long long"|__int64)
+	psize_modifier='"I64"'
+	psize_format='"I64u"'
+	pssize_format='"I64i"'
+	plib_msize_type='INT64'
+  ;;
+esac
+
 plib_socklen_type_define="$plib_socklen_type"
 plib_have_sockaddr_storage="$have_sockaddr_storage"
 
@@ -1097,15 +1231,27 @@ p_memory_barrier_needed="$plib_memory_barrier_needed"
 case $ac_cv_sizeof_void_p in
 $ac_cv_sizeof_int)
 	plib_intptr_type_define=int
+	pintptr_modifier='""'
+	pintptr_format='"i"'
+	puintptr_format='"u"'
 	;;
 $ac_cv_sizeof_long)
 	plib_intptr_type_define=long
+	pintptr_modifier='"l"'
+	pintptr_format='"li"'
+	puintptr_format='"lu"'
 	;;
 $ac_cv_sizeof_long_long)
 	plib_intptr_type_define='long long'
+	pintptr_modifier='"I64"'
+	pintptr_format='"I64i"'
+	puintptr_format='"I64u"'
 	;;
 $ac_cv_sizeof___int64)
 	plib_intptr_type_define=__int64
+	pintptr_modifier='"I64"'
+	pintptr_format='"I64i"'
+	puintptr_format='"I64u"'
 	;;
 *)
 	plib_unknown_void_p=yes
