@@ -116,6 +116,7 @@
     <ClCompile Include="..\..\..\src\pshmbuffer.c" />
     <ClCompile Include="..\..\..\src\psocket.c" />
     <ClCompile Include="..\..\..\src\psocketaddress.c" />
+    <ClCompile Include="..\..\..\src\pstring.c" />
     <ClCompile Include="..\..\..\src\puthread-win.c" />
     <ClCompile Include="..\..\..\src\puthread.c" />
   </ItemGroup>
@@ -139,6 +140,7 @@
     <ClInclude Include="..\..\..\src\pshmbuffer.h" />
     <ClInclude Include="..\..\..\src\psocket.h" />
     <ClInclude Include="..\..\..\src\psocketaddress.h" />
+    <ClInclude Include="..\..\..\src\pstring.h" />
     <ClInclude Include="..\..\..\src\ptypes.h" />
     <ClInclude Include="..\..\..\src\puthread.h" />
   </ItemGroup>

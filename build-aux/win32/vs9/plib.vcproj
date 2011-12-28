@@ -251,6 +251,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\src\pstring.c"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\src\psocketaddress.c"
 				>
 			</File>
@@ -342,6 +346,10 @@
 			</File>
 			<File
 				RelativePath="..\..\..\src\psocketaddress.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\pstring.h"
 				>
 			</File>
 			<File
