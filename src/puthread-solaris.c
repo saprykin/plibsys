@@ -19,7 +19,6 @@
 
 /* Threads for Sun Solaris */
 
-/* TODO: conditional variables */
 /* TODO: barriers */
 
 #include "pmem.h"
