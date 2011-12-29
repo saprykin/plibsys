@@ -757,6 +757,40 @@ if test -z $P_UTHREAD_CFLAGS; then
 	P_UTHREAD_CFLAGS="-D_REENTRANT -D_PTHREADS -D_THREAD_SAFE -D_POSIX4_DRAFT_SOURCE -D_POSIX4A_DRAFT10_SOURCE -U_OSF_SOURCE"
 fi
 
+dnl Try to setup static mutex
+mutex_has_default=no
+if test "x$have_threads" = xposix; then
+	mutex_has_default=yes
+	mutex_default_type='pthread_mutex_t'
+	mutex_default_init='PTHREAD_MUTEX_INITIALIZER'
+	mutex_header_file='pthread.h'
+elif test "x$have_threads" = xsolaris; then
+	mutex_has_default=yes
+	mutex_default_type='mutex_t'
+	mutex_default_init='DEFAULTMUTEX'
+	mutex_header_file='thread.h'
+fi
+
+if test $mutex_has_default = yes ; then
+	plib_save_CPPFLAGS="$CPPFLAGS"
+	plib_save_LIBS="$LIBS"
+	LIBS="$P_LIBS_FOR_UTHREAD $LIBS"
+	CPPFLAGS="$CPPFLAGS $PUTHREAD_COMPILE_IMPL_DEFINES"
+	PLIB_SIZEOF([#include <$mutex_header_file>],
+		    $mutex_default_type,
+		    pmutex)
+	PLIB_BYTE_CONTENTS([#include <$mutex_header_file>],
+			   $mutex_default_type,
+			   pmutex,
+			   $plib_cv_sizeof_pmutex,
+			   $mutex_default_init)
+	if test x"$plib_cv_byte_contents_gmutex" = xno; then
+		mutex_has_default=no
+	fi
+	CPPFLAGS="$plib_save_CPPFLAGS"
+	LIBS="$plib_save_LIBS"
+fi
+
 AM_CONDITIONAL(HAVE_THREADS, [test "x$have_threads" = xposix] || [test "x$have_threads" = xsolaris])
 AM_CONDITIONAL(HAVE_POSIX_THREADS, [test "x$have_threads" = xposix])
 AM_CONDITIONAL(HAVE_SOLARIS_THREADS, [test "x$have_threads" = xsolaris])
@@ -1053,6 +1087,30 @@ _______EOF
 	else
 	  echo '#error SIZEOF_VOID_P unknown - This should never happen' >>$outfile
 	fi
+		
+	echo >>$outfile
+	if test x$p_mutex_has_default = xyes; then
+		cat >>$outfile <<_______EOF
+typedef struct _PStaticMutex
+{
+	union {
+	char	pad[[$p_mutex_sizeof]];
+	double	dummy_double;
+	long	dummy_long;
+	void	*dummy_pointer;
+	} static_mutex;
+} PStaticMutex;
+
+#define	P_STATIC_MUTEX_INIT		{ { { $p_mutex_contents} } }
+#define	p_static_mutex_get_mutex(mutex)	((PMutex*) ((ppointer) ((mutex)->static_mutex.pad)))
+_______EOF
+	else
+		cat >>$outfile <<_______EOF
+typedef struct _PMutex* PStaticMutex;
+#define P_STATIC_MUTEX_INIT		NULL
+#define p_static_mutex_get_mutex(mutex)	(p_static_mutex_get_mutex_impl (mutex))
+_______EOF
+	fi
 
 	if test -n "$plib_socklen_type_define"; then
 		cat >>$outfile <<_______EOF
@@ -1225,6 +1283,10 @@ plib_long=$ac_cv_sizeof_long
 pintbits=`expr $ac_cv_sizeof_int \* 8`
 plongbits=`expr $ac_cv_sizeof_long \* 8`
 psizebits=`expr $ac_cv_sizeof_size_t \* 8`
+
+p_mutex_has_default="$mutex_has_default"
+p_mutex_sizeof="$plib_cv_sizeof_pmutex"
+p_mutex_contents="$plib_cv_byte_contents_pmutex"
 
 p_memory_barrier_needed="$plib_memory_barrier_needed"
 

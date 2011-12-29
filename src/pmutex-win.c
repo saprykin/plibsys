@@ -19,6 +19,7 @@
 
 #include "pmem.h"
 #include "pmutex.h"
+#include "patomic.h"
 
 #include <stdlib.h>
 #include <winsock2.h>
@@ -29,6 +30,50 @@ typedef HANDLE mutex_hdl;
 struct _PMutex {
 	mutex_hdl	hdl;
 };
+
+static PMutex *p_once_mutex = NULL;
+
+void
+_p_mutex_win_init (void)
+{
+	if (p_once_mutex == NULL)
+		p_once_mutex = p_mutex_new ();
+}
+
+void
+_p_mutex_win_shutdown (void)
+{
+	if (p_once_mutex != NULL) {
+		p_mutex_free (p_once_mutex);
+		p_once_mutex = NULL;
+	}
+}
+
+#define p_static_mutex_get_mutex_impl(mutex) \
+	(p_atomic_pointer_get (mutex) ? *(mutex) : \
+	_p_static_mutex_get_mutex (mutex))
+	
+static PMutex*
+_p_static_mutex_get_mutex (PMutex **mutex)
+{
+	PMutex *result;
+
+	result = p_atomic_pointer_get (mutex);
+
+	if (!result) {
+		p_mutex_lock (p_once_mutex);
+		result = *mutex;
+		
+		if (!result) {
+			result = p_mutex_new ();
+			p_atomic_pointer_set (mutex, result);
+        	}
+		
+		p_mutex_unlock (p_once_mutex);
+	}
+
+	return result;
+}
 
 P_LIB_API PMutex *
 p_mutex_new (void)
@@ -101,5 +146,31 @@ p_mutex_free (PMutex *mutex)
 		P_ERROR ("PMutex: error while closing handle");
 
 	p_free (mutex);
+}
+P_LIB_API void
+p_static_mutex_init (PStaticMutex *mutex)
+{
+	static const PStaticMutex init_mutex = P_STATIC_MUTEX_INIT;
+
+	if (mutex == NULL)
+		return;
+
+	*mutex = init_mutex;
+}
+
+P_LIB_API void
+p_static_mutex_free (PStaticMutex* mutex)
+{
+	PMutex **runtime_mutex;
+
+	if (mutex == NULL)
+		return;
+
+	runtime_mutex = ((PMutex **) mutex);
+
+	if (*runtime_mutex != NULL)
+		p_mutex_free (*runtime_mutex);
+
+	*runtime_mutex = NULL;
 }
 
