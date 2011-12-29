@@ -15,6 +15,7 @@ libplib_la_SOURCES =	\
 	pmd5.c		\
 	pprocess.c	\
 	psha1.c		\
+	pshmbuffer.c	\
 	psocket.c	\
 	psocketaddress.c\
 	pstring.c
@@ -56,8 +57,7 @@ endif
 if HAVE_IPC
 libplib_la_SOURCES +=	\
 	psemaphore.c	\
-	pshm.c		\
-	pshmbuffer.c
+	pshm.c
 if HAVE_SYSV_IPC
 libplib_la_SOURCES +=		\
 	psemaphore-sysv.c	\
@@ -69,6 +69,10 @@ libplib_la_SOURCES +=		\
 	pshm-posix.c
 endif
 endif
+else
+libplib_la_SOURCES +=		\
+	psemaphore-none.c	\
+	pshm-none.c
 endif
 
 if HAVE_THREADS

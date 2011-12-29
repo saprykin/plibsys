@@ -740,6 +740,9 @@ if test x"$have_threads" != xno; then
 
 	if test "x$P_UTHREAD_LIBS" = xerror; then
 		AC_MSG_ERROR($THREAD_LIBS_NOT_FOUND_1$have_threads$THREAD_LIBS_NOT_FOUND_2)  
+	else
+		AC_MSG_CHECKING(thread related libraries)
+		AC_MSG_RESULT($P_UTHREAD_LIBS)
 	fi
 fi
 
@@ -802,9 +805,6 @@ AM_CONDITIONAL(HAVE_SOLARIS_THREADS, [test "x$have_threads" = xsolaris])
 AC_SUBST(P_UTHREAD_CFLAGS)
 AC_SUBST(P_LIBS_FOR_UTHREAD)
 AC_SUBST(PUTHREAD_COMPILE_IMPL_DEFINES)
-
-AC_MSG_CHECKING(thread related libraries)
-AC_MSG_RESULT($P_UTHREAD_LIBS)
 
 dnl Test programs for basic POSIX IPC functionality
 m4_define([plib_posix_ipc_test],
@@ -912,6 +912,9 @@ if test "x$want_ipc" = xyes || test "x$want_ipc" = xsysv \
 			LIBS="$plib_save_LIBS"
 		fi
 	fi
+	
+	AC_MSG_CHECKING(IPC related libraries)
+	AC_MSG_RESULT($P_IPC_LIBS)
 fi
 
 AM_CONDITIONAL(HAVE_IPC, [test "x$have_ipc" = xsysv] || [test "x$have_ipc" = xposix])
@@ -919,9 +922,6 @@ AM_CONDITIONAL(HAVE_SYSV_IPC, [test "x$have_ipc" = xsysv])
 AM_CONDITIONAL(HAVE_POSIX_IPC, [test "x$have_ipc" = xposix])
 AC_SUBST(P_IPC_IMPLEMENTATION)
 AC_SUBST(P_IPC_LIBS)
-
-AC_MSG_CHECKING(IPC related libraries)
-AC_MSG_RESULT($P_IPC_LIBS)
 
 dnl Check for socket calls libs
 AC_SEARCH_LIBS([socket], [socket])
