@@ -510,6 +510,11 @@ else
 	AC_MSG_RESULT($have_threads)
 fi
 
+dnl Finally disable threads support
+if test "x$have_threads" = xnone; then
+	have_threads=no
+fi
+
 dnl Determination of P_UTHREAD_CFLAGS
 
 P_UTHREAD_LIBS=

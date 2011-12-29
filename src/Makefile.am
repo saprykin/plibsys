@@ -87,6 +87,11 @@ libplib_la_SOURCES +=		\
 	pcondvariable-solaris.c
 endif
 endif
+else
+libplib_la_SOURCES +=		\
+	puthread-none.c		\
+	pmutex-none.c		\
+	pcondvariable-none.c
 endif
 
 libplib_la_CFLAGS = \
