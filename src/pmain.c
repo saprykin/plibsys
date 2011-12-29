@@ -29,8 +29,11 @@ extern void _p_socket_init_once		(void);
 extern void _p_socket_close_once	(void);
 extern void _p_uthread_init		(void);
 extern void _p_uthread_shutdown		(void);
+
+#ifdef P_OS_WIN
 extern void _p_mutex_win_init		(void);
 extern void _p_mutex_win_shutdown	(void);
+#endif
 
 static pboolean plib_inited = FALSE;
 
@@ -45,7 +48,10 @@ p_lib_init (void)
 	_p_atomic_thread_init ();
 	_p_socket_init_once ();
 	_p_uthread_init ();
+	
+#ifdef P_OS_WIN
 	_p_mutex_win_init ();
+#endif
 }
 
 P_LIB_API void
@@ -59,6 +65,9 @@ p_lib_shutdown (void)
 	_p_atomic_thread_shutdown ();
 	_p_socket_close_once ();
 	_p_uthread_shutdown ();
+	
+#ifdef P_OS_WIN
 	_p_mutex_win_shutdown ();
+#endif
 }
 
