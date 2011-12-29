@@ -141,6 +141,11 @@ typedef unsigned __int64	puintptr;
 
 #endif
 
+typedef struct _PMutex* PStaticMutex;
+#define	P_STATIC_MUTEX_INIT		NULL
+#define p_static_mutex_get_mutex(mutex)	(p_static_mutex_get_mutex_impl (mutex))
+
+
 #define PINT16_TO_LE(val)	((pint16) (val))
 #define PUINT16_TO_LE(val)	((puint16) (val))
 #define PINT16_TO_BE(val)	((pint16) PUINT16_SWAP_BYTES (val))
