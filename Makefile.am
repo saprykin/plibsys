@@ -20,11 +20,11 @@ EXTRA_DIST =	\
 	plibconfig.h.win32				\
 	config.h.win32					\
 	Doxyfile.in					\
-	build-aux/win32/vs9/plib.sln			\
-	build-aux/win32/vs9/plib.vcproj			\
-	build-aux/win32/vs10/plib.sln			\
-	build-aux/win32/vs10/plib.vcxproj		\
-	build-aux/win32/vs10/plib.vcxproj.filters
+	build/win32/vs9/plib.sln			\
+	build/win32/vs9/plib.vcproj			\
+	build/win32/vs10/plib.sln			\
+	build/win32/vs10/plib.vcxproj		\
+	build/win32/vs10/plib.vcxproj.filters
 
 BUILT_EXTRA_DIST = \
 	ChangeLog
