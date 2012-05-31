@@ -56,7 +56,8 @@ P_LIB_API void
 p_mutex_free (PMutex *mutex)
 {
 }
-P_LIB_API void
+
+P_LIB_API void
 p_static_mutex_init (PStaticMutex *mutex)
 {
 	mutex = NULL;

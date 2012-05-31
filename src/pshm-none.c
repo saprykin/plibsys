@@ -22,7 +22,8 @@
 #include "pmem.h"
 #include "pshm.h"
 
-#include <stdlib.h>
+#include <stdlib.h>
+
 struct _PShm {
 	pint	hdl;
 };

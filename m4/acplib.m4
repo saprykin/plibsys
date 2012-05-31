@@ -29,7 +29,8 @@ m4_ifvaln([$3],[$3])dnl])
 ac_compile="$plib_ac_compile_save"
 rm -f conftest.$ac_objext conftest.err m4_ifval([$1], [conftest.$ac_ext])[]dnl
 ])# PLIB_CHECK_COMPILE_WARNINGS
-# PLIB_SIZEOF (INCLUDES, TYPE, ALIAS)
+
+# PLIB_SIZEOF (INCLUDES, TYPE, ALIAS)
 # ---------------------------------------------------------------
 # The definition here is based of that of AC_CHECK_SIZEOF
 AC_DEFUN([PLIB_SIZEOF],

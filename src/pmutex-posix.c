@@ -101,7 +101,8 @@ p_mutex_free (PMutex *mutex)
 
 	p_free (mutex);
 }
-P_LIB_API void
+
+P_LIB_API void
 p_static_mutex_init (PStaticMutex *mutex)
 {
 	static const PStaticMutex init_mutex = P_STATIC_MUTEX_INIT;

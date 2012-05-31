@@ -108,13 +108,15 @@ P_LIB_API void		p_mutex_free	(PMutex *mutex);
 
 /**
  * @brief Initializes #PStaticMutex object.
- * @param mutex #PStaticMutex to initialize. * @since 0.0.1
+ * @param mutex #PStaticMutex to initialize.
+ * @since 0.0.1
  */
 P_LIB_API void		p_static_mutex_init (PStaticMutex *mutex);
 
 /**
  * @brief Frees #PStaticMutex object.
- * @param mutex #PStaticMutex to free. * @since 0.0.1
+ * @param mutex #PStaticMutex to free.
+ * @since 0.0.1
  *
  * It doesn't unlock @a mutex before freeing memory, so you should do it
  * manually.
