@@ -17,6 +17,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA.
  */
 
+/* SHA1 interface implementation for #PCryptoHash */
+
 #if !defined (__PLIB_H_INSIDE__) && !defined (PLIB_COMPILATION)
 #  error "Header files shouldn't be included directly, consider using <plib.h> instead."
 #endif
