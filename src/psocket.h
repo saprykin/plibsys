@@ -113,6 +113,7 @@ typedef enum _PSocketDirection {
 	P_SOCKET_DIRECTION_RCV			= 1	/**< Receive direction.	*/
 } PSocketDirection;
 
+/** Typedef for opaque #PSocket structure */
 typedef struct _PSocket PSocket;
 
 /**
