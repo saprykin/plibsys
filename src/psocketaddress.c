@@ -37,6 +37,18 @@
 #  define INET_ADDRSTRLEN 16
 #endif 
 
+struct _PSocketAddress {
+	PSocketFamily	family;
+	union _addr {
+		struct in_addr sin_addr;
+#ifdef AF_INET6
+		struct in6_addr sin6_addr;
+#endif
+	} 		addr;
+	puint16 	port;
+};
+
+
 P_LIB_API PSocketAddress *
 p_socket_address_new_from_native (ppointer	native,
 				  psize		len)
