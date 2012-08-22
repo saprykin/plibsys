@@ -181,3 +181,34 @@ p_hash_table_free (PHashTable *table)
 	p_free (table);
 }
 
+P_LIB_API void
+p_hash_table_remove (PHashTable *table, ppointer key)
+{
+	PHashTableNode	*node, *prev_node;
+	puint		hash;
+
+	if (table == NULL)
+		return;
+
+	if (find_node (table, key) != NULL) {
+		hash = calc_hash (key, table->size);
+		node = table->table[hash];
+		prev_node = NULL;
+
+		while (node != NULL) {
+			if (node->key == key) {
+				if (prev_node == NULL)
+					table->table[hash] = node->next;
+				else
+					prev_node->next = node->next;
+
+				p_free (node);
+				return;
+			} else {
+				prev_node = node;
+				node = node->next;
+			}
+		}
+	} else
+		return;
+}

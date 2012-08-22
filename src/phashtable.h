@@ -103,6 +103,14 @@ P_LIB_API PList *	p_hash_table_values	(PHashTable *table);
  */
 P_LIB_API void		p_hash_table_free	(PHashTable *table);
 
+/**
+ * @brief Removes @a key from hash table.
+ * @param table Hash-table to remove key from.
+ * @param key Key to remove (if exists).
+ * @since 0.0.1
+ */
+P_LIB_API void		p_hash_table_remove	(PHashTable *table, ppointer key);
+
 P_END_DECLS
 
 #endif /* __PHASHTABLE_H__ */
