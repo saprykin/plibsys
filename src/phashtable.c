@@ -212,3 +212,21 @@ p_hash_table_remove (PHashTable *table, ppointer key)
 	} else
 		return;
 }
+
+P_LIB_API PList *
+p_hash_table_lookup_by_value (PHashTable *table, ppointer val)
+{
+	PList		*ret = NULL;
+	PHashTableNode	*node;
+	unsigned int	i;
+
+	if (table == NULL)
+		return NULL;
+
+	for (i = 0; i < table->size; ++i)
+		for (node = table->table[i]; node != NULL; node = node->next)
+			if (node->value == val)
+				ret = p_list_append (ret, node->key);
+
+	return ret;
+}

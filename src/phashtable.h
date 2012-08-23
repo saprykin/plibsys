@@ -54,7 +54,7 @@ typedef struct _PHashTable PHashTable;
  * NULL otherwise.
  * @since 0.0.1
  */
-P_LIB_API PHashTable *	p_hash_table_new	(void);
+P_LIB_API PHashTable *	p_hash_table_new		(void);
 
 /**
  * @brief Inserts new key-value pair into the hash-table.
@@ -66,7 +66,7 @@ P_LIB_API PHashTable *	p_hash_table_new	(void);
  * This function only stores pointers, so you need to manually free pointed
  * data after using it.
  */
-P_LIB_API void		p_hash_table_insert	(PHashTable *table, ppointer key, ppointer value);
+P_LIB_API void		p_hash_table_insert		(PHashTable *table, ppointer key, ppointer value);
 
 /**
  * @brief Searches for specifed key in the hash-table.
@@ -76,7 +76,7 @@ P_LIB_API void		p_hash_table_insert	(PHashTable *table, ppointer key, ppointer v
  * (ppointer) -1 if no value was found.
  * @since 0.0.1
  */
-P_LIB_API ppointer	p_hash_table_lookup	(PHashTable *table, ppointer key);
+P_LIB_API ppointer	p_hash_table_lookup		(PHashTable *table, ppointer key);
 
 /**
  * @brief Gives the list of all stored keys in hash-table.
@@ -85,7 +85,7 @@ P_LIB_API ppointer	p_hash_table_lookup	(PHashTable *table, ppointer key);
  * You should manually free this list with p_list_free() after using it.
  * @since 0.0.1
  */
-P_LIB_API PList *	p_hash_table_keys	(PHashTable *table);
+P_LIB_API PList *	p_hash_table_keys		(PHashTable *table);
 
 /**
  * @brief Gives the list of all stored values in hash-table.
@@ -94,14 +94,14 @@ P_LIB_API PList *	p_hash_table_keys	(PHashTable *table);
  * You should manually free this list with p_list_free() after using.
  * @since 0.0.1
  */
-P_LIB_API PList *	p_hash_table_values	(PHashTable *table);
+P_LIB_API PList *	p_hash_table_values		(PHashTable *table);
 
 /**
  * @brief Frees previously initialized #PHashTable.
  * @param table Hash-table to free.
  * @since 0.0.1
  */
-P_LIB_API void		p_hash_table_free	(PHashTable *table);
+P_LIB_API void		p_hash_table_free		(PHashTable *table);
 
 /**
  * @brief Removes @a key from hash table.
@@ -109,7 +109,17 @@ P_LIB_API void		p_hash_table_free	(PHashTable *table);
  * @param key Key to remove (if exists).
  * @since 0.0.1
  */
-P_LIB_API void		p_hash_table_remove	(PHashTable *table, ppointer key);
+P_LIB_API void		p_hash_table_remove		(PHashTable *table, ppointer key);
+
+/**
+ * @brief Searches for specifed key in the hash-table by its value.
+ * @param table Hash-table to lookup in.
+ * @param key Value to lookup for.
+ * @return List of keys with @a value (can be NULL), NULL if no keys ware found.
+ * Caller is responsible to call p_list_free() on returned list after usage.
+ * @since 0.0.1
+ */
+P_LIB_API PList *	p_hash_table_lookup_by_value	(PHashTable *table, ppointer val);
 
 P_END_DECLS
 
