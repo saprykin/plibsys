@@ -44,7 +44,16 @@ P_BEGIN_DECLS
  * ownership for the returned string.
  * @since 0.0.1
  */
-P_LIB_API pchar *	p_strdup (const pchar *str);
+P_LIB_API pchar *	p_strdup	(const pchar *str);
+
+/**
+ * @brief Removes trailing and leading whitespaces.
+ * @param str String with trailing \0 to process.
+ * @return Newlly allocated string in case of success, NULL otherwise. Caller takes
+ * ownership for the returned string.
+ * @since 0.0.1
+ */
+P_LIB_API pchar *	p_strchomp	(const pchar *str);
 
 P_END_DECLS
 

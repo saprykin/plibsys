@@ -18,6 +18,7 @@
  */
 
 #include <string.h>
+#include <ctype.h>
 
 #include "pstring.h"
 #include "pmem.h"
@@ -40,3 +41,39 @@ p_strdup (const pchar *str)
 	return ret;
 }
 
+P_LIB_API pchar *
+p_strchomp (const pchar *str)
+{
+	pint		pos_start, pos_end;
+	pchar		*ret;
+	pint		str_len;
+	const pchar	*ptr;
+
+	if (str == NULL)
+		return NULL;
+
+	ptr = str;
+	pos_start = 0;
+	pos_end = strlen (str) - 1;
+
+	while (isspace (* ((const puchar *) ptr++)))
+		++pos_start;
+
+	ptr = str + pos_end;
+
+	while (isspace (* ((const puchar *) ptr--)))
+		--pos_end;
+
+	if (pos_end < pos_start)
+		return p_strdup ("\0");
+
+	str_len = pos_end - pos_start + 2;
+
+	if ((ret = p_malloc0 (str_len)) == NULL)
+		return NULL;
+
+	memcpy (ret, str + pos_start, str_len - 1);
+	*(ret + str_len - 1) = '\0';
+
+	return ret;
+}
