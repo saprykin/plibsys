@@ -124,3 +124,23 @@ p_list_length (PList *list)
 	return ret;
 }
 
+P_LIB_API PList *
+p_list_prepend	(PList *list, ppointer data)
+{
+	PList *item, *cur;
+
+	if ((item = p_malloc0 (sizeof (PList))) == NULL) {
+		P_ERROR ("PList: failed to allocate memory");
+		return list;
+	}
+
+	item->data = data;
+
+	/* List is empty */
+	if (list == NULL)
+		return item;
+	
+	item->next = list;	
+
+	return item;
+}

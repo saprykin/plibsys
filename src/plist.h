@@ -154,6 +154,18 @@ P_LIB_API PList *	p_list_last	(PList *list);
  */
 P_LIB_API psize		p_list_length	(PList *list);
 
+/**
+ * @brief Prepends data to the list.
+ * @param list #PList for prepending data.
+ * @param data Data to prepend.
+ * @return Pointer to updated list in case of success, @a list otherwise.
+ * @since 0.0.1
+ *
+ * Before prepending first element to the list, @a list argument must be
+ * initialized with NULL. Otherwise behaviour is unpredictable.
+ */
+P_LIB_API PList *	p_list_prepend	(PList *list, ppointer data) P_GNUC_WARN_UNUSED_RESULT;
+
 P_END_DECLS
 
 #endif /* __PLIBLIST_H__ */
