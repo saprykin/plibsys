@@ -127,7 +127,7 @@ p_list_length (PList *list)
 P_LIB_API PList *
 p_list_prepend	(PList *list, ppointer data)
 {
-	PList *item, *cur;
+	PList *item;
 
 	if ((item = p_malloc0 (sizeof (PList))) == NULL) {
 		P_ERROR ("PList: failed to allocate memory");
