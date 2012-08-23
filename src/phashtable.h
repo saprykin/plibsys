@@ -41,9 +41,6 @@
 
 P_BEGIN_DECLS
 
-/** Opaque data structure for hash-table node. */
-typedef struct _PHashTableNode PHashTableNode;
-
 /** Opaque data structure for hash-table. */
 typedef struct _PHashTable PHashTable;
 

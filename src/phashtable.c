@@ -24,15 +24,17 @@
 
 #include <stdlib.h>
 
-struct _PHashTable {
-	PHashTableNode **table;
-	psize size;
-};
+typedef struct _PHashTableNode PHashTableNode;
 
 struct _PHashTableNode {
 	PHashTableNode *next;
 	ppointer key;
 	ppointer value;
+};
+
+struct _PHashTable {
+	PHashTableNode **table;
+	psize size;
 };
 
 /* Size of unique hash keys in hash table */
