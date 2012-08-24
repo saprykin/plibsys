@@ -199,6 +199,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\src\pinifile.c"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\src\plist.c"
 				>
 			</File>
@@ -290,6 +294,10 @@
 			</File>
 			<File
 				RelativePath="..\..\..\src\phashtable.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\pinifile.h"
 				>
 			</File>
 			<File

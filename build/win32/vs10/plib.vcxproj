@@ -102,6 +102,7 @@
     <ClCompile Include="..\..\..\src\pfile.c" />
     <ClCompile Include="..\..\..\src\pgost3411.c" />
     <ClCompile Include="..\..\..\src\phashtable.c" />
+    <ClCompile Include="..\..\..\src\pinifile.c" />
     <ClCompile Include="..\..\..\src\plist.c" />
     <ClCompile Include="..\..\..\src\pmain.c" />
     <ClCompile Include="..\..\..\src\pmd5.c" />
@@ -126,6 +127,7 @@
     <ClInclude Include="..\..\..\src\pfile.h" />
     <ClInclude Include="..\..\..\src\pgost3411.h" />
     <ClInclude Include="..\..\..\src\phashtable.h" />
+    <ClInclude Include="..\..\..\src\pinifile.h" />
     <ClInclude Include="..\..\..\src\plib.h" />
     <ClInclude Include="..\..\..\src\plist.h" />
     <ClInclude Include="..\..\..\src\pmacros.h" />

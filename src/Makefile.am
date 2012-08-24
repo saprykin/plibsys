@@ -9,6 +9,7 @@ libplib_la_SOURCES =	\
 	pfile.c		\
 	pgost3411.c	\
 	phashtable.c	\
+	pinifile.c	\
 	plist.c		\
 	pmain.c		\
 	pmem.c		\
@@ -30,6 +31,7 @@ plibinclude_HEADERS =   \
 	pfile.h		\
 	pgost3411.h	\
 	phashtable.h	\
+	pinifile.h	\
 	plib.h		\
 	plist.h		\
 	pmain.h		\

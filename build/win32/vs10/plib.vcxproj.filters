@@ -81,6 +81,9 @@
     <ClCompile Include="..\..\..\src\pstring.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\src\pinifile.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\src\pfile.h">
@@ -147,6 +150,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\src\pstring.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\pinifile.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -28,6 +28,7 @@
 #include "pfile.h"
 #include "pgost3411.h"
 #include "phashtable.h"
+#include "pinifile.h"
 #include "plist.h"
 #include "pmacros.h"
 #include "pmain.h"
