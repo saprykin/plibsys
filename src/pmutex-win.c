@@ -49,10 +49,6 @@ _p_mutex_win_shutdown (void)
 	}
 }
 
-#define p_static_mutex_get_mutex_impl(mutex) \
-	(p_atomic_pointer_get (mutex) ? *(mutex) : \
-	_p_static_mutex_get_mutex (mutex))
-	
 static PMutex*
 _p_static_mutex_get_mutex (PMutex **mutex)
 {
@@ -73,6 +69,12 @@ _p_static_mutex_get_mutex (PMutex **mutex)
 	}
 
 	return result;
+}
+
+P_LIB_API PStaticMutex
+p_static_mutex_get_mutex_impl (PStaticMutex *mutex)
+{
+	return p_atomic_pointer_get (mutex) ? *(mutex) : _p_static_mutex_get_mutex (mutex);
 }
 
 P_LIB_API PMutex *

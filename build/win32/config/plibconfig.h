@@ -143,6 +143,7 @@ typedef unsigned __int64	puintptr;
 
 typedef struct _PMutex* PStaticMutex;
 #define	P_STATIC_MUTEX_INIT		NULL
+P_LIB_API PStaticMutex p_static_mutex_get_mutex_impl (PStaticMutex *mutex);
 #define p_static_mutex_get_mutex(mutex)	(p_static_mutex_get_mutex_impl (mutex))
 
 

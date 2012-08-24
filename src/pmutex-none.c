@@ -1,6 +1,5 @@
 /* 
- * 29.12.2010
- * Copyright (C) 2010 Alexander Saprykin <xelfium@gmail.com>
+ * Copyright (C) 2010-2012 Alexander Saprykin <xelfium@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,11 +21,15 @@
 
 #include <stdlib.h>
 
-#define p_static_mutex_get_mutex_impl(mutex) NULL
-
 struct _PMutex {
 	pint	hdl;
 };
+
+P_LIB_API PStaticMutex
+p_static_mutex_get_mutex_impl (PStaticMutex *mutex)
+{
+	return NULL;
+}
 
 P_LIB_API PMutex *
 p_mutex_new (void)
