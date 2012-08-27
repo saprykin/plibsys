@@ -41,10 +41,10 @@ struct _PHashTable {
 #define P_HASH_SIZE 101
 
 static puint calc_hash (ppointer pointer, puint modulo);
-static PHashTableNode * find_node (PHashTable *table, ppointer key);
+static PHashTableNode * find_node (PHashTable *table, pconstpointer key);
 
 static puint
-calc_hash (ppointer pointer, puint modulo)
+calc_hash (pconstpointer pointer, puint modulo)
 {
 	if (modulo == 0)
 		return 0;
@@ -54,7 +54,7 @@ calc_hash (ppointer pointer, puint modulo)
 }
 
 static PHashTableNode * 
-find_node (PHashTable *table, ppointer key)
+find_node (PHashTable *table, pconstpointer key)
 {
 	puint		hash;
 	PHashTableNode	*ret;
@@ -119,7 +119,7 @@ p_hash_table_insert (PHashTable *table, ppointer key, ppointer value)
 }
 
 P_LIB_API ppointer
-p_hash_table_lookup (PHashTable *table, ppointer key)
+p_hash_table_lookup (PHashTable *table, pconstpointer key)
 {
 	PHashTableNode *node;
 
@@ -183,7 +183,7 @@ p_hash_table_free (PHashTable *table)
 }
 
 P_LIB_API void
-p_hash_table_remove (PHashTable *table, ppointer key)
+p_hash_table_remove (PHashTable *table, pconstpointer key)
 {
 	PHashTableNode	*node, *prev_node;
 	puint		hash;
@@ -215,7 +215,7 @@ p_hash_table_remove (PHashTable *table, ppointer key)
 }
 
 P_LIB_API PList *
-p_hash_table_lookup_by_value (PHashTable *table, ppointer val)
+p_hash_table_lookup_by_value (PHashTable *table, pconstpointer val)
 {
 	PList		*ret = NULL;
 	PHashTableNode	*node;

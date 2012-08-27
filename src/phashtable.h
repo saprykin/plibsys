@@ -72,7 +72,7 @@ P_LIB_API void		p_hash_table_insert		(PHashTable *table, ppointer key, ppointer 
  * (ppointer) -1 if no value was found.
  * @since 0.0.1
  */
-P_LIB_API ppointer	p_hash_table_lookup		(PHashTable *table, ppointer key);
+P_LIB_API ppointer	p_hash_table_lookup		(PHashTable *table, pconstpointer key);
 
 /**
  * @brief Gives the list of all stored keys in hash-table.
@@ -105,7 +105,7 @@ P_LIB_API void		p_hash_table_free		(PHashTable *table);
  * @param key Key to remove (if exists).
  * @since 0.0.1
  */
-P_LIB_API void		p_hash_table_remove		(PHashTable *table, ppointer key);
+P_LIB_API void		p_hash_table_remove		(PHashTable *table, pconstpointer key);
 
 /**
  * @brief Searches for specifed key in the hash-table by its value.
@@ -115,7 +115,7 @@ P_LIB_API void		p_hash_table_remove		(PHashTable *table, ppointer key);
  * Caller is responsible to call p_list_free() on returned list after usage.
  * @since 0.0.1
  */
-P_LIB_API PList *	p_hash_table_lookup_by_value	(PHashTable *table, ppointer val);
+P_LIB_API PList *	p_hash_table_lookup_by_value	(PHashTable *table, pconstpointer val);
 
 P_END_DECLS
 
