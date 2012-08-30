@@ -22,6 +22,7 @@
 #include "pstring.h"
 
 #include <stdio.h>
+#include <string.h>
 
 #define	P_INI_MAX_LINE_LENGTH	1024
 

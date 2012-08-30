@@ -40,7 +40,7 @@ struct _PHashTable {
 /* Size of unique hash keys in hash table */
 #define P_HASH_SIZE 101
 
-static puint calc_hash (ppointer pointer, puint modulo);
+static puint calc_hash (pconstpointer pointer, puint modulo);
 static PHashTableNode * find_node (PHashTable *table, pconstpointer key);
 
 static puint
@@ -63,7 +63,7 @@ find_node (PHashTable *table, pconstpointer key)
 		return NULL;
 
 	hash = calc_hash (key, table->size);
-
+ 
 	for (ret = table->table[hash]; ret != NULL; ret = ret->next)
 		if (ret->key == key)
 			return ret;
