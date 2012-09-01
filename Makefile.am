@@ -17,14 +17,18 @@ EXTRA_DIST =	\
 	autogen.sh					\
 	plib.pc.in					\
 	plib-uninstalled.pc.in				\
-	plibconfig.h.win32				\
-	config.h.win32					\
 	Doxyfile.in					\
 	build/win32/vs9/plib.sln			\
 	build/win32/vs9/plib.vcproj			\
 	build/win32/vs10/plib.sln			\
-	build/win32/vs10/plib.vcxproj		\
-	build/win32/vs10/plib.vcxproj.filters
+	build/win32/vs10/plib.vcxproj			\
+	build/win32/vs10/plib.vcxproj.filters		\
+	build/win32/vs11/plib.sln			\
+	build/win32/vs11/plib.vcxproj			\
+	build/win32/vs11/plib.vcxproj.filters		\
+	build/win32/config/config.h			\
+	build/win32/config/plibconfig.h
+
 
 BUILT_EXTRA_DIST = \
 	ChangeLog
