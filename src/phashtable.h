@@ -45,6 +45,17 @@ P_BEGIN_DECLS
 typedef struct _PHashTable PHashTable;
 
 /**
+ * @brief Compares two values.
+ * @param a First value to compare.
+ * @param b Second value to compare.
+ * @param data Addition data, may be NULL.
+ * @return -1 if first value less then second, 1 if first value
+ * greater then second, 0 otherwise.
+ * @since 0.0.1
+ */
+typedef int (*PCompareFunc) (pconstpointer a, pconstpointer b, ppointer data);
+
+/**
  * @brief Initializes new hash-table. Free with p_hash_table_free() after using.
  * @return Pointer to newly initialized #PHashTable structure in case of success,
  * NULL otherwise.
@@ -111,11 +122,13 @@ P_LIB_API void		p_hash_table_remove		(PHashTable *table, pconstpointer key);
  * @brief Searches for specifed key in the hash-table by its value.
  * @param table Hash-table to lookup in.
  * @param key Value to lookup for.
+ * @param func Function to compare table's values with @a val, if NULL then
+ * values will be compared as pointers.
  * @return List of keys with @a value (can be NULL), NULL if no keys ware found.
  * Caller is responsible to call p_list_free() on returned list after usage.
  * @since 0.0.1
  */
-P_LIB_API PList *	p_hash_table_lookup_by_value	(PHashTable *table, pconstpointer val);
+P_LIB_API PList *	p_hash_table_lookup_by_value	(PHashTable *table, pconstpointer val, PCompareFunc func);
 
 P_END_DECLS
 

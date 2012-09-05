@@ -215,19 +215,26 @@ p_hash_table_remove (PHashTable *table, pconstpointer key)
 }
 
 P_LIB_API PList *
-p_hash_table_lookup_by_value (PHashTable *table, pconstpointer val)
+p_hash_table_lookup_by_value (PHashTable *table, pconstpointer val, PCompareFunc func)
 {
 	PList		*ret = NULL;
 	PHashTableNode	*node;
 	unsigned int	i;
+	pboolean	res;
 
 	if (table == NULL)
 		return NULL;
 
 	for (i = 0; i < table->size; ++i)
-		for (node = table->table[i]; node != NULL; node = node->next)
-			if (node->value == val)
+		for (node = table->table[i]; node != NULL; node = node->next) {
+			if (func == NULL)
+				res = (node->value == val);
+			else
+				res = (func (node->value, val, NULL) == 0);
+			
+			if (res)
 				ret = p_list_append (ret, node->key);
+		}
 
 	return ret;
 }
