@@ -117,7 +117,11 @@
 
 /* Platform-independent MT-safe strtok ()*/
 #ifdef P_OS_WIN
-#  define P_STRTOK(str, delim, buf) strtok_s(str, delim, buf)
+#  ifdef P_CC_MINGW
+#    define P_STRTOK(str, delim, buf) strtok(str, delim)
+#  else
+#    define P_STRTOK(str, delim, buf) strtok_s(str, delim, buf)
+#  endif
 #else
 #  define P_STRTOK(str, delim, buf) strtok_r(str, delim, buf)
 #endif
