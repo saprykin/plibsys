@@ -7,4 +7,5 @@ Name: PLib
 Description: C Utility Library
 Version: @VERSION@
 Libs: -L${libdir} -lplib @P_LIBS_FOR_UTHREAD@ @P_IPC_LIBS@
-Cflags: -I${includedir}/plib -I${libdir}/plib/include @P_UTHREAD_CFLAGS@
+Cflags: -I${includedir}/plib -I${libdir}/plib/include @P_UTHREAD_CFLAGS@ @PLIB_EXTRA_CFLAGS@
+

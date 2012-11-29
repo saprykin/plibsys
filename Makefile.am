@@ -22,7 +22,6 @@ EXTRA_DIST =	\
 	config/win32/config.h		\
 	config/win32/plibconfig.h
 
-
 BUILT_EXTRA_DIST = \
 	ChangeLog
 

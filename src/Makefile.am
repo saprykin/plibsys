@@ -4,6 +4,21 @@ AM_CPPFLAGS = \
 
 lib_LTLIBRARIES = libplib.la
 
+if OS_WIN32_AND_DLL_COMPILATION
+if MS_LIB_AVAILABLE
+noinst_DATA = plib.lib
+
+install_ms_lib_cmd = $(INSTALL) plib.lib $(DESTDIR)$(libdir)
+uninstall_ms_lib_cmd = -rm $(DESTDIR)$(libdir)/plib.lib
+endif
+endif
+
+install-ms-lib:
+	$(install_ms_lib_cmd)
+
+uninstall-ms-lib:
+	$(uninstall_ms_lib_cmd)
+
 libplib_la_SOURCES =	\
 	pcryptohash.c	\
 	pfile.c		\
@@ -69,6 +84,12 @@ if HAVE_POSIX_IPC
 libplib_la_SOURCES +=		\
 	psemaphore-posix.c	\
 	pshm-posix.c
+else
+if HAVE_WIN32_IPC
+libplib_la_SOURCES +=		\
+	psemaphore-win.c	\
+	pshm-win.c
+endif
 endif
 endif
 else
@@ -91,6 +112,13 @@ libplib_la_SOURCES +=		\
 	puthread-solaris.c	\
 	pmutex-solaris.c	\
 	pcondvariable-solaris.c
+else
+if HAVE_WIN32_THREADS
+libplib_la_SOURCES +=		\
+	puthread-win.c	\
+	pmutex-win.c	\
+	pcondvariable-win.c
+endif
 endif
 endif
 else
@@ -100,12 +128,43 @@ libplib_la_SOURCES +=		\
 	pcondvariable-none.c
 endif
 
+install-data-local: install-ms-lib install-def-file
+	@if test -f $(plibincludedir)/plist.h ; then						\
+		echo "*** Old headers found in $(plibincludedir). You should remove the" ;	\
+		echo "*** contents of this directory and type 'make install' again." ;		\
+		false ;										\
+	fi
+
+uninstall-local: uninstall-ms-lib uninstall-def-file
+
+if PLATFORM_WIN32
+no_undefined = -no-undefined
+endif
+
+if OS_WIN32_AND_DLL_COMPILATION
+export_symbols = -export-symbols plib.def
+plib_def = plib.def
+
+install-def-file:
+	$(INSTALL) plib.def $(DESTDIR)$(libdir)/plib.def
+
+uninstall-def-file:
+	-rm $(DESTDIR)$(libdir)/plib.def
+else
+install-def-file:
+uninstall-def-file:
+
+export_symbols = $(LIBTOOL_EXPORT_OPTIONS)
+endif
+
 libplib_la_CFLAGS = \
-	$(P_UTHREAD_CFLAGS)
+	$(P_UTHREAD_CFLAGS) $(PLIB_EXTRA_CFLAGS)
+libplib_la_DEPENDENCIES = $(plib_def)
 libplib_la_LIBADD = \
-	$(P_LIBS_FOR_UTHREAD) $(P_IPC_LIBS)
+	$(P_LIBS_FOR_UTHREAD) $(P_IPC_LIBS) $(P_LIBS_EXTRA)
 libplib_la_LDFLAGS = \
-	-version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE)
+	-version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE) 	\
+	-export-dynamic $(no_undefined) $(export_symbols)
 
 EXTRA_DIST =			\
 	CMakeLists.txt		\
@@ -114,4 +173,7 @@ EXTRA_DIST =			\
 	psemaphore-win.c	\
 	pshm-win.c		\
 	puthread-win.c
+
+plib.lib: libplib.la plib.def
+	lib -machine:@LIB_EXE_MACHINE_FLAG@ -name:libplib-$(LT_CURRENT_MINUS_AGE).dll -def:plib.def -out:$@
 

@@ -76,16 +76,51 @@ AC_CANONICAL_HOST
 AC_MSG_CHECKING([for platform])
 case $host in
 	*-*-linux*)
-	plib_os_native=linux
-	;;
+		plib_os_native=linux
+		;;
 	*-*-qnx*)
-	plib_os_native=qnx
-	;;
+		plib_os_native=qnx
+		;;
 	*-*-solaris*)
-	plib_os_native=solaris
-	;;
+		plib_os_native=solaris
+		;;
+	*-*-mingw*)
+		plib_os_native=mingw
+		;;
 esac
 AC_MSG_RESULT([$plib_os_native])
+
+AC_MSG_CHECKING([for Win32])
+LIB_EXE_MACHINE_FLAG=X86
+case "$host" in
+*-*-mingw*)
+	case "$host" in
+	x86_64-*-*)
+		LIB_EXE_MACHINE_FLAG=X64
+		;;
+	esac
+    	;;
+*)
+	;;
+esac
+
+if test x"$plib_os_native" = "xmingw"; then
+	AC_MSG_RESULT([$LIB_EXE_MACHINE_FLAG])
+else
+	AC_MSG_RESULT([no])
+fi
+AC_SUBST(LIB_EXE_MACHINE_FLAG)
+
+
+if test x"$plib_os_native" = "xmingw"; then
+  AC_CHECK_TOOL(NM, nm, no)
+  if test "$NM" = no; then
+    AC_MSG_ERROR([*** Could not find an implementation of nm in your PATH.])
+  fi
+  AC_CHECK_TOOL(RANLIB, ranlib, :)
+  AC_CHECK_PROG(ms_librarian, [lib.exe], [yes], [no])
+fi
+AM_CONDITIONAL(MS_LIB_AVAILABLE, [test x$ms_librarian = xyes])
 
 dnl Configuration arguments
 AC_ARG_ENABLE(threads,
@@ -126,6 +161,55 @@ AC_PROG_INSTALL
 
 AM_DISABLE_STATIC
 AM_PROG_LIBTOOL
+
+if test x"$plib_os_native" = "xmingw"; then
+	if test x$enable_static = xyes -a x$enable_shared = xyes; then
+		AC_MSG_ERROR([Can not build both shared and static at the same time on Windows.])
+	fi
+	if test x$enable_static = xyes; then
+		plib_win32_static_compilation=yes
+		PLIB_WIN32_STATIC_COMPILATION_DEFINE="#define PLIB_STATIC_COMPILATION 1"
+    		AC_SUBST(PLIB_WIN32_STATIC_COMPILATION_DEFINE)
+  	fi
+fi
+AM_CONDITIONAL(OS_WIN32_AND_DLL_COMPILATION, [test x$plib_os_native = xmingw -a x$plib_win32_static_compilation != xyes])
+
+dnl Ensure MSVC-compatible struct packing convention is used when
+dnl compiling for Win32 with gcc.
+dnl What flag to depends on gcc version: gcc3 uses "-mms-bitfields", while
+dnl gcc2 uses "-fnative-struct".
+if test x"$plib_os_native" = xmingw; then
+	if test x"$GCC" = xyes; then
+		msnative_struct=''
+		AC_MSG_CHECKING([how to get MSVC-compatible struct packing])
+		if test -z "$ac_cv_prog_CC"; then
+			our_gcc="$CC"
+		else
+			our_gcc="$ac_cv_prog_CC"
+		fi
+		case `$our_gcc --version | sed -e 's,\..*,.,' -e q` in
+		2.)
+			if $our_gcc -v --help 2>/dev/null | grep fnative-struct >/dev/null; then
+				msnative_struct='-fnative-struct'
+			fi
+		;;
+		*)
+			if $our_gcc -v --help 2>/dev/null | grep ms-bitfields >/dev/null; then
+				msnative_struct='-mms-bitfields'
+			fi
+		;;
+		esac
+		if test x"$msnative_struct" = x ; then
+			AC_MSG_RESULT([no way])
+			AC_MSG_WARN([produced libraries might be incompatible with MSVC-compiled code])
+		else
+			CFLAGS="$CFLAGS $msnative_struct"
+			AC_MSG_RESULT([${msnative_struct}])
+		fi
+	fi
+fi
+PLIB_EXTRA_CFLAGS="${msnative_struct}"
+AC_SUBST(PLIB_EXTRA_CFLAGS)
 
 dnl Check header files
 AC_HEADER_STDC
@@ -190,6 +274,10 @@ fi
 
 AC_CHECK_TYPES([socklen_t], have_socklen_t=yes, have_socklen_t=no, [#include <sys/socket.h>])
 AC_CHECK_TYPES([struct sockaddr_storage], have_sockaddr_storage=yes, have_sockaddr_storage=no, [#include <sys/socket.h>])
+
+if test "x$plib_os_native" = xmingw; then
+	have_sockaddr_storage=yes
+fi
 
 if test "x$have_socklen_t" = xno; then
 	AC_MSG_CHECKING(for appropriate definition for socklen_t)
@@ -410,14 +498,31 @@ if test x"$GCC" = xyes; then
 		;;
 		esac
 	fi
+else
+	if test x"$plib_os_native" = xmingw; then
+		dnl For Windows but not using gcc. No barriers needed then either.
+    		plib_memory_barrier_needed=no
+  	fi
 fi
 
 AM_CONDITIONAL(HAVE_GCC_BUILTINS_FOR_ATOMIC_OPERATIONS,
 	       [test $plib_cv_gcc_has_builtin_atomic_operations = yes])
 
+AC_MSG_CHECKING([if building for some Win32 platform])
+case "$host" in
+*-*-mingw*)
+	platform_win32=yes
+	;;
+*)
+	platform_win32=no
+	;;
+esac
+AC_MSG_RESULT($platform_win32)
+AM_CONDITIONAL(PLATFORM_WIN32, test x$platform_win32 = xyes)
+
 dnl Check configure arguments
 AC_ARG_WITH(threads,
-	    [AC_HELP_STRING([--with-threads=@<:@none/posix/solaris@:>@],
+	    [AC_HELP_STRING([--with-threads=@<:@none/posix/solaris/win32@:>@],
 			    [specify a thread implementation to use])],
 	    [if test "x$with_threads" = x; then
 		want_threads=yes
@@ -430,7 +535,7 @@ if test "x$enable_threads" = "xno"; then
 fi
 
 AC_ARG_WITH(ipc,
-	    [AC_HELP_STRING([--with-ipc=@<:@none/sysv/posix@:>@],
+	    [AC_HELP_STRING([--with-ipc=@<:@none/sysv/posix/win32@:>@],
 			    [specify an IPC implementation to use])],
 	    [if test "x$with_ipc" = x; then
 		want_ipc=yes
@@ -463,10 +568,23 @@ AIX_COMPILE_INFO="AIX's C compiler needs to be called by a different name, when
 dnl determination of thread implementation
 dnl have_threads=no   means no thread support
 dnl have_threads=none means no default thread implementation
+if test "x$want_threads" = xnone; then
+	have_threads=none
+fi
+
 if test "x$want_threads" = xposix || test "x$want_threads" = xsolaris; then
 	have_threads="$want_threads";
 else
 	have_threads=no
+fi
+
+if test "x$want_threads" = xyes || test "x$want_threads" = xwin32; then
+       	case $host in
+               	*-*-mingw*)
+		have_threads=win32
+		want_threads=yes
+		;;
+	esac
 fi
 
 if test "x$want_threads" = xyes || test "x$want_threads" = xposix \
@@ -733,6 +851,8 @@ if test x"$have_threads" != xno; then
 		LIBS="$plib_save_LIBS"
 		CPPFLAGS="$plib_save_CPPFLAGS"
 		;;
+		win32)
+		;;
 		*)
 		P_UTHREAD_LIBS=error
 		;;
@@ -799,9 +919,11 @@ if test $mutex_has_default = yes ; then
 	LIBS="$plib_save_LIBS"
 fi
 
-AM_CONDITIONAL(HAVE_THREADS, [test "x$have_threads" = xposix] || [test "x$have_threads" = xsolaris])
+AM_CONDITIONAL(HAVE_THREADS, [test "x$have_threads" = xposix] || [test "x$have_threads" = xsolaris] || \
+			     [test "x$have_threads" = xwin32])
 AM_CONDITIONAL(HAVE_POSIX_THREADS, [test "x$have_threads" = xposix])
 AM_CONDITIONAL(HAVE_SOLARIS_THREADS, [test "x$have_threads" = xsolaris])
+AM_CONDITIONAL(HAVE_WIN32_THREADS, [test "x$have_threads" = xwin32])
 AC_SUBST(P_UTHREAD_CFLAGS)
 AC_SUBST(P_LIBS_FOR_UTHREAD)
 AC_SUBST(PUTHREAD_COMPILE_IMPL_DEFINES)
@@ -843,8 +965,17 @@ else
 	have_ipc=no
 fi
 
+if test "x$want_ipc" = xyes || test "x$want_ipc" = xwin32; then
+       	case $host in
+               	*-*-mingw*)
+		have_ipc=win32
+		;;
+	esac
+fi
+
 if test "x$want_ipc" = xyes || test "x$want_ipc" = xsysv \
-			    || test "x$want_ipc" = xposix; then
+			    || test "x$want_ipc" = xposix \
+			    || text "x$want_ipc" = xwin32; then
 	if test "x$have_ipc" = xno; then
 		AC_TRY_LINK([#include <stdlib.h>
 			     #include <sys/types.h>
@@ -917,9 +1048,11 @@ if test "x$want_ipc" = xyes || test "x$want_ipc" = xsysv \
 	AC_MSG_RESULT($P_IPC_LIBS)
 fi
 
-AM_CONDITIONAL(HAVE_IPC, [test "x$have_ipc" = xsysv] || [test "x$have_ipc" = xposix])
+AM_CONDITIONAL(HAVE_IPC, [test "x$have_ipc" = xsysv] || [test "x$have_ipc" = xposix] || \
+			 [test "x$have_ipc" = xwin32])
 AM_CONDITIONAL(HAVE_SYSV_IPC, [test "x$have_ipc" = xsysv])
 AM_CONDITIONAL(HAVE_POSIX_IPC, [test "x$have_ipc" = xposix])
+AM_CONDITIONAL(HAVE_WIN32_IPC, [test "x$have_ipc" = xwin32])
 AC_SUBST(P_IPC_IMPLEMENTATION)
 AC_SUBST(P_IPC_LIBS)
 
@@ -929,6 +1062,16 @@ if test "x$ac_cv_search_socket" != xno && test "x$ac_cv_search_socket" != x"none
 	P_SOCKET_LIBS="$ac_cv_search_socket"
 fi
 AC_SUBST(P_SOCKET_LIBS)
+
+case $host in
+	*-*-mingw*)
+		P_LIBS_EXTRA="-lws2_32 -lole32"
+    		;;
+  	*)
+		P_LIBS_EXTRA=""
+   		;;
+esac
+AC_SUBST(P_LIBS_EXTRA)
 
 dnl Doxygen documentation
 AC_PATH_PROG(doxygen_prog, doxygen, no)
@@ -1381,6 +1524,6 @@ else
 fi
 ])
 
-AC_CONFIG_FILES([Makefile src/Makefile plib.pc plib-uninstalled.pc Doxyfile])
+AC_CONFIG_FILES([Makefile src/Makefile src/plib.def plib.pc plib-uninstalled.pc Doxyfile])
 AC_OUTPUT
 

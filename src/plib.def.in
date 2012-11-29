@@ -1,0 +1,149 @@
+EXPORTS
+	p_atomic_int_exchange_and_add
+	p_atomic_int_add
+	p_atomic_int_compare_and_exchange
+	p_atomic_pointer_compare_and_exchange
+	p_atomic_int_get
+	p_atomic_int_set
+	p_atomic_pointer_get
+	p_atomic_pointer_set
+	p_atomic_memory_barrier
+
+	p_cond_variable_new
+	p_cond_variable_free
+	p_cond_variable_wait
+	p_cond_variable_signal
+	p_cond_variable_broadcast
+
+	p_crypto_hash_new
+	p_crypto_hash_update
+	p_crypto_hash_reset
+	p_crypto_hash_get_string
+	p_crypto_hash_get_digest
+	p_crypto_hash_get_length
+	p_crypto_hash_get_type
+	p_crypto_hash_free
+
+	p_hash_table_new
+	p_hash_table_insert
+	p_hash_table_lookup
+	p_hash_table_keys
+	p_hash_table_values
+	p_hash_table_free
+	p_hash_table_remove
+	p_hash_table_lookup_by_value
+
+	p_ini_file_new
+	p_ini_file_free
+	p_ini_file_parse
+	p_ini_file_is_parsed
+	p_ini_file_sections
+	p_ini_file_keys
+	p_ini_file_is_key_exists
+	p_ini_file_parameter_string
+	p_ini_file_parameter_int
+	p_ini_file_parameter_double
+	p_ini_file_parameter_boolean
+
+	p_list_append
+	p_list_remove
+	p_list_foreach
+	p_list_free
+	p_list_last
+	p_list_length
+	p_list_prepend
+
+	p_lib_init
+	p_lib_shutdown
+
+	p_malloc
+	p_malloc0
+	p_realloc
+	p_free
+	p_mem_set_vtable
+
+	p_mutex_new
+	p_mutex_lock
+	p_mutex_trylock
+	p_mutex_unlock
+	p_mutex_free
+	p_static_mutex_init
+	p_static_mutex_free
+
+	p_process_get_current_pid
+	p_process_is_running
+
+	p_semaphore_new
+	p_semaphore_acquire
+	p_semaphore_release
+	p_semaphore_free
+
+	p_shm_new
+	p_shm_free
+	p_shm_lock
+	p_shm_unlock
+	p_shm_get_address
+	p_shm_get_size
+
+	p_shm_buffer_new
+	p_shm_buffer_free
+	p_shm_buffer_read
+	p_shm_buffer_write
+	p_shm_buffer_get_free_space
+	p_shm_buffer_get_used_space
+	p_shm_buffer_clear
+
+	p_socket_new_from_fd
+	p_socket_new
+	p_socket_get_fd
+	p_socket_get_family
+	p_socket_get_type
+	p_socket_get_protocol
+	p_socket_get_keepalive
+	p_socket_get_blocking
+	p_socket_get_listen_backlog
+	p_socket_get_local_address
+	p_socket_get_remote_address
+	p_socket_is_connected
+	p_socket_set_keepalive
+	p_socket_set_blocking
+	p_socket_set_listen_backlog
+	p_socket_bind
+	p_socket_connect
+	p_socket_check_connect_result
+	p_socket_listen
+	p_socket_accept
+	p_socket_receive
+	p_socket_receive_from
+	p_socket_send
+	p_socket_send_to
+	p_socket_close
+	p_socket_shutdown
+	p_socket_free
+	p_socket_get_last_error
+	p_socket_set_buffer_size
+
+	p_socket_address_new_from_native
+	p_socket_address_new
+	p_socket_address_new_any
+	p_socket_address_new_loopback
+	p_socket_address_to_native
+	p_socket_address_get_native_size
+	p_socket_address_get_family
+	p_socket_address_get_address
+	p_socket_address_get_port
+	p_socket_address_is_any
+	p_socket_address_is_loopback
+	p_socket_address_free
+
+	p_strdup
+	p_strchomp
+
+	p_uthread_create_full
+	p_uthread_create
+	p_uthread_exit
+	p_uthread_join
+	p_uthread_free
+	p_uthread_sleep
+	p_uthread_set_priority
+	p_uthread_yield
