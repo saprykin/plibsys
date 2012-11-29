@@ -372,7 +372,7 @@ set_fd_blocking (pint		fd,
 #ifndef P_OS_WIN
 	pint32 arg;
 #else
-	puint32 arg;
+	pulong arg;
 #endif
 
 #ifndef P_OS_WIN
