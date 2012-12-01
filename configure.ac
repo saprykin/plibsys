@@ -912,7 +912,7 @@ if test $mutex_has_default = yes ; then
 			   pmutex,
 			   $plib_cv_sizeof_pmutex,
 			   $mutex_default_init)
-	if test x"$plib_cv_byte_contents_gmutex" = xno; then
+	if test x"$plib_cv_byte_contents_pmutex" = xno; then
 		mutex_has_default=no
 	fi
 	CPPFLAGS="$plib_save_CPPFLAGS"
