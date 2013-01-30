@@ -108,6 +108,7 @@ libplib_la_LDFLAGS = \
 	-version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE)
 
 EXTRA_DIST =			\
+	CMakeLists.txt		\
 	pcondvariable-win.c	\
 	pmutex-win.c		\
 	psemaphore-win.c	\

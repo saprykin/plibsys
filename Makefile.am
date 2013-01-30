@@ -13,21 +13,14 @@ CONFIGURE_DEPENDENCIES = m4/acplib.m4
 # We should always distribute these files in order to
 # build PLib on any platform
 EXTRA_DIST =	\
-	HACKING						\
-	autogen.sh					\
-	plib.pc.in					\
-	plib-uninstalled.pc.in				\
-	Doxyfile.in					\
-	build/win32/vs9/plib.sln			\
-	build/win32/vs9/plib.vcproj			\
-	build/win32/vs10/plib.sln			\
-	build/win32/vs10/plib.vcxproj			\
-	build/win32/vs10/plib.vcxproj.filters		\
-	build/win32/vs11/plib.sln			\
-	build/win32/vs11/plib.vcxproj			\
-	build/win32/vs11/plib.vcxproj.filters		\
-	build/win32/config/config.h			\
-	build/win32/config/plibconfig.h
+	HACKING				\
+	autogen.sh			\
+	plib.pc.in			\
+	plib-uninstalled.pc.in		\
+	Doxyfile.in			\
+	CMakeLists.txt			\
+	config/win32/config.h		\
+	config/win32/plibconfig.h
 
 
 BUILT_EXTRA_DIST = \
