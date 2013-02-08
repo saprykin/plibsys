@@ -70,7 +70,8 @@ if(MSVC)
 	add_definitions(-D_CRT_SECURE_NO_WARNINGS)
 endif()
 
-set_target_properties(plib PROPERTIES SOVERSION 1)
+set_target_properties(plib PROPERTIES VERSION 1)
+set_target_properties(plibstatic PROPERTIES VERSION 1)
 
 target_link_libraries(plib ws2_32)
 target_link_libraries(plibstatic ws2_32)
