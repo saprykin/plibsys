@@ -1,5 +1,5 @@
-set(INSTALL_LIB_DIR "${CMAKE_INSTALL_PREFIX}/lib" CACHE PATH "Installation directory for libraries")
-set(INSTALL_INC_DIR "${CMAKE_INSTALL_PREFIX}/include" CACHE PATH "Installation directory for headers")
+set(INSTALL_LIB_DIR ${CMAKE_INSTALL_PREFIX}/lib CACHE PATH "Installation directory for libraries")
+set(INSTALL_INC_DIR ${CMAKE_INSTALL_PREFIX}/include CACHE PATH "Installation directory for headers")
 
 include_directories(
 	${CMAKE_BINARY_DIR}
@@ -83,10 +83,11 @@ target_link_libraries(plibstatic ws2_32)
 
 if(NOT SKIP_INSTALL_LIBRARIES AND NOT SKIP_INSTALL_ALL)
 	install(TARGETS plib plibstatic
-    	RUNTIME DESTINATION "${INSTALL_BIN_DIR}"
-    	ARCHIVE DESTINATION "${INSTALL_LIB_DIR}"
-    	LIBRARY DESTINATION "${INSTALL_LIB_DIR}")
+    	RUNTIME DESTINATION ${INSTALL_BIN_DIR}
+    	ARCHIVE DESTINATION ${INSTALL_LIB_DIR}
+    	LIBRARY DESTINATION ${INSTALL_LIB_DIR})
 endif()
 if(NOT SKIP_INSTALL_HEADERS AND NOT SKIP_INSTALL_ALL)
-    install(FILES ${PLIB_PUBLIC_HDRS} DESTINATION "${INSTALL_INC_DIR}")
+	install(FILES ${PLIB_PUBLIC_HDRS} ${PROJECT_SOURCE_DIR}/config/win32/plibconfig.h
+		DESTINATION ${INSTALL_INC_DIR})
 endif()
