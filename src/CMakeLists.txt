@@ -81,10 +81,11 @@ set_target_properties(plibstatic PROPERTIES SOVERSION ${VERSION})
 target_link_libraries(plib ws2_32)
 target_link_libraries(plibstatic ws2_32)
 
-install(TARGETS plib plibstatic
+install(TARGETS plib plibstatic EXPORT plib-targets
     	RUNTIME DESTINATION ${INSTALL_BIN_DIR}
     	ARCHIVE DESTINATION ${INSTALL_LIB_DIR}
-    	LIBRARY DESTINATION ${INSTALL_LIB_DIR})
+    	LIBRARY DESTINATION ${INSTALL_LIB_DIR}
+)
 
 install(FILES ${PLIB_PUBLIC_HDRS} ${PROJECT_SOURCE_DIR}/config/win32/plibconfig.h
 	DESTINATION ${INSTALL_INC_DIR})

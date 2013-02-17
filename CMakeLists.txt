@@ -1,6 +1,10 @@
 cmake_minimum_required(VERSION 2.8)
-project(plib C)
-set(VERSION "0.0.1")
+project(PLib C)
+set(PLIB_VERSION_MAJOR 0)
+set(PLIB_VERSION_MINOR 0)
+set(PLIB_VERSION_PATCH 1)
+set(PLIB_VERSION ${PLIB_VERSION_MAJOR}.${PLIB_VERSION_MINOR}.${PLIB_VERSION_PATCH})
+set(VERSION ${PLIB_VERSION})
 
 if(!MSVC)
 	message(FATAL_ERROR "CMake build system is only available for Windows (MSVC) targets")
@@ -14,3 +18,4 @@ configure_file (
 )
 
 subdirs(src)
+subdirs(cmake)
