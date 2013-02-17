@@ -19,8 +19,8 @@ else()
 endif()
 
 # Read in the exported definition of the library.
-include ("${_DIR}/plib-targets.cmake")
+include("${_DIR}/plib-targets.cmake")
 set(PLib_LIBRARIES plib)
 
-# PLib_FOUND is set to 1 automatically
+# PLib_FOUND is set to 1 automatically.
 set(PLib_FOUND 1)	# for backwards compatibility
