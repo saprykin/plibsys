@@ -82,10 +82,30 @@ target_link_libraries(plib ws2_32)
 target_link_libraries(plibstatic ws2_32)
 
 install(TARGETS plib plibstatic EXPORT plib-targets
-    	RUNTIME DESTINATION ${INSTALL_BIN_DIR}
-    	ARCHIVE DESTINATION ${INSTALL_LIB_DIR}
-    	LIBRARY DESTINATION ${INSTALL_LIB_DIR}
+	DESTINATION bin
+    	RUNTIME DESTINATION bin
+	COMPONENT Core
+)
+install(TARGETS plib plibstatic
+	DESTINATION lib
+    	ARCHIVE DESTINATION lib
+	COMPONENT Core
+)
+install(TARGETS plib plibstatic
+	DESTINATION lib
+    	LIBRARY DESTINATION lib
+	COMPONENT Core
 )
 
 install(FILES ${PLIB_PUBLIC_HDRS} ${PROJECT_SOURCE_DIR}/config/win32/plibconfig.h
-	DESTINATION ${INSTALL_INC_DIR})
+	DESTINATION include
+	COMPONENT Core
+)
+
+set(CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS_SKIP TRUE)
+include(InstallRequiredSystemLibraries)
+
+install(PROGRAMS ${CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS} 
+	DESTINATION bin
+	COMPONENT Core
+)
