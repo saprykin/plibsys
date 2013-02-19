@@ -13,14 +13,18 @@ CONFIGURE_DEPENDENCIES = m4/acplib.m4
 # We should always distribute these files in order to
 # build PLib on any platform
 EXTRA_DIST =	\
-	HACKING				\
-	autogen.sh			\
-	plib.pc.in			\
-	plib-uninstalled.pc.in		\
-	Doxyfile.in			\
-	CMakeLists.txt			\
-	config/win32/config.h		\
-	config/win32/plibconfig.h
+	HACKING					\
+	autogen.sh				\
+	plib.pc.in				\
+	plib-uninstalled.pc.in			\
+	Doxyfile.in				\
+	CMakeLists.txt				\
+	config/win32/config.h			\
+	config/win32/plibconfig.h		\
+	cmake\CMakeLists.txt			\
+	cmake\plib-config-version.cmake.in	\
+	cmake\plib-config.cmake.in		\
+	cmake\FindPLib.cmake
 
 BUILT_EXTRA_DIST = \
 	ChangeLog
