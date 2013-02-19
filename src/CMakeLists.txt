@@ -1,6 +1,3 @@
-set(INSTALL_LIB_DIR ${CMAKE_INSTALL_PREFIX}/lib CACHE PATH "Installation directory for libraries")
-set(INSTALL_INC_DIR ${CMAKE_INSTALL_PREFIX}/include CACHE PATH "Installation directory for headers")
-
 include_directories(
 	${CMAKE_BINARY_DIR}
 	${PROJECT_SOURCE_DIR}
@@ -75,8 +72,8 @@ if(MSVC)
 	add_definitions(-D_CRT_SECURE_NO_WARNINGS)
 endif()
 
-set_target_properties(plib PROPERTIES SOVERSION ${VERSION})
-set_target_properties(plibstatic PROPERTIES SOVERSION ${VERSION})
+set_target_properties(plib PROPERTIES SOVERSION ${PLIB_VERSION})
+set_target_properties(plibstatic PROPERTIES SOVERSION ${PLIB_VERSION})
 
 target_link_libraries(plib ws2_32)
 target_link_libraries(plibstatic ws2_32)

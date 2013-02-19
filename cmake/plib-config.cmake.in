@@ -14,7 +14,7 @@ else()
 	# This is an installed package; figure out the paths relative to the
 	# current directory.
 	get_filename_component(PLIB_ROOT_DIR ${_DIR}/@PLIB_ROOT_DIR@ ABSOLUTE)
-	set(PLib_INCLUDE_DIRS ${PLIB_ROOT_DIR}/src ${PLIB_ROOT_DIR}/config/win32)
+	set(PLib_INCLUDE_DIRS ${PLIB_ROOT_DIR}/include)
 	set(PLib_LIBRARY_DIRS ${PLIB_ROOT_DIR}/lib)
 endif()
 
