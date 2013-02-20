@@ -60,7 +60,7 @@ pkgconfig_DATA = plib.pc
 
 $(pkgconfig_DATA): config.status
 
-DISTCLEANFILES = plibconfig.h stamp-pc-h 
+DISTCLEANFILES = plibconfig.h stamp-pc-h Doxyfile
 
 distclean-local:
 	cd $(top_builddir) && rm -rf doc
