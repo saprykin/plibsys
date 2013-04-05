@@ -195,6 +195,9 @@ p_ini_file_parse (PIniFile *file)
 	while (fgets (src_line, sizeof (src_line), in_file) != NULL) {
 		dst_line = p_strchomp (src_line);
 
+		if (dst_line == NULL)
+			continue;
+
 		if (dst_line[0] == '[' && dst_line[strlen (dst_line) - 1] &&
 		    sscanf (dst_line, "[%[^]]", key) == 1) {
 			/* New section found */
