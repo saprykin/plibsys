@@ -36,8 +36,6 @@ typedef signed short	pint16;
 typedef unsigned short	puint16;
 typedef signed int	pint32;
 typedef unsigned int	puint32;
-typedef signed int	pssize;
-typedef unsigned int	psize;
 
 #define PINT16_MODIFIER	"h"
 #define PINT16_FORMAT	"hi"
