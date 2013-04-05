@@ -38,10 +38,10 @@
 /* Operating systems */
 
 /* Microsoft Windows */
-#if defined(__WIN32__) || defined(_WIN32) || defined(WIN32)
-#  define P_OS_WIN
-#elif defined(_WIN64) || defined(_M_X64) || defined(_M_AMD64)
+#if defined(_WIN64) || defined(_M_X64) || defined(_M_AMD64)
 #  define P_OS_WIN64
+#elif defined(__WIN32__) || defined(_WIN32) || defined(WIN32)
+#  define P_OS_WIN
 /* Linux */
 #elif defined(__linux) || defined(__linux__)
 #  define P_OS_LINUX
