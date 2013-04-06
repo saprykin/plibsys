@@ -200,7 +200,7 @@ p_md5_new (void)
 P_LIB_API void
 p_md5_update (PHashMD5			*ctx,
 	      const puchar		*data,
-	      pssize			len)
+	      psize			len)
 {
 	puint32	left, to_fill;
 
@@ -210,7 +210,7 @@ p_md5_update (PHashMD5			*ctx,
 	left = ctx->len_low & 0x3F;
 	to_fill = 64 - left;
 
-	ctx->len_low += len;
+	ctx->len_low += (puint32) len;
 	if (ctx->len_low < (puint32) len)
 		++ctx->len_high;
 

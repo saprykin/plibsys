@@ -246,7 +246,7 @@ p_sha1_new (void)
 P_LIB_API void
 p_sha1_update (PHashSHA1		*ctx,
 	       const puchar		*data,
-	       pint			len)
+	       psize			len)
 {
 	puint32	left, to_fill;
 
@@ -256,7 +256,7 @@ p_sha1_update (PHashSHA1		*ctx,
 	left = ctx->len_low & 0x3F;
 	to_fill = 64 - left;
 
-	ctx->len_low += len;
+	ctx->len_low += (puint32) len;
 	if (ctx->len_low < (puint32) len)
 		++ctx->len_high;
 

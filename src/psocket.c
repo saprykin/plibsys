@@ -615,7 +615,7 @@ p_socket_new (PSocketFamily	family,
 #ifdef SOCK_CLOEXEC
 	native_type |= SOCK_CLOEXEC;
 #endif
-	if ((fd = socket (family, native_type, protocol)) < 0) {
+	if ((fd = (pint) socket (family, native_type, protocol)) < 0) {
 		P_ERROR ("PSocket: failed to create socket");
 		return NULL;
 	}
@@ -857,7 +857,7 @@ p_socket_bind (PSocket		*socket,
 	if (!p_socket_address_to_native (address, &addr, sizeof addr))
 		return FALSE;
 
-	if (bind (socket->fd, (struct sockaddr *) &addr, p_socket_address_get_native_size (address)) < 0) {
+	if (bind (socket->fd, (struct sockaddr *) &addr, (pint) p_socket_address_get_native_size (address)) < 0) {
 		P_ERROR ("PSocket: failed to bind socket address");
 
 		set_socket_error (socket);
@@ -885,7 +885,7 @@ p_socket_connect (PSocket		*socket,
 
 	while (TRUE) {
 		if (connect (socket->fd, (struct sockaddr *) &buffer,
-				p_socket_address_get_native_size (address)) < 0) {
+				(pint) p_socket_address_get_native_size (address)) < 0) {
 #ifndef P_OS_WIN
 			if (get_socket_errno () == EINTR)
 				continue;
@@ -967,7 +967,7 @@ p_socket_accept (PSocket *socket)
 		return NULL;
 
 	while (TRUE) {
-		if ((res = accept (socket->fd, NULL, 0)) < 0) {
+		if ((res = (pint) accept (socket->fd, NULL, 0)) < 0) {
 #ifndef P_OS_WIN
 			if (get_socket_errno () == EINTR)
 				continue;
@@ -1044,7 +1044,7 @@ p_socket_receive (PSocket	*socket,
 				break;
 			}
 		} else if (evret == WSA_WAIT_EVENT_0) {
-			ret = recv (socket->fd, buffer, buflen, 0);
+			ret = recv (socket->fd, buffer, (pint) buflen, 0);
 			break;
 		}
 	}
@@ -1118,7 +1118,7 @@ p_socket_receive_from (PSocket		*socket,
 				break;
 			}
 		} else if (evret == WSA_WAIT_EVENT_0) {
-			ret = recvfrom (socket->fd, buffer, buflen, 0, (struct sockaddr *) &sa, &optlen);
+			ret = recvfrom (socket->fd, buffer, (pint) buflen, 0, (struct sockaddr *) &sa, &optlen);
 			break;
 		}
 	}
@@ -1190,7 +1190,7 @@ p_socket_send (PSocket		*socket,
 				break;
 			}
 		} else if (evret == WSA_WAIT_EVENT_0) {
-			ret = send (socket->fd, buffer, buflen, P_SOCKET_DEFAULT_SEND_FLAGS);
+			ret = send (socket->fd, buffer, (pint) buflen, P_SOCKET_DEFAULT_SEND_FLAGS);
 			break;
 		}
 	}
@@ -1267,7 +1267,7 @@ p_socket_send_to (PSocket		*socket,
 				break;
 			}
 		} else if (evret == WSA_WAIT_EVENT_0) {
-			ret = sendto (socket->fd, buffer, buflen, 0, (struct sockaddr *) &sa, optlen);
+			ret = sendto (socket->fd, buffer, (pint) buflen, 0, (struct sockaddr *) &sa, (pint) optlen);
 			break;
 		}
 	}

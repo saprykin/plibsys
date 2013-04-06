@@ -82,7 +82,7 @@ P_LIB_API pint		p_shm_buffer_read		(PShmBuffer *buf, ppointer storage, psize len
  * @return Number of written bytes, or -1 if error occured or buffer is full. 
  * @since 0.0.1
  */
-P_LIB_API pint		p_shm_buffer_write		(PShmBuffer *buf, ppointer data, psize len);
+P_LIB_API pssize	p_shm_buffer_write		(PShmBuffer *buf, ppointer data, psize len);
 
 /**
  * @brief Gets free space in shared memory buffer.

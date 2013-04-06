@@ -132,7 +132,7 @@ p_shm_buffer_free (PShmBuffer *buf)
 P_LIB_API pint
 p_shm_buffer_read (PShmBuffer *buf, ppointer storage, psize len)
 {
-	puint32		read_pos, write_pos;
+	psize		read_pos, write_pos;
 	psize		data_aval, to_copy;
 	puint		i;
 	ppointer	addr;
@@ -176,10 +176,10 @@ p_shm_buffer_read (PShmBuffer *buf, ppointer storage, psize len)
 	return (pint) to_copy;
 }
 
-P_LIB_API pint
+P_LIB_API pssize
 p_shm_buffer_write (PShmBuffer *buf, ppointer data, psize len)
 {
-	puint32		read_pos, write_pos;
+	psize		read_pos, write_pos;
 	puint		i;
 	ppointer	addr;
 

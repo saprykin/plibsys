@@ -36,7 +36,7 @@ P_BEGIN_DECLS
 P_LIB_API PHashGOST3411 *	p_gost3411_new		(void);
 P_LIB_API void			p_gost3411_update	(PHashGOST3411		*ctx,
 							 const puchar		*data,
-							 pssize			len);
+							 psize			len);
 P_LIB_API void			p_gost3411_finish	(PHashGOST3411		*ctx);
 P_LIB_API const puchar *	p_gost3411_digest	(PHashGOST3411		*ctx);
 P_LIB_API void			p_gost3411_reset	(PHashGOST3411		*ctx);

@@ -44,9 +44,9 @@ p_strdup (const pchar *str)
 P_LIB_API pchar *
 p_strchomp (const pchar *str)
 {
-	pint		pos_start, pos_end;
+	psize		pos_start, pos_end;
+	psize		str_len;
 	pchar		*ret;
-	pint		str_len;
 	const pchar	*ptr;
 
 	if (str == NULL)
@@ -64,7 +64,7 @@ p_strchomp (const pchar *str)
 	while (isspace (* ((const puchar *) ptr--)))
 		--pos_end;
 
-	if (pos_end < pos_start)
+	if (pos_end <= pos_start)
 		return p_strdup ("\0");
 
 	str_len = pos_end - pos_start + 2;

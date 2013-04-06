@@ -78,7 +78,7 @@ P_LIB_API PCryptoHash *		p_crypto_hash_new		(PCryptoHashType	type);
  */
 P_LIB_API void			p_crypto_hash_update		(PCryptoHash		*hash,
 								 const puchar		*data,
-								 pssize			len);
+								 psize			len);
 
 /**
  * @brief Resets hash state.

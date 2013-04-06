@@ -393,7 +393,7 @@ p_gost3411_new	(void)
 P_LIB_API void
 p_gost3411_update (PHashGOST3411	*ctx,
 		   const puchar		*data,
-		   pssize		len)
+		   psize		len)
 {
 	puint32	left, to_fill, len256[8];
 
@@ -404,8 +404,8 @@ p_gost3411_update (PHashGOST3411	*ctx,
 	to_fill = 32 - left;
 
 	memset (len256, 0, 32);
-	len256[0] = len << 3;
-	len256[1] = len >> 29;
+	len256[0] = (puint32) (len << 3);
+	len256[1] = (puint32) (len >> 29);
 
 	gost3411_sum_256 (ctx->len, len256);
 

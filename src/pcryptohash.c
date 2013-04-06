@@ -34,7 +34,7 @@
 
 #define P_HASH_FUNCS(ctx, type) \
 	ctx->new = (void * (*) (void)) p_##type##_new;					\
-	ctx->update = (void (*) (void *, const puchar *, pint)) p_##type##_update;	\
+	ctx->update = (void (*) (void *, const puchar *, psize)) p_##type##_update;	\
 	ctx->finish = (void (*) (void *)) p_##type##_finish;				\
 	ctx->digest = (const puchar * (*) (void *)) p_##type##_digest;			\
 	ctx->reset = (void (*) (void *)) p_##type##_reset;				\
@@ -46,7 +46,7 @@ struct _PCryptoHash {
 	puint		hash_len;
 	pboolean	closed;
 	void *		(*new)		(void);
-	void		(*update)	(void *hash, const puchar *data, pint len);
+	void		(*update)	(void *hash, const puchar *data, psize len);
 	void		(*finish)	(void *hash);
 	const puchar *	(*digest)	(void *hash);
 	void		(*reset)	(void *hash);
@@ -91,9 +91,9 @@ p_crypto_hash_new (PCryptoHashType type)
 }
 
 P_LIB_API void
-p_crypto_hash_update (PCryptoHash *hash, const puchar *data, pssize len)
+p_crypto_hash_update (PCryptoHash *hash, const puchar *data, psize len)
 {
-	if (hash == NULL || data == NULL || len <= 0)
+	if (hash == NULL || data == NULL || len == 0)
 		return;
 
 	if (hash->closed)

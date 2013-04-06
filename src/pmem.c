@@ -30,9 +30,9 @@ static void		init_mem_table (void);
 static void
 init_mem_table (void)
 {
-	p_mem_table.malloc	= malloc;
-	p_mem_table.realloc	= realloc;
-	p_mem_table.free	= free;
+	p_mem_table.malloc	= (ppointer (*)(psize)) malloc;
+	p_mem_table.realloc	= (ppointer (*)(ppointer, psize)) realloc;
+	p_mem_table.free	= (void (*)(ppointer)) free;
 }
 
 P_LIB_API ppointer

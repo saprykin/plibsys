@@ -34,7 +34,7 @@ typedef struct _PHashSHA1 PHashSHA1;
 P_BEGIN_DECLS
 
 P_LIB_API PHashSHA1 *		p_sha1_new	(void);
-P_LIB_API void			p_sha1_update	(PHashSHA1 *ctx, const puchar *data, pint len);
+P_LIB_API void			p_sha1_update	(PHashSHA1 *ctx, const puchar *data, psize len);
 P_LIB_API void			p_sha1_finish	(PHashSHA1 *ctx);
 P_LIB_API const puchar *	p_sha1_digest	(PHashSHA1 *ctx);
 P_LIB_API void			p_sha1_reset	(PHashSHA1 *ctx);

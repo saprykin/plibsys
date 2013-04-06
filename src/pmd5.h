@@ -34,7 +34,7 @@ typedef struct _PHashMD5 PHashMD5;
 P_BEGIN_DECLS
 
 P_LIB_API PHashMD5 *		p_md5_new	(void);
-P_LIB_API void			p_md5_update	(PHashMD5 *ctx, const puchar *data, pssize len);
+P_LIB_API void			p_md5_update	(PHashMD5 *ctx, const puchar *data, psize len);
 P_LIB_API void			p_md5_finish	(PHashMD5 *ctx);
 P_LIB_API const puchar *	p_md5_digest	(PHashMD5 *ctx);
 P_LIB_API void			p_md5_reset	(PHashMD5 *ctx);
