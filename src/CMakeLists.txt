@@ -95,7 +95,7 @@ install(TARGETS plib plibstatic
 )
 
 install(FILES ${PLIB_PUBLIC_HDRS} ${PROJECT_SOURCE_DIR}/config/win32/plibconfig.h
-	DESTINATION include
+	DESTINATION include/PLib
 	COMPONENT Core
 )
 
