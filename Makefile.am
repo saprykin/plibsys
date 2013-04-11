@@ -19,8 +19,6 @@ EXTRA_DIST =	\
 	plib-uninstalled.pc.in			\
 	Doxyfile.in				\
 	CMakeLists.txt				\
-	config/win32/config.h			\
-	config/win32/plibconfig.h		\
 	cmake\CMakeLists.txt			\
 	cmake\plib-config-version.cmake.in	\
 	cmake\plib-config.cmake.in		\
