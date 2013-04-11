@@ -6,10 +6,6 @@ set(PLIB_VERSION_PATCH 1)
 set(PLIB_VERSION ${PLIB_VERSION_MAJOR}.${PLIB_VERSION_MINOR}.${PLIB_VERSION_PATCH})
 set(VERSION ${PLIB_VERSION})
 
-if(!MSVC)
-	message(FATAL_ERROR "CMake build system is only available for Windows (MSVC) targets")
-endif()
-
 set(top_srcdir ${PROJECT_SOURCE_DIR})
 
 configure_file (
