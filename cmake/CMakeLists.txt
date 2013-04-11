@@ -6,9 +6,13 @@
 # it's in the install tree (note that the whole install tree
 # can be relocated).
 
+include (PlatformDetect.cmake)
+
+plib_detect_target_platform (PLIB_TARGET_PLATFORM)
+
 # plib-config.cmake for the build tree.
 set(PLIB_ROOT_DIR ${PROJECT_BINARY_DIR})
-set(PLib_INCLUDE_DIRS ${PROJECT_SOURCE_DIR}/src ${PROJECT_SOURCE_DIR}/config/win32)
+set(PLib_INCLUDE_DIRS ${PROJECT_SOURCE_DIR}/src ${PROJECT_SOURCE_DIR}/platforms/${PLIB_TARGET_PLATFORM})
 configure_file(plib-config.cmake.in ${PROJECT_BINARY_DIR}/plib-config.cmake @ONLY)
 configure_file(plib-config-version.cmake.in ${PROJECT_BINARY_DIR}/plib-config-version.cmake @ONLY)
 export(TARGETS plib plibstatic FILE ${PROJECT_BINARY_DIR}/plib-targets.cmake)
