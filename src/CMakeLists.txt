@@ -1,39 +1,10 @@
+include (${PROJECT_SOURCE_DIR}/cmake/PlatformDetect.cmake)
+
 #Try to detect target platform
 string (TOLOWER ${CMAKE_SYSTEM_NAME} PLIB_TARGET_OS)
 
-if (${CMAKE_C_COMPILER_ID} STREQUAL GNU)
-	set (PLIB_C_COMPILER gcc)
-elseif (${CMAKE_C_COMPILER_ID} STREQUAL MSVC)
-	set (PLIB_C_COMPILER msvc)
-else()
-	string (TOLOWER ${CMAKE_C_COMPILER_ID} PLIB_C_COMPILER)
-endif()
-
-if (CMAKE_SIZEOF_VOID_P EQUAL 8)
-	set(PLIB_ARCH_BITS 64)
-else()
-	set(PLIB_ARCH_BITS 32)
-endif()
-
-if (CMAKE_SYSTEM_PROCESSOR MATCHES "[i*86, x86_64]")
-	set (PLIB_PROCESSOR_ARCH x86)
-else()
-	set (PLIB_PROCESSOR_ARCH ${CMAKE_SYSTEM_PROCESSOR MATCHES})
-endif()
-
-if (PLIB_TARGET_OS STREQUAL windows)
-	set (PLIB_TARGET_PLATFORM win${PLIB_ARCH_BITS})
-elseif (PLIB_TARGET_OS STREQUAL qnx)
-	if (PLIB_C_COMPILER STREQUAL gcc)
-		set (PLIB_C_COMPILER qcc)
-	endif()
-
-	set (PLIB_TARGET_PLATFORM qnx-${PLIB_PROCESSOR_ARCH})
-else()
-	set (PLIB_TARGET_PLATFORM ${PLIB_TARGET_OS}-${PLIB_PROCESSOR_ARCH})
-endif()
-
-set (PLIB_TARGET_PLATFORM ${PLIB_TARGET_PLATFORM}-${PLIB_C_COMPILER})
+plib_detect_target_platform (PLIB_TARGET_PLATFORM)
+plib_detect_c_compiler (PLIB_C_COMPILER)
 
 if (NOT EXISTS "${PROJECT_SOURCE_DIR}/platforms/${PLIB_TARGET_PLATFORM}/")
 	message (FATAL_ERROR "PLib doesn't support unknown platform ${PLIB_TARGET_PLATFORM}")
@@ -134,12 +105,12 @@ target_link_libraries(plibstatic ${PLIB_PLATFORM_LINK_LIBRARIES})
 
 install(TARGETS plib plibstatic
 	DESTINATION lib
-    	ARCHIVE DESTINATION lib
+	ARCHIVE DESTINATION lib
 	COMPONENT Core
 )
 install(TARGETS plib plibstatic EXPORT plib-targets
 	DESTINATION lib
-    	LIBRARY DESTINATION lib
+	LIBRARY DESTINATION lib
 	COMPONENT Core
 )
 

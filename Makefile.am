@@ -19,19 +19,20 @@ EXTRA_DIST =	\
 	plib-uninstalled.pc.in			\
 	Doxyfile.in				\
 	CMakeLists.txt				\
-	cmake\CMakeLists.txt			\
-	cmake\plib-config-version.cmake.in	\
-	cmake\plib-config.cmake.in		\
-	cmake\FindPLib.cmake			\
-	platforms\qnx-x86-qcc\config.h		\
-	platforms\qnx-x86-qcc\plibconfig.h	\
-	platforms\qnx-x86-qcc\platform.cmake	\
-	platforms\win32-msvc\config.h		\
-	platforms\win32-msvc\plibconfig.h	\
-	platforms\win32-msvc\platform.cmake	\
-	platforms\win64-msvc\config.h		\
-	platforms\win64-msvc\plibconfig.h	\
-	platforms\win64-msvc\platform.cmake
+	cmake/CMakeLists.txt			\
+	cmake/plib-config-version.cmake.in	\
+	cmake/plib-config.cmake.in		\
+	cmake/FindPLib.cmake			\
+	cmake/PlatformDetect.cmake		\
+	platforms/qnx-x86-qcc/config.h		\
+	platforms/qnx-x86-qcc/plibconfig.h	\
+	platforms/qnx-x86-qcc/platform.cmake	\
+	platforms/win32-msvc/config.h		\
+	platforms/win32-msvc/plibconfig.h	\
+	platforms/win32-msvc/platform.cmake	\
+	platforms/win64-msvc/config.h		\
+	platforms/win64-msvc/plibconfig.h	\
+	platforms/win64-msvc/platform.cmake
 	
 
 BUILT_EXTRA_DIST = \
