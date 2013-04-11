@@ -1,4 +1,5 @@
 include (${PROJECT_SOURCE_DIR}/cmake/PlatformDetect.cmake)
+set (OUTPUT_DIR ${CMAKE_BINARY_DIR})
 
 #Try to detect target platform
 string (TOLOWER ${CMAKE_SYSTEM_NAME} PLIB_TARGET_OS)
@@ -92,6 +93,8 @@ set(PLIB_PLATFORM_SRCS
 add_library(plib SHARED ${PLIB_SRCS} ${PLIB_PLATFORM_SRCS} ${PLIB_PUBLIC_HDRS} ${PLIB_PRIVATE_HDRS})
 add_library(plibstatic STATIC ${PLIB_SRCS} ${PLIB_PLATFORM_SRCS} ${PLIB_PUBLIC_HDRS} ${PLIB_PRIVATE_HDRS})
 add_definitions(-DPLIB_COMPILATION ${PLIB_PLATFORM_DEFINES})
+
+set_target_properties(plib plibstatic PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${OUTPUT_DIR})
 
 if (PLIB_C_COMPILER STREQUAL msvc)
 	add_definitions(-D_CRT_SECURE_NO_WARNINGS)
