@@ -13,11 +13,21 @@ endif()
 
 include (${PROJECT_SOURCE_DIR}/platforms/${PLIB_TARGET_PLATFORM}/platform.cmake)
 
+# Copy platform dependent files to binary dir
+file (COPY
+      ${PROJECT_SOURCE_DIR}/platforms/${PLIB_TARGET_PLATFORM}/config.h
+      ${PROJECT_SOURCE_DIR}/platforms/${PLIB_TARGET_PLATFORM}/plibconfig.h
+      DESTINATION ${PROJECT_BINARY_DIR})
+
+set (PLIB_INCLUDE_DIRS
+	${PROJECT_SOURCE_DIR}/src
+	${PROJECT_SOURCE_DIR}/platforms/${PLIB_TARGET_PLATFORM}
+)
+
 include_directories(
 	${CMAKE_BINARY_DIR}
 	${PROJECT_SOURCE_DIR}
-	${PROJECT_SOURCE_DIR}/src
-	${PROJECT_SOURCE_DIR}/platforms/${PLIB_TARGET_PLATFORM}
+	${PLIB_INCLUDE_DIRS}
 )
 
 set(PLIB_PUBLIC_HDRS
@@ -108,6 +118,11 @@ target_link_libraries(plibstatic ${PLIB_PLATFORM_LINK_LIBRARIES})
 
 install(TARGETS plib plibstatic
 	DESTINATION lib
+	RUNTIME DESTINATION lib
+	COMPONENT Core
+)
+install(TARGETS plib plibstatic
+	DESTINATION lib
 	ARCHIVE DESTINATION lib
 	COMPONENT Core
 )
@@ -126,6 +141,6 @@ set(CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS_SKIP TRUE)
 include(InstallRequiredSystemLibraries)
 
 install(PROGRAMS ${CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS} 
-	DESTINATION bin
+	DESTINATION lib
 	COMPONENT Core
 )
