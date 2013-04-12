@@ -5,7 +5,6 @@ Makefile.in
 Makefile
 doc
 m4
-plibconfig.h
 .libs
 .deps
 *.o
@@ -18,9 +17,13 @@ plibconfig.h
 *.gcov
 *.tar.gz
 
+#Current directory
+./plibconfig.h
+./config.h
+./config.*
+
 # autofoo stuff here
 compile
-config.*
 configure
 depcomp
 aclocal.m4
