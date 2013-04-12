@@ -24,13 +24,13 @@ set (PLIB_INCLUDE_DIRS
 	${PROJECT_SOURCE_DIR}/platforms/${PLIB_TARGET_PLATFORM}
 )
 
-include_directories(
+include_directories (
 	${CMAKE_BINARY_DIR}
 	${PROJECT_SOURCE_DIR}
 	${PLIB_INCLUDE_DIRS}
 )
 
-set(PLIB_PUBLIC_HDRS
+set (PLIB_PUBLIC_HDRS
 	patomic.h
 	ptypes.h
 	pmacros.h
@@ -57,12 +57,12 @@ set(PLIB_PUBLIC_HDRS
 	puthread.h
 )
 
-set(PLIB_PRIVATE_HDRS
+set (PLIB_PRIVATE_HDRS
 	${PROJECT_SOURCE_DIR}/platforms/${PLIB_TARGET_PLATFORM}/config.h
 	${PROJECT_SOURCE_DIR}/platforms/${PLIB_TARGET_PLATFORM}/plibconfig.h
 )
 
-set(PLIB_SRCS
+set (PLIB_SRCS
 	patomic.c
 	pcryptohash.c
 	pfile.c
@@ -92,7 +92,7 @@ if (PLIB_IPC_MODEL STREQUAL "")
 	set (PLIB_IPC_MODEL none)
 endif()
 
-set(PLIB_PLATFORM_SRCS
+set (PLIB_PLATFORM_SRCS
 	pcondvariable-${PLIB_THREAD_MODEL}.c
 	pmutex-${PLIB_THREAD_MODEL}.c
 	psemaphore-${PLIB_IPC_MODEL}.c
@@ -100,47 +100,47 @@ set(PLIB_PLATFORM_SRCS
 	puthread-${PLIB_THREAD_MODEL}.c
 )
 
-add_library(plib SHARED ${PLIB_SRCS} ${PLIB_PLATFORM_SRCS} ${PLIB_PUBLIC_HDRS} ${PLIB_PRIVATE_HDRS})
-add_library(plibstatic STATIC ${PLIB_SRCS} ${PLIB_PLATFORM_SRCS} ${PLIB_PUBLIC_HDRS} ${PLIB_PRIVATE_HDRS})
-add_definitions(-DPLIB_COMPILATION ${PLIB_PLATFORM_DEFINES})
+add_library (plib SHARED ${PLIB_SRCS} ${PLIB_PLATFORM_SRCS} ${PLIB_PUBLIC_HDRS} ${PLIB_PRIVATE_HDRS})
+add_library (plibstatic STATIC ${PLIB_SRCS} ${PLIB_PLATFORM_SRCS} ${PLIB_PUBLIC_HDRS} ${PLIB_PRIVATE_HDRS})
+add_definitions (-DPLIB_COMPILATION ${PLIB_PLATFORM_DEFINES})
 
-set_target_properties(plib plibstatic PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${OUTPUT_DIR})
+set_target_properties (plib plibstatic PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${OUTPUT_DIR})
 
 if (PLIB_C_COMPILER STREQUAL msvc)
-	add_definitions(-D_CRT_SECURE_NO_WARNINGS)
+	add_definitions (-D_CRT_SECURE_NO_WARNINGS)
 endif()
 
-set_target_properties(plib PROPERTIES SOVERSION ${PLIB_VERSION})
-set_target_properties(plibstatic PROPERTIES SOVERSION ${PLIB_VERSION})
+set_target_properties (plib PROPERTIES SOVERSION ${PLIB_VERSION})
+set_target_properties (plibstatic PROPERTIES SOVERSION ${PLIB_VERSION})
 
-target_link_libraries(plib ${PLIB_PLATFORM_LINK_LIBRARIES})
-target_link_libraries(plibstatic ${PLIB_PLATFORM_LINK_LIBRARIES})
+target_link_libraries (plib ${PLIB_PLATFORM_LINK_LIBRARIES})
+target_link_libraries (plibstatic ${PLIB_PLATFORM_LINK_LIBRARIES})
 
-install(TARGETS plib plibstatic
+install (TARGETS plib plibstatic EXPORT plib-targets
 	DESTINATION lib
 	RUNTIME DESTINATION lib
 	COMPONENT Core
 )
-install(TARGETS plib plibstatic
+install (TARGETS plib plibstatic
 	DESTINATION lib
 	ARCHIVE DESTINATION lib
 	COMPONENT Core
 )
-install(TARGETS plib plibstatic EXPORT plib-targets
+install (TARGETS plib plibstatic
 	DESTINATION lib
 	LIBRARY DESTINATION lib
 	COMPONENT Core
 )
 
-install(FILES ${PLIB_PUBLIC_HDRS} ${PROJECT_SOURCE_DIR}/platforms/${PLIB_TARGET_PLATFORM}/plibconfig.h
+install (FILES ${PLIB_PUBLIC_HDRS} ${PROJECT_SOURCE_DIR}/platforms/${PLIB_TARGET_PLATFORM}/plibconfig.h
 	DESTINATION include/PLib
 	COMPONENT Core
 )
 
-set(CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS_SKIP TRUE)
-include(InstallRequiredSystemLibraries)
+set (CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS_SKIP TRUE)
+include (InstallRequiredSystemLibraries)
 
-install(PROGRAMS ${CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS} 
+install (PROGRAMS ${CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS} 
 	DESTINATION lib
 	COMPONENT Core
 )
