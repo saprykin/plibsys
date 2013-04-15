@@ -116,9 +116,17 @@ set_target_properties (plibstatic PROPERTIES SOVERSION ${PLIB_VERSION})
 target_link_libraries (plib ${PLIB_PLATFORM_LINK_LIBRARIES})
 target_link_libraries (plibstatic ${PLIB_PLATFORM_LINK_LIBRARIES})
 
+if (PLIB_TARGET_OS STREQUAL windows)
+	install (TARGETS plib plibstatic
+		DESTINATION lib
+		RUNTIME DESTINATION lib
+		COMPONENT Core
+	)
+endif()
+
 install (TARGETS plib plibstatic EXPORT plib-targets
 	DESTINATION lib
-	RUNTIME DESTINATION lib
+	LIBRARY DESTINATION lib
 	COMPONENT Core
 )
 install (TARGETS plib plibstatic
@@ -126,12 +134,6 @@ install (TARGETS plib plibstatic
 	ARCHIVE DESTINATION lib
 	COMPONENT Core
 )
-install (TARGETS plib plibstatic
-	DESTINATION lib
-	LIBRARY DESTINATION lib
-	COMPONENT Core
-)
-
 install (FILES ${PLIB_PUBLIC_HDRS} ${PROJECT_SOURCE_DIR}/platforms/${PLIB_TARGET_PLATFORM}/plibconfig.h
 	DESTINATION include/PLib
 	COMPONENT Core
