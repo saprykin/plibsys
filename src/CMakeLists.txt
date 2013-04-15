@@ -122,6 +122,13 @@ if (PLIB_TARGET_OS STREQUAL windows)
 		RUNTIME DESTINATION lib
 		COMPONENT Core
 	)
+	set (CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS_SKIP TRUE)
+	include (InstallRequiredSystemLibraries)
+	
+	install (PROGRAMS ${CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS} 
+		DESTINATION lib
+		COMPONENT Core
+	)
 endif()
 
 install (TARGETS plib plibstatic EXPORT plib-targets
@@ -136,13 +143,5 @@ install (TARGETS plib plibstatic
 )
 install (FILES ${PLIB_PUBLIC_HDRS} ${PROJECT_SOURCE_DIR}/platforms/${PLIB_TARGET_PLATFORM}/plibconfig.h
 	DESTINATION include/PLib
-	COMPONENT Core
-)
-
-set (CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS_SKIP TRUE)
-include (InstallRequiredSystemLibraries)
-
-install (PROGRAMS ${CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS} 
-	DESTINATION lib
 	COMPONENT Core
 )
