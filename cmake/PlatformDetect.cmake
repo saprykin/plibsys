@@ -3,15 +3,15 @@ function (plib_detect_c_compiler result)
 	string (TOLOWER ${CMAKE_SYSTEM_NAME} PLIB_TARGET_OS)
 
 	# Detect C compiler by it's ID
-	if (${CMAKE_C_COMPILER_ID} STREQUAL GNU)
+	if (CMAKE_C_COMPILER_ID STREQUAL GNU)
 		set (PLIB_C_COMPILER gcc)
-	elseif (${CMAKE_C_COMPILER_ID} STREQUAL MSVC)
+	elseif (CMAKE_C_COMPILER_ID STREQUAL MSVC)
 		set (PLIB_C_COMPILER msvc)
 	else()
 		string (TOLOWER ${CMAKE_C_COMPILER_ID} PLIB_C_COMPILER)
 	endif()
 
-	# Fix gcc -> qcc nameing on QNX 6
+	# Fix gcc -> qcc naming on QNX 6
 	if ((PLIB_TARGET_OS STREQUAL qnx) AND (PLIB_C_COMPILER STREQUAL gcc))
 		set (PLIB_C_COMPILER qcc)
 	endif()
