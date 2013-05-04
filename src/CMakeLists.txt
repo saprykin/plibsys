@@ -1,3 +1,4 @@
+include (CheckCSourceCompiles)
 include (${PROJECT_SOURCE_DIR}/cmake/PlatformDetect.cmake)
 set (OUTPUT_DIR ${CMAKE_BINARY_DIR})
 
@@ -99,6 +100,114 @@ set (PLIB_PLATFORM_SRCS
 	pshm-${PLIB_IPC_MODEL}.c
 	puthread-${PLIB_THREAD_MODEL}.c
 )
+
+# Detect atomic operations
+set (PLIB_HAS_BUILTIN_ATOMIC_OPERATIONS false)
+set (PLIB_MEMORY_BARRIER_NEEDED true)
+
+if (PLIB_C_COMPILER STREQUAL "gcc" OR
+	PLIB_C_COMPILER STREQUAL "qcc")
+	check_c_source_compiles (
+			"int i;
+			 __sync_synchronize ();
+		     __sync_bool_compare_and_swap (&i, 0, 1);
+		     __sync_fetch_and_add (&i, 1);"
+		     PLIB_HAS_BUILTIN_ATOMIC_OPERATIONS
+	)
+
+	message (STATUS 
+			 "Checking for GCC builtin atomic operations... ${PLIB_HAS_BUILTIN_ATOMIC_OPERATIONS}"
+	)
+
+	if (PLIB_HAS_BUILTIN_ATOMIC_OPERATIONS)
+		set (PLIB_MEMORY_BARRIER_NEEDED true)
+	else()
+		if (CMAKE_SYSTEM_PROCESSOR MATCHES "i386")
+			set (PLIB_MEMORY_BARRIER_NEEDED false)
+		elseif (CMAKE_SYSTEM_PROCESSOR MATCHES "i?86")
+			set (PLIB_MEMORY_BARRIER_NEEDED false)
+			add_definitions (-DP_ATOMIC_I486)
+		elseif (CMAKE_SYSTEM_PROCESSOR MATCHES "sparc*")
+			check_c_source_compiles (
+					"main () {
+							int tmp1, tmp2, tmp3;
+							__asm__ __volatile__("casx [%2], %0, %1"
+								: "=&r" (tmp1), "=&r" (tmp2) : "r" (&tmp3));
+					}"
+					PLIB_HAS_SPARCV9
+			)
+
+			message (STATUS "Checking for SPARC V9 instruction set... ${PLIB_HAS_SPARCV9}")
+
+			if (PLIB_HAS_SPARCV9)
+				add_definitions (-DP_ATOMIC_SPARCV9)
+			else()
+				message (WARNING
+						 "Try to rerun configure with '-mcpu=v9' complier flag,
+						 when you are using a sparc with v9 instruction set (most
+						 sparcs nowadays). This will make the code for atomic
+						 operations much faster. The resulting code will not run
+						 on very old sparcs though.")
+			endif()
+
+			set (PLIB_MEMORY_BARRIER_NEEDED true)
+		elseif (CMAKE_SYSTEM_PROCESSOR MATCHES "alpha*")
+			set (PLIB_MEMORY_BARRIER_NEEDED true)
+			add_definitions (-DP_ATOMIC_ALPHA)	
+		elseif (CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64")
+			set (PLIB_MEMORY_BARRIER_NEEDED false)
+			add_definitions (-DP_ATOMIC_X86_64)
+		elseif (CMAKE_SYSTEM_PROCESSOR MATCHES "powerpc*")
+			set (PLIB_MEMORY_BARRIER_NEEDED true)
+			add_definitions (-DP_ATOMIC_POWERPC)
+
+			check_c_source_compiles (
+					"__asm__ __volatile__ (\"1:       nop\n\"
+										   \"         bne-    1b\")"
+					PLIB_HAS_POWERPC_LABELS
+			)
+
+			message (STATUS
+					 "Checking for PowerPC asm numeric labels... ${PLIB_HAS_POWERPC_LABELS}")
+
+			if (PLIB_HAS_POWERPC_LABELS)
+				add_definitions (-DASM_NUMERIC_LABELS)
+			endif()
+		elseif (CMAKE_SYSTEM_PROCESSOR MATCHES "ia64")
+			set (PLIB_MEMORY_BARRIER_NEEDED true)
+			add_definitions (-DP_ATOMIC_IA64)
+		elseif (CMAKE_SYSTEM_PROCESSOR MATCHES "s390" OR
+				CMAKE_SYSTEM_PROCESSOR MATCHER "s390x")
+			set (PLIB_MEMORY_BARRIER_NEEDED false)
+			add_definitions (-DP_ATOMIC_S390)
+		elseif (CMAKE_SYSTEM_PROCESSOR MATCHES "arm*")
+			set (PLIB_MEMORY_BARRIER_NEEDED false)
+			add_definitions (-DP_ATOMIC_ARM)
+		elseif (CMAKE_SYSTEM_PROCESSOR MATCHES "crisv32*" OR
+				CMAKE_SYSTEM_PROCESSOR MATCHES "etraxfs*")
+			set (PLIB_MEMORY_BARRIER_NEEDED false)
+			add_definitions (-DP_ATOMIC_CRISV32)
+		elseif (CMAKE_SYSTEM_PROCESSOR MATCHES "cris*" OR
+				CMAKE_SYSTEM_PROCESSOR MATCHES "etrax*")
+			set (PLIB_MEMORY_BARRIER_NEEDED false)
+			add_definitions (-DP_ATOMIC_CRIS)
+		endif()
+	endif()
+else()
+	if (PLIB_TARGET_PLATFORM MATCHES "mingw*")
+		set (PLIB_MEMORY_BARRIER_NEEDED false)
+	endif()
+endif()
+
+message (STATUS "Checking whether memory barrier needed... ${PLIB_MEMORY_BARRIER_NEEDED}")
+
+if (PLIB_HAS_BUILTIN_ATOMIC_OPERATIONS)
+	set (PLIB_SRCS ${PLIB_SRCS} patomic-gcc.c)
+endif()
+
+if (PLIB_MEMORY_BARRIER_NEEDED)
+	add_definitions (-DP_ATOMIC_OP_MEMORY_BARRIER_NEEDED)
+endif()
 
 add_library (plib SHARED ${PLIB_SRCS} ${PLIB_PLATFORM_SRCS} ${PLIB_PUBLIC_HDRS} ${PLIB_PRIVATE_HDRS})
 add_library (plibstatic STATIC ${PLIB_SRCS} ${PLIB_PLATFORM_SRCS} ${PLIB_PUBLIC_HDRS} ${PLIB_PRIVATE_HDRS})

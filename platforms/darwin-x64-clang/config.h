@@ -1,9 +1,6 @@
 /* Define if building universal (internal helper macro) */
 /* #undef AC_APPLE_UNIVERSAL_BUILD */
 
-/* define if asm blocks can use numeric local labels */
-/* #undef ASM_NUMERIC_LABELS */
-
 /* Define to 1 if you have the <arpa/inet.h> header file. */
 #define HAVE_ARPA_INET_H 1
 
@@ -111,36 +108,6 @@
 
 /* The size of pmutex, as computed by sizeof. */
 #define PLIB_SIZEOF_PMUTEX 64
-
-/* alpha atomic implementation */
-/* #undef P_ATOMIC_ALPHA */
-
-/* arm atomic implementation */
-/* #undef P_ATOMIC_ARM */
-
-/* cris atomic implementation */
-/* #undef P_ATOMIC_CRIS */
-
-/* crisv32 atomic implementation */
-/* #undef P_ATOMIC_CRISV32 */
-
-/* i486 atomic implementation */
-/* #undef P_ATOMIC_I486 */
-
-/* ia64 atomic implementation */
-/* #undef P_ATOMIC_IA64 */
-
-/* powerpc atomic implementation */
-/* #undef P_ATOMIC_POWERPC */
-
-/* s390 atomic implementation */
-/* #undef P_ATOMIC_S390 */
-
-/* sparcv9 atomic implementation */
-/* #undef P_ATOMIC_SPARCV9 */
-
-/* x86_64 atomic implementation */
-/* #undef P_ATOMIC_X86_64 */
 
 /* The size of `char', as computed by sizeof. */
 #define SIZEOF_CHAR 1

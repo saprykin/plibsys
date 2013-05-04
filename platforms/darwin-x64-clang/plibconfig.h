@@ -84,7 +84,6 @@ typedef struct _PStaticMutex
 #define	P_STATIC_MUTEX_INIT		{ { { -89,-85,-86,50,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0} } }
 #define	p_static_mutex_get_mutex(mutex)	((PMutex*) ((ppointer) ((mutex)->static_mutex.pad)))
 
-#define P_ATOMIC_OP_MEMORY_BARRIER_NEEDED 1
 #define PINT16_TO_LE(val)	((pint16) (val))
 #define PUINT16_TO_LE(val)	((puint16) (val))
 #define PINT16_TO_BE(val)	((pint16) PUINT16_SWAP_BYTES (val))
