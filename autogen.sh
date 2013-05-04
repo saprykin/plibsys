@@ -40,7 +40,13 @@ fi
 	DIE=1
 }
 
-if automake-1.11 --version < /dev/null > /dev/null 2>&1 ; then
+if automake-1.13 --version < /dev/null > /dev/null 2>&1 ; then
+    AUTOMAKE=automake-1.13
+    ACLOCAL=aclocal-1.13
+else if automake-1.12 --version < /dev/null > /dev/null 2>&1 ; then
+    AUTOMAKE=automake-1.12
+    ACLOCAL=aclocal-1.12
+else if automake-1.11 --version < /dev/null > /dev/null 2>&1 ; then
     AUTOMAKE=automake-1.11
     ACLOCAL=aclocal-1.11
 else if automake-1.10 --version < /dev/null > /dev/null 2>&1 ; then
@@ -51,10 +57,13 @@ else if automake-1.9 --version < /dev/null > /dev/null 2>&1 ; then
     ACLOCAL=aclocal-1.9
 else
 	echo
-	echo "You must have automake 1.9.x, 1.10.x or 1.11.x installed to compile $PROJECT."
+	echo "You must have automake 1.9.x, 1.10.x, 1.11.x, 1.12.x or 1.13.x"
+	echo "installed to compile $PROJECT."
 	echo "Install the appropriate package for your distribution,"
 	echo "or get the source tarball at http://ftp.gnu.org/gnu/automake/"
 	DIE=1
+fi
+fi
 fi
 fi
 fi
