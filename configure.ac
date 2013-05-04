@@ -87,6 +87,9 @@ case $host in
 	*-*-mingw*)
 		plib_os_native=mingw
 		;;
+	*-*-darwin*)
+		plib_os_native=macosx
+		;;
 esac
 AC_MSG_RESULT([$plib_os_native])
 
