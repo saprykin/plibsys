@@ -402,7 +402,7 @@ AC_MSG_CHECKING([whether to use assembler code for atomic operations])
 
 plib_cv_gcc_has_builtin_atomic_operations=no
 if test x"$GCC" = xyes; then
-	AC_MSG_CHECKING([whether GCC supports build-in atomic intrinsics])
+	AC_MSG_CHECKING([whether GCC supports built-in atomic intrinsics])
 	AC_TRY_LINK([],
 		    [int i;
 	 	     __sync_synchronize ();
