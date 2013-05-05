@@ -94,6 +94,9 @@
 #  if defined(__INTEL_COMPILER)
 #    define P_CC_INTEL
 #  endif
+#  if defined(__clang__)
+#    define P_CC_CLANG
+#  endif
 /* Sun WorkShop/Studio */
 #elif defined(__SUNPRO_C)
 #  define P_CC_SUN
