@@ -36,9 +36,17 @@
 #include <stdio.h>
 
 /* Operating systems */
-
+/* Darwin and BSD4 */
+#if defined(__APPLE__) && (defined(__GNUC__) || defined(__xlC__) || defined(__xlc__))
+#  define P_OS_DARWIN
+#  define P_OS_BSD4
+#  ifdef __LP64__
+#    define P_OS_DARWIN64
+#  else
+#    define P_OS_DARWIN32
+#  endif
 /* Microsoft Windows */
-#if defined(_WIN64) || defined(_M_X64) || defined(_M_AMD64)
+#elif defined(_WIN64) || defined(_M_X64) || defined(_M_AMD64)
 #  define P_OS_WIN64
 #elif defined(__WIN32__) || defined(_WIN32) || defined(WIN32)
 #  define P_OS_WIN
@@ -58,6 +66,15 @@
 
 #ifdef P_OS_WIN64
 #  define P_OS_WIN
+#endif
+
+#if defined(P_OS_DARWIN)
+#  define P_OS_MAC
+#  if defined(P_OS_DARWIN64)
+#     define P_OS_MAC64
+#  elif defined(P_OS_DARWIN32)
+#     define P_OS_MAC32
+#  endif
 #endif
 
 /* Compilers */
