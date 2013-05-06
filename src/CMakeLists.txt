@@ -7,6 +7,7 @@ string (TOLOWER ${CMAKE_SYSTEM_NAME} PLIB_TARGET_OS)
 
 plib_detect_target_platform (PLIB_TARGET_PLATFORM)
 plib_detect_c_compiler (PLIB_C_COMPILER)
+string (TOLOWER ${CMAKE_SYSTEM_NAME} PLIB_TARGET_OS)
 
 if (NOT EXISTS "${PROJECT_SOURCE_DIR}/platforms/${PLIB_TARGET_PLATFORM}/")
 	message (FATAL_ERROR "PLib doesn't support unknown platform ${PLIB_TARGET_PLATFORM}")
@@ -105,8 +106,9 @@ set (PLIB_PLATFORM_SRCS
 set (PLIB_HAS_BUILTIN_ATOMIC_OPERATIONS false)
 set (PLIB_MEMORY_BARRIER_NEEDED true)
 
-if (PLIB_C_COMPILER STREQUAL "gcc" OR
-	PLIB_C_COMPILER STREQUAL "qcc")
+if (PLIB_C_COMPILER MATCHES "gcc|qcc")
+	message (STATUS "Checking for GCC builtin atomic operations")
+
 	check_c_source_compiles (
 			"int i;
 			 __sync_synchronize ();
@@ -115,19 +117,23 @@ if (PLIB_C_COMPILER STREQUAL "gcc" OR
 		     PLIB_HAS_BUILTIN_ATOMIC_OPERATIONS
 	)
 
-	message (STATUS 
-			 "Checking for GCC builtin atomic operations... ${PLIB_HAS_BUILTIN_ATOMIC_OPERATIONS}"
-	)
-
+	if (PLIB_HAS_BUILTIN_ATOMIC_OPERATIONS)
+		message (STATUS "Checking for GCC builtin atomic operations - works")
+	else()
+		message (STATUS "Checking for GCC builtin atomic operations - not works")
+	endif()
+	
 	if (PLIB_HAS_BUILTIN_ATOMIC_OPERATIONS)
 		set (PLIB_MEMORY_BARRIER_NEEDED true)
 	else()
-		if (CMAKE_SYSTEM_PROCESSOR MATCHES "i386")
+		if (CMAKE_SYSTEM_PROCESSOR STREQUAL "i386")
 			set (PLIB_MEMORY_BARRIER_NEEDED false)
-		elseif (CMAKE_SYSTEM_PROCESSOR MATCHES "i?86")
+		elseif (CMAKE_SYSTEM_PROCESSOR MATCHES "i[1-9]86")
 			set (PLIB_MEMORY_BARRIER_NEEDED false)
 			add_definitions (-DP_ATOMIC_I486)
-		elseif (CMAKE_SYSTEM_PROCESSOR MATCHES "sparc*")
+		elseif (CMAKE_SYSTEM_PROCESSOR MATCHES "sparc.*")
+			message (STATUS "Checking for SPARC V9 instruction set")
+
 			check_c_source_compiles (
 					"main () {
 							int tmp1, tmp2, tmp3;
@@ -137,7 +143,11 @@ if (PLIB_C_COMPILER STREQUAL "gcc" OR
 					PLIB_HAS_SPARCV9
 			)
 
-			message (STATUS "Checking for SPARC V9 instruction set... ${PLIB_HAS_SPARCV9}")
+			if (PLIB_HAS_SPARCV9)
+				message (STATUS "Checking for SPARC V9 instruction set - works")
+			else()
+				message (STATUS "Checking for SPARC V9 instruction set - not works")
+			endif()
 
 			if (PLIB_HAS_SPARCV9)
 				add_definitions (-DP_ATOMIC_SPARCV9)
@@ -151,15 +161,17 @@ if (PLIB_C_COMPILER STREQUAL "gcc" OR
 			endif()
 
 			set (PLIB_MEMORY_BARRIER_NEEDED true)
-		elseif (CMAKE_SYSTEM_PROCESSOR MATCHES "alpha*")
+		elseif (CMAKE_SYSTEM_PROCESSOR MATCHES "alpha.*")
 			set (PLIB_MEMORY_BARRIER_NEEDED true)
 			add_definitions (-DP_ATOMIC_ALPHA)	
-		elseif (CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64")
+		elseif (CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64")
 			set (PLIB_MEMORY_BARRIER_NEEDED false)
 			add_definitions (-DP_ATOMIC_X86_64)
-		elseif (CMAKE_SYSTEM_PROCESSOR MATCHES "powerpc*")
+		elseif (CMAKE_SYSTEM_PROCESSOR MATCHES "powerpc.*")
 			set (PLIB_MEMORY_BARRIER_NEEDED true)
 			add_definitions (-DP_ATOMIC_POWERPC)
+
+			message (STATUS "Checking for PowerPC asm numeric labels")
 
 			check_c_source_compiles (
 					"__asm__ __volatile__ (\"1:       nop\n\"
@@ -167,39 +179,45 @@ if (PLIB_C_COMPILER STREQUAL "gcc" OR
 					PLIB_HAS_POWERPC_LABELS
 			)
 
-			message (STATUS
-					 "Checking for PowerPC asm numeric labels... ${PLIB_HAS_POWERPC_LABELS}")
+			if (PLIB_HAS_POWERPC_LABELS)
+				message (STATUS "Checking for PowerPC asm numeric labels - works")
+			else()
+				message (STATUS "Checking for PowerPC asm numeric labels - not works")
+			endif()
 
 			if (PLIB_HAS_POWERPC_LABELS)
 				add_definitions (-DASM_NUMERIC_LABELS)
 			endif()
-		elseif (CMAKE_SYSTEM_PROCESSOR MATCHES "ia64")
+		elseif (CMAKE_SYSTEM_PROCESSOR STREQUAL "ia64")
 			set (PLIB_MEMORY_BARRIER_NEEDED true)
 			add_definitions (-DP_ATOMIC_IA64)
-		elseif (CMAKE_SYSTEM_PROCESSOR MATCHES "s390" OR
-				CMAKE_SYSTEM_PROCESSOR MATCHER "s390x")
+		elseif (CMAKE_SYSTEM_PROCESSOR MATCHES "s390|s390x")
 			set (PLIB_MEMORY_BARRIER_NEEDED false)
 			add_definitions (-DP_ATOMIC_S390)
-		elseif (CMAKE_SYSTEM_PROCESSOR MATCHES "arm*")
+		elseif (CMAKE_SYSTEM_PROCESSOR MATCHES "arm.*")
 			set (PLIB_MEMORY_BARRIER_NEEDED false)
 			add_definitions (-DP_ATOMIC_ARM)
-		elseif (CMAKE_SYSTEM_PROCESSOR MATCHES "crisv32*" OR
-				CMAKE_SYSTEM_PROCESSOR MATCHES "etraxfs*")
+		elseif (CMAKE_SYSTEM_PROCESSOR MATCHES "(crisv32.*)|(etraxfs.*)")
 			set (PLIB_MEMORY_BARRIER_NEEDED false)
 			add_definitions (-DP_ATOMIC_CRISV32)
-		elseif (CMAKE_SYSTEM_PROCESSOR MATCHES "cris*" OR
-				CMAKE_SYSTEM_PROCESSOR MATCHES "etrax*")
+		elseif (CMAKE_SYSTEM_PROCESSOR MATCHES "(cris.*)|(etrax.*)")
 			set (PLIB_MEMORY_BARRIER_NEEDED false)
 			add_definitions (-DP_ATOMIC_CRIS)
 		endif()
 	endif()
 else()
-	if (PLIB_TARGET_PLATFORM MATCHES "[mingw* windows*]")
+	if (PLIB_TARGET_OS MATCHES "(mingw.*)|(windows.*)")
 		set (PLIB_MEMORY_BARRIER_NEEDED false)
 	endif()
 endif()
 
-message (STATUS "Checking whether memory barrier needed... ${PLIB_MEMORY_BARRIER_NEEDED}")
+message (STATUS "Checking whether memory barrier needed")
+
+if (PLIB_MEMORY_BARRIER_NEEDED)
+	message (STATUS "Checking whether memory barrier needed - yes")
+else()
+	message (STATUS "Checking whether memory barrier needed - no")
+endif()
 
 if (PLIB_HAS_BUILTIN_ATOMIC_OPERATIONS)
 	set (PLIB_SRCS ${PLIB_SRCS} patomic-gcc.c)
