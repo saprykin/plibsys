@@ -194,7 +194,7 @@ if (PLIB_C_COMPILER STREQUAL "gcc" OR
 		endif()
 	endif()
 else()
-	if (PLIB_TARGET_PLATFORM MATCHES "mingw*")
+	if (PLIB_TARGET_PLATFORM MATCHES "[mingw* windows*]")
 		set (PLIB_MEMORY_BARRIER_NEEDED false)
 	endif()
 endif()
