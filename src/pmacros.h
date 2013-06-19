@@ -146,12 +146,6 @@
 #  define P_STRTOK(str, delim, buf) strtok_r(str, delim, buf)
 #endif
 
-#ifdef P_OS_WIN
-#  define P_LOCALTIME_R(gt, lt) localtime_s(lt, gt)
-#else
-#  define P_LOCALTIME_R(gt, lt) localtime_r(gt, lt)
-#endif
-
 /* Printing macroses */
 #define P_WARNING(msg) printf ("** Warning: %s **\n", msg)
 #define P_ERROR(msg) printf ("** Error: %s **\n", msg)
