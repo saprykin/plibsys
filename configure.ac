@@ -162,7 +162,7 @@ AM_PROG_CC_C_O
 AC_PROG_INSTALL
 
 AM_DISABLE_STATIC
-AM_PROG_AR
+m4_ifdef([AM_PROG_AR], [AM_PROG_AR])
 AM_PROG_LIBTOOL
 
 if test x"$plib_os_native" = "xmingw"; then
