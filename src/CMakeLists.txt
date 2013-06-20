@@ -240,9 +240,12 @@ if (PLIB_C_COMPILER STREQUAL msvc)
 endif()
 
 set_target_properties (plib PROPERTIES SOVERSION ${PLIB_VERSION})
-set_target_properties (plib PROPERTIES COMPILE_FLAGS ${PLIB_PLATFORM_CFLAGS})
 set_target_properties (plibstatic PROPERTIES SOVERSION ${PLIB_VERSION})
-set_target_properties (plibstatic PROPERTIES COMPILE_FLAGS ${PLIB_PLATFORM_CFLAGS})
+
+if (PLIB_PLATFORM_CFLAGS)
+	set_target_properties (plib PROPERTIES COMPILE_FLAGS ${PLIB_PLATFORM_CFLAGS})
+	set_target_properties (plibstatic PROPERTIES COMPILE_FLAGS ${PLIB_PLATFORM_CFLAGS})
+endif()
 
 target_link_libraries (plib ${PLIB_PLATFORM_LINK_LIBRARIES})
 target_link_libraries (plibstatic ${PLIB_PLATFORM_LINK_LIBRARIES})
