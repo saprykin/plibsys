@@ -1,6 +1,5 @@
 /* 
- * 14.09.2010
- * Copyright (C) 2010 Alexander Saprykin <xelfium@gmail.com>
+ * Copyright (C) 2010-2013 Alexander Saprykin <xelfium@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,21 +16,12 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA.
  */
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
-
 #include "pmem.h"
 #include "psocketaddress.h"
 #include "pstring.h"
 
 #include <stdlib.h>
 #include <string.h>
-
-/* Just to shut-up Sun compiler */
-#ifdef HAVE_ARPA_INET_H
-#include <arpa/inet.h>
-#endif
 
 #ifndef INET_ADDRSTRLEN
 #  define INET_ADDRSTRLEN 16

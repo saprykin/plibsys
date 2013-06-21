@@ -1,6 +1,5 @@
 /* 
- * 25.08.2010
- * Copyright (C) 2010 Alexander Saprykin <xelfium@gmail.com>
+ * Copyright (C) 2010-2013 Alexander Saprykin <xelfium@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,6 +36,38 @@
 
 P_BEGIN_DECLS
 
+/** Type for signed 8 bit */
+typedef signed char		pint8;
+/** Type for unsigned 8 bit */
+typedef unsigned char		puint8;
+/** Type for signed 16 bit */
+typedef signed short		pint16;
+/** Type for unsigned 16 bit */
+typedef unsigned short		puint16;
+/** Type for signed 32 bit */
+typedef signed int		pint32;
+/** Type for unsigned 32 bit */
+typedef unsigned int		puint32;
+
+#if defined (P_OS_WIN) && defined (P_CC_MSVC)
+  /** Type for signed 64 bit */
+  typedef signed __int64	pint64;
+  /** Type for unsigned 64 bit */
+  typedef unsigned __int64	puint64;
+#else
+#  if PLIB_SIZEOF_LONG == 8
+     /** Type for signed 64 bit */
+     typedef signed long	pint64;
+     /** Type for unsigned 64 bit */
+     typedef unsigned long	puint64;
+#  else
+     /** Type for signed 64 bit */
+     typedef signed long long	pint64;
+     /** Type for unsigned 64 bit */
+     typedef unsigned long long	puint64;
+#  endif
+#endif
+
 /** Type for pointer */
 typedef void *		ppointer;
 /** Type for const pointer */
@@ -67,6 +98,86 @@ typedef float		pfloat;
 /** Type for double precision float */
 typedef double		pdouble;
 
+#if PLIB_SIZEOF_SIZE_T == 8
+#  if defined (P_OS_WIN) && defined (P_CC_MSVC)
+     typedef signed __int64	pssize;
+     typedef unsigned __int64	psize;
+     #define PSIZE_MODIFIER	"I64"
+     #define PSSIZE_FORMAT	"I64d"
+     #define PSIZE_FORMAT	"I64u"
+     #define P_MAXSIZE		P_MAXUINT64
+     #define P_MINSSIZE		P_MININT64
+     #define P_MAXSSIZE		P_MAXINT64
+#  else
+#    if PLIB_SIZEOF_LONG == 8
+       typedef long			pssize;
+       typedef unsigned long		psize;
+       #define PSIZE_MODIFIER		"l"
+       #define PSSIZE_FORMAT		"li"
+       #define PSIZE_FORMAT		"lu"
+       #define P_MAXSIZE		P_MAXULONG
+       #define P_MINSSIZE		P_MINLONG
+       #define P_MAXSSIZE		P_MAXLONG
+#    else
+       typedef long long		pssize;
+       typedef unsigned long long	psize;
+       #define PSIZE_MODIFIER		"ll"
+       #define PSSIZE_FORMAT		"lli"
+       #define PSIZE_FORMAT		"llu"
+       #define P_MAXSIZE		P_MAXUINT64
+       #define P_MINSSIZE		P_MININT64
+       #define P_MAXSSIZE		P_MAXINT64
+#    endif 
+#  endif
+#else
+  typedef signed int		pssize;
+  typedef unsigned int		psize;
+  #define PSIZE_MODIFIER	""
+  #define PSSIZE_FORMAT		"i"
+  #define PSIZE_FORMAT		"u"
+  #define P_MAXSIZE		P_MAXUINT
+  #define P_MINSSIZE		P_MININT
+  #define P_MAXSSIZE		P_MAXINT
+#endif
+
+#if PLIB_SIZEOF_VOID_P == 8
+#  if defined (P_OS_WIN) && defined (P_CC_MSVC)
+     typedef signed __int64	pintptr;
+     typedef unsigned __int64	puintptr;
+     #define PINTPTR_MODIFIER	"I64"
+     #define PINTPTR_FORMAT	"I64i"
+     #define PUINTPTR_FORMAT	"I64u"
+#  else
+#    if PLIB_SIZEOF_LONG == 8
+       typedef long			pintptr;
+       typedef unsigned long		puintptr;
+       #define PINTPTR_MODIFIER		"l"
+       #define PINTPTR_FORMAT		"li"
+       #define PUINTPTR_FORMAT		"lu"
+#    else
+       typedef long long		pintptr;
+       typedef unsigned long long	puintptr;
+       #define PINTPTR_MODIFIER		"ll"
+       #define PINTPTR_FORMAT		"lli"
+       #define PUINTPTR_FORMAT		"llu"
+#    endif
+#  endif
+#else
+  typedef signed int		pintptr;
+  typedef unsigned int		puintptr;
+  #define PINTPTR_MODIFIER      ""
+  #define PINTPTR_FORMAT        "i"
+  #define PUINTPTR_FORMAT       "u"
+#endif
+
+typedef pint64 poffset;
+
+#define PPOINTER_TO_INT(p)	((pint)   (p))
+#define PPOINTER_TO_UINT(p)	((puint)  (p))
+
+#define PINT_TO_POINTER(i)	((ppointer)  (i))
+#define PUINT_TO_POINTER(u)	((ppointer)  (u))
+
 /** Min value for 8-bit int */
 #define P_MININT8	((pint8)  0x80)
 /** Max value for 8-bit int */
@@ -95,12 +206,119 @@ typedef double		pdouble;
 /** Max value for 64-bit unsigned int */
 #define P_MAXUINT64	((puint64) 0xFFFFFFFFFFFFFFFFU)
 
+#if defined (P_OS_WIN) && defined (P_CC_MSVC)
+  #define PINT16_MODIFIER	"h"
+#else
+  #define PINT16_MODIFIER	""	
+#endif
+
+#define PINT16_FORMAT		"hi"
+#define PUINT16_FORMAT		"hu"
+
+#define PINT32_MODIFIER		""
+#define PINT32_FORMAT		"i"
+#define PUINT32_FORMAT		"u"
+
+#if defined (P_OS_WIN) && defined (P_CC_MSVC)
+  #define PINT64_MODIFIER	"I64"
+  #define PINT64_FORMAT		"I64i"
+  #define PUINT64_FORMAT	"I64u"
+#else
+  #define PINT64_MODIFIER	"ll"
+  #define PINT64_FORMAT		"lli"
+  #define PUINT64_FORMAT	"llu"
+#endif
+
+#define POFFSET_MODIFIER	PINT64_MODIFIER
+#define POFFSET_FORMAT		PINT64_FORMAT
+
 /* Endian checks, see P_BYTE_ORDER in plibconfig.h */
 
 /** Little endian mark */
 #define P_LITTLE_ENDIAN	1234
 /** Big endian mark */
 #define P_BIG_ENDIAN	4321
+
+#if P_BYTE_ORDER == P_LITTLE_ENDIAN
+  #define PINT16_TO_LE(val)	((pint16) (val))
+  #define PUINT16_TO_LE(val)	((puint16) (val))
+  #define PINT16_TO_BE(val)	((pint16) PUINT16_SWAP_BYTES (val))
+  #define PUINT16_TO_BE(val)	(PUINT16_SWAP_BYTES (val))
+  #define PINT32_TO_LE(val)	((pint32) (val))
+  #define PUINT32_TO_LE(val)	((puint32) (val))
+  #define PINT32_TO_BE(val)	((pint32) PUINT32_SWAP_BYTES (val))
+  #define PUINT32_TO_BE(val)	(PUINT32_SWAP_BYTES (val))
+  #define PINT64_TO_LE(val)	((pint64) (val))
+  #define PUINT64_TO_LE(val)	((puint64) (val))
+  #define PINT64_TO_BE(val)	((pint64) PUINT64_SWAP_BYTES (val))
+  #define PUINT64_TO_BE(val)	(PUINT64_SWAP_BYTES (val))
+#  if PLIB_SIZEOF_LONG == 8
+     #define PLONG_TO_LE(val)	((plong) PINT64_TO_LE (val))
+     #define PULONG_TO_LE(val)	((pulong) PUINT64_TO_LE (val))
+     #define PLONG_TO_BE(val)	((plong) PINT64_TO_BE (val))
+     #define PULONG_TO_BE(val)	((pulong) PUINT64_TO_BE (val))
+#  else
+     #define PLONG_TO_LE(val)	((plong) PINT32_TO_LE (val))
+     #define PULONG_TO_LE(val)	((pulong) PUINT32_TO_LE (val))
+     #define PLONG_TO_BE(val)	((plong) PINT32_TO_BE (val))
+     #define PULONG_TO_BE(val)	((pulong) PUINT32_TO_BE (val))
+#  endif
+#  if PLIB_SIZEOF_SIZE_T == 8
+     #define PSIZE_TO_LE(val)	((psize) PUINT64_TO_LE (val))
+     #define PSSIZE_TO_LE(val)	((pssize) PINT64_TO_LE (val))
+     #define PSIZE_TO_BE(val)	((psize) PUINT64_TO_BE (val))
+     #define PSSIZE_TO_BE(val)	((pssize) PINT64_TO_BE (val))
+#  else
+     #define PSIZE_TO_LE(val)	((psize) PUINT32_TO_LE (val))
+     #define PSSIZE_TO_LE(val)	((pssize) PINT32_TO_LE (val))
+     #define PSIZE_TO_BE(val)	((psize) PUINT32_TO_BE (val))
+     #define PSSIZE_TO_BE(val)	((pssize) PINT32_TO_BE (val))
+#  endif
+  #define PINT_TO_LE(val)	((pint) PINT32_TO_LE (val))
+  #define PUINT_TO_LE(val)	((puint) PUINT32_TO_LE (val))
+  #define PINT_TO_BE(val)	((pint) PINT32_TO_BE (val))
+  #define PUINT_TO_BE(val)	((puint) PUINT32_TO_BE (val))
+
+#else
+  #define PINT16_TO_LE(val)	((pint16) PUINT16_SWAP_BYTES (val))
+  #define PUINT16_TO_LE(val)	(PUINT16_SWAP_BYTES (val))
+  #define PINT16_TO_BE(val)	((pint16) (val))
+  #define PUINT16_TO_BE(val)	((puint16) (val))
+  #define PINT32_TO_LE(val)	((pint32) PUINT32_SWAP_BYTES (val))
+  #define PUINT32_TO_LE(val)	(PUINT32_SWAP_BYTES (val))
+  #define PINT32_TO_BE(val)	((pint32) (val))
+  #define PUINT32_TO_BE(val)	((puint32) (val))
+  #define PINT64_TO_LE(val)	((pint64) PUINT64_SWAP_BYTES (val))
+  #define PUINT64_TO_LE(val)	(PUINT64_SWAP_BYTES (val))
+  #define PINT64_TO_BE(val)	((pint64) (val))
+  #define PUINT64_TO_BE(val)	((puint64) (val))
+#  if PLIB_SIZEOF_LONG == 8
+     #define PLONG_TO_LE(val)	((plong) PINT64_TO_LE (val))
+     #define PULONG_TO_LE(val)	((pulong) PUINT64_TO_LE (val))
+     #define PLONG_TO_BE(val)	((plong) PINT64_TO_BE (val))
+     #define PULONG_TO_BE(val)	((pulong) PUINT64_TO_BE (val))
+#  else
+     #define PLONG_TO_LE(val)	((plong) PINT32_TO_LE (val))
+     #define PULONG_TO_LE(val)	((pulong) PUINT32_TO_LE (val))
+     #define PLONG_TO_BE(val)	((plong) PINT32_TO_BE (val))
+     #define PULONG_TO_BE(val)	((pulong) PUINT32_TO_BE (val))
+#  endif
+#  if PLIB_SIZEOF_SIZE_T == 8
+     #define PSIZE_TO_LE(val)	((psize) PUINT64_TO_LE (val))
+     #define PSSIZE_TO_LE(val)	((pssize) PINT64_TO_LE (val))
+     #define PSIZE_TO_BE(val)	((psize) PUINT64_TO_BE (val))
+     #define PSSIZE_TO_BE(val)	((pssize) PINT64_TO_BE (val))
+#  else
+     #define PSIZE_TO_LE(val)	((psize) PUINT32_TO_LE (val))
+     #define PSSIZE_TO_LE(val)	((pssize) PINT32_TO_LE (val))
+     #define PSIZE_TO_BE(val)	((psize) PUINT32_TO_BE (val))
+     #define PSSIZE_TO_BE(val)	((pssize) PINT32_TO_BE (val))
+#  endif
+  #define PINT_TO_LE(val)	((pint) PINT32_TO_LE (val))
+  #define PUINT_TO_LE(val)	((puint) PUINT32_TO_LE (val))
+  #define PINT_TO_BE(val)	((pint) PINT32_TO_BE (val))
+  #define PUINT_TO_BE(val)	((puint) PUINT32_TO_BE (val))
+#endif
 
 /* Functions for bit swapping */
 

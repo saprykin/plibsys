@@ -15,8 +15,4 @@ else()
 	message (STATUS "Checking for MSVC-compatible code compile flags -mms-bitfields")
 endif()
 
-set (PLIB_PLATFORM_DEFINES
-	 -DHAVE_CONFIG_H
-)
-
 set (PLIB_PLATFORM_LINK_LIBRARIES ws2_32)

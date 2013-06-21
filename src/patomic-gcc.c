@@ -1,6 +1,5 @@
 /* 
- * 30.12.2010
- * Copyright (C) 2010 Alexander Saprykin <xelfium@gmail.com>
+ * Copyright (C) 2010-2013 Alexander Saprykin <xelfium@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,10 +20,6 @@
  * This file was taken from GLib and adopted for using along with PLib.
  * See gatomic-gcc.c for other copyrights and details.
  */
-
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
 
 #include "plib.h"
 

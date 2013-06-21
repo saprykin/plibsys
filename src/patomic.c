@@ -1,6 +1,5 @@
 /* 
- * 30.12.2010
- * Copyright (C) 2010 Alexander Saprykin <xelfium@gmail.com>
+ * Copyright (C) 2010-2013 Alexander Saprykin <xelfium@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,10 +21,6 @@
  * See gatomic.c for other copyrights and details. All original comments
  * are presented.
  */
-
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
 
 #if defined (P_ATOMIC_ARM)
 #include <sched.h>

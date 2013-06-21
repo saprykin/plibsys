@@ -1,6 +1,5 @@
 /* 
- * 15.09.2010
- * Copyright (C) 2010 Alexander Saprykin <xelfium@gmail.com>
+ * Copyright (C) 2010-2013 Alexander Saprykin <xelfium@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,10 +26,6 @@
 #include <string.h>
 #include <pthread.h>
 #include <unistd.h>
-
-#ifdef HAVE_SCHED_H
-#include <sched.h>
-#endif
 
 typedef pthread_t puthread_hdl;
 

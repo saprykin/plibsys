@@ -1,6 +1,5 @@
 /* 
- * 07.04.2011
- * Copyright (C) 2010-2011 Alexander Saprykin <xelfium@gmail.com>
+ * Copyright (C) 2010-2013 Alexander Saprykin <xelfium@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

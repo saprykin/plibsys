@@ -1,6 +1,10 @@
 include (CheckCSourceCompiles)
+include (CheckTypeSize)
+include (CheckIncludeFile)
+include (TestBigEndian)
 include (${PROJECT_SOURCE_DIR}/cmake/PlatformDetect.cmake)
 set (OUTPUT_DIR ${CMAKE_BINARY_DIR})
+set (PLIB_CONFIG_FILE ${CMAKE_BINARY_DIR}/plibconfig.h)
 
 #Try to detect target platform
 string (TOLOWER ${CMAKE_SYSTEM_NAME} PLIB_TARGET_OS)
@@ -17,8 +21,7 @@ include (${PROJECT_SOURCE_DIR}/platforms/${PLIB_TARGET_PLATFORM}/platform.cmake)
 
 # Copy platform dependent files to binary dir
 file (COPY
-      ${PROJECT_SOURCE_DIR}/platforms/${PLIB_TARGET_PLATFORM}/config.h
-      ${PROJECT_SOURCE_DIR}/platforms/${PLIB_TARGET_PLATFORM}/plibconfig.h
+      ${PROJECT_SOURCE_DIR}/platforms/${PLIB_TARGET_PLATFORM}/pplatform.h
       DESTINATION ${PROJECT_BINARY_DIR})
 
 set (PLIB_INCLUDE_DIRS
@@ -60,8 +63,8 @@ set (PLIB_PUBLIC_HDRS
 )
 
 set (PLIB_PRIVATE_HDRS
-	${PROJECT_SOURCE_DIR}/platforms/${PLIB_TARGET_PLATFORM}/config.h
-	${PROJECT_SOURCE_DIR}/platforms/${PLIB_TARGET_PLATFORM}/plibconfig.h
+	${PROJECT_SOURCE_DIR}/platforms/${PLIB_TARGET_PLATFORM}/pplatform.h
+	${CMAKE_BINARY_DIR}/plibconfig.h
 )
 
 set (PLIB_SRCS
@@ -227,9 +230,116 @@ if (PLIB_MEMORY_BARRIER_NEEDED)
 	add_definitions (-DP_ATOMIC_OP_MEMORY_BARRIER_NEEDED)
 endif()
 
+if (EXISTS PLIB_CONFIG_FILE)
+	file (RENOVE ${PLIB_CONFIG_FILE})
+endif()
+
+test_big_endian (PLIB_IS_BIGENDIAN)
+
+check_include_file ("float.h" PLIB_HAVE_FLOAT_H)
+check_include_file ("values.h" PLIB_HAVE_VALUES_H)
+check_include_file ("limits.h" PLIB_HAVE_LIMITS_H)
+
+if (PLIB_HAVE_FLOAT_H)
+	set (PLIB_NEED_FLOAT_H TRUE)
+	set (PLIB_FLOAT_MIN FLT_MIN)
+	set (PLIB_FLOAT_MAX FLT_MAX)
+	set (PLIB_DOUBLE_MIN DBL_MIN)
+	set (PLIB_DOUBLE_MAX DBL_MAX)
+elseif (PLIB_HAVE_VALUES_H)
+	set (PLIB_NEED_VALUES_H TRUE)
+	set (PLIB_FLOAT_MIN MINFLOAT)
+	set (PLIB_FLOAT_MAX MAXFLOAT)
+	set (PLIB_DOUBLE_MIN MINDOUBLE)
+	set (PLIB_DOUBLE_MAX MAXDOUBLE)
+endif()
+
+if (PLIB_HAVE_LIMITS_H)
+	set (PLIB_NEED_LIMITS_H TRUE)
+	set (PLIB_SHORT_MIN SHRT_MIN)
+	set (PLIB_SHORT_MAX SHRT_MAX)
+	set (PLIB_USHORT_MAX USHRT_MAX)
+	set (PLIB_INT_MIN INT_MIN)
+	set (PLIB_INT_MAX INT_MAX)
+	set (PLIB_UINT_MAX UINT_MAX)
+	set (PLIB_LONG_MIN LONG_MIN)
+	set (PLIB_LONG_MAX LONG_MAX)
+	set (PLIB_ULONG_MAX ULONG_MAX)
+elseif (PLIB_HAVE_VALUES_H)
+	set (PLIB_NEED_VALUES_H TRUE)
+	set (PLIB_SHORT_MIN MINSHORT)
+	set (PLIB_SHORT_MAX MAXSHORT)
+	set (PLIB_USHORT_MAX "(((pushort) P_MAXSHORT) * 2 + 1)")
+	set (PLIB_INT_MIN MININT)
+	set (PLIB_INT_MAX MAXINT)
+	set (PLIB_UINT_MAX "(((puint) P_MAXINT) * 2 + 1)")
+	set (PLIB_LONG_MIN MINLONG)
+	set (PLIB_LONG_MAX MAXLONG)
+	set (PLIB_ULONG_MAX "(((pulong) P_MAXLONG) * 2 + 1)")
+endif()
+
+check_type_size ("size_t" PLIB_SIZEOF_SIZE_T)
+check_type_size ("long" PLIB_SIZEOF_LONG)
+
+file (WRITE ${PLIB_CONFIG_FILE} "#ifndef __PLIBCONFIG_H__\n")
+file (APPEND ${PLIB_CONFIG_FILE} "#define __PLIBCONFIG_H__\n\n")
+
+if (PLIB_TARGET_OS STREQUAL windows)
+	file (APPEND ${PLIB_CONFIG_FILE} "#include <winsock2.h>\n")
+	file (APPEND ${PLIB_CONFIG_FILE} "#include <windows.h>\n")
+endif()
+
+file (APPEND ${PLIB_CONFIG_FILE} "#include <pmacros.h>\n")
+file (APPEND ${PLIB_CONFIG_FILE} "#include <pplatform.h>\n")
+
+if (PLIB_NEED_FLOAT_H)
+	file (APPEND ${PLIB_CONFIG_FILE} "#include <float.h>\n")
+endif()
+
+if (PLIB_NEED_LIMITS_H)
+	file (APPEND ${PLIB_CONFIG_FILE} "#include <limits.h>\n")
+endif()
+
+if (PLIB_NEED_VALUES_H)
+	file (APPEND ${PLIB_CONFIG_FILE} "#include <values.h>\n")
+endif()
+
+file (APPEND ${PLIB_CONFIG_FILE} "\nP_BEGIN_DECLS\n\n")
+
+file (APPEND ${PLIB_CONFIG_FILE} "#define P_MINFLOAT	${PLIB_FLOAT_MIN}\n")
+file (APPEND ${PLIB_CONFIG_FILE} "#define P_MAXFLOAT	${PLIB_FLOAT_MAX}\n")
+file (APPEND ${PLIB_CONFIG_FILE} "#define P_MINDOUBLE	${PLIB_DOUBLE_MIN}\n")
+file (APPEND ${PLIB_CONFIG_FILE} "#define P_MAXDOUBLE	${PLIB_DOUBLE_MAX}\n")
+file (APPEND ${PLIB_CONFIG_FILE} "#define P_MINSHORT	${PLIB_SHORT_MIN}\n")
+file (APPEND ${PLIB_CONFIG_FILE} "#define P_MAXSHORT	${PLIB_SHORT_MAX}\n")
+file (APPEND ${PLIB_CONFIG_FILE} "#define P_MAXUSHORT	${PLIB_USHORT_MAX}\n")
+file (APPEND ${PLIB_CONFIG_FILE} "#define P_MININT	${PLIB_INT_MIN}\n")
+file (APPEND ${PLIB_CONFIG_FILE} "#define P_MAXINT	${PLIB_INT_MAX}\n")
+file (APPEND ${PLIB_CONFIG_FILE} "#define P_MAXUINT	${PLIB_UINT_MAX}\n")
+file (APPEND ${PLIB_CONFIG_FILE} "#define P_MINLONG	${PLIB_LONG_MIN}\n")
+file (APPEND ${PLIB_CONFIG_FILE} "#define P_MAXLONG	${PLIB_LONG_MAX}\n")
+file (APPEND ${PLIB_CONFIG_FILE} "#define P_MAXULONG	${PLIB_ULONG_MAX}\n\n")
+
+file (APPEND ${PLIB_CONFIG_FILE} "#define PLIB_SIZEOF_VOID_P ${CMAKE_SIZEOF_VOID_P}\n")
+file (APPEND ${PLIB_CONFIG_FILE} "${PLIB_SIZEOF_SIZE_T_CODE}\n")
+file (APPEND ${PLIB_CONFIG_FILE} "${PLIB_SIZEOF_LONG_CODE}\n")
+
+if (PLIB_IS_BIGENDIAN)
+	file (APPEND ${PLIB_CONFIG_FILE} "#define P_BYTE_ORDER P_BIG_ENDIAN\n")
+else()
+	file (APPEND ${PLIB_CONFIG_FILE} "#define P_BYTE_ORDER P_LITTLE_ENDIAN\n")
+endif()
+
+file (APPEND ${PLIB_CONFIG_FILE} "\nP_END_DECLS\n\n")
+file (APPEND ${PLIB_CONFIG_FILE} "#endif /* __PLIBCONFIG_H__ */")
+
 add_library (plib SHARED ${PLIB_SRCS} ${PLIB_PLATFORM_SRCS} ${PLIB_PUBLIC_HDRS} ${PLIB_PRIVATE_HDRS})
 add_library (plibstatic STATIC ${PLIB_SRCS} ${PLIB_PLATFORM_SRCS} ${PLIB_PUBLIC_HDRS} ${PLIB_PRIVATE_HDRS})
-add_definitions (-DPLIB_COMPILATION ${PLIB_PLATFORM_DEFINES})
+add_definitions (-DPLIB_COMPILATION)
+
+if (PLIB_PLATFORM_DEFINES)
+	add_definitions (${PLIB_PLATFORM_DEFINES})
+endif()
 
 set_target_properties (plib PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${OUTPUT_DIR})
 set_target_properties (plib PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${OUTPUT_DIR})
@@ -275,7 +385,10 @@ install (TARGETS plib plibstatic
 	ARCHIVE DESTINATION lib
 	COMPONENT Core
 )
-install (FILES ${PLIB_PUBLIC_HDRS} ${PROJECT_SOURCE_DIR}/platforms/${PLIB_TARGET_PLATFORM}/plibconfig.h
+install (FILES
+	${PLIB_PUBLIC_HDRS}
+	${CMAKE_BINARY_DIR}/plibconfig.h
+	${PROJECT_SOURCE_DIR}/platforms/${PLIB_TARGET_PLATFORM}/pplatform.h
 	DESTINATION include/PLib
 	COMPONENT Core
 )
