@@ -1,6 +1,5 @@
 /* 
- * 07.04.2011
- * Copyright (C) 2010-2011 Alexander Saprykin <xelfium@gmail.com>
+ * Copyright (C) 2010-2013 Alexander Saprykin <xelfium@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -68,7 +67,7 @@ p_cond_variable_wait (PCondVariable	*cond,
 	if (cond == NULL || mutex == NULL)
 		return -1;
 	
-	/* Cast is eligible since there is only one filed in PMutex structure */
+	/* Cast is eligible since there is only one field in PMutex structure */
 	if (cond_wait (&cond->hdl, (mutex_t *) mutex) != 0) {
 		P_ERROR ("PCondVariable: failed to wait");
 		return -1;
