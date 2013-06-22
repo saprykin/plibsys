@@ -1,6 +1,5 @@
 /* 
- * 14.09.2010
- * Copyright (C) 2010 Alexander Saprykin <xelfium@gmail.com>
+ * Copyright (C) 2010-2013 Alexander Saprykin <xelfium@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -90,7 +89,7 @@ P_LIB_API PSocketAddress *	p_socket_address_new			(pchar		*address,
 /**
  * @brief Creates new #PSocketAddress for any address representation.
  * @param family Address family.
- * @param Port number.
+ * @param port Port number.
  * @return Pointer to #PSocketAddress in case of success, NULL otherwise.
  * @since 0.0.1
  */

@@ -1,5 +1,5 @@
 /* 
- * Copyright (C) 2010-2012 Alexander Saprykin <xelfium@gmail.com>
+ * Copyright (C) 2010-2013 Alexander Saprykin <xelfium@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -121,10 +121,10 @@ P_LIB_API void		p_hash_table_remove		(PHashTable *table, pconstpointer key);
 /**
  * @brief Searches for specifed key in the hash-table by its value.
  * @param table Hash-table to lookup in.
- * @param key Value to lookup for.
+ * @param val Value to lookup keys for.
  * @param func Function to compare table's values with @a val, if NULL then
  * values will be compared as pointers.
- * @return List of keys with @a value (can be NULL), NULL if no keys ware found.
+ * @return List of keys with @a val (can be NULL), NULL if no keys were found.
  * Caller is responsible to call p_list_free() on returned list after usage.
  * @since 0.0.1
  */

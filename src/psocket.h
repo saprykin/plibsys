@@ -1,6 +1,5 @@
 /* 
- * 17.09.2010
- * Copyright (C) 2010 Alexander Saprykin <xelfium@gmail.com>
+ * Copyright (C) 2010-2013 Alexander Saprykin <xelfium@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -369,6 +368,7 @@ P_LIB_API pboolean		p_socket_close			(PSocket		*socket);
 
 /**
  * @brief Shutdowns socket's data transfer directions.
+ * @param socket #PSocket to shutdown.
  * @param shutdown_read Whether to shutdown read data transfer direction.
  * @param shutdown_write Whether to shutdown write data transfer direction.
  * @return TRUE in case of success, FALSE otherwise.

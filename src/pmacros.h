@@ -1,6 +1,5 @@
 /* 
- * 23.08.2010
- * Copyright (C) 2010 Alexander Saprykin <xelfium@gmail.com>
+ * Copyright (C) 2010-2013 Alexander Saprykin <xelfium@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -108,21 +107,30 @@
 #  define P_CC_INTEL
 #endif
 
-/* Give warning if returned from function result is not used */
+/**
+ * @def P_GNUC_WARN_UNUSED_RESULT
+ * @brief Gives warning if returned from function result is not used
+ */
 #if __GNUC__ > 3 || (__GNUC__ == 3 && __GNUC_MINOR__ >= 4)
 #  define P_GNUC_WARN_UNUSED_RESULT __attribute__((warn_unused_result))
 #else
 #  define P_GNUC_WARN_UNUSED_RESULT
 #endif
 
-/* For proper library compilation on Windows */
+/**
+ * @def P_LIB_API
+ * @brief Export symbols macro
+ */
 #ifdef P_CC_MSVC
 #  define P_LIB_API __declspec(dllexport)
 #else
 #  define P_LIB_API
 #endif
 
-/* Notify compiler that function will never return a value (e.g. abort ()) */
+/**
+ * @def P_NO_RETURN
+ * @brief Notifies compiler that function will never return a value (e.g. abort ())
+ */
 #ifdef P_CC_MSVC
 #  define P_NO_RETURN __declspec(noreturn)
 #elif defined(P_CC_GNU)
@@ -131,11 +139,15 @@
 #  define P_NO_RETURN
 #endif
 
-/* Convert pointer to int and vice versa, 32-bit only */
+/** Casts int to 32-bit pointer */
 #define P_INT_TO_POINTER(i) ((void *) (long)(i))
+/** Casts 32-bit pointer to int */
 #define P_POINTER_TO_INT(p) ((int) (long)(p))
 
-/* Platform-independent MT-safe strtok ()*/
+/**
+  * @def P_STRTOK
+  * @brief Platform-independent MT-safe strtok()
+  */
 #ifdef P_OS_WIN
 #  ifdef P_CC_MINGW
 #    define P_STRTOK(str, delim, buf) strtok(str, delim)
@@ -146,12 +158,36 @@
 #  define P_STRTOK(str, delim, buf) strtok_r(str, delim, buf)
 #endif
 
-/* Printing macroses */
+/**
+ * @def P_WARNING
+ * @brief Prints warning message
+ * @param msg Message to print.
+ */
 #define P_WARNING(msg) printf ("** Warning: %s **\n", msg)
+
+/**
+ * @def P_ERROR
+ * @brief Prints error message
+ * @param msg Message to print.
+ */
 #define P_ERROR(msg) printf ("** Error: %s **\n", msg)
+
+/**
+ * @def P_DEBUG
+ * @brief Prints debug message
+ * @param msg Message to print.
+ */
 #define P_DEBUG(msg) printf ("** Debug: %s **\n", msg)
 
-/* For .h-file declarations */
+/**
+  * @def P_BEGIN_DECLS
+  * @brief Starts .h file declarations to be exported as C functions
+  */
+/**
+  * @def P_END_DECLS
+  * @brief Closes .h file declarations to be exported as C functions,
+  * should be always used after #P_END_DECLS
+  */
 #ifdef __cplusplus
 #  define P_BEGIN_DECLS extern "C" {
 #  define P_END_DECLS }

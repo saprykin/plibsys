@@ -49,21 +49,25 @@ typedef signed int		pint32;
 /** Type for unsigned 32 bit */
 typedef unsigned int		puint32;
 
+/**
+  * @var pint64
+  * @brief Type for signed 64 bit
+  */
+
+/**
+  * @var puint64
+  * @brief Type for unsigned 64 bit
+  */
+
 #if defined (P_OS_WIN) && defined (P_CC_MSVC)
-  /** Type for signed 64 bit */
   typedef signed __int64	pint64;
-  /** Type for unsigned 64 bit */
   typedef unsigned __int64	puint64;
 #else
 #  if PLIB_SIZEOF_LONG == 8
-     /** Type for signed 64 bit */
      typedef signed long	pint64;
-     /** Type for unsigned 64 bit */
      typedef unsigned long	puint64;
 #  else
-     /** Type for signed 64 bit */
      typedef signed long long	pint64;
-     /** Type for unsigned 64 bit */
      typedef unsigned long long	puint64;
 #  endif
 #endif
@@ -97,6 +101,49 @@ typedef unsigned int	puint;
 typedef float		pfloat;
 /** Type for double precision float */
 typedef double		pdouble;
+
+/**
+  * @var pssize
+  * @brief Type for platform independent signed size_t
+  */
+
+/**
+  * @var psize
+  * @brief Type for platform independent size_t
+  */
+
+/**
+  * @def PSIZE_MODIFIER
+  * @brief Modifier for #psize type used to specify literal length:
+  * @code
+  * psize lvar = 1024524#PSIZE_MODIFIER;
+  * @endcode
+  */
+
+/**
+  * @def PSSIZE_FORMAT
+  * @brief Format of #pssize type used to i.e. printf() such a variable
+  */
+
+/**
+  * @def PSIZE_FORMAT
+  * @brief Format of #psize type used to i.e. printf() such a variable
+  */
+
+/**
+  * @def P_MAXSIZE
+  * @brief Maximum value of #psize type
+  */
+
+/**
+  * @def P_MINSSIZE
+  * @brief Minimum value of #pssize type
+  */
+
+/**
+  * @def P_MAXSSIZE
+  * @brief Maximum value of #pssize type
+  */
 
 #if PLIB_SIZEOF_SIZE_T == 8
 #  if defined (P_OS_WIN) && defined (P_CC_MSVC)
@@ -140,6 +187,31 @@ typedef double		pdouble;
   #define P_MAXSSIZE		P_MAXINT
 #endif
 
+/**
+  * @var pintptr
+  * @brief Type for platform independent signed pointer represented by integer
+  */
+
+/**
+  * @var puintptr
+  * @brief Type for platform independent unsigned pointer represented by integer
+  */
+
+/**
+  * @def PINTPTR_MODIFIER
+  * @brief Modifier for #pintptr type used to specify literal length
+  */
+
+/**
+  * @def PINTPTR_FORMAT
+  * @brief Format of #pintptr type used to i.e. printf() such a variable
+  */
+
+/**
+  * @def PUINTPTR_FORMAT
+  * @brief Format of #puintptr type used to i.e. printf() such a variable
+  */
+
 #if PLIB_SIZEOF_VOID_P == 8
 #  if defined (P_OS_WIN) && defined (P_CC_MSVC)
      typedef signed __int64	pintptr;
@@ -170,12 +242,17 @@ typedef double		pdouble;
   #define PUINTPTR_FORMAT       "u"
 #endif
 
+/** Platform independent offset_t definition */
 typedef pint64 poffset;
 
+/** Casts #ppointer to #pint value */
 #define PPOINTER_TO_INT(p)	((pint)   (p))
+/** Casts #ppointer to #puint value */
 #define PPOINTER_TO_UINT(p)	((puint)  (p))
 
+/** Casts #pint value to #ppointer */
 #define PINT_TO_POINTER(i)	((ppointer)  (i))
+/** Casts #puint value to #ppointer */
 #define PUINT_TO_POINTER(u)	((ppointer)  (u))
 
 /** Min value for 8-bit int */
@@ -205,6 +282,61 @@ typedef pint64 poffset;
 #define P_MAXINT64	((pint64)  0x7FFFFFFFFFFFFFFF)
 /** Max value for 64-bit unsigned int */
 #define P_MAXUINT64	((puint64) 0xFFFFFFFFFFFFFFFFU)
+
+/**
+  * @def PINT16_MODIFIER
+  * @brief Modifier for #pint16 type used to specify literal length
+  */
+
+/**
+  * @def PINT16_FORMAT
+  * @brief Format of #pint16 type used to i.e. printf() such a variable
+  */
+
+/**
+  * @def PUINT16_FORMAT
+  * @brief Format of #puint16 type used to i.e. printf() such a variable
+  */
+
+/**
+  * @def PINT32_MODIFIER
+  * @brief Modifier for #pint32 type used to specify literal length
+  */
+
+/**
+  * @def PINT32_FORMAT
+  * @brief Format of #pint32 type used to i.e. printf() such a variable
+  */
+
+/**
+  * @def PUINT32_FORMAT
+  * @brief Format of #puint32 type used to i.e. printf() such a variable
+  */
+
+/**
+  * @def PINT64_MODIFIER
+  * @brief Modifier for #pint64 type used to specify literal length
+  */
+
+/**
+  * @def PINT64_FORMAT
+  * @brief Format of #pint64 type used to i.e. printf() such a variable
+  */
+
+/**
+  * @def PUINT64_FORMAT
+  * @brief Format of #puint64 type used to i.e. printf() such a variable
+  */
+
+/**
+  * @def POFFSET_MODIFIER
+  * @brief Modifier for #poffset type used to specify literal length
+  */
+
+/**
+  * @def POFFSET_FORMAT
+  * @brief Format of #poffset type used to i.e. printf() such a variable
+  */
 
 #if defined (P_OS_WIN) && defined (P_CC_MSVC)
   #define PINT16_MODIFIER	"h"
@@ -238,6 +370,198 @@ typedef pint64 poffset;
 #define P_LITTLE_ENDIAN	1234
 /** Big endian mark */
 #define P_BIG_ENDIAN	4321
+
+/**
+  * @def PINT16_TO_LE
+  * @brief Swaps #pint16 variable from host to little endian order
+  * @param val Value to swap.
+  * @return Swapped value.
+  * @since 0.0.1
+  */
+
+/**
+  * @def PUINT16_TO_LE
+  * @brief Swaps #puint16 variable from host to little endian order
+  * @param val Value to swap.
+  * @return Swapped value.
+  * @since 0.0.1
+  */
+
+/**
+  * @def PINT16_TO_BE
+  * @brief Swaps #pint16 variable from host to big endian order
+  * @param val Value to swap.
+  * @return Swapped value.
+  * @since 0.0.1
+  */
+
+/**
+  * @def PUINT16_TO_BE
+  * @brief Swaps #puint16 variable from host to big endian order
+  * @param val Value to swap.
+  * @return Swapped value.
+  * @since 0.0.1
+  */
+
+/**
+  * @def PINT32_TO_LE
+  * @brief Swaps #pint32 variable from host to little endian order
+  * @param val Value to swap.
+  * @return Swapped value.
+  * @since 0.0.1
+  */
+
+/**
+  * @def PUINT32_TO_LE
+  * @brief Swaps #puint32 variable from host to little endian order
+  * @param val Value to swap.
+  * @return Swapped value.
+  * @since 0.0.1
+  */
+
+/**
+  * @def PINT32_TO_BE
+  * @brief Swaps #pint32 variable from host to big endian order
+  * @param val Value to swap.
+  * @return Swapped value.
+  * @since 0.0.1
+  */
+
+/**
+  * @def PUINT32_TO_BE
+  * @brief Swaps #puint32 variable from host to big endian order
+  * @param val Value to swap.
+  * @return Swapped value.
+  * @since 0.0.1
+  */
+
+/**
+  * @def PINT64_TO_LE
+  * @brief Swaps #pint64 variable from host to little endian order
+  * @param val Value to swap.
+  * @return Swapped value.
+  * @since 0.0.1
+  */
+
+/**
+  * @def PUINT64_TO_LE
+  * @brief Swaps #puint64 variable from host to little endian order
+  * @param val Value to swap.
+  * @return Swapped value.
+  * @since 0.0.1
+  */
+
+/**
+  * @def PINT64_TO_BE
+  * @brief Swaps #pint64 variable from host to big endian order
+  * @param val Value to swap.
+  * @return Swapped value.
+  * @since 0.0.1
+  */
+
+/**
+  * @def PUINT64_TO_BE
+  * @brief Swaps #puint64 variable from host to big endian order
+  * @param val Value to swap.
+  * @return Swapped value.
+  * @since 0.0.1
+  */
+
+/**
+  * @def PLONG_TO_LE
+  * @brief Swaps #plong variable from host to little endian order
+  * @param val Value to swap.
+  * @return Swapped value.
+  * @since 0.0.1
+  */
+
+/**
+  * @def PULONG_TO_LE
+  * @brief Swaps #pulong variable from host to little endian order
+  * @param val Value to swap.
+  * @return Swapped value.
+  * @since 0.0.1
+  */
+
+/**
+  * @def PLONG_TO_BE
+  * @brief Swaps #plong variable from host to big endian order
+  * @param val Value to swap.
+  * @return Swapped value.
+  * @since 0.0.1
+  */
+
+/**
+  * @def PULONG_TO_BE
+  * @brief Swaps #pulong variable from host to big endian order
+  * @param val Value to swap.
+  * @return Swapped value.
+  * @since 0.0.1
+  */
+
+/**
+  * @def PSSIZE_TO_LE
+  * @brief Swaps #pssize variable from host to little endian order
+  * @param val Value to swap.
+  * @return Swapped value.
+  * @since 0.0.1
+  */
+
+/**
+  * @def PSIZE_TO_LE
+  * @brief Swaps #psize variable from host to little endian order
+  * @param val Value to swap.
+  * @return Swapped value.
+  * @since 0.0.1
+  */
+
+/**
+  * @def PSSIZE_TO_BE
+  * @brief Swaps #pssize variable from host to big endian order
+  * @param val Value to swap.
+  * @return Swapped value.
+  * @since 0.0.1
+  */
+
+/**
+  * @def PSIZE_TO_BE
+  * @brief Swaps #psize variable from host to big endian order
+  * @param val Value to swap.
+  * @return Swapped value.
+  * @since 0.0.1
+  */
+
+/**
+  * @def PINT_TO_LE
+  * @brief Swaps #pint variable from host to little endian order
+  * @param val Value to swap.
+  * @return Swapped value.
+  * @since 0.0.1
+  */
+
+/**
+  * @def PUINT_TO_LE
+  * @brief Swaps #puint variable from host to little endian order
+  * @param val Value to swap.
+  * @return Swapped value.
+  * @since 0.0.1
+  */
+
+/**
+  * @def PINT_TO_BE
+  * @brief Swaps #pint variable from host to big endian order
+  * @param val Value to swap.
+  * @return Swapped value.
+  * @since 0.0.1
+  */
+
+/**
+  * @def PUINT_TO_BE
+  * @brief Swaps #puint variable from host to big endian order
+  * @param val Value to swap.
+  * @return Swapped value.
+  * @since 0.0.1
+  */
 
 #if P_BYTE_ORDER == P_LITTLE_ENDIAN
   #define PINT16_TO_LE(val)	((pint16) (val))

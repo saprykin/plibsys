@@ -1,6 +1,5 @@
 /* 
- * 16.09.2010
- * Copyright (C) 2010 Alexander Saprykin <xelfium@gmail.com>
+ * Copyright (C) 2010-2013 Alexander Saprykin <xelfium@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -96,6 +95,14 @@ P_LIB_API pboolean	p_mutex_unlock	(PMutex *mutex);
  * manually.
  */
 P_LIB_API void		p_mutex_free	(PMutex *mutex);
+
+/**
+ * @struct PStaticMutex
+ * @brief Static mutex used without explicit memory allocation
+ *
+ * On some platforms it is supported natively, and on others it is
+ * emulated using #PMutex object.
+ */
 
 /** Locks static mutex. */
 #define p_static_mutex_lock(mutex)	p_mutex_lock (p_static_mutex_get_mutex (mutex))
