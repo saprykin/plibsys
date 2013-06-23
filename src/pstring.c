@@ -1,6 +1,5 @@
 /* 
- * 14.01.2011
- * Copyright (C) 2011 Alexander Saprykin <xelfium@gmail.com>
+ * Copyright (C) 2011-2013 Alexander Saprykin <xelfium@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -56,12 +55,19 @@ p_strchomp (const pchar *str)
 	pos_start = 0;
 	pos_end = strlen (str) - 1;
 
-	while (isspace (* ((const puchar *) ptr++)))
+	if (pos_start == pos_end) {
+		if (isspace (* ((const puchar *) ptr++)))
+			return (p_strdup ("\0"));
+		else
+			return (p_strdup (str));
+	}
+
+	while (pos_start <= pos_end && isspace (* ((const puchar *) ptr++)))
 		++pos_start;
 
 	ptr = str + pos_end;
 
-	while (isspace (* ((const puchar *) ptr--)))
+	while (pos_end >= 0 && isspace (* ((const puchar *) ptr--)))
 		--pos_end;
 
 	if (pos_end <= pos_start)
