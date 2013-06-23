@@ -1,6 +1,0 @@
-Name: PLib Uninstalled
-Description: C Utility Library, Not Installed
-Version: @VERSION@
-Libs: ${pc_top_builddir}/${pcfiledir}/src/libplib.la
-Cflags: -I${pc_top_builddir}/${pcfiledir} -I${pc_top_builddir}/${pcfiledir}/@srcdir@ -I${pc_top_builddir}/${pcfiledir}/@srcdir@/src
-
