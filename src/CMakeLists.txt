@@ -6,6 +6,11 @@ include (${PROJECT_SOURCE_DIR}/cmake/PlatformDetect.cmake)
 set (OUTPUT_DIR ${CMAKE_BINARY_DIR})
 set (PLIB_CONFIG_FILE ${CMAKE_BINARY_DIR}/plibconfig.h)
 
+configure_file (
+	"plib.def.in"
+	"plib.def"
+)
+
 #Try to detect target platform
 string (TOLOWER ${CMAKE_SYSTEM_NAME} PLIB_TARGET_OS)
 
@@ -66,6 +71,10 @@ set (PLIB_PRIVATE_HDRS
 	${PROJECT_SOURCE_DIR}/platforms/${PLIB_TARGET_PLATFORM}/pplatform.h
 	${CMAKE_BINARY_DIR}/plibconfig.h
 )
+
+if (PLIB_TARGET_OS STREQUAL "windows")
+	set (PLIB_PRIVATE_HDRS ${PLIB_PRIVATE_HDRS} plib.def)
+endif()
 
 set (PLIB_SRCS
 	patomic.c
