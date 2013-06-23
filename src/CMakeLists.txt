@@ -7,8 +7,8 @@ set (OUTPUT_DIR ${CMAKE_BINARY_DIR})
 set (PLIB_CONFIG_FILE ${CMAKE_BINARY_DIR}/plibconfig.h)
 
 configure_file (
-	"plib.def.in"
-	"plib.def"
+	"${PROJECT_SOURCE_DIR}/src/plib.def.in"
+	"${CMAKE_BINARY_DIR}/plib.def"
 )
 
 #Try to detect target platform
@@ -73,7 +73,7 @@ set (PLIB_PRIVATE_HDRS
 )
 
 if (PLIB_TARGET_OS STREQUAL "windows")
-	set (PLIB_PRIVATE_HDRS ${PLIB_PRIVATE_HDRS} plib.def)
+	set (PLIB_PRIVATE_HDRS ${PLIB_PRIVATE_HDRS} ${CMAKE_BINARY_DIR}/plib.def)
 endif()
 
 set (PLIB_SRCS
