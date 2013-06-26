@@ -15,5 +15,11 @@ add_executable (plist_test ${PLIST_TEST_SRCS})
 target_link_libraries (plist_test ${Boost_LIBRARIES} plib)
 set_target_properties (plist_test PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${OUTPUT_DIR})
 
+set (PHASH_TEST_SRCS phash_test.cpp)
+add_executable (phash_test ${PHASH_TEST_SRCS})
+target_link_libraries (phash_test ${Boost_LIBRARIES} plib)
+set_target_properties (phash_test PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${OUTPUT_DIR})
+
 add_test (NAME pstring_test COMMAND pstring_test)
 add_test (NAME plist_test COMMAND plist_test)
+add_test (NAME phash_test COMMAND phash_test)
