@@ -55,22 +55,18 @@ p_strchomp (const pchar *str)
 	pos_start = 0;
 	pos_end = strlen (str) - 1;
 
-	if (pos_start == pos_end) {
-		if (isspace (* ((const puchar *) ptr++)))
-			return (p_strdup ("\0"));
-		else
-			return (p_strdup (str));
-	}
-
-	while (pos_start <= pos_end && isspace (* ((const puchar *) ptr++)))
+	while (pos_start < pos_end && isspace (* ((const puchar *) ptr++)))
 		++pos_start;
 
 	ptr = str + pos_end;
 
-	while (pos_end >= 0 && isspace (* ((const puchar *) ptr--)))
+	while (pos_end > 0 && isspace (* ((const puchar *) ptr--)))
 		--pos_end;
 
-	if (pos_end <= pos_start)
+	if (pos_end < pos_start)
+		return p_strdup ("\0");
+
+	if (pos_end == pos_start && isspace (* ((const puchar *) (str + pos_end))))
 		return p_strdup ("\0");
 
 	str_len = pos_end - pos_start + 2;

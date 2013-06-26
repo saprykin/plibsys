@@ -13,7 +13,10 @@ configure_file (
 	"${PROJECT_BINARY_DIR}/Doxyfile"
 )
 
+enable_testing ()
+
 subdirs (src)
+subdirs (tests)
 subdirs (cmake)
 
 set (CPACK_PACKAGE_NAME ${PROJECT_NAME}-installer)
