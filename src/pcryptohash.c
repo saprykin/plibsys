@@ -1,6 +1,5 @@
 /* 
- * 21.12.2010
- * Copyright (C) 2010 Alexander Saprykin <xelfium@gmail.com>
+ * Copyright (C) 2010-2013 Alexander Saprykin <xelfium@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,6 +44,7 @@ struct _PCryptoHash {
 	void		*context;
 	puint		hash_len;
 	pboolean	closed;
+	pboolean	reseted;
 	void *		(*new)		(void);
 	void		(*update)	(void *hash, const puchar *data, psize len);
 	void		(*finish)	(void *hash);
@@ -81,6 +81,7 @@ p_crypto_hash_new (PCryptoHashType type)
 
 	ret->type = type;
 	ret->closed = FALSE;
+	ret->reseted = TRUE;
 
 	if ((ret->context = ret->new ()) == NULL) {
 		p_free (ret);
@@ -100,6 +101,8 @@ p_crypto_hash_update (PCryptoHash *hash, const puchar *data, psize len)
 		return;
 
 	hash->update (hash->context, data, len);
+
+	hash->reseted = FALSE;
 }
 
 P_LIB_API void
@@ -110,6 +113,7 @@ p_crypto_hash_reset (PCryptoHash *hash)
 
 	hash->reset (hash->context);
 	hash->closed = FALSE;
+	hash->reseted = TRUE;
 }
 
 P_LIB_API pchar *
@@ -119,7 +123,7 @@ p_crypto_hash_get_string (PCryptoHash *hash)
 	puint		i;
 	const puchar	*digest;
 
-	if (hash == NULL)
+	if (hash == NULL || hash->reseted)
 		return NULL;
 
 	if (!hash->closed) {
@@ -144,8 +148,18 @@ p_crypto_hash_get_digest (PCryptoHash *hash, puchar *buf, psize *len)
 {
 	const puchar *digest;
 
-	if (hash == NULL || buf == NULL || len == NULL)
+	if (len == NULL)
 		return;
+
+	if (hash == NULL || buf == NULL) {
+		*len = 0;
+		return;
+	}
+
+	if (hash->reseted) {
+		*len = 0;
+		return;
+	}
 
 	if (hash->hash_len < *len) {
 		*len = 0;
@@ -191,5 +205,6 @@ p_crypto_hash_free (PCryptoHash *hash)
 		return;
 
 	hash->free (hash->context);
+	p_free (hash);
 }
 
