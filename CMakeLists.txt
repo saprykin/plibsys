@@ -16,8 +16,18 @@ configure_file (
 enable_testing ()
 
 subdirs (src)
-subdirs (tests)
 subdirs (cmake)
+
+message (STATUS "Checking whether to enable unit tests")
+
+find_package (Boost COMPONENTS unit_test_framework)
+
+if (Boost_FOUND)
+	message (STATUS "Checking whether to enable unit tests - yes")
+	subdirs (tests)
+else()
+	message (STATUS "Checking whether to enable unit tests - no")
+endif()
 
 set (CPACK_PACKAGE_NAME ${PROJECT_NAME}-installer)
 set (CPACK_PACKAGE_VENDOR "Alexander Saprykin")
