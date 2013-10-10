@@ -122,7 +122,8 @@ P_LIB_API pboolean	p_ini_file_is_key_exists	(const PIniFile	*file,
  * @param section Section to get from.
  * @param key Key to get value from.
  * @param default_val Default value to return if no specified key exists.
- * @return Key's value in case of success, @a default_value otherwise.
+ * @return Key's value in case of success, @a default_value otherwise. It's
+ * a caller responsibility to p_free() string after usage.
  * @since 0.0.1
  */
 P_LIB_API pchar *	p_ini_file_parameter_string	(const PIniFile	*file,
@@ -174,6 +175,21 @@ P_LIB_API pboolean	p_ini_file_parameter_boolean	(const PIniFile	*file,
 							 const pchar	*section,
 							 const pchar	*key,
 							 pboolean	default_val);
+
+/**
+ * @brief Gets specified parameter's value as a list of strings separated
+ * with space or tabs. @a file should be parsed before.
+ * @param file #PIniFile to get value from.
+ * @param section Section to get from.
+ * @param key Key to get value from.
+ * @return #PList of strings. It's a caller responsibility
+ * to p_free() each string and to free returned list with p_list_free().
+ * NULL will be returned if no parameter with the given name exists.
+ * @since 0.0.1
+ */
+P_LIB_API PList *	p_ini_file_parameter_list	(const PIniFile	*file,
+							 const pchar	*section,
+							 const pchar	*key);
 
 P_END_DECLS
 

@@ -24,6 +24,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <ctype.h>
 
 #define	P_INI_MAX_LINE_LENGTH	1024
 
@@ -393,6 +394,56 @@ p_ini_file_parameter_boolean (const PIniFile	*file,
 		ret = TRUE;
 	else
 		ret = FALSE;
+
+	p_free (val);
+
+	return ret;
+}
+
+P_LIB_API PList *
+p_ini_file_parameter_list (const PIniFile	*file,
+			   const pchar		*section,
+			   const pchar		*key)
+{
+	PList	*ret = NULL;
+	pchar	*val, *str;
+	pchar	buf[P_INI_MAX_LINE_LENGTH + 1];
+	pint	len, buf_cnt;
+
+	if ((val = __p_ini_find_parameter (file, section, key)) == NULL)
+		return NULL;
+
+	len = strlen (val);
+
+	if (len < 3 || val[0] != '{' || val[len - 1] != '}') {
+		p_free (val);
+		return NULL;
+	}
+
+	/* Skip first brace '{' symbol */
+	str = val + 1;
+	buf[0] = '\0';
+	buf_cnt = 0;
+
+	while (*str && *str != '}') {
+		if (!isspace (* ((const puchar *) str)))
+			buf[buf_cnt++] = *str;
+		else {
+			buf[buf_cnt] = '\0';
+
+			if (buf_cnt > 0)
+				ret = p_list_append (ret, p_strdup (buf));
+
+			buf_cnt = 0;
+		}
+
+		++str;
+	}
+
+	if (buf_cnt > 0) {
+		ret = p_list_append (ret, p_strdup (buf));
+		buf[buf_cnt] = '\0';
+	}
 
 	p_free (val);
 
