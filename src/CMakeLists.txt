@@ -59,6 +59,7 @@ set (PLIB_PUBLIC_HDRS
 	psocket.h
 	psocketaddress.h
 	pstring.h
+        ptimeprofiler.h
 	puthread.h
 )
 
@@ -86,6 +87,7 @@ set (PLIB_SRCS
 	psocket.c
 	psocketaddress.c
 	pstring.c
+        ptimeprofiler.c
 	puthread.c
 )
 
