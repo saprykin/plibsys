@@ -441,8 +441,8 @@ p_ini_file_parameter_list (const PIniFile	*file,
 	}
 
 	if (buf_cnt > 0) {
-		ret = p_list_append (ret, p_strdup (buf));
 		buf[buf_cnt] = '\0';
+		ret = p_list_append (ret, p_strdup (buf));
 	}
 
 	p_free (val);
