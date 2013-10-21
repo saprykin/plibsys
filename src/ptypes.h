@@ -653,7 +653,7 @@ typedef pint64 poffset;
  * @since 0.0.1
  */
 #define PUINT16_SWAP_BYTES(val)			\
-	((puint16) (((puint16) (val)) >> 8) | ((puint16) (val)) << 8))
+	((puint16) (((puint16) (val)) >> 8 | ((puint16) (val)) << 8))
 
 /**
  * @brief Swaps 32-bit unsigned int.
@@ -674,7 +674,7 @@ typedef pint64 poffset;
  * @since 0.0.1
  */
 #define PUINT64_SWAP_BYTES(val) ((puint64) (				\
-	(((puint64) (val))  >> 56)) |					\
+	(((puint64) (val))  >> 56) |					\
 	((((puint64) (val)) << 40) & ((puint64) 0x00FF000000000000U)) |	\
 	((((puint64) (val)) << 24) & ((puint64) 0x0000FF0000000000U)) |	\
 	((((puint64) (val)) <<  8) & ((puint64) 0x000000FF00000000U)) |	\
