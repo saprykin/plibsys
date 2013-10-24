@@ -183,6 +183,7 @@ p_ini_file_parse (PIniFile *file)
 	pchar		src_line[P_INI_MAX_LINE_LENGTH + 1],
 			key[P_INI_MAX_LINE_LENGTH + 1],
 			value[P_INI_MAX_LINE_LENGTH + 1];
+	pint		bom_shift;
 
 	if (file == NULL || file->is_parsed)
 		return FALSE;
@@ -194,8 +195,25 @@ p_ini_file_parse (PIniFile *file)
 	section		= NULL;
 	param		= NULL;
 
+	memset (src_line, 0, sizeof (src_line));
+
 	while (fgets (src_line, sizeof (src_line), in_file) != NULL) {
-		dst_line = p_strchomp (src_line);
+		/* UTF-8, UTF-16 and UTF-32 BOM detection */
+		if ((puchar) src_line[0] == 0xEF && (puchar) src_line[1] == 0xBB && (puchar) src_line[2] == 0xBF)
+			bom_shift = 3;
+		else if (((puchar) src_line[0] == 0xFE && (puchar) src_line[1] == 0xFF) ||
+			 ((puchar) src_line[0] == 0xFF && (puchar) src_line[1] == 0xFE))
+			bom_shift = 2;
+		else if ((puchar) src_line[0] == 0x00 && (puchar) src_line[1] == 0x00 &&
+			 (puchar) src_line[2] == 0xFE && (puchar) src_line[3] == 0xFF)
+			bom_shift = 4;
+		else if ((puchar) src_line[0] == 0xFF && (puchar) src_line[1] == 0xFE &&
+			 (puchar) src_line[2] == 0x00 && (puchar) src_line[3] == 0x00)
+			bom_shift = 4;
+		else
+			bom_shift = 0;
+
+		dst_line = p_strchomp (src_line + bom_shift);
 
 		if (dst_line == NULL)
 			continue;
@@ -234,6 +252,7 @@ p_ini_file_parse (PIniFile *file)
 		}
 
 		p_free (dst_line);
+		memset (src_line, 0, sizeof (src_line));
 	}
 
 	if (section != NULL) {
