@@ -145,9 +145,9 @@
 #define P_POINTER_TO_INT(p) ((int) (long)(p))
 
 /**
-  * @def P_STRTOK
-  * @brief Platform-independent MT-safe strtok()
-  */
+ * @def P_STRTOK
+ * @brief Platform-independent MT-safe strtok()
+ */
 #ifdef P_OS_WIN
 #  ifdef P_CC_MINGW
 #    define P_STRTOK(str, delim, buf) strtok(str, delim)
@@ -157,6 +157,12 @@
 #else
 #  define P_STRTOK(str, delim, buf) strtok_r(str, delim, buf)
 #endif
+
+/**
+ * @def P_UNUSED
+ * @brief Macro to by-pass compiler warning on usused variables
+ */
+#define P_UNUSED(a) ((void) a);
 
 /**
  * @def P_WARNING
