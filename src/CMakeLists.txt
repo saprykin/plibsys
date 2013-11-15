@@ -142,8 +142,8 @@ if (PLIB_C_COMPILER MATCHES "gcc|qcc")
 			check_c_source_compiles (
 					"main () {
 							int tmp1, tmp2, tmp3;
-							__asm__ __volatile__("casx [%2], %0, %1"
-								: "=&r" (tmp1), "=&r" (tmp2) : "r" (&tmp3));
+							__asm__ __volatile__(\"casx [%2], %0, %1\"
+								: \"=&r\" (tmp1), \"=&r\" (tmp2) : \"r\" (&tmp3));
 					}"
 					PLIB_HAS_SPARCV9
 			)
