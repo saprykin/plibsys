@@ -31,7 +31,11 @@ p_strdup (const pchar *str)
 	if (str == NULL)
 		return NULL;
 
-	len = strlen (str) + 1;
+	len = strlen (str);
+
+	if (len != 0)
+		len += 1;
+
 	if ((ret = p_malloc (len)) == NULL)
 		return NULL;
 
