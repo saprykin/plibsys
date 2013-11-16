@@ -1,6 +1,5 @@
 /*
- * 08.11.2010
- * Copyright (C) 2010 Alexander Saprykin <xelfium@gmail.com>
+ * Copyright (C) 2010-2013 Alexander Saprykin <xelfium@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,14 +40,14 @@ struct _PSemaphore {
 	pint			init_val;
 };
 
-extern pchar *	p_ipc_get_platform_key		(const pchar		*name,
-						 pboolean		posix);
+extern pchar *	__p_ipc_get_platform_key	(const pchar	*name,
+						 pboolean	posix);
 
-static pboolean create_handle (PSemaphore *sem);
-static void clean_handle (PSemaphore *sem);
+static pboolean __p_semaphore_create_handle (PSemaphore *sem);
+static void __p_semaphore_clean_handle (PSemaphore *sem);
 
 static pboolean
-create_handle (PSemaphore *sem)
+__p_semaphore_create_handle (PSemaphore *sem)
 {
 	if (sem == NULL || sem->platform_key == NULL)
 		return FALSE;
@@ -63,7 +62,7 @@ create_handle (PSemaphore *sem)
 }
 
 static void
-clean_handle (PSemaphore *sem)
+__p_semaphore_clean_handle (PSemaphore *sem)
 {
 	if (sem == NULL)
 		return;
@@ -100,13 +99,13 @@ p_semaphore_new (const pchar *name,  pint init_val, PSemaphoreAccessMode mode)
 	strcpy (new_name, name);
 	strcpy (new_name, P_SEM_SUFFIX);
 
-	ret->platform_key = p_ipc_get_platform_key (new_name, FALSE);
+	ret->platform_key = __p_ipc_get_platform_key (new_name, FALSE);
 	ret->init_val = init_val;
 	ret->mode = mode;
 
 	p_free (new_name);
 
-	if (!create_handle (ret)) {
+	if (!__p_semaphore_create_handle (ret)) {
 		P_ERROR ("PSemaphore: failed to create system handle");
 		p_semaphore_free (ret);
 		return NULL;
@@ -153,11 +152,10 @@ p_semaphore_free (PSemaphore *sem)
 	if (sem == NULL)
 		return;
 
-	clean_handle (sem);
+	__p_semaphore_clean_handle (sem);
 
 	if (sem->platform_key)
 		p_free (sem->platform_key);
 
 	p_free (sem);
 }
-

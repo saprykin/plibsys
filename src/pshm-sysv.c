@@ -1,6 +1,5 @@
 /*
- * 08.11.2010
- * Copyright (C) 2010 Alexander Saprykin <xelfium@gmail.com>
+ * Copyright (C) 2010-2013 Alexander Saprykin <xelfium@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,14 +32,10 @@
 #include <sys/types.h>
 #include <sys/ipc.h>
 
-#ifndef P_OS_WIN
-extern pchar *	p_ipc_unix_get_temp_dir		(void);
-extern pint	p_ipc_unix_create_key_file	(const pchar		*file_name);
-extern pint	p_ipc_unix_get_ftok_key		(const pchar		*file_name);
-#endif
-
-extern pchar *	p_ipc_get_platform_key		(const pchar		*name,
-						 pboolean		posix);
+extern pint	__p_ipc_unix_create_key_file	(const pchar	*file_name);
+extern pint	__p_ipc_unix_get_ftok_key	(const pchar	*file_name);
+extern pchar *	__p_ipc_get_platform_key	(const pchar	*name,
+						 pboolean	posix);
 
 #define P_SHM_SUFFIX		"_p_shm_object"
 
@@ -58,11 +53,11 @@ struct _PShm {
 	PShmAccessPerms	perms;
 };
 
-static pboolean create_handle (PShm *shm);
-static void clean_handle (PShm *shm);
+static pboolean __p_semaphore_create_handle (PShm *shm);
+static void __p_semaphore_clean_handle (PShm *shm);
 
 static pboolean
-create_handle (PShm *shm)
+__p_semaphore_create_handle (PShm *shm)
 {
 	pboolean	is_exists;
 	pint		flags, built;
@@ -73,16 +68,16 @@ create_handle (PShm *shm)
 
 	is_exists = FALSE;
 
-	if ((built = p_ipc_unix_create_key_file (shm->platform_key)) == -1) {
+	if ((built = __p_ipc_unix_create_key_file (shm->platform_key)) == -1) {
 		P_ERROR ("PShm: failed to create key file");
-		clean_handle (shm);
+		__p_semaphore_clean_handle (shm);
 		return FALSE;
 	} else if (built == 0)
 		shm->file_created = TRUE;
 
-	if ((shm->unix_key = p_ipc_unix_get_ftok_key (shm->platform_key)) == -1) {
+	if ((shm->unix_key = __p_ipc_unix_get_ftok_key (shm->platform_key)) == -1) {
 		P_ERROR ("PShm: failed to get unique IPC key");
-		clean_handle (shm);
+		__p_semaphore_clean_handle (shm);
 		return FALSE;
 	}
 
@@ -94,7 +89,7 @@ create_handle (PShm *shm)
 
 			if ((shm->shm_hdl = shmget (shm->unix_key, 0, flags)) == -1) {
 				P_ERROR ("PShm: shmget failed");
-				clean_handle (shm);
+				__p_semaphore_clean_handle (shm);
 				return FALSE;
 			}
 		}
@@ -103,7 +98,7 @@ create_handle (PShm *shm)
 
 	if (shmctl (shm->shm_hdl, IPC_STAT, &shm_stat) == -1) {
 		P_ERROR ("PShm: failed to get memory size");
-		clean_handle (shm);
+		__p_semaphore_clean_handle (shm);
 		return FALSE;
 	}
 
@@ -113,14 +108,14 @@ create_handle (PShm *shm)
 
 	if (shm->shm_hdl == P_SHM_INVALID_HDL || (shm->addr = shmat (shm->shm_hdl, 0, flags)) == (void *) -1) {
 		P_ERROR ("PShm: shmget or shmat failed");
-		clean_handle (shm);
+		__p_semaphore_clean_handle (shm);
 		return FALSE;
 	}
 
 	if ((shm->sem = p_semaphore_new (shm->platform_key, 1,
 					 is_exists ? P_SEM_ACCESS_OPEN : P_SEM_ACCESS_CREATE)) == NULL) {
 		P_ERROR ("PShm: failed create PSemaphore object");
-		clean_handle (shm);
+		__p_semaphore_clean_handle (shm);
 		return FALSE;
 	}
 
@@ -128,7 +123,7 @@ create_handle (PShm *shm)
 }
 
 static void
-clean_handle (PShm *shm)
+__p_semaphore_clean_handle (PShm *shm)
 {
 	struct shmid_ds shm_stat;
 
@@ -188,14 +183,14 @@ p_shm_new (const pchar		*name,
 	strcpy (new_name, name);
 	strcat (new_name, P_SHM_SUFFIX);
 
-	ret->platform_key = p_ipc_get_platform_key (new_name, FALSE);
+	ret->platform_key = __p_ipc_get_platform_key (new_name, FALSE);
 	ret->perms = perms;
 
 	ret->size = size;
 
 	p_free (new_name);
 
-	if (!create_handle (ret)) {
+	if (!__p_semaphore_create_handle (ret)) {
 		P_ERROR ("PShm: failed to create system handle");
 		p_shm_free (ret);
 		return NULL;
@@ -213,7 +208,7 @@ p_shm_free (PShm *shm)
 	if (shm == NULL)
 		return;
 
-	clean_handle (shm);
+	__p_semaphore_clean_handle (shm);
 
 	if (shm->platform_key)
 		p_free (shm->platform_key);
@@ -264,4 +259,3 @@ p_shm_get_size (PShm *shm)
 
 	return shm->size;
 }
-

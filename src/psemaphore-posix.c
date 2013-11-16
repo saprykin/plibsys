@@ -1,6 +1,5 @@
 /*
- * 08.11.2010
- * Copyright (C) 2010 Alexander Saprykin <xelfium@gmail.com>
+ * Copyright (C) 2010-2013 Alexander Saprykin <xelfium@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,14 +28,8 @@
 #include <fcntl.h>
 #include <semaphore.h>
 
-#ifndef P_OS_WIN
-extern pchar *	p_ipc_unix_get_temp_dir		(void);
-extern pint	p_ipc_unix_create_key_file	(const pchar		*file_name);
-extern pint	p_ipc_unix_get_ftok_key		(const pchar		*file_name);
-#endif
-
-extern pchar *	p_ipc_get_platform_key		(const pchar		*name,
-						 pboolean		posix);
+extern pchar *	__p_ipc_get_platform_key	(const pchar	*name,
+						 pboolean	posix);
 
 #define P_SEM_SUFFIX		"_p_sem_object"
 #define P_SEM_ERROR_BUF_SIZE	255
@@ -59,11 +52,11 @@ struct _PSemaphore {
 	pint			init_val;
 };
 
-static pboolean create_handle (PSemaphore *sem);
-static void clean_handle (PSemaphore *sem);
+static pboolean __p_semaphore_create_handle (PSemaphore *sem);
+static void __p_semaphore_clean_handle (PSemaphore *sem);
 
 static pboolean
-create_handle (PSemaphore *sem)
+__p_semaphore_create_handle (PSemaphore *sem)
 {
 	if (sem == NULL || sem->platform_key == NULL)
 		return FALSE;
@@ -88,7 +81,7 @@ create_handle (PSemaphore *sem)
 
 	if (sem->sem_hdl == P_SEM_INVALID_HDL) {
 		P_ERROR ("PSemaphore: sem_open failed");
-		clean_handle (sem);
+		__p_semaphore_clean_handle (sem);
 		return FALSE;
 	}
 
@@ -96,7 +89,7 @@ create_handle (PSemaphore *sem)
 }
 
 static void
-clean_handle (PSemaphore *sem)
+__p_semaphore_clean_handle (PSemaphore *sem)
 {
 	if (sem == NULL)
 		return;
@@ -137,13 +130,13 @@ p_semaphore_new (const pchar *name,  pint init_val, PSemaphoreAccessMode mode)
 	strcpy (new_name, name);
 	strcat (new_name, P_SEM_SUFFIX);
 
-	ret->platform_key = p_ipc_get_platform_key (new_name, TRUE);
+	ret->platform_key = __p_ipc_get_platform_key (new_name, TRUE);
 	ret->init_val = init_val;
 	ret->mode = mode;
 
 	p_free (new_name);
 
-	if (!create_handle (ret)) {
+	if (!__p_semaphore_create_handle (ret)) {
 		P_ERROR ("PSemaphore: failed to create system handle");
 		p_semaphore_free (ret);
 		return NULL;
@@ -161,7 +154,7 @@ p_semaphore_acquire (PSemaphore *sem)
 	if (sem == NULL)
 		return FALSE;
 
-	while ((res = sem_wait(sem->sem_hdl)) == -1 && errno == EINTR)
+	while ((res = sem_wait (sem->sem_hdl)) == -1 && errno == EINTR)
 		;
 
 	ret = (res == 0);
@@ -194,11 +187,10 @@ p_semaphore_free (PSemaphore *sem)
 	if (sem == NULL)
 		return;
 
-	clean_handle (sem);
+	__p_semaphore_clean_handle (sem);
 
 	if (sem->platform_key)
 		p_free (sem->platform_key);
 
 	p_free (sem);
 }
-

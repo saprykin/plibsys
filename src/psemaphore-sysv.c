@@ -1,6 +1,5 @@
 /*
- * 08.11.2010
- * Copyright (C) 2010 Alexander Saprykin <xelfium@gmail.com>
+ * Copyright (C) 2010-2013 Alexander Saprykin <xelfium@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,14 +31,10 @@
 #include <sys/types.h>
 #include <sys/ipc.h>
 
-#ifndef P_OS_WIN
-extern pchar *	p_ipc_unix_get_temp_dir		(void);
-extern pint	p_ipc_unix_create_key_file	(const pchar		*file_name);
-extern pint	p_ipc_unix_get_ftok_key		(const pchar		*file_name);
-#endif
-
-extern pchar *	p_ipc_get_platform_key		(const pchar		*name,
-						 pboolean		posix);
+extern pint	__p_ipc_unix_create_key_file	(const pchar	*file_name);
+extern pint	__p_ipc_unix_get_ftok_key	(const pchar	*file_name);
+extern pchar *	__p_ipc_get_platform_key	(const pchar	*name,
+						 pboolean	posix);
 
 #define P_SEM_SUFFIX		"_p_sem_object"
 #define P_SEM_ERROR_BUF_SIZE	255
@@ -68,11 +63,11 @@ struct _PSemaphore {
 	pint			init_val;
 };
 
-static pboolean create_handle (PSemaphore *sem);
-static void clean_handle (PSemaphore *sem);
+static pboolean __p_semaphore_create_handle (PSemaphore *sem);
+static void __p_semaphore_clean_handle (PSemaphore *sem);
 
 static pboolean
-create_handle (PSemaphore *sem)
+__p_semaphore_create_handle (PSemaphore *sem)
 {
 	pint	built;
 	p_semun	semun_op;
@@ -80,16 +75,16 @@ create_handle (PSemaphore *sem)
 	if (sem == NULL || sem->platform_key == NULL)
 		return FALSE;
 
-	if ((built = p_ipc_unix_create_key_file (sem->platform_key)) == -1) {
+	if ((built = __p_ipc_unix_create_key_file (sem->platform_key)) == -1) {
 		P_ERROR ("PSemaphore: failed to create key file");
-		clean_handle (sem);
+		__p_semaphore_clean_handle (sem);
 		return FALSE;
 	} else if (built == 0)
 		sem->file_created = TRUE;
 
-	if ((sem->unix_key = p_ipc_unix_get_ftok_key (sem->platform_key)) == -1) {
+	if ((sem->unix_key = __p_ipc_unix_get_ftok_key (sem->platform_key)) == -1) {
 		P_ERROR ("PSemaphore: failed to get unique IPC key");
-		clean_handle (sem);
+		__p_semaphore_clean_handle (sem);
 		return FALSE;
 	}
 
@@ -105,7 +100,7 @@ create_handle (PSemaphore *sem)
 
 	if (sem->sem_hdl == P_SEM_INVALID_HDL) {
 		P_ERROR ("PSemaphore: semget failed");
-		clean_handle (sem);
+		__p_semaphore_clean_handle (sem);
 		return FALSE;
 	}
 
@@ -113,7 +108,7 @@ create_handle (PSemaphore *sem)
 		semun_op.val = sem->init_val;
 		if (semctl (sem->sem_hdl, 0, SETVAL, semun_op) == -1) {
 			P_ERROR ("PSemaphore: failed to set initial value");
-			clean_handle (sem);
+			__p_semaphore_clean_handle (sem);
 			return FALSE;
 		}
 	}
@@ -122,7 +117,7 @@ create_handle (PSemaphore *sem)
 }
 
 static void
-clean_handle (PSemaphore *sem)
+__p_semaphore_clean_handle (PSemaphore *sem)
 {
 	if (sem == NULL)
 		return;
@@ -165,13 +160,13 @@ p_semaphore_new (const pchar *name,  pint init_val, PSemaphoreAccessMode mode)
 	strcpy (new_name, name);
 	strcat (new_name, P_SEM_SUFFIX);
 
-	ret->platform_key = p_ipc_get_platform_key (new_name, FALSE);
+	ret->platform_key = __p_ipc_get_platform_key (new_name, FALSE);
 	ret->init_val = init_val;
 	ret->mode = mode;
 
 	p_free (new_name);
 
-	if (!create_handle (ret)) {
+	if (!__p_semaphore_create_handle (ret)) {
 		P_ERROR ("PSemaphore: failed to create system handle");
 		p_semaphore_free (ret);
 		return NULL;
@@ -196,9 +191,9 @@ p_semaphore_acquire (PSemaphore *sem)
 
 	if (!ret && (errno == EIDRM || errno == EINVAL)) {
 		P_WARNING ("PSemaphore: trying to recreate");
-		clean_handle (sem);
+		__p_semaphore_clean_handle (sem);
 
-		if (!create_handle (sem))
+		if (!__p_semaphore_create_handle (sem))
 			return FALSE;
 
 		ret = p_semaphore_acquire (sem);
@@ -226,9 +221,9 @@ p_semaphore_release (PSemaphore *sem)
 
 	if (!ret && (errno == EIDRM || errno == EINVAL)) {
 		P_WARNING ("PSemaphore: trying to recreate");
-		clean_handle (sem);
+		__p_semaphore_clean_handle (sem);
 
-		if (!create_handle (sem))
+		if (!__p_semaphore_create_handle (sem))
 			return FALSE;
 
 		return TRUE;
@@ -246,11 +241,10 @@ p_semaphore_free (PSemaphore *sem)
 	if (sem == NULL)
 		return;
 
-	clean_handle (sem);
+	__p_semaphore_clean_handle (sem);
 
 	if (sem->platform_key)
 		p_free (sem->platform_key);
 
 	p_free (sem);
 }
-

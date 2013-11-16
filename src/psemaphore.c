@@ -40,7 +40,7 @@
 
 #ifndef P_OS_WIN
 pchar *
-p_ipc_unix_get_temp_dir (void)
+__p_ipc_unix_get_temp_dir (void)
 {
 	pchar	*str, *ret;
 	pint	len;
@@ -82,7 +82,7 @@ p_ipc_unix_get_temp_dir (void)
 /* Create file for System V IPC, if needed
  * Returns: -1 = error, 0 = file successfully created, 1 = file already exists */
 pint
-p_ipc_unix_create_key_file (const pchar *file_name)
+__p_ipc_unix_create_key_file (const pchar *file_name)
 {
 	pint fd;
 
@@ -97,7 +97,7 @@ p_ipc_unix_create_key_file (const pchar *file_name)
 }
 
 pint
-p_ipc_unix_get_ftok_key (const pchar *file_name)
+__p_ipc_unix_get_ftok_key (const pchar *file_name)
 {
 	struct stat st_info;
 
@@ -114,7 +114,7 @@ p_ipc_unix_get_ftok_key (const pchar *file_name)
 /* Returns platform-independent key for IPC usage, object name for Windows and
  * file name to use with ftok () for UNIX-like systems */
 pchar *
-p_ipc_get_platform_key (const pchar *name, pboolean posix)
+__p_ipc_get_platform_key (const pchar *name, pboolean posix)
 {
 	PCryptoHash	*sha1;
 	pchar		*hash_str;
@@ -154,7 +154,7 @@ p_ipc_get_platform_key (const pchar *name, pboolean posix)
 		strcpy (path_name, "/");
 		strcat (path_name, hash_str);
 	} else {
-		tmp_path = p_ipc_unix_get_temp_dir ();
+		tmp_path = __p_ipc_unix_get_temp_dir ();
 
 		/* tmp dir + filename + zero symbol */
 		path_name = p_malloc0 (strlen (tmp_path) + hash_len + 1);
@@ -175,4 +175,3 @@ p_ipc_get_platform_key (const pchar *name, pboolean posix)
 		return path_name;
 #endif
 }
-
