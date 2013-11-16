@@ -42,7 +42,7 @@ static int p_uthread_priority_map[P_UTHREAD_PRIORITY_HIGHEST + 1];
 #endif
 
 void
-_p_uthread_init (void)
+__p_uthread_init (void)
 {
 	int			min_prio, max_prio, normal_prio;
 #ifdef P_HAVE_PRIORITIES
@@ -79,7 +79,7 @@ _p_uthread_init (void)
 }
 
 void
-_p_uthread_shutdown (void)
+__p_uthread_shutdown (void)
 {
 
 }
@@ -232,4 +232,3 @@ p_uthread_set_priority (PUThread		*thread,
 	thread->prio = prio;
 	return 0;
 }
-

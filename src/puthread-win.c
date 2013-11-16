@@ -39,7 +39,7 @@ struct _PUThread {
 static int p_uthread_priority_map[P_UTHREAD_PRIORITY_HIGHEST + 1];
 
 void
-_p_uthread_init (void)
+__p_uthread_init (void)
 {
 	p_uthread_priority_map[P_UTHREAD_PRIORITY_LOWEST]	= THREAD_PRIORITY_LOWEST;
 	p_uthread_priority_map[P_UTHREAD_PRIORITY_LOW]		= THREAD_PRIORITY_BELOW_NORMAL;
@@ -49,7 +49,7 @@ _p_uthread_init (void)
 }
 
 void
-_p_uthread_shutdown (void)
+__p_uthread_shutdown (void)
 {
 }
 
