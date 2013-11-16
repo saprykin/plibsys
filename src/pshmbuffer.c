@@ -32,12 +32,12 @@ struct _PShmBuffer {
 	psize size;
 };
 
-static psize get_free_space (PShmBuffer *buf);
-static pssize get_used_space (PShmBuffer *buf);
+static psize __p_shm_buffer_get_free_space (PShmBuffer *buf);
+static pssize __p_shm_buffer_get_used_space (PShmBuffer *buf);
 
 /* Warning: this function is not thread-safe, only for internal usage */
 static psize
-get_free_space (PShmBuffer *buf)
+__p_shm_buffer_get_free_space (PShmBuffer *buf)
 {
 	puint32		read_pos, write_pos;
 	ppointer	addr;
@@ -62,7 +62,7 @@ get_free_space (PShmBuffer *buf)
 }
 
 static pssize
-get_used_space (PShmBuffer *buf)
+__p_shm_buffer_get_used_space (PShmBuffer *buf)
 {
 	puint32		read_pos, write_pos;
 	ppointer	addr;
@@ -159,7 +159,7 @@ p_shm_buffer_read (PShmBuffer *buf, ppointer storage, psize len)
 		return 0;
 	}
 
-	data_aval = get_used_space (buf);
+	data_aval = __p_shm_buffer_get_used_space (buf);
 	to_copy = (data_aval <= len) ? data_aval : len;
 
 	/* TODO: Handle exceptions on Windows */
@@ -198,7 +198,7 @@ p_shm_buffer_write (PShmBuffer *buf, ppointer data, psize len)
 	memcpy (&read_pos, (pchar *) addr + SHM_BUFFER_READ_OFFSET, sizeof (read_pos));
 	memcpy (&write_pos, (pchar *) addr + SHM_BUFFER_WRITE_OFFSET, sizeof (write_pos));
 
-	if (get_free_space (buf) < len) {
+	if (__p_shm_buffer_get_free_space (buf) < len) {
 		if (!p_shm_unlock (buf->shm))
 			P_ERROR ("PShmBuffer: failed to unlock memory after writing");
 
@@ -231,7 +231,7 @@ p_shm_buffer_get_free_space (PShmBuffer *buf)
 		return 0;
 	}
 
-	space = get_free_space (buf);
+	space = __p_shm_buffer_get_free_space (buf);
 
 	if (!p_shm_unlock (buf->shm))
 		P_ERROR ("PShmBuffer: failed to unlock memory after getting free space");
@@ -252,7 +252,7 @@ p_shm_buffer_get_used_space (PShmBuffer *buf)
 		return -1;
 	}
 
-	space = get_used_space (buf);
+	space = __p_shm_buffer_get_used_space (buf);
 
 	if (!p_shm_unlock (buf->shm))
 		P_ERROR ("PShmBuffer: failed to unlock memory after getting used space");
