@@ -103,4 +103,3 @@ p_cond_variable_broadcast (PCondVariable *cond)
 
 	return 0;
 }
-
