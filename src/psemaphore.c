@@ -1,6 +1,5 @@
 /* 
- * 22.08.2010
- * Copyright (C) 2010 Alexander Saprykin <xelfium@gmail.com>
+ * Copyright (C) 2010-2013 Alexander Saprykin <xelfium@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -122,6 +121,8 @@ p_ipc_get_platform_key (const pchar *name, pboolean posix)
 
 #ifndef P_OS_WIN
 	pchar		*path_name, *tmp_path;
+#else
+	P_UNUSED (posix);
 #endif
 
 	if (name == NULL)
