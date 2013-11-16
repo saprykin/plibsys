@@ -1,5 +1,5 @@
 /* 
- * Copyright (C) 2010 Alexander Saprykin <xelfium@gmail.com>
+ * Copyright (C) 2010-2013 Alexander Saprykin <xelfium@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,8 +30,8 @@ extern void __p_uthread_init		(void);
 extern void __p_uthread_shutdown	(void);
 
 #ifdef P_OS_WIN
-extern void _p_mutex_win_init		(void);
-extern void _p_mutex_win_shutdown	(void);
+extern void __p_mutex_win_init		(void);
+extern void __p_mutex_win_shutdown	(void);
 #endif
 
 static pboolean plib_inited = FALSE;
@@ -49,7 +49,7 @@ p_lib_init (void)
 	__p_uthread_init ();
 	
 #ifdef P_OS_WIN
-	_p_mutex_win_init ();
+	__p_mutex_win_init ();
 #endif
 }
 
@@ -66,6 +66,6 @@ p_lib_shutdown (void)
 	__p_uthread_shutdown ();
 	
 #ifdef P_OS_WIN
-	_p_mutex_win_shutdown ();
+	__p_mutex_win_shutdown ();
 #endif
 }

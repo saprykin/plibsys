@@ -1,6 +1,5 @@
 /* 
- * 19.11.2010
- * Copyright (C) 2010 Alexander Saprykin <xelfium@gmail.com>
+ * Copyright (C) 2010-2013 Alexander Saprykin <xelfium@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,14 +33,14 @@ struct _PMutex {
 static PMutex *p_once_mutex = NULL;
 
 void
-_p_mutex_win_init (void)
+__p_mutex_win_init (void)
 {
 	if (p_once_mutex == NULL)
 		p_once_mutex = p_mutex_new ();
 }
 
 void
-_p_mutex_win_shutdown (void)
+__p_mutex_win_shutdown (void)
 {
 	if (p_once_mutex != NULL) {
 		p_mutex_free (p_once_mutex);
@@ -50,7 +49,7 @@ _p_mutex_win_shutdown (void)
 }
 
 static PMutex*
-_p_static_mutex_get_mutex (PMutex **mutex)
+__p_static_mutex_get_mutex (PMutex **mutex)
 {
 	PMutex *result;
 
@@ -74,7 +73,7 @@ _p_static_mutex_get_mutex (PMutex **mutex)
 P_LIB_API PStaticMutex
 p_static_mutex_get_mutex_impl (PStaticMutex *mutex)
 {
-	return p_atomic_pointer_get (mutex) ? *(mutex) : _p_static_mutex_get_mutex (mutex);
+	return p_atomic_pointer_get (mutex) ? *(mutex) : __p_static_mutex_get_mutex (mutex);
 }
 
 P_LIB_API PMutex *
@@ -176,4 +175,3 @@ p_static_mutex_free (PStaticMutex* mutex)
 
 	*runtime_mutex = NULL;
 }
-

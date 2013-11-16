@@ -1,5 +1,5 @@
 /* 
- * Copyright (C) 2010-2012 Alexander Saprykin <xelfium@gmail.com>
+ * Copyright (C) 2010-2013 Alexander Saprykin <xelfium@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +28,7 @@ struct _PMutex {
 P_LIB_API PStaticMutex
 p_static_mutex_get_mutex_impl (PStaticMutex *mutex)
 {
+	P_UNUSED (mutex);
 	return NULL;
 }
 
@@ -46,18 +47,21 @@ p_mutex_lock (PMutex *mutex)
 P_LIB_API pboolean
 p_mutex_trylock (PMutex *mutex)
 {
+	P_UNUSED (mutex);
 	return FALSE;
 }
 
 P_LIB_API pboolean
 p_mutex_unlock (PMutex *mutex)
 {
+	P_UNUSED (mutex);
 	return FALSE;
 }
 
 P_LIB_API void
 p_mutex_free (PMutex *mutex)
 {
+	P_UNUSED (mutex);
 }
 
 P_LIB_API void
@@ -69,5 +73,5 @@ p_static_mutex_init (PStaticMutex *mutex)
 P_LIB_API void
 p_static_mutex_free (PStaticMutex* mutex)
 {
+	P_UNUSED (mutex);
 }
-

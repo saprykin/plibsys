@@ -1,5 +1,4 @@
 /* 
- * 19.11.2010
  * Copyright (C) 2010 Alexander Saprykin <xelfium@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -119,4 +118,3 @@ p_static_mutex_free (PStaticMutex* mutex)
 	if (mutex == NULL)
 		return;
 }
-
