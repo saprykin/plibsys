@@ -22,8 +22,8 @@
 #include "pmem.h"
 #include "pmain.h"
 
-extern void _p_atomic_thread_init	(void);
-extern void _p_atomic_thread_shutdown	(void);
+extern void __p_atomic_thread_init	(void);
+extern void __p_atomic_thread_shutdown	(void);
 extern void __p_socket_init_once	(void);
 extern void __p_socket_close_once	(void);
 extern void __p_uthread_init		(void);
@@ -44,7 +44,7 @@ p_lib_init (void)
 
 	plib_inited = TRUE;
 	
-	_p_atomic_thread_init ();
+	__p_atomic_thread_init ();
 	__p_socket_init_once ();
 	__p_uthread_init ();
 	
@@ -61,7 +61,7 @@ p_lib_shutdown (void)
 
 	plib_inited = FALSE;
 
-	_p_atomic_thread_shutdown ();
+	__p_atomic_thread_shutdown ();
 	__p_socket_close_once ();
 	__p_uthread_shutdown ();
 	

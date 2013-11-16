@@ -1053,7 +1053,7 @@ p_atomic_memory_barrier (void)
 }
 
 void 
-_p_atomic_thread_init (void)
+__p_atomic_thread_init (void)
 {
 #ifdef DEFINE_WITH_MUTEXES
 	p_atomic_mutex = p_mutex_new ();
@@ -1061,7 +1061,7 @@ _p_atomic_thread_init (void)
 }
 
 void 
-_p_atomic_thread_shutdown (void)
+__p_atomic_thread_shutdown (void)
 {
 #ifdef DEFINE_WITH_MUTEXES
 	if (p_atomic_mutex != NULL) {
