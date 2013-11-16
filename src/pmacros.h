@@ -162,7 +162,7 @@
  * @def P_UNUSED
  * @brief Macro to by-pass compiler warning on usused variables
  */
-#define P_UNUSED(a) ((void) a);
+#define P_UNUSED(a) ((void) a)
 
 /**
  * @def P_WARNING
