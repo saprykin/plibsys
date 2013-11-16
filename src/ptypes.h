@@ -356,9 +356,15 @@ typedef pint64 poffset;
   #define PINT64_FORMAT		"I64i"
   #define PUINT64_FORMAT	"I64u"
 #else
-  #define PINT64_MODIFIER	"ll"
-  #define PINT64_FORMAT		"lli"
-  #define PUINT64_FORMAT	"llu"
+#  if PLIB_SIZEOF_LONG == 8
+     #define PINT64_MODIFIER    "l"
+     #define PINT64_FORMAT      "li"
+     #define PUINT64_FORMAT     "lu"     
+#  else
+     #define PINT64_MODIFIER	"ll"
+     #define PINT64_FORMAT	"lli"
+     #define PUINT64_FORMAT	"llu"
+#  endif
 #endif
 
 #define POFFSET_MODIFIER	PINT64_MODIFIER
