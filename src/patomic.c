@@ -1070,4 +1070,3 @@ _p_atomic_thread_shutdown (void)
 	}
 #endif /* DEFINE_WITH_MUTEXES */
 }
-

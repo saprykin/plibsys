@@ -1,5 +1,4 @@
 /* 
- * 25.08.2010
  * Copyright (C) 2010 Alexander Saprykin <xelfium@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -110,4 +109,3 @@ P_LIB_API void		p_shm_buffer_clear		(PShmBuffer *buf);
 P_END_DECLS
 
 #endif /* __PSHMBUFFER_H__ */
-

@@ -1,5 +1,4 @@
 /* 
- * 21.12.2010
  * Copyright (C) 2010 Alexander Saprykin <xelfium@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify

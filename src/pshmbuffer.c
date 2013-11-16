@@ -1,5 +1,4 @@
 /* 
- * 25.08.2010
  * Copyright (C) 2010 Alexander Saprykin <xelfium@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -287,4 +286,3 @@ p_shm_buffer_clear (PShmBuffer *buf)
 	if (!p_shm_unlock (buf->shm))
 		P_ERROR ("PShmBuffer: failed to unlock memory after clearance");
 }
-

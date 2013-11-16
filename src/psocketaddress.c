@@ -383,4 +383,3 @@ p_socket_address_free (PSocketAddress *addr)
 
 	p_free (addr);
 }
-

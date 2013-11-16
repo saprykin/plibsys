@@ -1,5 +1,4 @@
 /* 
- * 22.08.2010
  * Copyright (C) 2010 Alexander Saprykin <xelfium@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -111,4 +110,3 @@ P_LIB_API void		p_semaphore_free	(PSemaphore		*sem);
 P_END_DECLS
 
 #endif /* __PSEMAPHORE_H__ */
-

@@ -1,5 +1,4 @@
 /* 
- * 03.08.2010
  * Copyright (C) 2010 Alexander Saprykin <xelfium@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -169,4 +168,3 @@ P_LIB_API PList *	p_list_prepend	(PList *list, ppointer data) P_GNUC_WARN_UNUSED
 P_END_DECLS
 
 #endif /* __PLIBLIST_H__ */
-

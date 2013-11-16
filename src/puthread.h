@@ -1,5 +1,4 @@
 /* 
- * 15.09.2010
  * Copyright (C) 2010 Alexander Saprykin <xelfium@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -36,7 +35,6 @@
  * Also p_uthread_sleep() method can be used to sleep currently running thread for
  * given amount of time.
  */
-
 
 #if !defined (__PLIB_H_INSIDE__) && !defined (PLIB_COMPILATION)
 #  error "Header files shouldn't be included directly, consider using <plib.h> instead."
@@ -144,4 +142,3 @@ P_LIB_API void			p_uthread_yield		(void);
 P_END_DECLS
 
 #endif /* __PUTHREAD_H__ */
-

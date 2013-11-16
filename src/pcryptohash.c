@@ -207,4 +207,3 @@ p_crypto_hash_free (PCryptoHash *hash)
 	hash->free (hash->context);
 	p_free (hash);
 }
-

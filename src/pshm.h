@@ -1,5 +1,4 @@
 /* 
- * 24.08.2010
  * Copyright (C) 2010 Alexander Saprykin <xelfium@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -115,4 +114,3 @@ P_LIB_API psize		p_shm_get_size		(PShm *shm);
 P_END_DECLS
 
 #endif /* __PSHM_H__ */
-

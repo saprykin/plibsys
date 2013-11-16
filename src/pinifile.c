@@ -1,5 +1,5 @@
 /* 
- * Copyright (C) 2012 Alexander Saprykin <xelfium@gmail.com>
+ * Copyright (C) 2012-2013 Alexander Saprykin <xelfium@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -218,7 +218,7 @@ p_ini_file_parse (PIniFile *file)
 		if (dst_line == NULL)
 			continue;
 
-		if (dst_line[0] == '[' && dst_line[strlen (dst_line) - 1] &&
+		if (dst_line[0] == '[' && dst_line[strlen (dst_line) - 1] == ']' &&
 		    sscanf (dst_line, "[%[^]]", key) == 1) {
 			/* New section found */
 			tmp_str = p_strchomp (key);

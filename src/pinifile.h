@@ -1,5 +1,5 @@
 /* 
- * Copyright (C) 2012 Alexander Saprykin <xelfium@gmail.com>
+ * Copyright (C) 2012-2013 Alexander Saprykin <xelfium@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -194,4 +194,3 @@ P_LIB_API PList *	p_ini_file_parameter_list	(const PIniFile	*file,
 P_END_DECLS
 
 #endif /* __PINIFILE_H__ */
-

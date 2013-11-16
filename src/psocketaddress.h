@@ -179,4 +179,3 @@ P_LIB_API void			p_socket_address_free			(PSocketAddress	*addr);
 P_END_DECLS
 
 #endif /* __PSOCKETADDRESS_H__ */
-

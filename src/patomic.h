@@ -1,5 +1,4 @@
 /* 
- * 30.12.2010
  * Copyright (C) 2010 Alexander Saprykin <xelfium@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -197,4 +196,3 @@ void		p_atomic_memory_barrier			(void);
 P_END_DECLS
 
 #endif /* __P_ATOMIC_H__ */
-
