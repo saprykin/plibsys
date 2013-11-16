@@ -2,7 +2,7 @@
  * Copyright (C) 2008 Christian Kellner, Samuel Cormier-Iijima
  * Copyright (C) 2009 Codethink Limited
  * Copyright (C) 2009 Red Hat, Inc
- * Copyright (C) 2010 Alexander Saprykin <xelfium@gmail.com>
+ * Copyright (C) 2010-2013 Alexander Saprykin <xelfium@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -78,20 +78,20 @@ struct _PSocket {
 #endif
 
 #ifdef P_OS_WIN
-static PSocketError get_socket_error_win (pint err_code);
+static PSocketError __p_socket_get_error_win (pint err_code);
 #else
-static PSocketError get_socket_error_unix (pint err_code);
+static PSocketError __p_socket_get_error_unix (pint err_code);
 #endif
 
-static pint get_socket_errno (void);
-static void set_socket_error (PSocket *socket);
-static pint set_fd_blocking (pint fd, pboolean blocking);
-static pboolean check_socket (PSocket *socket);
-static void set_socket_details_from_fd (PSocket *socket);
+static pint __p_socket_get_errno (void);
+static void __p_socket_set_error (PSocket *socket);
+static pint __p_socket_set_fd_blocking (pint fd, pboolean blocking);
+static pboolean __p_socket_check (PSocket *socket);
+static void __p_socket_set_details_from_fd (PSocket *socket);
 
 
 #ifdef P_OS_WIN
-static PSocketError get_socket_error_win (pint err_code)
+static PSocketError __p_socket_get_error_win (pint err_code)
 {
 	switch (err_code) {
 	case WSAEADDRINUSE:
@@ -121,7 +121,7 @@ static PSocketError get_socket_error_win (pint err_code)
 
 #ifndef P_OS_WIN
 static PSocketError
-get_socket_error_unix (pint err_code)
+__p_socket_get_error_unix (pint err_code)
 {
 	switch (err_code) {
 #ifdef EACCES
@@ -342,7 +342,7 @@ get_socket_error_unix (pint err_code)
 }
 #endif /* !P_OS_WIN */
 
-static pint get_socket_errno (void)
+static pint __p_socket_get_errno (void)
 {
 #ifdef P_OS_WIN
 	return WSAGetLastError ();
@@ -352,21 +352,21 @@ static pint get_socket_errno (void)
 }
 
 static void
-set_socket_error (PSocket *socket)
+__p_socket_set_error (PSocket *socket)
 {
 	if (!socket)
 		return;
 
 #ifdef P_OS_WIN
-	socket->error = get_socket_error_win (get_socket_errno ());
+	socket->error = __p_socket_get_error_win (__p_socket_get_errno ());
 #else
-	socket->error = get_socket_error_unix (get_socket_errno ());
+	socket->error = __p_socket_get_error_unix (__p_socket_get_errno ());
 #endif
 }
 
 static pint
-set_fd_blocking (pint		fd,
-		 pboolean	blocking)
+__p_socket_set_fd_blocking (pint	fd,
+			    pboolean	blocking)
 {
 #ifndef P_OS_WIN
 	pint32 arg;
@@ -389,14 +389,14 @@ set_fd_blocking (pint		fd,
 	if (ioctlsocket (fd, FIONBIO, &arg) == SOCKET_ERROR) {
 #endif
 		P_ERROR ("PSocket: error setting socket flags");
-		return get_socket_errno();
+		return __p_socket_get_errno();
 	}
 
 	return 0;
 }
 
 static pboolean
-check_socket (PSocket *socket)
+__p_socket_check (PSocket *socket)
 {
 	if (!socket->inited) {
 		P_ERROR ("PSocket: invalid socket, not initialized");
@@ -411,7 +411,7 @@ check_socket (PSocket *socket)
 }
 
 static void
-set_socket_details_from_fd (PSocket *socket)
+__p_socket_set_details_from_fd (PSocket *socket)
 {
 	struct sockaddr_storage	address;
 	pint			fd, value;
@@ -428,7 +428,7 @@ set_socket_details_from_fd (PSocket *socket)
 	if (getsockopt (fd, SOL_SOCKET, SO_TYPE, (void *) &value, &optlen) != 0) {
 		P_ERROR ("PSocket: failed to get socket info for fd");
 
-		set_socket_error (socket);
+		__p_socket_set_error (socket);
 
 		return;
 	}
@@ -460,7 +460,7 @@ set_socket_details_from_fd (PSocket *socket)
 	if (getsockname (fd, (struct sockaddr *) &address, &addrlen) != 0) {
 		P_ERROR ("PSocket: failed to get socket address info");
 
-		set_socket_error (socket);
+		__p_socket_set_error (socket);
 
 		return;
 	}
@@ -501,7 +501,7 @@ set_socket_details_from_fd (PSocket *socket)
 }
 
 pboolean
-_p_socket_init_once (void)
+__p_socket_init_once (void)
 {
 #ifdef P_OS_WIN
 	WORD	ver_req;
@@ -526,7 +526,7 @@ _p_socket_init_once (void)
 }
 
 void
-_p_socket_close_once (void)
+__p_socket_close_once (void)
 {
 #ifdef P_OS_WIN
 	WSACleanup ();
@@ -550,10 +550,10 @@ p_socket_new_from_fd (pint fd)
 
 	ret->fd = fd;
 
-	set_socket_details_from_fd (ret);
+	__p_socket_set_details_from_fd (ret);
 
-	if (set_fd_blocking (ret->fd, FALSE) != 0)
-		set_socket_error (ret);
+	if (__p_socket_set_fd_blocking (ret->fd, FALSE) != 0)
+		__p_socket_set_error (ret);
 
 	p_socket_set_listen_backlog (ret, P_SOCKET_DEFAULT_BACKLOG);
 	
@@ -637,8 +637,8 @@ p_socket_new (PSocketFamily	family,
 		return NULL;
 	}
 
-	if (set_fd_blocking (fd, FALSE) != 0)
-		set_socket_error (ret);
+	if (__p_socket_set_fd_blocking (fd, FALSE) != 0)
+		__p_socket_set_error (ret);
 
 	ret->fd = fd;
 	ret->blocking = FALSE;
@@ -738,7 +738,7 @@ p_socket_get_local_address (PSocket *socket)
 	if (getsockname (socket->fd, (struct sockaddr *) &buffer, &len) < 0) {
 		P_ERROR ("PSocket: unable to get local socket address");
 
-		set_socket_error (socket);
+		__p_socket_set_error (socket);
 
 		return NULL;
 	}
@@ -760,7 +760,7 @@ p_socket_get_remote_address (PSocket *socket)
 	if (getpeername (socket->fd, (struct sockaddr *) &buffer, &len) < 0) {
 		P_ERROR ("PSocket: unable to get remote socket address");
 
-		set_socket_error (socket);
+		__p_socket_set_error (socket);
 
 		return NULL;
 	}
@@ -793,7 +793,7 @@ p_socket_set_keepalive (PSocket		*socket,
 	if (setsockopt (socket->fd, SOL_SOCKET, SO_KEEPALIVE, &val, sizeof (val)) < 0) {
 		P_ERROR ("PSocket: failed to set keepalive flag");
 
-		set_socket_error (socket);
+		__p_socket_set_error (socket);
 
 		return;
 	}
@@ -811,8 +811,8 @@ p_socket_set_blocking (PSocket	*socket,
 	if (socket->blocking == blocking)
 		return;
 
-	if (set_fd_blocking (socket->fd, blocking) != 0)
-		set_socket_error (socket);
+	if (__p_socket_set_fd_blocking (socket->fd, blocking) != 0)
+		__p_socket_set_error (socket);
 
 	socket->blocking = blocking;
 }
@@ -841,7 +841,7 @@ p_socket_bind (PSocket		*socket,
 	if (!socket || !address)
 		return FALSE;
 
-	if (!check_socket (socket))
+	if (!__p_socket_check (socket))
 		return FALSE;
 
 	/* SO_REUSEADDR on Windows means something else and is not what we want.
@@ -859,7 +859,7 @@ p_socket_bind (PSocket		*socket,
 	if (bind (socket->fd, (struct sockaddr *) &addr, (pint) p_socket_address_get_native_size (address)) < 0) {
 		P_ERROR ("PSocket: failed to bind socket address");
 
-		set_socket_error (socket);
+		__p_socket_set_error (socket);
 
 		return FALSE;
 	}
@@ -876,7 +876,7 @@ p_socket_connect (PSocket		*socket,
 	if (!socket || !address)
 		return FALSE;
 
-	if (!check_socket (socket))
+	if (!__p_socket_check (socket))
 		return FALSE;
 
 	if (!p_socket_address_to_native (address, &buffer, sizeof buffer))
@@ -886,12 +886,12 @@ p_socket_connect (PSocket		*socket,
 		if (connect (socket->fd, (struct sockaddr *) &buffer,
 				(pint) p_socket_address_get_native_size (address)) < 0) {
 #ifndef P_OS_WIN
-			if (get_socket_errno () == EINTR)
+			if (__p_socket_get_errno () == EINTR)
 				continue;
 #endif
 			P_ERROR ("PSocket: failed to connect");
 
-			set_socket_error (socket);
+			__p_socket_set_error (socket);
 
 			return FALSE;
 		}
@@ -916,7 +916,7 @@ p_socket_check_connect_result (PSocket *socket)
 	if (getsockopt (socket->fd, SOL_SOCKET, SO_ERROR, (void *)&value, &optlen) != 0) {
 		P_ERROR ("PSocket: failed to check connect result");
 
-		set_socket_error (socket);
+		__p_socket_set_error (socket);
 
 		return FALSE;
 	}
@@ -935,13 +935,13 @@ p_socket_listen (PSocket *socket)
 	if (!socket)
 		return FALSE;
 
-	if (!check_socket (socket))
+	if (!__p_socket_check (socket))
 		return FALSE;
 
 	if (listen (socket->fd, socket->listen_backlog) < 0) {
 		P_ERROR ("PSocket: unable to listen");
 
-		set_socket_error (socket);
+		__p_socket_set_error (socket);
 
 		return FALSE;
 	}
@@ -962,18 +962,18 @@ p_socket_accept (PSocket *socket)
 	if (!socket)
 		return NULL;
 
-	if (!check_socket (socket))
+	if (!__p_socket_check (socket))
 		return NULL;
 
 	while (TRUE) {
 		if ((res = (pint) accept (socket->fd, NULL, 0)) < 0) {
 #ifndef P_OS_WIN
-			if (get_socket_errno () == EINTR)
+			if (__p_socket_get_errno () == EINTR)
 				continue;
 #endif
 			P_ERROR ("PSocket: failed to accept");
 
-			set_socket_error (socket);
+			__p_socket_set_error (socket);
 
 			return NULL;
 		}
@@ -1019,7 +1019,7 @@ p_socket_receive (PSocket	*socket,
 	if (!socket || !buffer)
 		return -1;
 
-	if (!check_socket (socket))
+	if (!__p_socket_check (socket))
 		return -1;
 
 	timeout = (socket->blocking) ? 250 : 1;
@@ -1033,12 +1033,12 @@ p_socket_receive (PSocket	*socket,
 		
 		if (evret == WSA_WAIT_FAILED) {
 			ret = -1;
-			set_socket_error (socket);
+			__p_socket_set_error (socket);
 			P_ERROR ("PSocket: WSAWaitForMultipleEvents failed");
 			break;
 		} else if (evret == WSA_WAIT_TIMEOUT) {
 			if (!socket->blocking) {
-				set_socket_error (socket);
+				__p_socket_set_error (socket);
 				ret = -1;
 				break;
 			}
@@ -1060,12 +1060,12 @@ p_socket_receive (PSocket	*socket,
 			break;
 		} else if (evret == 0) {
 			if (!socket->blocking) {
-				set_socket_error (socket);
+				__p_socket_set_error (socket);
 				ret = -1;
 				break;
 			}
 		} else if (evret == -1 && errno != EINTR) {
-			set_socket_error (socket);
+			__p_socket_set_error (socket);
 			ret = -1;
 			break;
 		}
@@ -1092,7 +1092,7 @@ p_socket_receive_from (PSocket		*socket,
 	if (!socket || !address || !buffer)
 		return -1;
 
-	if (!check_socket (socket))
+	if (!__p_socket_check (socket))
 		return -1;
 
 	optlen = sizeof (sa);
@@ -1107,12 +1107,12 @@ p_socket_receive_from (PSocket		*socket,
 		
 		if (evret == WSA_WAIT_FAILED) {
 			ret = -1;
-			set_socket_error (socket);
+			__p_socket_set_error (socket);
 			P_ERROR ("PSocket: WSAWaitForMultipleEvents failed");
 			break;
 		} else if (evret == WSA_WAIT_TIMEOUT) {
 			if (!socket->blocking) {
-				set_socket_error (socket);
+				__p_socket_set_error (socket);
 				ret = -1;
 				break;
 			}
@@ -1134,12 +1134,12 @@ p_socket_receive_from (PSocket		*socket,
 			break;
 		} else if (evret == 0) {
 			if (!socket->blocking) {
-				set_socket_error (socket);
+				__p_socket_set_error (socket);
 				ret = -1;
 				break;
 			}
 		} else if (evret == -1 && errno != EINTR) {
-			set_socket_error (socket);
+			__p_socket_set_error (socket);
 			ret = -1;
 			break;
 		}
@@ -1166,7 +1166,7 @@ p_socket_send (PSocket		*socket,
 	if (!socket || !buffer)
 		return -1;
 
-	if (!check_socket (socket))
+	if (!__p_socket_check (socket))
 		return -1;
 	timeout = (socket->blocking) ? 250 : 1;
 
@@ -1179,12 +1179,12 @@ p_socket_send (PSocket		*socket,
 		
 		if (evret == WSA_WAIT_FAILED) {
 			ret = -1;
-			set_socket_error (socket);
+			__p_socket_set_error (socket);
 			P_ERROR ("PSocket: WSAWaitForMultipleEvents failed");
 			break;
 		} else if (evret == WSA_WAIT_TIMEOUT) {
 			if (!socket->blocking) {
-				set_socket_error (socket);
+				__p_socket_set_error (socket);
 				ret = -1;
 				break;
 			}
@@ -1206,12 +1206,12 @@ p_socket_send (PSocket		*socket,
 			break;
 		} else if (evret == 0) {
 			if (!socket->blocking) {
-				set_socket_error (socket);
+				__p_socket_set_error (socket);
 				ret = -1;
 				break;
 			}
 		} else if (evret == -1 && errno != EINTR) {
-			set_socket_error (socket);
+			__p_socket_set_error (socket);
 			ret = -1;
 			break;
 		}
@@ -1238,7 +1238,7 @@ p_socket_send_to (PSocket		*socket,
 	if (!socket || !address || !buffer)
 		return -1;
 
-	if (!check_socket (socket))
+	if (!__p_socket_check (socket))
 		return -1;
 
 	if (!p_socket_address_to_native (address, &sa, sizeof (sa)))
@@ -1256,12 +1256,12 @@ p_socket_send_to (PSocket		*socket,
 		
 		if (evret == WSA_WAIT_FAILED) {
 			ret = -1;
-			set_socket_error (socket);
+			__p_socket_set_error (socket);
 			P_ERROR ("PSocket: WSAWaitForMultipleEvents failed");
 			break;
 		} else if (evret == WSA_WAIT_TIMEOUT) {
 			if (!socket->blocking) {
-				set_socket_error (socket);
+				__p_socket_set_error (socket);
 				ret = -1;
 				break;
 			}
@@ -1283,12 +1283,12 @@ p_socket_send_to (PSocket		*socket,
 			break;
 		} else if (evret == 0) {
 			if (!socket->blocking) {
-				set_socket_error (socket);
+				__p_socket_set_error (socket);
 				ret = -1;
 				break;
 			}
 		} else if (evret == -1 && errno != EINTR) {
-			set_socket_error (socket);
+			__p_socket_set_error (socket);
 			ret = -1;
 			break;
 		}
@@ -1309,7 +1309,7 @@ p_socket_close (PSocket *socket)
 	if (socket->closed)
 		return TRUE;
 
-	if (!check_socket (socket))
+	if (!__p_socket_check (socket))
 		return FALSE;
 
 	while (TRUE) {
@@ -1320,12 +1320,12 @@ p_socket_close (PSocket *socket)
 #endif
 		if (res == -1) {
 #ifndef P_OS_WIN
-			if (get_socket_errno () == EINTR)
+			if (__p_socket_get_errno () == EINTR)
 				continue;
 #endif
 			P_ERROR ("PSocket: failed to close socket");
 
-			set_socket_error (socket);
+			__p_socket_set_error (socket);
 
 			return FALSE;
 		}
@@ -1349,7 +1349,7 @@ p_socket_shutdown (PSocket	*socket,
 	if (!socket)
 		return FALSE;
 
-	if (!check_socket (socket))
+	if (!__p_socket_check (socket))
 		return FALSE;
 
 	if (!shutdown_read && !shutdown_write)
@@ -1374,7 +1374,7 @@ p_socket_shutdown (PSocket	*socket,
 	if (shutdown (socket->fd, how) != 0) {
 		P_ERROR ("PSocket: failed to shutdown socket");
 
-		set_socket_error (socket);
+		__p_socket_set_error (socket);
 
 		return FALSE;
 	}

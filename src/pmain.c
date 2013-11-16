@@ -24,8 +24,8 @@
 
 extern void _p_atomic_thread_init	(void);
 extern void _p_atomic_thread_shutdown	(void);
-extern void _p_socket_init_once		(void);
-extern void _p_socket_close_once	(void);
+extern void __p_socket_init_once	(void);
+extern void __p_socket_close_once	(void);
 extern void _p_uthread_init		(void);
 extern void _p_uthread_shutdown		(void);
 
@@ -45,7 +45,7 @@ p_lib_init (void)
 	plib_inited = TRUE;
 	
 	_p_atomic_thread_init ();
-	_p_socket_init_once ();
+	__p_socket_init_once ();
 	_p_uthread_init ();
 	
 #ifdef P_OS_WIN
@@ -62,7 +62,7 @@ p_lib_shutdown (void)
 	plib_inited = FALSE;
 
 	_p_atomic_thread_shutdown ();
-	_p_socket_close_once ();
+	__p_socket_close_once ();
 	_p_uthread_shutdown ();
 	
 #ifdef P_OS_WIN
