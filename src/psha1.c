@@ -1,5 +1,5 @@
 /* 
- * Copyright (C) 2010 Alexander Saprykin <xelfium@gmail.com>
+ * Copyright (C) 2010-2013 Alexander Saprykin <xelfium@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,8 +43,8 @@ static puchar sha1_pad[64] = {
 	   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 };
 
-static void sha1_swap_bytes (puint32 *data, puint words);
-static void sha1_process (PHashSHA1 *ctx, const puint32 data[16]);
+static void __p_sha1_swap_bytes (puint32 *data, puint words);
+static void __p_sha1_process (PHashSHA1 *ctx, const puint32 data[16]);
 
 #define P_SHA1_ROTL(val, shift) ((val) << (shift) |  (val) >> (32 - (shift)))
 
@@ -91,7 +91,7 @@ static void sha1_process (PHashSHA1 *ctx, const puint32 data[16]);
 }
 
 static void
-sha1_swap_bytes (puint32	*data,
+__p_sha1_swap_bytes (puint32	*data,
 		 puint		words)
 {
 	if (P_BYTE_ORDER == P_BIG_ENDIAN)
@@ -104,7 +104,7 @@ sha1_swap_bytes (puint32	*data,
 }
 
 static void
-sha1_process (PHashSHA1		*ctx,
+__p_sha1_process (PHashSHA1		*ctx,
 	      const puint32	data[16])
 {
 	puint32		W[16], A, B, C, D, E;
@@ -261,8 +261,8 @@ p_sha1_update (PHashSHA1		*ctx,
 
 	if (left && (puint32) len >= to_fill) {
 		memcpy (ctx->buf.buf + left, data, to_fill);
-		sha1_swap_bytes (ctx->buf.buf_w, 16);
-		sha1_process (ctx, ctx->buf.buf_w);
+		__p_sha1_swap_bytes (ctx->buf.buf_w, 16);
+		__p_sha1_process (ctx, ctx->buf.buf_w);
 
 		data += to_fill;
 		len -= to_fill;
@@ -271,8 +271,8 @@ p_sha1_update (PHashSHA1		*ctx,
 
 	while (len >= 64) {
 		memcpy (ctx->buf.buf, data, 64);
-		sha1_swap_bytes (ctx->buf.buf_w, 16);
-		sha1_process (ctx, ctx->buf.buf_w);
+		__p_sha1_swap_bytes (ctx->buf.buf_w, 16);
+		__p_sha1_process (ctx, ctx->buf.buf_w);
 
 		data += 64;
 		len -= 64;
@@ -304,10 +304,10 @@ p_sha1_finish (PHashSHA1	*ctx)
 	ctx->buf.buf_w[14] = high;
 	ctx->buf.buf_w[15] = low;
 
-	sha1_swap_bytes (ctx->buf.buf_w, 14);
-	sha1_process (ctx, ctx->buf.buf_w);
+	__p_sha1_swap_bytes (ctx->buf.buf_w, 14);
+	__p_sha1_process (ctx, ctx->buf.buf_w);
 
-	sha1_swap_bytes (ctx->hash, 5);
+	__p_sha1_swap_bytes (ctx->hash, 5);
 }
 
 P_LIB_API const puchar *
