@@ -340,7 +340,7 @@ else()
 endif()
 
 file (APPEND ${PLIB_CONFIG_FILE} "\nP_END_DECLS\n\n")
-file (APPEND ${PLIB_CONFIG_FILE} "#endif /* __PLIBCONFIG_H__ */")
+file (APPEND ${PLIB_CONFIG_FILE} "#endif /* __PLIBCONFIG_H__ */\n")
 
 if (NOT PLIB_TARGET_OS STREQUAL windows)
 	message (STATUS "Checking whether mmap has anonymous mapping")
