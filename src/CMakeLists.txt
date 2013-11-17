@@ -371,7 +371,7 @@ if (NOT PLIB_TARGET_OS STREQUAL windows)
 
 	if (PLIB_MMAP_HAS_MAP_ANONYMOUS)
 		add_definitions (-DPLIB_MMAP_HAS_MAP_ANONYMOUS)
-	elif (PLIB_MMAP_HAS_MAP_ANON)
+	elseif (PLIB_MMAP_HAS_MAP_ANON)
 		add_definitions (-DPLIB_MMAP_HAS_MAP_ANON)
 	endif()
 endif()
