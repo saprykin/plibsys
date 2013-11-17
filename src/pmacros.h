@@ -52,6 +52,10 @@
 /* Linux */
 #elif defined(__linux) || defined(__linux__)
 #  define P_OS_LINUX
+/* FreeBSD */
+#elif defined(__FreeBSD__) || defined(__DragonFly__)
+#  define P_OS_FREEBSD
+#  define P_OS_BSD4
 /* Sun Solaris */
 #elif defined(__sun) || defined(sun)
 #  define P_OS_SOLARIS
