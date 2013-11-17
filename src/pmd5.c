@@ -42,8 +42,8 @@ static puchar md5_pad[64] = {
 	   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 };
 
-static void md5_swap_bytes (puint32 *data, puint words);
-static void md5_process (PHashMD5 *ctx, const puint32 data[16]);
+static void __p_md5_swap_bytes (puint32 *data, puint words);
+static void __p_md5_process (PHashMD5 *ctx, const puint32 data[16]);
 
 #define P_MD5_ROTL(val, shift) ((val) << (shift) |  (val) >> (32 - (shift)))
 
@@ -66,7 +66,7 @@ static void md5_process (PHashMD5 *ctx, const puint32 data[16]);
 	a += P_MD5_I (b, c, d) + data[k] + i, a = P_MD5_ROTL (a, s) + b
 
 static void
-md5_swap_bytes (puint32 *data, puint words)
+__p_md5_swap_bytes (puint32 *data, puint words)
 {
 	if (P_BYTE_ORDER == P_LITTLE_ENDIAN)
 		return;
@@ -78,7 +78,7 @@ md5_swap_bytes (puint32 *data, puint words)
 }
 
 static void
-md5_process (PHashMD5		*ctx,
+__p_md5_process (PHashMD5		*ctx,
 	     const puint32	data[16])
 {
 	puint32		A, B, C, D;
@@ -214,8 +214,8 @@ p_md5_update (PHashMD5			*ctx,
 
 	if (left && (puint32) len >= to_fill) {
 		memcpy (ctx->buf.buf + left, data, to_fill);
-		md5_swap_bytes (ctx->buf.buf_w, 16);
-		md5_process (ctx, ctx->buf.buf_w);
+		__p_md5_swap_bytes (ctx->buf.buf_w, 16);
+		__p_md5_process (ctx, ctx->buf.buf_w);
 
 		data += to_fill;
 		len -= to_fill;
@@ -224,8 +224,8 @@ p_md5_update (PHashMD5			*ctx,
 
 	while (len >= 64) {
 		memcpy (ctx->buf.buf, data, 64);
-		md5_swap_bytes (ctx->buf.buf_w, 16);
-		md5_process (ctx, ctx->buf.buf_w);
+		__p_md5_swap_bytes (ctx->buf.buf_w, 16);
+		__p_md5_process (ctx, ctx->buf.buf_w);
 
 		data += 64;
 		len -= 64;
@@ -257,10 +257,10 @@ p_md5_finish (PHashMD5		*ctx)
 	ctx->buf.buf_w[14] = low;
 	ctx->buf.buf_w[15] = high;
 
-	md5_swap_bytes (ctx->buf.buf_w, 14);
-	md5_process (ctx, ctx->buf.buf_w);
+	__p_md5_swap_bytes (ctx->buf.buf_w, 14);
+	__p_md5_process (ctx, ctx->buf.buf_w);
 
-	md5_swap_bytes (ctx->hash, 4);
+	__p_md5_swap_bytes (ctx->hash, 4);
 }
 
 P_LIB_API const puchar *
