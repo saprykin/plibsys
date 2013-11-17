@@ -1,6 +1,5 @@
 /* 
- * 09.12.2010
- * Copyright (C) 2010 Alexander Saprykin <xelfium@gmail.com>
+ * Copyright (C) 2010-2013 Alexander Saprykin <xelfium@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,15 +19,24 @@
 #include <string.h>
 #include <stdlib.h>
 
+#include "pmacros.h"
 #include "pmem.h"
+
+#ifndef P_OS_WIN
+#include <sys/mman.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <unistd.h>
+#endif
 
 pboolean		p_mem_table_inited = FALSE;
 static PMemVTable	p_mem_table;
 
-static void		init_mem_table (void);
+static void		__p_mem_init_mem_table (void);
 
 static void
-init_mem_table (void)
+__p_mem_init_mem_table (void)
 {
 	p_mem_table.malloc	= (ppointer (*)(psize)) malloc;
 	p_mem_table.realloc	= (ppointer (*)(ppointer, psize)) realloc;
@@ -39,7 +47,7 @@ P_LIB_API ppointer
 p_malloc (psize n_bytes)
 {
 	if (!p_mem_table_inited) {
-		init_mem_table ();
+		__p_mem_init_mem_table ();
 		p_mem_table_inited = TRUE;
 	}
 
@@ -55,7 +63,7 @@ p_malloc0 (psize n_bytes)
 	ppointer ret;
 
 	if (!p_mem_table_inited) {
-		init_mem_table ();
+		__p_mem_init_mem_table ();
 		p_mem_table_inited = TRUE;
 	}
 
@@ -77,7 +85,7 @@ p_realloc (ppointer mem, psize n_bytes)
 		return NULL;
 
 	if (!p_mem_table_inited) {
-		init_mem_table ();
+		__p_mem_init_mem_table ();
 		p_mem_table_inited = TRUE;
 	}
 
@@ -91,7 +99,7 @@ P_LIB_API void
 p_free (ppointer mem)
 {
 	if (!p_mem_table_inited) {
-		init_mem_table ();
+		__p_mem_init_mem_table ();
 		p_mem_table_inited = TRUE;
 	}
 
@@ -115,3 +123,74 @@ p_mem_set_vtable (PMemVTable *table)
 	return TRUE;
 }
 
+P_LIB_API ppointer
+p_mem_mmap (psize n_bytes)
+{
+	ppointer	addr;
+#ifdef P_OS_WIN
+	HANDLE		hdl;
+#else
+	int		fd;
+	int		map_flags = MAP_PRIVATE;
+#endif
+
+	if (n_bytes == 0)
+		return NULL;
+
+#ifdef P_OS_WIN
+	if ((hdl = CreateFileMapping (INVALID_HANDLE_VALUE, NULL, PAGE_READWRITE, 0, (DWORD) n_bytes, NULL)) == NULL)
+		return NULL;
+
+	if ((addr = MapViewOfFile (hdl, FILE_MAP_READ | FILE_MAP_WRITE, 0, 0, n_bytes)) == NULL) {
+		CloseHandle (hdl);
+		return NULL;
+	}
+
+	if (!CloseHandle (hdl)) {
+		UnmapViewOfFile (addr);
+		return NULL;
+	}
+#else
+#  if !defined (PLIB_MMAP_HAS_MAP_ANONYMOUS) && !defined (PLIB_MMAP_HAS_MAP_ANON)
+	if ((fd = open ("/dev/zero", O_RDWR | O_EXCL, 0754)) == -1)
+		return NULL;
+#  else
+	fd = -1;
+#  endif
+
+#  ifdef PLIB_MMAP_HAS_MAP_ANONYMOUS
+	map_flags |= MAP_ANONYMOUS;
+#  elif defined (PLIB_MMAP_HAS_MAP_ANON)
+	map_flags |= MAP_ANON;
+#  endif
+
+	if ((addr = mmap (NULL, n_bytes, PROT_READ | PROT_WRITE, map_flags, fd, 0)) == (void *) -1) {
+#  if !defined (PLIB_MMAP_HAS_MAP_ANONYMOUS) && !defined (PLIB_MMAP_HAS_MAP_ANON)
+		close (fd);
+#  endif
+		return NULL;
+	}
+
+#  if !defined (PLIB_MMAP_HAS_MAP_ANONYMOUS) && !defined (PLIB_MMAP_HAS_MAP_ANON)
+	if (close (fd) == -1) {
+		munmap (addr, n_bytes);
+		return NULL;
+	}
+#  endif
+#endif
+
+	return addr;
+}
+
+P_LIB_API pboolean
+p_mem_munmap (ppointer mem, psize n_bytes)
+{
+	if (mem == NULL || n_bytes == 0)
+		return FALSE;
+
+#ifdef P_OS_WIN
+	return UnmapViewOfFile (mem) ? TRUE : FALSE;
+#else
+	return (munmap (mem, n_bytes) == 0) ? TRUE : FALSE;
+#endif
+}

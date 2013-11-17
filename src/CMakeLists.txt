@@ -115,11 +115,14 @@ if (PLIB_C_COMPILER MATCHES "gcc|qcc")
 	message (STATUS "Checking for GCC builtin atomic operations")
 
 	check_c_source_compiles (
-			"int i;
-			 __sync_synchronize ();
-		     __sync_bool_compare_and_swap (&i, 0, 1);
-		     __sync_fetch_and_add (&i, 1);"
-		     PLIB_HAS_BUILTIN_ATOMIC_OPERATIONS
+				 "int main () {
+				int i;
+				__sync_synchronize ();
+				__sync_bool_compare_and_swap (&i, 0, 1);
+				__sync_fetch_and_add (&i, 1);
+				return 0;
+				}"
+				PLIB_HAS_BUILTIN_ATOMIC_OPERATIONS
 	)
 
 	if (PLIB_HAS_BUILTIN_ATOMIC_OPERATIONS)
@@ -140,10 +143,11 @@ if (PLIB_C_COMPILER MATCHES "gcc|qcc")
 			message (STATUS "Checking for SPARC V9 instruction set")
 
 			check_c_source_compiles (
-					"main () {
-							int tmp1, tmp2, tmp3;
-							__asm__ __volatile__(\"casx [%2], %0, %1\"
-								: \"=&r\" (tmp1), \"=&r\" (tmp2) : \"r\" (&tmp3));
+					"int main () {
+						int tmp1, tmp2, tmp3;
+						__asm__ __volatile__(\"casx [%2], %0, %1\"
+							: \"=&r\" (tmp1), \"=&r\" (tmp2) : \"r\" (&tmp3));
+						return 0;
 					}"
 					PLIB_HAS_SPARCV9
 			)
@@ -179,8 +183,11 @@ if (PLIB_C_COMPILER MATCHES "gcc|qcc")
 			message (STATUS "Checking for PowerPC asm numeric labels")
 
 			check_c_source_compiles (
-					"__asm__ __volatile__ (\"1:       nop\n\"
-										   \"         bne-    1b\")"
+					"int main () {
+						__asm__ __volatile__ (\"1:       nop\n\"
+								      \"         bne-    1b\");
+						return 0;
+					}"
 					PLIB_HAS_POWERPC_LABELS
 			)
 
@@ -334,6 +341,40 @@ endif()
 
 file (APPEND ${PLIB_CONFIG_FILE} "\nP_END_DECLS\n\n")
 file (APPEND ${PLIB_CONFIG_FILE} "#endif /* __PLIBCONFIG_H__ */")
+
+if (NOT PLIB_TARGET_OS STREQUAL windows)
+	message (STATUS "Checking whether mmap has anonymous mapping")
+
+	check_c_source_compiles (
+				 "#include <sys/mman.h>
+				 int main () {
+				 	mmap (0, 1024, PROT_READ | PROT_WRITE, MAP_ANON | MAP_PRIVATE, -1, 0);
+				 	return 0;
+				 }"
+				 PLIB_MMAP_HAS_MAP_ANON
+				)
+
+	check_c_source_compiles (
+				 "#include <sys/mman.h>
+				 int main () {
+				 	mmap (0, 1024, PROT_READ | PROT_WRITE, MAP_ANONYMOUS | MAP_PRIVATE, -1, 0);
+				 	return 0;
+				 }"
+				 PLIB_MMAP_HAS_MAP_ANONYMOUS
+				)
+
+	if (PLIB_MMAP_HAS_MAP_ANONYMOUS OR PLIB_MMAP_HAS_MAP_ANON)
+		message (STATUS "Checking whether mmap has anonymous mapping - yes")
+	else()
+		message (STATUS "Checking whether mmap has anonymous mapping - no")
+	endif()
+
+	if (PLIB_MMAP_HAS_MAP_ANONYMOUS)
+		add_definitions (-DPLIB_MMAP_HAS_MAP_ANONYMOUS)
+	elif (PLIB_MMAP_HAS_MAP_ANON)
+		add_definitions (-DPLIB_MMAP_HAS_MAP_ANON)
+	endif()
+endif()
 
 add_library (plib SHARED ${PLIB_SRCS} ${PLIB_PLATFORM_SRCS} ${PLIB_PUBLIC_HDRS} ${PLIB_PRIVATE_HDRS})
 add_library (plibstatic STATIC ${PLIB_SRCS} ${PLIB_PLATFORM_SRCS} ${PLIB_PUBLIC_HDRS} ${PLIB_PRIVATE_HDRS})

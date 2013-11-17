@@ -1,6 +1,5 @@
 /* 
- * 09.12.2010
- * Copyright (C) 2010 Alexander Saprykin <xelfium@gmail.com>
+ * Copyright (C) 2010-2013 Alexander Saprykin <xelfium@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -100,6 +99,29 @@ P_LIB_API void		p_free			(ppointer mem);
  * when you know what are you doing!
  */
 P_LIB_API pboolean	p_mem_set_vtable	(PMemVTable *table);
+
+/**
+ * @brief Gets memory from the system using mmap() call.
+ * @param n_bytes Bytes of memory to allocate.
+ * @return Pointer to allocated memory in case of success, NULL
+ * otherwise.
+ * @since 0.0.1
+ *
+ * Note that some systems can allocate memory only in chunks of
+ * page size, so if @a n_bytes is less than page size it will
+ * try to allocate a chunk of memory equal to page size instead.
+ */
+P_LIB_API ppointer	p_mem_mmap		(psize n_bytes);
+
+/**
+ * @brief Unmaps memory to system back using munmap() call.
+ * @param mem Pointer to memory previously allocated using
+ * p_mem_mmap() call.
+ * @param n_bytes Bytes of memory to unmap.
+ * @return TRUE in case of success, FALSE otherwise.
+ * @since 0.0.1
+ */
+P_LIB_API pboolean	p_mem_munmap		(ppointer mem, psize n_bytes);
 
 P_END_DECLS
 
