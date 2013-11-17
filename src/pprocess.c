@@ -1,5 +1,4 @@
 /* 
- * 05.10.2010
  * Copyright (C) 2010 Alexander Saprykin <xelfium@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -56,4 +55,3 @@ p_process_is_running (puint32 pid)
 	return kill (pid, 0) == 0;
 #endif
 }
-
