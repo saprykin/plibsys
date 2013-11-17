@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Alexander Saprykin <xelfium@gmail.com>
+ * Copyright (C) 2010-2013 Alexander Saprykin <xelfium@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,9 +29,9 @@ struct _PHashGOST3411 {
 	puint32		sum[8];  /* 256-bit sum of hashed data.     */
 };
 
-static void gost3411_swap_bytes (puint32 *data, puint words);
-static void gost3411_sum_256 (puint32 a[8], const puint32 b[8]);
-static void gost3411_process (PHashGOST3411 *ctx, const puint32 data[8]);
+static void __p_gost3411_swap_bytes (puint32 *data, puint words);
+static void __p_gost3411_sum_256 (puint32 a[8], const puint32 b[8]);
+static void __p_gost3411_process (PHashGOST3411 *ctx, const puint32 data[8]);
 
 /* K block data from RFC4357 */
 static puchar K_block[8][16] = {
@@ -164,7 +164,7 @@ static puchar K_block[8][16] = {
 }
 
 static void
-gost3411_swap_bytes (puint32	*data,
+__p_gost3411_swap_bytes (puint32	*data,
 		     puint	words)
 {
 	if (P_BYTE_ORDER == P_LITTLE_ENDIAN)
@@ -178,7 +178,7 @@ gost3411_swap_bytes (puint32	*data,
 
 /* 256-bit sum */
 static void
-gost3411_sum_256 (puint32	a[8],
+__p_gost3411_sum_256 (puint32	a[8],
 		  const puint32	b[8])
 {
 	puint		i;
@@ -194,8 +194,8 @@ gost3411_sum_256 (puint32	a[8],
 }
 
 /* Core GOST R 34.11-94 transformation */
-static void gost3411_process (PHashGOST3411	*ctx,
-			     const puint32	data[8])
+static void __p_gost3411_process (PHashGOST3411	*ctx,
+				  const puint32	data[8])
 {
 	puint32 U[8], V[8], W[8], S[8], K[4][8];
 
@@ -406,13 +406,13 @@ p_gost3411_update (PHashGOST3411	*ctx,
 	len256[0] = (puint32) (len << 3);
 	len256[1] = (puint32) (len >> 29);
 
-	gost3411_sum_256 (ctx->len, len256);
+	__p_gost3411_sum_256 (ctx->len, len256);
 
 	if (left && (puint32) len >= to_fill) {
 		memcpy ((pchar *) ctx->buf + left, data, to_fill);
-		gost3411_swap_bytes (ctx->buf, 8);
-		gost3411_process (ctx, ctx->buf);
-		gost3411_sum_256 (ctx->sum, ctx->buf);
+		__p_gost3411_swap_bytes (ctx->buf, 8);
+		__p_gost3411_process (ctx, ctx->buf);
+		__p_gost3411_sum_256 (ctx->sum, ctx->buf);
 
 		data += to_fill;
 		len -= to_fill;
@@ -421,9 +421,9 @@ p_gost3411_update (PHashGOST3411	*ctx,
 
 	while (len >= 32) {
 		memcpy (ctx->buf, data, 32);
-		gost3411_swap_bytes (ctx->buf, 8);
-		gost3411_process (ctx, ctx->buf);
-		gost3411_sum_256 (ctx->sum, ctx->buf);
+		__p_gost3411_swap_bytes (ctx->buf, 8);
+		__p_gost3411_process (ctx, ctx->buf);
+		__p_gost3411_sum_256 (ctx->sum, ctx->buf);
 
 		data += 32;
 		len -= 32;
@@ -446,14 +446,14 @@ p_gost3411_finish (PHashGOST3411	*ctx)
 
 	if (last % 32 != 0) {
 		memset ((pchar *) ctx->buf + (left >> 3), 0, last);
-		gost3411_process (ctx, ctx->buf);
-		gost3411_sum_256 (ctx->sum, ctx->buf);
+		__p_gost3411_process (ctx, ctx->buf);
+		__p_gost3411_sum_256 (ctx->sum, ctx->buf);
 	}
 
-	gost3411_process (ctx, ctx->len);
-	gost3411_process (ctx, ctx->sum);
+	__p_gost3411_process (ctx, ctx->len);
+	__p_gost3411_process (ctx, ctx->sum);
 
-	gost3411_swap_bytes (ctx->hash, 8);
+	__p_gost3411_swap_bytes (ctx->hash, 8);
 }
 
 P_LIB_API const puchar *
