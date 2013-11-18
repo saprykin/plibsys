@@ -98,4 +98,3 @@ p_atomic_memory_barrier (void)
 {
 	__sync_synchronize ();
 }
-
