@@ -59,7 +59,11 @@
 /* NetBSD */
 #elif defined(__NetBSD__)
 #  define P_OS_NETBSD
-#  define P_OS_BSD4 
+#  define P_OS_BSD4
+/* OpenBSD */
+#elif defined(__OpenBSD__)
+#  define P_OS_OPENBSD
+#  define P_OS_BSD4
 /* Sun Solaris */
 #elif defined(__sun) || defined(sun)
 #  define P_OS_SOLARIS
