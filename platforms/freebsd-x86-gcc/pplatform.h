@@ -1,6 +1,7 @@
 #ifndef __PPLATFORM_H__
 #define __PPLATFORM_H__
 
+#include <unistd.h>
 #include <arpa/inet.h>
 #include <dlfcn.h>
 #include <errno.h>
@@ -19,7 +20,6 @@
 #include <sys/socket.h>
 #include <sys/stat.h>
 #include <sys/types.h>
-#include <unistd.h>
 
 /* Byte contents of pmutex */
 #define PLIB_BYTE_CONTENTS_PMUTEX 0,0,0,0
@@ -37,7 +37,7 @@ typedef struct _PStaticMutex
 	} static_mutex;
 } PStaticMutex;
 
-#define	P_STATIC_MUTEX_INIT		{ { { 0,0,0,0} } }
+#define	P_STATIC_MUTEX_INIT		{ { {0,0,0,0} } }
 #define	p_static_mutex_get_mutex(mutex)	((PMutex*) ((ppointer) ((mutex)->static_mutex.pad)))
 
 #endif /* __PPLATFORM_H__ */

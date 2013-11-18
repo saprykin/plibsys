@@ -1,6 +1,7 @@
 #ifndef __PPLATFORM_H__
 #define __PPLATFORM_H__
 
+#include <unistd.h>
 #include <errno.h>
 #include <fcntl.h>
 #include <inttypes.h>
@@ -14,7 +15,6 @@
 #include <string.h>
 #include <sys/stat.h>
 #include <sys/types.h>
-#include <unistd.h>
 
 typedef struct _PMutex* PStaticMutex;
 #define P_STATIC_MUTEX_INIT NULL

@@ -1,6 +1,7 @@
 #ifndef __PPLATFORM_H__
 #define __PPLATFORM_H__
 
+#include <unistd.h>
 #include <arpa/inet.h>
 #include <dlfcn.h>
 #include <errno.h>
@@ -19,7 +20,6 @@
 #include <sys/socket.h>
 #include <sys/stat.h>
 #include <sys/types.h>
-#include <unistd.h>
 
 /* Byte contents of pmutex */
 #define PLIB_BYTE_CONTENTS_PMUTEX -89,-85,-86,50,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
