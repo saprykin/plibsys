@@ -56,6 +56,10 @@
 #elif defined(__FreeBSD__) || defined(__DragonFly__)
 #  define P_OS_FREEBSD
 #  define P_OS_BSD4
+/* NetBSD */
+#elif defined(__NetBSD__)
+#  define P_OS_NETBSD
+#  define P_OS_BSD4 
 /* Sun Solaris */
 #elif defined(__sun) || defined(sun)
 #  define P_OS_SOLARIS
@@ -78,6 +82,12 @@
 #  elif defined(P_OS_DARWIN32)
 #     define P_OS_MAC32
 #  endif
+#endif
+
+#if defined(P_OS_WIN)
+#  undef P_OS_UNIX
+#elif !defined(P_OS_UNIX)
+#  define P_OS_UNIX
 #endif
 
 /* Compilers */
