@@ -21,12 +21,6 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 
-/* Byte contents of pmutex */
-#define PLIB_BYTE_CONTENTS_PMUTEX 0,0,0,-128,-1,-1,-1,-1
-
-/* The size of pmutex, as computed by sizeof. */
-#define PLIB_SIZEOF_PMUTEX 8
-
 typedef struct _PStaticMutex
 {
 	union {
