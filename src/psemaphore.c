@@ -146,13 +146,19 @@ __p_ipc_get_platform_key (const pchar *name, pboolean posix)
 #else
 	if (posix) {
 		/* POSIX semaphores which are named kinda like '/semname' */
-		if ((path_name = p_malloc0 (sizeof (hash_str) + 2)) == NULL) {
+#  ifdef P_OS_BSD4
+		/* BSD implementation of POSIX semaphores has restriction for the name - max 14
+		   characters */
+		if ((path_name = p_malloc0 (15)) == NULL) {
+#  else
+		if ((path_name = p_malloc0 (strlen (hash_str) + 2)) == NULL) {
+#  endif
 			p_free (hash_str);
 			return NULL;
 		}
 
 		strcpy (path_name, "/");
-		strcat (path_name, hash_str);
+		strncat (path_name, hash_str, 13);
 	} else {
 		tmp_path = __p_ipc_unix_get_temp_dir ();
 
@@ -167,11 +173,10 @@ __p_ipc_get_platform_key (const pchar *name, pboolean posix)
 
 		strcpy (path_name, tmp_path);
 		strcat (path_name, hash_str);
-
 		p_free (tmp_path);
-		p_free (hash_str);
 	}
 
-		return path_name;
+	p_free (hash_str);
+	return path_name;
 #endif
 }
