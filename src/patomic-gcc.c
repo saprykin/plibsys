@@ -98,3 +98,13 @@ p_atomic_memory_barrier (void)
 {
 	__sync_synchronize ();
 }
+
+void
+__p_atomic_thread_init (void)
+{
+}
+
+void
+__p_atomic_thread_shutdown (void)
+{
+}

@@ -69,7 +69,6 @@ set (PLIB_PRIVATE_HDRS
 )
 
 set (PLIB_SRCS
-	patomic.c
 	pcryptohash.c
 	pfile.c
 	pgost3411.c
@@ -108,7 +107,6 @@ set (PLIB_PLATFORM_SRCS
 )
 
 # Detect atomic operations
-set (PLIB_HAS_BUILTIN_ATOMIC_OPERATIONS false)
 set (PLIB_MEMORY_BARRIER_NEEDED true)
 
 if (PLIB_C_COMPILER MATCHES "gcc|qcc")
@@ -232,7 +230,9 @@ else()
 endif()
 
 if (PLIB_HAS_BUILTIN_ATOMIC_OPERATIONS)
-	set (PLIB_SRCS ${PLIB_SRCS} patomic-gcc.c)
+	set (PLIB_SRCS patomic-gcc.c ${PLIB_SRCS})
+else()
+	set (PLIB_SRCS patomic.c ${PLIB_SRCS})
 endif()
 
 if (PLIB_MEMORY_BARRIER_NEEDED)
