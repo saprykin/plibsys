@@ -92,4 +92,36 @@ BOOST_AUTO_TEST_CASE (sha1_test)
 	p_crypto_hash_free (sha1_hash);
 }
 
+BOOST_AUTO_TEST_CASE (gost3411_94_test)
+{
+	PCryptoHash	*gost3411_94_hash;
+	pchar		*hash_str;
+	int		i;
+
+	gost3411_94_hash = p_crypto_hash_new (P_CRYPTO_HASH_TYPE_GOST);
+
+	BOOST_REQUIRE (p_crypto_hash_get_length (gost3411_94_hash) == 32);
+	BOOST_REQUIRE (p_crypto_hash_get_type (gost3411_94_hash) == P_CRYPTO_HASH_TYPE_GOST);
+	BOOST_REQUIRE (p_crypto_hash_get_string (gost3411_94_hash) == NULL);
+
+	p_crypto_hash_update (gost3411_94_hash,
+			      (const puchar *) ("This is message, length=32 bytes"),
+			      32);
+	hash_str = p_crypto_hash_get_string (gost3411_94_hash);
+	BOOST_CHECK (strcmp (hash_str, "b1c466d37519b82e8319819ff32595e047a28cb6f83eff1c6916a815a637fffa") == 0);
+	p_free (hash_str);
+
+	p_crypto_hash_reset (gost3411_94_hash);
+	BOOST_REQUIRE (p_crypto_hash_get_string (gost3411_94_hash) == NULL);
+
+	p_crypto_hash_update (gost3411_94_hash,
+			      (const puchar *) ("Suppose the original message has length = 50 bytes"),
+			      50);
+	hash_str = p_crypto_hash_get_string (gost3411_94_hash);
+	BOOST_CHECK (strcmp (hash_str, "471aba57a60a770d3a76130635c1fbea4ef14de51f78b4ae57dd893b62f55208") == 0);
+	p_free (hash_str);
+
+	p_crypto_hash_free (gost3411_94_hash);
+}
+
 BOOST_AUTO_TEST_SUITE_END()
