@@ -96,7 +96,6 @@ BOOST_AUTO_TEST_CASE (gost3411_94_test)
 {
 	PCryptoHash	*gost3411_94_hash;
 	pchar		*hash_str;
-	int		i;
 
 	gost3411_94_hash = p_crypto_hash_new (P_CRYPTO_HASH_TYPE_GOST);
 
