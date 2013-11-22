@@ -26,7 +26,7 @@
  * then in thread you can wait for signal from another thread on this conditional variable
  * using p_cond_variable_wait() and passing mutex there. Mutex should be locked, or
  * behaviour can be unpredictable. After that thread will be slept until signal on this
- * conditional variabl will not be emitted by another thread using p_cond_variable_signal()
+ * conditional variable will not be emitted by another thread using p_cond_variable_signal()
  * or p_cond_variable_broadcast(). As soon as waked up, thread already holds mutex locked
  * and can work with shared resources. For additional information see other sources about
  * conditional variables concept.
