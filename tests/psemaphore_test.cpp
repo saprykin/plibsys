@@ -6,7 +6,7 @@
 
 static int semaphore_test_val = 10;
 
-void * semaphore_test_thread (void *)
+static void * semaphore_test_thread (void *)
 {
 	PSemaphore	*sem;
 	int		i;
@@ -22,10 +22,10 @@ void * semaphore_test_thread (void *)
 
 		if (semaphore_test_val == 10)
 			--semaphore_test_val;
-		else
+		else {
+			p_uthread_sleep (1);
 			++semaphore_test_val;
-
-		p_uthread_sleep (1);
+		}
 
 		if (!p_semaphore_release (sem))
 			p_uthread_exit (1);
@@ -39,8 +39,11 @@ BOOST_AUTO_TEST_SUITE (BOOST_TEST_MODULE)
 
 BOOST_AUTO_TEST_CASE (psemaphore_general_test)
 {
-	PSemaphore	*sem;
+	PSemaphore	*sem = NULL;
 	int		i;
+
+	BOOST_REQUIRE (p_semaphore_acquire (sem) == FALSE);
+	BOOST_REQUIRE (p_semaphore_acquire (sem) == FALSE);
 
 	sem = p_semaphore_new ("p_semaphore_test_object", 10, P_SEM_ACCESS_CREATE);
 	BOOST_REQUIRE (sem != NULL);

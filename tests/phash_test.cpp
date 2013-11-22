@@ -8,6 +8,17 @@
 
 BOOST_AUTO_TEST_SUITE (BOOST_TEST_MODULE)
 
+BOOST_AUTO_TEST_CASE (phash_general_test)
+{
+	PCryptoHash *hash = NULL;
+
+	p_crypto_hash_get_digest (hash, NULL, NULL);
+	BOOST_REQUIRE (p_crypto_hash_get_length (hash) == 0);
+	BOOST_REQUIRE (p_crypto_hash_get_string (hash) == NULL);
+	BOOST_REQUIRE (p_crypto_hash_get_type (hash) == -1);
+	p_crypto_hash_reset (hash);
+}
+
 BOOST_AUTO_TEST_CASE (md5_test)
 {
 	PCryptoHash	*md5_hash;

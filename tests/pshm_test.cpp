@@ -8,9 +8,12 @@ BOOST_AUTO_TEST_SUITE (BOOST_TEST_MODULE)
 
 BOOST_AUTO_TEST_CASE (pshm_general_test)
 {
-	PShm		*shm, *shm2;
+	PShm		*shm = NULL, *shm2 = NULL;
 	ppointer	addr, addr2;
 	int		i;
+
+	BOOST_REQUIRE (p_shm_get_address (shm) == NULL);
+	BOOST_REQUIRE (p_shm_get_size (shm) == 0);
 
 	shm = p_shm_new ("p_shm_test_memory_block", 1024, P_SHM_ACCESS_READWRITE);
 	BOOST_REQUIRE (shm != NULL);
