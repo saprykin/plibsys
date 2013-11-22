@@ -184,7 +184,7 @@ P_LIB_API pssize
 p_crypto_hash_get_length (PCryptoHash *hash)
 {
 	if (hash == NULL)
-		return -1;
+		return 0;
 
 	return hash->hash_len;
 }
