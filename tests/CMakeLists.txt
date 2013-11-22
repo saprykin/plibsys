@@ -5,10 +5,10 @@ find_package (Boost COMPONENTS unit_test_framework REQUIRED)
 
 include_directories (${Boost_INCLUDE_DIR} ${PROJECT_SOURCE_DIR}/../src ${CMAKE_BINARY_DIR})
 
-set (PHASH_TEST_SRCS phash_test.cpp)
-add_executable (phash_test ${PHASH_TEST_SRCS})
-target_link_libraries (phash_test ${Boost_LIBRARIES} plib)
-set_target_properties (phash_test PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${OUTPUT_DIR})
+set (PCRYPTOHASH_TEST_SRCS pcryptohash_test.cpp)
+add_executable (pcryptohash_test ${PCRYPTOHASH_TEST_SRCS})
+target_link_libraries (pcryptohash_test ${Boost_LIBRARIES} plib)
+set_target_properties (pcryptohash_test PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${OUTPUT_DIR})
 
 set (PLIST_TEST_SRCS plist_test.cpp)
 add_executable (plist_test ${PLIST_TEST_SRCS})
@@ -35,7 +35,7 @@ add_executable (pstring_test ${PSTRING_TEST_SRCS})
 target_link_libraries (pstring_test ${Boost_LIBRARIES} plib)
 set_target_properties (pstring_test PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${OUTPUT_DIR})
 
-add_test (NAME phash_test COMMAND phash_test)
+add_test (NAME pcryptohash_test COMMAND pcryptohash_test)
 add_test (NAME plist_test COMMAND plist_test)
 add_test (NAME pmutex_test COMMAND pmutex_test)
 add_test (NAME psemaphore_test COMMAND psemaphore_test)

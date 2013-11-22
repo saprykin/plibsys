@@ -1,4 +1,4 @@
-#define BOOST_TEST_MODULE phash_test
+#define BOOST_TEST_MODULE pcryptohash_test
 
 #include "plib.h"
 
@@ -8,7 +8,7 @@
 
 BOOST_AUTO_TEST_SUITE (BOOST_TEST_MODULE)
 
-BOOST_AUTO_TEST_CASE (phash_general_test)
+BOOST_AUTO_TEST_CASE (pcryptohash_general_test)
 {
 	PCryptoHash *hash = NULL;
 
