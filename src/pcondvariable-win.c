@@ -73,14 +73,14 @@ p_cond_variable_free (PCondVariable *cond)
 	p_free (cond);
 }
 
-P_LIB_API pint
+P_LIB_API pboolean
 p_cond_variable_wait (PCondVariable	*cond,
 		      PMutex		*mutex)
 {
 	pboolean	last_waiter;
 
 	if (cond == NULL || mutex == NULL)
-		return -1;
+		return FALSE;
 	
 	EnterCriticalSection (&cond->waiters_count_lock);
 	cond->waiters_count++;
@@ -102,16 +102,16 @@ p_cond_variable_wait (PCondVariable	*cond,
 	else
 		WaitForSingleObject (*((HANDLE *) mutex), INFINITE);
 
-	return 0;
+	return TRUE;
 }
 
-P_LIB_API pint
+P_LIB_API pboolean
 p_cond_variable_signal (PCondVariable *cond)
 {
 	pboolean have_waiters;
 
 	if (cond == NULL)
-		return -1;
+		return FALSE;
 
 	EnterCriticalSection (&cond->waiters_count_lock);
   	have_waiters = (cond->waiters_count > 0) ? TRUE : FALSE;
@@ -120,16 +120,16 @@ p_cond_variable_signal (PCondVariable *cond)
 	if (have_waiters)
 		ReleaseSemaphore (cond->waiters_sema, 1, 0);
 
-	return 0;
+	return TRUE;
 }
 
-P_LIB_API pint
+P_LIB_API pboolean
 p_cond_variable_broadcast (PCondVariable *cond)
 {
 	pboolean have_waiters;
 
 	if (cond == NULL)
-		return -1;
+		return FALSE;
 
 	EnterCriticalSection (&cond->waiters_count_lock);
 	have_waiters = FALSE;
@@ -147,5 +147,5 @@ p_cond_variable_broadcast (PCondVariable *cond)
 	} else
 		LeaveCriticalSection (&cond->waiters_count_lock);
 
-	return 0;
+	return TRUE;
 }

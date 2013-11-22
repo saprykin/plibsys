@@ -1,5 +1,5 @@
 /* 
- * Copyright (C) 2010-2011 Alexander Saprykin <xelfium@gmail.com>
+ * Copyright (C) 2010-2013 Alexander Saprykin <xelfium@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,23 +34,28 @@ p_cond_variable_new (void)
 P_LIB_API void
 p_cond_variable_free (PCondVariable *cond)
 {
+	P_UNUSED (cond);
 }
 
-P_LIB_API pint
+P_LIB_API pboolean
 p_cond_variable_wait (PCondVariable	*cond,
 		      PMutex		*mutex)
 {
-	return -1;
+	P_UNUSED (cond);
+	P_UNUSED (mutex);
+	return FALSE;
 }
 
-P_LIB_API pint
+P_LIB_API pboolean
 p_cond_variable_signal (PCondVariable *cond)
 {
-	return -1;
+	P_UNUSED (cond);
+	return FALSE;
 }
 
-P_LIB_API pint
+P_LIB_API pboolean
 p_cond_variable_broadcast (PCondVariable *cond)
 {
-	return -1;
+	P_UNUSED (cond);
+	return FALSE;
 }

@@ -1,5 +1,5 @@
 /* 
- * Copyright (C) 2010-2011 Alexander Saprykin <xelfium@gmail.com>
+ * Copyright (C) 2010-2013 Alexander Saprykin <xelfium@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -59,46 +59,46 @@ p_cond_variable_free (PCondVariable *cond)
 	p_free (cond);
 }
 
-P_LIB_API pint
+P_LIB_API pboolean
 p_cond_variable_wait (PCondVariable	*cond,
 		      PMutex		*mutex)
 {
 	if (cond == NULL || mutex == NULL)
-		return -1;
+		return FALSE;
 	
 	/* Cast is eligible since there is only one filed in PMutex structure */
 	if (pthread_cond_wait (&cond->hdl, (pthread_mutex_t *) mutex) != 0) {
 		P_ERROR ("PCondVariable: failed to wait");
-		return -1;
+		return FALSE;
 	}
 
-	return 0;
+	return TRUE;
 }
 
-P_LIB_API pint
+P_LIB_API pboolean
 p_cond_variable_signal (PCondVariable *cond)
 {
 	if (cond == NULL)
-		return -1;
+		return FALSE;
 
 	if (pthread_cond_signal (&cond->hdl) != 0) {
 		P_ERROR ("PCondVariable: failed to signal");
-		return -1;
+		return FALSE;
 	}
 
-	return 0;
+	return TRUE;
 }
 
-P_LIB_API pint
+P_LIB_API pboolean
 p_cond_variable_broadcast (PCondVariable *cond)
 {
 	if (cond == NULL)
-		return -1;
+		return FALSE;
 
 	if (pthread_cond_broadcast (&cond->hdl) != 0) {
 		P_ERROR ("PCondVariable: failed to broadcast");
-		return -1;
+		return FALSE;
 	}
 
-	return 0;
+	return TRUE;
 }

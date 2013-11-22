@@ -1,5 +1,5 @@
 /* 
- * Copyright (C) 2010-2011 Alexander Saprykin <xelfium@gmail.com>
+ * Copyright (C) 2010-2013 Alexander Saprykin <xelfium@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -66,17 +66,17 @@ P_LIB_API void			p_cond_variable_free		(PCondVariable *cond);
  * @brief Waits for signal on given conditional variable.
  * @param cond Conditional variable to wait on.
  * @param mutex Locked mutex which will remain locked after waiting.
- * @return 0 on success, -1 otherwise.
+ * @return TRUE on success, FALSE otherwise.
  * @since 0.0.1
  *
  * Calling thread will sleep until signal on @a cond arrived.
  */
-P_LIB_API pint			p_cond_variable_wait		(PCondVariable *cond, PMutex *mutex);
+P_LIB_API pboolean		p_cond_variable_wait		(PCondVariable *cond, PMutex *mutex);
 
 /**
  * @brief Emits signal on given conditional variable for one waiting thread.
  * @param cond Conditional variable to emit signal on.
- * @return 0 on success, -1 otherwise. 
+ * @return TRUE on success, FALSE otherwise.
  * @since 0.0.1
  *
  * After emitting signal only one thread waiting for it will be waken up. Do not
@@ -85,17 +85,17 @@ P_LIB_API pint			p_cond_variable_wait		(PCondVariable *cond, PMutex *mutex);
  * up, even if it just called p_cond_variable_wait() while there were another waiting
  * threads.
  */
-P_LIB_API pint			p_cond_variable_signal		(PCondVariable *cond);
+P_LIB_API pboolean		p_cond_variable_signal		(PCondVariable *cond);
 
 /**
  * @brief Emits signal on given conditional variable for all waiting threads.
  * @param cond Conditional variable to emit signal on.
- * @return 0 on success, -1 otherwise. 
+ * @return TRUE on success, FALSE otherwise.
  * @since 0.0.1
  *
  * After emitting signal all threads waiting for it will be waken up.
  */
-P_LIB_API pint			p_cond_variable_broadcast	(PCondVariable *cond);
+P_LIB_API pboolean		p_cond_variable_broadcast	(PCondVariable *cond);
 
 P_END_DECLS
 
