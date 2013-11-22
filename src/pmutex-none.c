@@ -25,13 +25,6 @@ struct _PMutex {
 	pint	hdl;
 };
 
-P_LIB_API PStaticMutex
-p_static_mutex_get_mutex_impl (PStaticMutex *mutex)
-{
-	P_UNUSED (mutex);
-	return NULL;
-}
-
 P_LIB_API PMutex *
 p_mutex_new (void)
 {
@@ -60,18 +53,6 @@ p_mutex_unlock (PMutex *mutex)
 
 P_LIB_API void
 p_mutex_free (PMutex *mutex)
-{
-	P_UNUSED (mutex);
-}
-
-P_LIB_API void
-p_static_mutex_init (PStaticMutex *mutex)
-{
-	mutex = NULL;
-}
-
-P_LIB_API void
-p_static_mutex_free (PStaticMutex* mutex)
 {
 	P_UNUSED (mutex);
 }

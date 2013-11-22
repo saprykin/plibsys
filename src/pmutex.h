@@ -80,7 +80,7 @@ P_LIB_API pboolean	p_mutex_trylock	(PMutex *mutex);
  * @since 0.0.1
  *
  * If @a mutex was previousely lock then it becomes unlocked. Do not use
- * this function on non-locked mutexes - behaviour may be unpredictable.
+ * this function on non-locked mutexes - behavior may be unpredictable.
  * It's implementation dependent whether only the same thread can lock and
  * unlock mutex.
  */
@@ -96,41 +96,6 @@ P_LIB_API pboolean	p_mutex_unlock	(PMutex *mutex);
  */
 P_LIB_API void		p_mutex_free	(PMutex *mutex);
 
-/**
- * @struct PStaticMutex
- * @brief Static mutex used without explicit memory allocation
- *
- * On some platforms it is supported natively, and on others it is
- * emulated using #PMutex object.
- */
-
-/** Locks static mutex. */
-#define p_static_mutex_lock(mutex)	p_mutex_lock (p_static_mutex_get_mutex (mutex))
-
-/** Immediatly tries to lock static mutex. */
-#define p_static_mutex_trylock(mutex)	p_mutex_trylock (p_static_mutex_get_mutex (mutex))
-
-/** Unlocks static mutex. */
-#define p_static_mutex_unlock(mutex)	p_mutex_unlock (p_static_mutex_get_mutex (mutex))
-
-/**
- * @brief Initializes #PStaticMutex object.
- * @param mutex #PStaticMutex to initialize.
- * @since 0.0.1
- */
-P_LIB_API void		p_static_mutex_init (PStaticMutex *mutex);
-
-/**
- * @brief Frees #PStaticMutex object.
- * @param mutex #PStaticMutex to free.
- * @since 0.0.1
- *
- * It doesn't unlock @a mutex before freeing memory, so you should do it
- * manually.
- */
-P_LIB_API void		p_static_mutex_free (PStaticMutex *mutex);
-
 P_END_DECLS
 
 #endif /* __PMUTEX_H__ */
-

@@ -21,17 +21,4 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 
-typedef struct _PStaticMutex
-{
-	union {
-	char	pad[28];
-	double	dummy_double;
-	long	dummy_long;
-	void	*dummy_pointer;
-	} static_mutex;
-} PStaticMutex;
-
-#define	P_STATIC_MUTEX_INIT		{ { {3,0,51,51,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0} } }
-#define	p_static_mutex_get_mutex(mutex)	((PMutex*) ((ppointer) ((mutex)->static_mutex.pad)))
-
 #endif /* __PPLATFORM_H__ */

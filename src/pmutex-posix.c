@@ -1,5 +1,5 @@
 /* 
- * Copyright (C) 2010 Alexander Saprykin <xelfium@gmail.com>
+ * Copyright (C) 2010-2013 Alexander Saprykin <xelfium@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -99,22 +99,4 @@ p_mutex_free (PMutex *mutex)
 		P_ERROR ("PMutex: error while destroying mutex object");
 
 	p_free (mutex);
-}
-
-P_LIB_API void
-p_static_mutex_init (PStaticMutex *mutex)
-{
-	static const PStaticMutex init_mutex = P_STATIC_MUTEX_INIT;
-
-	if (mutex == NULL)
-		return;
-
-	*mutex = init_mutex;
-}
-
-P_LIB_API void
-p_static_mutex_free (PStaticMutex* mutex)
-{
-	if (mutex == NULL)
-		return;
 }
