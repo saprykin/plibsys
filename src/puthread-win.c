@@ -156,4 +156,3 @@ p_uthread_set_priority (PUThread		*thread,
 
 	return 0;
 }
-
