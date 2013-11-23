@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Alexander Saprykin <xelfium@gmail.com>
+ * Copyright (C) 2010-2013 Alexander Saprykin <xelfium@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,8 +36,8 @@ p_shm_new (const pchar		*name,
 		return NULL;
 
 	/* To shut up compiler */
-	P_INT_TO_POINTER (size);
-	P_INT_TO_POINTER (perms);
+	P_UNUSED (size);
+	P_UNUSED (perms);
 
 	return NULL;
 }
@@ -45,15 +45,13 @@ p_shm_new (const pchar		*name,
 P_LIB_API void
 p_shm_free (PShm *shm)
 {
-	if (shm == NULL)
-		return;
+	P_UNUSED (shm);
 }
 
 P_LIB_API pboolean
 p_shm_lock (PShm *shm)
 {
-	if (shm == NULL)
-		return FALSE;
+	P_UNUSED (shm);
 
 	return FALSE;
 }
@@ -61,8 +59,7 @@ p_shm_lock (PShm *shm)
 P_LIB_API pboolean
 p_shm_unlock (PShm *shm)
 {
-	if (shm == NULL)
-		return FALSE;
+	P_UNUSED (shm);
 
 	return FALSE;
 }
@@ -70,8 +67,7 @@ p_shm_unlock (PShm *shm)
 P_LIB_API ppointer
 p_shm_get_address (PShm *shm)
 {
-	if (shm == NULL)
-		return NULL;
+	P_UNUSED (shm);
 
 	return NULL;
 }
@@ -79,8 +75,7 @@ p_shm_get_address (PShm *shm)
 P_LIB_API psize
 p_shm_get_size (PShm *shm)
 {
-	if (shm == NULL)
-		return 0;
+	P_UNUSED (shm);
 
 	return 0;
 }
