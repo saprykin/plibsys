@@ -5,6 +5,11 @@ find_package (Boost COMPONENTS unit_test_framework REQUIRED)
 
 include_directories (${Boost_INCLUDE_DIR} ${PROJECT_SOURCE_DIR}/../src ${CMAKE_BINARY_DIR})
 
+set (PCONDVARIABLE_TEST_SRCS pcondvariable_test.cpp)
+add_executable (pcondvariable_test ${PCONDVARIABLE_TEST_SRCS})
+target_link_libraries (pcondvariable_test ${Boost_LIBRARIES} plib)
+set_target_properties (pcondvariable_test PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${OUTPUT_DIR})
+
 set (PCRYPTOHASH_TEST_SRCS pcryptohash_test.cpp)
 add_executable (pcryptohash_test ${PCRYPTOHASH_TEST_SRCS})
 target_link_libraries (pcryptohash_test ${Boost_LIBRARIES} plib)
@@ -35,6 +40,7 @@ add_executable (pstring_test ${PSTRING_TEST_SRCS})
 target_link_libraries (pstring_test ${Boost_LIBRARIES} plib)
 set_target_properties (pstring_test PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${OUTPUT_DIR})
 
+add_test (NAME pcondvariable_test COMMAND pcondvariable_test)
 add_test (NAME pcryptohash_test COMMAND pcryptohash_test)
 add_test (NAME plist_test COMMAND plist_test)
 add_test (NAME pmutex_test COMMAND pmutex_test)
