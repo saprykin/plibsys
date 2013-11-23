@@ -179,6 +179,7 @@ p_hash_table_free (PHashTable *table)
 			node = next_node;
 		}
 
+	p_free (table->table);
 	p_free (table);
 }
 

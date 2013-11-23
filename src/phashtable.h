@@ -73,7 +73,9 @@ P_LIB_API PHashTable *	p_hash_table_new		(void);
  * This function only stores pointers, so you need to manually free pointed
  * data after using it.
  */
-P_LIB_API void		p_hash_table_insert		(PHashTable *table, ppointer key, ppointer value);
+P_LIB_API void		p_hash_table_insert		(PHashTable	*table,
+							 ppointer	key,
+							 ppointer	value);
 
 /**
  * @brief Searches for specifed key in the hash-table.
@@ -128,7 +130,9 @@ P_LIB_API void		p_hash_table_remove		(PHashTable *table, pconstpointer key);
  * Caller is responsible to call p_list_free() on returned list after usage.
  * @since 0.0.1
  */
-P_LIB_API PList *	p_hash_table_lookup_by_value	(PHashTable *table, pconstpointer val, PCompareFunc func);
+P_LIB_API PList *	p_hash_table_lookup_by_value	(PHashTable	*table,
+							 pconstpointer	val,
+							 PCompareFunc	func);
 
 P_END_DECLS
 
