@@ -129,6 +129,10 @@ P_LIB_API void		p_hash_table_remove		(PHashTable *table, pconstpointer key);
  * @return List of keys with @a val (can be NULL), NULL if no keys were found.
  * Caller is responsible to call p_list_free() on returned list after usage.
  * @since 0.0.1
+ *
+ * Compare function should return 0 if value from hash table (first parameter)
+ * is accepted related to the given lookup value (second parameter),
+ * and -1 or 1 otherwise.
  */
 P_LIB_API PList *	p_hash_table_lookup_by_value	(PHashTable	*table,
 							 pconstpointer	val,
