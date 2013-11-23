@@ -21,6 +21,8 @@
  * See: http://www.cse.wustl.edu/~schmidt/win32-cv-1.html
  */
 
+/* TODO: Use native conditional variable if available */
+
 #include "pmem.h"
 #include "pcondvariable.h"
 
