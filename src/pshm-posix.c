@@ -45,11 +45,11 @@ struct _PShm {
 	PShmAccessPerms perms;
 };
 
-static pboolean __p_semaphore_create_handle (PShm *shm);
-static void __p_semaphore_clean_handle (PShm *shm);
+static pboolean __p_shm_create_handle (PShm *shm);
+static void __p_shm_clean_handle (PShm *shm);
 
 static pboolean
-__p_semaphore_create_handle (PShm *shm)
+__p_shm_create_handle (PShm *shm)
 {
 	pboolean	is_exists;
 	pint		fd, flags;
@@ -74,7 +74,7 @@ __p_semaphore_create_handle (PShm *shm)
 
 			if (fd == P_SHM_INVALID_HDL) {
 				P_ERROR ("PShm: shm_open failed");
-				__p_semaphore_clean_handle (shm);
+				__p_shm_clean_handle (shm);
 				return FALSE;
 			}
 		}
@@ -86,7 +86,7 @@ __p_semaphore_create_handle (PShm *shm)
 		if (fstat (fd, &stat_buf) == -1) {
 			P_ERROR ("PShm: failed to get region size");
 			close (fd);
-			__p_semaphore_clean_handle (shm);
+			__p_shm_clean_handle (shm);
 			return FALSE;
 		}
 
@@ -95,7 +95,7 @@ __p_semaphore_create_handle (PShm *shm)
 		if ((ftruncate (fd, shm->size)) == -1) {
 			P_ERROR ("PShm: failed to truncate file");
 			close (fd);
-			__p_semaphore_clean_handle (shm);
+			__p_shm_clean_handle (shm);
 			return FALSE;
 		}
 	}
@@ -105,7 +105,7 @@ __p_semaphore_create_handle (PShm *shm)
 	if ((shm->addr = mmap (NULL, shm->size, flags, MAP_SHARED, fd, 0)) == (void *) -1) {
 		P_ERROR ("PShm: mmap failed");
 		close (fd);
-		__p_semaphore_clean_handle (shm);
+		__p_shm_clean_handle (shm);
 		return FALSE;
 	}
 
@@ -115,7 +115,7 @@ __p_semaphore_create_handle (PShm *shm)
 	if ((shm->sem = p_semaphore_new (shm->platform_key, 1,
 					 is_exists ? P_SEM_ACCESS_OPEN : P_SEM_ACCESS_CREATE)) == NULL) {
 		P_ERROR ("PShm: failed create PSemaphore object");
-		__p_semaphore_clean_handle (shm);
+		__p_shm_clean_handle (shm);
 		return FALSE;
 	}
 
@@ -123,7 +123,7 @@ __p_semaphore_create_handle (PShm *shm)
 }
 
 static void
-__p_semaphore_clean_handle (PShm *shm)
+__p_shm_clean_handle (PShm *shm)
 {
 	if (shm == NULL)
 		return;
@@ -178,7 +178,7 @@ p_shm_new (const pchar		*name,
 
 	p_free (new_name);
 
-	if (!__p_semaphore_create_handle (ret)) {
+	if (!__p_shm_create_handle (ret)) {
 		P_ERROR ("PShm: failed to create system handle");
 		p_shm_free (ret);
 		return NULL;
@@ -196,7 +196,7 @@ p_shm_free (PShm *shm)
 	if (shm == NULL)
 		return;
 
-	__p_semaphore_clean_handle (shm);
+	__p_shm_clean_handle (shm);
 
 	if (shm->platform_key)
 		p_free (shm->platform_key);

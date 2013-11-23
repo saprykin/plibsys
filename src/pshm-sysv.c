@@ -53,11 +53,11 @@ struct _PShm {
 	PShmAccessPerms	perms;
 };
 
-static pboolean __p_semaphore_create_handle (PShm *shm);
-static void __p_semaphore_clean_handle (PShm *shm);
+static pboolean __p_shm_create_handle (PShm *shm);
+static void __p_shm_clean_handle (PShm *shm);
 
 static pboolean
-__p_semaphore_create_handle (PShm *shm)
+__p_shm_create_handle (PShm *shm)
 {
 	pboolean	is_exists;
 	pint		flags, built;
@@ -70,14 +70,14 @@ __p_semaphore_create_handle (PShm *shm)
 
 	if ((built = __p_ipc_unix_create_key_file (shm->platform_key)) == -1) {
 		P_ERROR ("PShm: failed to create key file");
-		__p_semaphore_clean_handle (shm);
+		__p_shm_clean_handle (shm);
 		return FALSE;
 	} else if (built == 0)
 		shm->file_created = TRUE;
 
 	if ((shm->unix_key = __p_ipc_unix_get_ftok_key (shm->platform_key)) == -1) {
 		P_ERROR ("PShm: failed to get unique IPC key");
-		__p_semaphore_clean_handle (shm);
+		__p_shm_clean_handle (shm);
 		return FALSE;
 	}
 
@@ -89,7 +89,7 @@ __p_semaphore_create_handle (PShm *shm)
 
 			if ((shm->shm_hdl = shmget (shm->unix_key, 0, flags)) == -1) {
 				P_ERROR ("PShm: shmget failed");
-				__p_semaphore_clean_handle (shm);
+				__p_shm_clean_handle (shm);
 				return FALSE;
 			}
 		}
@@ -98,7 +98,7 @@ __p_semaphore_create_handle (PShm *shm)
 
 	if (shmctl (shm->shm_hdl, IPC_STAT, &shm_stat) == -1) {
 		P_ERROR ("PShm: failed to get memory size");
-		__p_semaphore_clean_handle (shm);
+		__p_shm_clean_handle (shm);
 		return FALSE;
 	}
 
@@ -108,14 +108,14 @@ __p_semaphore_create_handle (PShm *shm)
 
 	if (shm->shm_hdl == P_SHM_INVALID_HDL || (shm->addr = shmat (shm->shm_hdl, 0, flags)) == (void *) -1) {
 		P_ERROR ("PShm: shmget or shmat failed");
-		__p_semaphore_clean_handle (shm);
+		__p_shm_clean_handle (shm);
 		return FALSE;
 	}
 
 	if ((shm->sem = p_semaphore_new (shm->platform_key, 1,
 					 is_exists ? P_SEM_ACCESS_OPEN : P_SEM_ACCESS_CREATE)) == NULL) {
 		P_ERROR ("PShm: failed create PSemaphore object");
-		__p_semaphore_clean_handle (shm);
+		__p_shm_clean_handle (shm);
 		return FALSE;
 	}
 
@@ -123,7 +123,7 @@ __p_semaphore_create_handle (PShm *shm)
 }
 
 static void
-__p_semaphore_clean_handle (PShm *shm)
+__p_shm_clean_handle (PShm *shm)
 {
 	struct shmid_ds shm_stat;
 
@@ -190,7 +190,7 @@ p_shm_new (const pchar		*name,
 
 	p_free (new_name);
 
-	if (!__p_semaphore_create_handle (ret)) {
+	if (!__p_shm_create_handle (ret)) {
 		P_ERROR ("PShm: failed to create system handle");
 		p_shm_free (ret);
 		return NULL;
@@ -208,7 +208,7 @@ p_shm_free (PShm *shm)
 	if (shm == NULL)
 		return;
 
-	__p_semaphore_clean_handle (shm);
+	__p_shm_clean_handle (shm);
 
 	if (shm->platform_key)
 		p_free (shm->platform_key);

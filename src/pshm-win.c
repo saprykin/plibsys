@@ -49,11 +49,11 @@ struct _PShm {
 	PShmAccessPerms	perms;
 };
 
-static pboolean create_handle (PShm *shm);
-static void clean_handle (PShm *shm);
+static pboolean __p_shm_create_handle (PShm *shm);
+static void __p_shm_clean_handle (PShm *shm);
 
 static pboolean
-create_handle (PShm *shm)
+__p_shm_create_handle (PShm *shm)
 {
 	pboolean			is_exists;
 	MEMORY_BASIC_INFORMATION	mem_stat;
@@ -69,7 +69,7 @@ create_handle (PShm *shm)
 	/* Multibyte character set must be enabled in MS VS */
 	if ((shm->shm_hdl = CreateFileMapping (INVALID_HANDLE_VALUE, NULL, protect, 0, (DWORD) shm->size, shm->platform_key)) == NULL) {
 		P_ERROR ("PShm: CreateFleMapping failed");
-		clean_handle (shm);
+		__p_shm_clean_handle (shm);
 		return FALSE;
 	}
 
@@ -77,7 +77,7 @@ create_handle (PShm *shm)
 
 	if ((shm->addr = MapViewOfFile (shm->shm_hdl, protect, 0, 0, 0)) == NULL) {
 		P_ERROR ("PShm: MapViewOfFile failed");
-		clean_handle (shm);
+		__p_shm_clean_handle (shm);
 		return FALSE;
 	}
 
@@ -86,7 +86,7 @@ create_handle (PShm *shm)
 
 	if (!VirtualQuery (shm->addr, &mem_stat, sizeof (mem_stat))) {
 		P_ERROR ("PShm: VirtualQuery failed");
-		clean_handle (shm);
+		__p_shm_clean_handle (shm);
 		return FALSE;
 	}
 
@@ -95,7 +95,7 @@ create_handle (PShm *shm)
 	if ((shm->sem = p_semaphore_new (shm->platform_key, 1,
 					 is_exists ? P_SEM_ACCESS_OPEN : P_SEM_ACCESS_CREATE)) == NULL) {
 		P_ERROR ("PShm: failed create PSemaphore object");
-		clean_handle (shm);
+		__p_shm_clean_handle (shm);
 		return FALSE;
 	}
 
@@ -103,7 +103,7 @@ create_handle (PShm *shm)
 }
 
 static void
-clean_handle (PShm *shm)
+__p_shm_clean_handle (PShm *shm)
 {
 	if (shm == NULL)
 		return;
@@ -157,7 +157,7 @@ p_shm_new (const pchar		*name,
 
 	p_free (new_name);
 
-	if (!create_handle (ret)) {
+	if (!__p_shm_create_handle (ret)) {
 		P_ERROR ("PShm: failed to create system handle");
 		p_shm_free (ret);
 		return NULL;
@@ -175,7 +175,7 @@ p_shm_free (PShm *shm)
 	if (shm == NULL)
 		return;
 
-	clean_handle (shm);
+	__p_shm_clean_handle (shm);
 
 	if (shm->platform_key)
 		p_free (shm->platform_key);
