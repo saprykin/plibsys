@@ -32,6 +32,7 @@ p_strdup (const pchar *str)
 		return NULL;
 
 	len = strlen (str) + 1;
+
 	if ((ret = p_malloc (len)) == NULL)
 		return NULL;
 
@@ -43,7 +44,7 @@ p_strdup (const pchar *str)
 P_LIB_API pchar *
 p_strchomp (const pchar *str)
 {
-	psize		pos_start, pos_end;
+	pssize		pos_start, pos_end;
 	psize		str_len;
 	pchar		*ret;
 	const pchar	*ptr;
