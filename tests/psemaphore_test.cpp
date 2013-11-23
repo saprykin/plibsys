@@ -4,12 +4,12 @@
 
 #include <boost/test/included/unit_test.hpp>
 
-static int semaphore_test_val = 10;
+static pint semaphore_test_val = 10;
 
 static void * semaphore_test_thread (void *)
 {
 	PSemaphore	*sem;
-	int		i;
+	pint		i;
 
 	sem = p_semaphore_new ("p_semaphore_test_object", 1, P_SEM_ACCESS_OPEN);
 
@@ -40,7 +40,7 @@ BOOST_AUTO_TEST_SUITE (BOOST_TEST_MODULE)
 BOOST_AUTO_TEST_CASE (psemaphore_general_test)
 {
 	PSemaphore	*sem = NULL;
-	int		i;
+	pint		i;
 
 	BOOST_REQUIRE (p_semaphore_acquire (sem) == FALSE);
 	BOOST_REQUIRE (p_semaphore_acquire (sem) == FALSE);

@@ -23,7 +23,7 @@ BOOST_AUTO_TEST_CASE (md5_test)
 {
 	PCryptoHash	*md5_hash;
 	pchar		*hash_str;
-	int		i;
+	pint		i;
 
 	md5_hash = p_crypto_hash_new (P_CRYPTO_HASH_TYPE_MD5);
 
@@ -65,7 +65,7 @@ BOOST_AUTO_TEST_CASE (sha1_test)
 {
 	PCryptoHash	*sha1_hash;
 	pchar		*hash_str;
-	int		i;
+	pint		i;
 
 	sha1_hash = p_crypto_hash_new (P_CRYPTO_HASH_TYPE_SHA1);
 

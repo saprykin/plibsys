@@ -10,7 +10,7 @@ BOOST_AUTO_TEST_CASE (pshm_general_test)
 {
 	PShm		*shm = NULL, *shm2 = NULL;
 	ppointer	addr, addr2;
-	int		i;
+	pint		i;
 
 	BOOST_REQUIRE (p_shm_get_address (shm) == NULL);
 	BOOST_REQUIRE (p_shm_get_size (shm) == 0);

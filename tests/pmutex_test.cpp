@@ -4,12 +4,12 @@
 
 #include <boost/test/included/unit_test.hpp>
 
-static int mutex_test_val = 10;
+static pint mutex_test_val = 10;
 static PMutex *global_mutex = NULL;
 
 static void * mutex_test_thread (void *)
 {
-	int	i;
+	pint	i;
 
 	for (i = 0; i < 1000; ++i) {
 		if (!p_mutex_lock (global_mutex))
