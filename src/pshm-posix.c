@@ -53,7 +53,7 @@ __p_semaphore_create_handle (PShm *shm)
 {
 	pboolean	is_exists;
 	pint		fd, flags;
-	poffset		file_size;
+	struct stat	stat_buf;
 
 	if (shm == NULL || shm->platform_key == NULL)
 		return FALSE;
@@ -83,14 +83,14 @@ __p_semaphore_create_handle (PShm *shm)
 
 	/* Try to get size of the existing file descriptor */
 	if (is_exists) {
-		if ((file_size = lseek (fd, 0, SEEK_END)) == -1) {
+		if (fstat (fd, &stat_buf) == -1) {
 			P_ERROR ("PShm: failed to get region size");
 			close (fd);
 			__p_semaphore_clean_handle (shm);
 			return FALSE;
 		}
 
-		shm->size = file_size;
+		shm->size = stat_buf.st_size;
 	} else {
 		if ((ftruncate (fd, shm->size)) == -1) {
 			P_ERROR ("PShm: failed to truncate file");
