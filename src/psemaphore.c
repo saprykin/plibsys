@@ -68,7 +68,7 @@ __p_ipc_unix_get_temp_dir (void)
 	*(str + ++len) = '\0';
 
 	/* len + / + zero symbol */
-	if ((ret = p_malloc (len + 2)) == NULL) {
+	if ((ret = p_malloc0 (len + 2)) == NULL) {
 		p_free (str);
 		return NULL;
 	}
@@ -118,7 +118,6 @@ __p_ipc_get_platform_key (const pchar *name, pboolean posix)
 {
 	PCryptoHash	*sha1;
 	pchar		*hash_str;
-	pssize		hash_len;
 
 #ifdef P_OS_WIN
 	P_UNUSED (posix);
@@ -135,7 +134,6 @@ __p_ipc_get_platform_key (const pchar *name, pboolean posix)
 	p_crypto_hash_update (sha1, (const puchar *) name, strlen (name));
 
 	hash_str = p_crypto_hash_get_string (sha1);
-	hash_len = p_crypto_hash_get_length (sha1);
 	p_crypto_hash_free (sha1);
 
 	if (hash_str == NULL)
@@ -163,7 +161,7 @@ __p_ipc_get_platform_key (const pchar *name, pboolean posix)
 		tmp_path = __p_ipc_unix_get_temp_dir ();
 
 		/* tmp dir + filename + zero symbol */
-		path_name = p_malloc0 (strlen (tmp_path) + hash_len + 1);
+		path_name = p_malloc0 (strlen (tmp_path) + strlen (hash_str) + 1);
 
 		if ((path_name) == NULL) {
 			p_free (tmp_path);
