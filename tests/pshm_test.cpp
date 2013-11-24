@@ -120,7 +120,7 @@ BOOST_AUTO_TEST_CASE (pshm_thread_test)
 
 	srand ((puint) time (NULL));
 
-	shm = p_shm_new ("p_shm_test_memory_block", 1024 * 1024, P_SHM_ACCESS_READWRITE);
+	shm = p_shm_new ("p_shm_test_memory_block_3", 1024 * 1024, P_SHM_ACCESS_READWRITE);
 	BOOST_REQUIRE (shm != NULL);
 	BOOST_REQUIRE (p_shm_get_size (shm) == 1024 * 1024);
 
