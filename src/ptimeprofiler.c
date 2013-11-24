@@ -85,7 +85,7 @@ p_time_profiler_reset (PTimeProfiler *profiler)
 }
 
 P_LIB_API pint64
-p_time_profiler_elapsed_usecs (PTimeProfiler *profiler)
+p_time_profiler_elapsed_usecs (const PTimeProfiler *profiler)
 {
 #ifdef P_OS_WIN
 	LARGE_INTEGER frequency;

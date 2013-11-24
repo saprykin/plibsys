@@ -55,7 +55,7 @@ P_LIB_API PTimeProfiler *	p_time_profiler_new		(void);
  * After reset time profiler begins to count elapsed time from
  * that moment of time.
  */
-P_LIB_API void			p_time_profiler_reset		(PTimeProfiler *profiler);
+P_LIB_API void			p_time_profiler_reset		(PTimeProfiler *	profiler);
 
 /**
  * @brief Calculates elapsed time since last reset or creation.
@@ -63,14 +63,14 @@ P_LIB_API void			p_time_profiler_reset		(PTimeProfiler *profiler);
  * @return Microseconds elapsed since last reset or creation.
  * @since 0.0.1
  */
-P_LIB_API pint64		p_time_profiler_elapsed_usecs	(PTimeProfiler *profiler);
+P_LIB_API pint64		p_time_profiler_elapsed_usecs	(const PTimeProfiler *	profiler);
 
 /**
  * @brief Frees #PTimeProfiler object.
  * @param profiler #PTimeProfiler to free.
  * @since 0.0.1
  */
-P_LIB_API void			p_time_profiler_free		(PTimeProfiler *profiler);
+P_LIB_API void			p_time_profiler_free		(PTimeProfiler *	profiler);
 
 P_END_DECLS
 
