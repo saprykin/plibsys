@@ -2,7 +2,40 @@
 
 #include "plib.h"
 
+#include <stdlib.h>
+#include <time.h>
 #include <boost/test/included/unit_test.hpp>
+
+static void * shm_test_thread (void *arg)
+{
+	pint		i, rand_num;
+	psize		shm_size;
+	ppointer	addr;
+	PShm		*shm;
+
+	if (arg == NULL)
+		p_uthread_exit (1);
+
+	shm = (PShm *) arg;
+	rand_num = rand () % 127;
+	shm_size = p_shm_get_size (shm);
+	addr = p_shm_get_address (shm);
+
+	if (shm_size == 0 || addr == NULL)
+		p_uthread_exit (1);
+
+	for (i = 0; i < shm_size; ++i) {
+		if (!p_shm_lock (shm))
+			p_uthread_exit (1);
+
+		*(((pchar *) addr) + i) = (pchar) rand_num;
+
+		if (!p_shm_unlock (shm))
+			p_uthread_exit (1);
+	}
+
+	p_uthread_exit (0);
+}
 
 BOOST_AUTO_TEST_SUITE (BOOST_TEST_MODULE)
 
@@ -76,6 +109,53 @@ BOOST_AUTO_TEST_CASE (pshm_general_test)
 
 	p_shm_free (shm);
 	p_shm_free (shm2);
+}
+
+BOOST_AUTO_TEST_CASE (pshm_thread_test)
+{
+	PShm		*shm;
+	PUThread	*thr1, *thr2, *thr3;
+	ppointer	addr;
+	pint		i, val;
+	pboolean	test_ok;
+
+	srand ((puint) time (NULL));
+
+	shm = p_shm_new ("p_shm_test_memory_block", 1024 * 1024, P_SHM_ACCESS_READWRITE);
+	BOOST_REQUIRE (shm != NULL);
+	BOOST_REQUIRE (p_shm_get_size (shm) == 1024 * 1024);
+
+	addr = p_shm_get_address (shm);
+	BOOST_REQUIRE (addr != NULL);
+
+	thr1 = p_uthread_create ((PUThreadFunc) shm_test_thread, (ppointer) shm, true);
+	BOOST_REQUIRE (thr1 != NULL);
+
+	thr2 = p_uthread_create ((PUThreadFunc) shm_test_thread, (ppointer) shm, true);
+	BOOST_REQUIRE (thr2 != NULL);
+
+	thr3 = p_uthread_create ((PUThreadFunc) shm_test_thread, (ppointer) shm, true);
+	BOOST_REQUIRE (thr3 != NULL);
+
+	BOOST_CHECK (p_uthread_join (thr1) == 0);
+	BOOST_CHECK (p_uthread_join (thr2) == 0);
+	BOOST_CHECK (p_uthread_join (thr3) == 0);
+
+	test_ok = TRUE;
+	val = *((pchar *) addr);
+
+	for (i = 1; i < 1024 * 1024; ++i)
+		if (*(((pchar *) addr) + i) != val) {
+			test_ok = FALSE;
+			break;
+		}
+
+	BOOST_REQUIRE (test_ok == TRUE);
+
+	p_uthread_free (thr1);
+	p_uthread_free (thr2);
+	p_uthread_free (thr3);
+	p_shm_free (shm);
 }
 
 BOOST_AUTO_TEST_SUITE_END()
