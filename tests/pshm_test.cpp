@@ -24,15 +24,14 @@ static void * shm_test_thread (void *arg)
 	if (shm_size == 0 || addr == NULL)
 		p_uthread_exit (1);
 
-	for (i = 0; i < shm_size; ++i) {
-		if (!p_shm_lock (shm))
-			p_uthread_exit (1);
+	if (!p_shm_lock (shm))
+		p_uthread_exit (1);
 
+	for (i = 0; i < shm_size; ++i)
 		*(((pchar *) addr) + i) = (pchar) rand_num;
 
-		if (!p_shm_unlock (shm))
-			p_uthread_exit (1);
-	}
+	if (!p_shm_unlock (shm))
+		p_uthread_exit (1);
 
 	p_uthread_exit (0);
 }
