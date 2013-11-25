@@ -34,7 +34,6 @@ typedef HANDLE psem_hdl;
 struct _PSemaphore {
 	pchar			*platform_key;
 	psem_hdl		sem_hdl;
-	PSemaphoreAccessMode	mode;
 	PSemaphoreError		error;
 	pchar			error_str[P_SEM_ERROR_BUF_SIZE];
 	pint			init_val;
@@ -82,6 +81,8 @@ p_semaphore_new (const pchar *name,  pint init_val, PSemaphoreAccessMode mode)
 	PSemaphore	*ret;
 	pchar		*new_name;
 
+	P_UNUSED (mode);
+
 	if (name == NULL || init_val < 0)
 		return NULL;
 
@@ -101,7 +102,6 @@ p_semaphore_new (const pchar *name,  pint init_val, PSemaphoreAccessMode mode)
 
 	ret->platform_key = __p_ipc_get_platform_key (new_name, FALSE);
 	ret->init_val = init_val;
-	ret->mode = mode;
 
 	p_free (new_name);
 
@@ -112,6 +112,12 @@ p_semaphore_new (const pchar *name,  pint init_val, PSemaphoreAccessMode mode)
 	}
 
 	return ret;
+}
+
+P_LIB_API void
+p_semaphore_take_ownership (PSemaphore *sem)
+{
+	P_UNUSED (sem);
 }
 
 P_LIB_API pboolean

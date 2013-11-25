@@ -77,9 +77,28 @@ typedef struct _PSemaphore PSemaphore;
  * (non-Windows platforms only). In other cases @a init_val ignored. @a name is
  * system-wide, so any process can open semaphore with the same name.
  */
-P_LIB_API PSemaphore *	p_semaphore_new 	(const pchar		*name,
-						 pint			init_val,
-						 PSemaphoreAccessMode	mode);
+P_LIB_API PSemaphore *	p_semaphore_new			(const pchar		*name,
+							 pint			init_val,
+							 PSemaphoreAccessMode	mode);
+
+/**
+ * @brief Takes ownership of the semaphore.
+ * @param sem Semaphore to take ownership.
+ * @since 0.0.1
+ *
+ * If you take ownership of the semaphore object, p_semaphore_free()
+ * will try to completely unlink it and remove from the system.
+ * This is useful on Unix systems with POSIX and SysV IPC implementation, where shared
+ * memory can survive the application crash. On Windows platform this call has no effect.
+ * The common usage of this call is upon application startup to ensure that
+ * semaphore from the previous crash can be unlinked from the system. To
+ * do that, call p_semaphore_new(), take ownership of the semaphore object and remove it with
+ * p_semaphore_free() call. After that, create it again.
+ * You can also do the same thing upon semaphore creation passing #P_SEM_ACCESS_CREATE
+ * to p_semaphore_new(). The only difference is that you should already know whether
+ * this semaphore object is from the previous crash or not.
+ */
+P_LIB_API void		p_semaphore_take_ownership	(PSemaphore		*sem);
 
 /**
  * @brief Acquires semaphore.
@@ -87,7 +106,7 @@ P_LIB_API PSemaphore *	p_semaphore_new 	(const pchar		*name,
  * @return TRUE in case of success, FALSE otherwise.
  * @since 0.0.1
  */
-P_LIB_API pboolean	p_semaphore_acquire 	(PSemaphore		*sem);
+P_LIB_API pboolean	p_semaphore_acquire		(PSemaphore		*sem);
 
 /**
  * @brief Releases semaphore.
@@ -95,7 +114,7 @@ P_LIB_API pboolean	p_semaphore_acquire 	(PSemaphore		*sem);
  * @return TRUE in case of success, FALSE otherwise.
  * @since 0.0.1
  */
-P_LIB_API pboolean	p_semaphore_release	(PSemaphore		*sem);
+P_LIB_API pboolean	p_semaphore_release		(PSemaphore		*sem);
 
 /**
  * @brief Frees semaphore object.
@@ -105,7 +124,7 @@ P_LIB_API pboolean	p_semaphore_release	(PSemaphore		*sem);
  * It doesn't release acquired semaphore, be careful to not to make deadlock
  * while removing locked semaphore.
  */
-P_LIB_API void		p_semaphore_free	(PSemaphore		*sem);
+P_LIB_API void		p_semaphore_free		(PSemaphore		*sem);
 
 P_END_DECLS
 

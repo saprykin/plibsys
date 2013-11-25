@@ -145,6 +145,15 @@ p_semaphore_new (const pchar *name,  pint init_val, PSemaphoreAccessMode mode)
 	return ret;
 }
 
+P_LIB_API void
+p_semaphore_take_ownership (PSemaphore *sem)
+{
+	if (sem == NULL)
+		return;
+
+	sem->sem_created = TRUE;
+}
+
 P_LIB_API pboolean
 p_semaphore_acquire (PSemaphore *sem)
 {

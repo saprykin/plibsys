@@ -36,6 +36,12 @@ p_semaphore_new (const pchar *name,  pint init_val, PSemaphoreAccessMode mode)
 	return NULL;
 }
 
+P_LIB_API void
+p_semaphore_take_ownership (PSemaphore *sem)
+{
+	P_UNUSED (sem);
+}
+
 P_LIB_API pboolean
 p_semaphore_acquire (PSemaphore *sem)
 {
