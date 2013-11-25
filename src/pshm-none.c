@@ -43,6 +43,12 @@ p_shm_new (const pchar		*name,
 }
 
 P_LIB_API void
+p_shm_take_ownership (PShm *shm)
+{
+	P_UNUSED (shm);
+}
+
+P_LIB_API void
 p_shm_free (PShm *shm)
 {
 	P_UNUSED (shm);

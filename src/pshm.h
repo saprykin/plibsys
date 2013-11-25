@@ -66,6 +66,23 @@ P_LIB_API PShm *	p_shm_new		(const pchar		*name,
 						 PShmAccessPerms	perms);
 
 /**
+ * @brief Takes ownership of the shared memory segment.
+ * @param shm Shared memory segment.
+ * @since 0.0.1
+ *
+ * If you take ownership of the shared memory object, p_shm_free()
+ * will try to completely unlink it and remove from the system.
+ * This is useful on Unix systems with POSIX and SysV IPC implementation, where shared
+ * memory can survive the application crash. On Windows platform this call has no effect.
+ * The common usage of this call is upon application startup to ensure that
+ * memory segment from the previous crash can be unlinked from the system. To
+ * do that, call p_shm_new(), and check if its condition is OK (segment size,
+ * data). If not, take ownership of the shared memory object and remove it with
+ * p_shm_free() call. After that, create it again.
+ */
+P_LIB_API void		p_shm_take_ownership	(PShm *shm);
+
+/**
  * @brief Frees shared memory object.
  * @param shm #PShm to free.
  * @since 0.0.1

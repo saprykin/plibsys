@@ -173,7 +173,6 @@ p_shm_new (const pchar		*name,
 
 	ret->platform_key = __p_ipc_get_platform_key (new_name, TRUE);
 	ret->perms = perms;
-
 	ret->size = size;
 
 	p_free (new_name);
@@ -188,6 +187,16 @@ p_shm_new (const pchar		*name,
 		ret->size = size;
 
 	return ret;
+}
+
+P_LIB_API void
+p_shm_take_ownership (PShm *shm)
+{
+	if (shm == NULL)
+		return;
+
+	shm->shm_created = TRUE;
+	p_semaphore_take_ownership (shm->sem);
 }
 
 P_LIB_API void

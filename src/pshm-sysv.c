@@ -203,6 +203,16 @@ p_shm_new (const pchar		*name,
 }
 
 P_LIB_API void
+p_shm_take_ownership (PShm *shm)
+{
+	if (shm == NULL)
+		return;
+
+	shm->file_created = TRUE;
+	p_semaphore_take_ownership (shm->sem);
+}
+
+P_LIB_API void
 p_shm_free (PShm *shm)
 {
 	if (shm == NULL)

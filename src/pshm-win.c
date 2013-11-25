@@ -37,10 +37,6 @@ typedef HANDLE pshm_hdl;
 #define P_SHM_SUFFIX		"_p_shm_object"
 
 struct _PShm {
-#ifndef P_OS_WIN
-	pboolean file_created;
-	key_t unix_key;
-#endif
 	pchar		*platform_key;
 	pshm_hdl	shm_hdl;
 	ppointer	addr;
@@ -167,6 +163,12 @@ p_shm_new (const pchar		*name,
 		ret->size = size;
 
 	return ret;
+}
+
+P_LIB_API void
+p_shm_take_ownership (PShm *shm)
+{
+	P_UNUSED (shm);
 }
 
 P_LIB_API void
