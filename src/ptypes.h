@@ -255,6 +255,11 @@ typedef pint64 poffset;
 /** Casts #puint value to #ppointer */
 #define PUINT_TO_POINTER(u)	((ppointer)  (u))
 
+/** Casts #psize value to #ppointer */
+#define PSIZE_TO_POINTER(i)	((ppointer)  ((psize) (i)))
+/** Casts #ppointer to #psize value */
+#define PPOINTER_TO_PSIZE(p)	((psize)  (p))
+
 /** Min value for 8-bit int */
 #define P_MININT8	((pint8)  0x80)
 /** Max value for 8-bit int */
