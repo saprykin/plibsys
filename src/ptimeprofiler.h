@@ -63,7 +63,7 @@ P_LIB_API void			p_time_profiler_reset		(PTimeProfiler *	profiler);
  * @return Microseconds elapsed since last reset or creation.
  * @since 0.0.1
  */
-P_LIB_API pint64		p_time_profiler_elapsed_usecs	(const PTimeProfiler *	profiler);
+P_LIB_API puint64		p_time_profiler_elapsed_usecs	(const PTimeProfiler *	profiler);
 
 /**
  * @brief Frees #PTimeProfiler object.

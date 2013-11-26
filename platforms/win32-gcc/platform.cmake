@@ -1,5 +1,6 @@
 set (PLIB_THREAD_MODEL win)
 set (PLIB_IPC_MODEL win)
+set (PLIB_TIME_PROFILER_MODEL win)
 
 # Ensure MSVC-compatible struct packing convention is used
 # What flag to depends on gcc version: gcc3 uses '-mms-bitfields', while

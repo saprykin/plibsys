@@ -86,7 +86,6 @@ set (PLIB_SRCS
 	psocket.c
 	psocketaddress.c
 	pstring.c
-        ptimeprofiler.c
 	puthread.c
 )
 
@@ -98,13 +97,33 @@ if (PLIB_IPC_MODEL STREQUAL "")
 	set (PLIB_IPC_MODEL none)
 endif()
 
+if (PLIB_TIME_PROFILER_MODEL STREQUAL "")
+	set (PLIB_TIME_PROFILER_MODEL generic)
+endif()
+
 set (PLIB_PLATFORM_SRCS
 	pcondvariable-${PLIB_THREAD_MODEL}.c
 	pmutex-${PLIB_THREAD_MODEL}.c
 	psemaphore-${PLIB_IPC_MODEL}.c
 	pshm-${PLIB_IPC_MODEL}.c
 	puthread-${PLIB_THREAD_MODEL}.c
+	ptimeprofiler-${PLIB_TIME_PROFILER_MODEL}.c
 )
+
+if (PLIB_TARGET_OS STREQUAL windows)
+	check_c_source_compiles (
+				 "#include <windows.h>
+				 int main () {
+				 	(void) GetTickCount64 ();
+				 	return 0;
+				 }"
+				 PLIB_HAS_GETTICKCOUNT_64
+				)
+endif()
+
+if (PLIB_HAS_GETTICKCOUNT_64)
+	add_definitions (-DPLIB_HAS_GETTICKCOUNT_64)
+endif()
 
 # Detect atomic operations
 set (PLIB_MEMORY_BARRIER_NEEDED true)
