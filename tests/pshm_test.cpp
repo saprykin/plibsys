@@ -1,10 +1,11 @@
+#define BOOST_TEST_DYN_LINK
 #define BOOST_TEST_MODULE pshm_test
 
 #include "plib.h"
 
 #include <stdlib.h>
 #include <time.h>
-#include <boost/test/included/unit_test.hpp>
+#include <boost/test/unit_test.hpp>
 
 static void * shm_test_thread (void *arg)
 {

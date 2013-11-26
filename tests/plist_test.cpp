@@ -1,10 +1,11 @@
+#define BOOST_TEST_DYN_LINK
 #define BOOST_TEST_MODULE plist_test
 
 #include "plib.h"
 
 #include <string.h>
 
-#include <boost/test/included/unit_test.hpp>
+#include <boost/test/unit_test.hpp>
 
 typedef struct _TestData {
 	pint test_array[3];
@@ -38,7 +39,7 @@ BOOST_AUTO_TEST_CASE (plist_general_test)
 
 	BOOST_REQUIRE (list != NULL);
 	BOOST_CHECK (p_list_length (list) == 2);
-	
+
 	/* Testing data access */
 	BOOST_CHECK (P_POINTER_TO_INT (list->data) == 32);
 	BOOST_CHECK (P_POINTER_TO_INT (p_list_last(list)->data) == 64);

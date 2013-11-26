@@ -1,10 +1,11 @@
+#define BOOST_TEST_DYN_LINK
 #define BOOST_TEST_MODULE phashtable_test
 
 #include "plib.h"
 
 #include <string.h>
 
-#include <boost/test/included/unit_test.hpp>
+#include <boost/test/unit_test.hpp>
 
 static int test_hash_table_values (pconstpointer a, pconstpointer b, ppointer data)
 {

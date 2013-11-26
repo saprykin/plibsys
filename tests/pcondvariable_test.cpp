@@ -1,8 +1,9 @@
+#define BOOST_TEST_DYN_LINK
 #define BOOST_TEST_MODULE pcondvariable_test
 
 #include "plib.h"
 
-#include <boost/test/included/unit_test.hpp>
+#include <boost/test/unit_test.hpp>
 
 #define PCONDTEST_MAX_QUEUE 10
 

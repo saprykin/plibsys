@@ -1,10 +1,11 @@
+#define BOOST_TEST_DYN_LINK
 #define BOOST_TEST_MODULE pcryptohash_test
 
 #include "plib.h"
 
 #include <string.h>
 
-#include <boost/test/included/unit_test.hpp>
+#include <boost/test/unit_test.hpp>
 
 BOOST_AUTO_TEST_SUITE (BOOST_TEST_MODULE)
 
@@ -15,7 +16,7 @@ BOOST_AUTO_TEST_CASE (pcryptohash_general_test)
 	p_crypto_hash_get_digest (hash, NULL, NULL);
 	BOOST_REQUIRE (p_crypto_hash_get_length (hash) == 0);
 	BOOST_REQUIRE (p_crypto_hash_get_string (hash) == NULL);
-	BOOST_REQUIRE (p_crypto_hash_get_type (hash) == -1);
+	BOOST_REQUIRE ((pint) p_crypto_hash_get_type (hash) == -1);
 	p_crypto_hash_reset (hash);
 }
 
