@@ -1,4 +1,4 @@
-/* 
+/*
  * Copyright (C) 2010-2013 Alexander Saprykin <xelfium@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -174,7 +174,7 @@ typedef double		pdouble;
        #define P_MAXSIZE		P_MAXUINT64
        #define P_MINSSIZE		P_MININT64
        #define P_MAXSSIZE		P_MAXINT64
-#    endif 
+#    endif
 #  endif
 #else
   typedef signed int		pssize;
@@ -246,9 +246,9 @@ typedef double		pdouble;
 typedef pint64 poffset;
 
 /** Casts #ppointer to #pint value */
-#define PPOINTER_TO_INT(p)	((pint)   (p))
+#define PPOINTER_TO_INT(p)	((pint)   ((plong) (p)))
 /** Casts #ppointer to #puint value */
-#define PPOINTER_TO_UINT(p)	((puint)  (p))
+#define PPOINTER_TO_UINT(p)	((puint)  ((pulong) (p)))
 
 /** Casts #pint value to #ppointer */
 #define PINT_TO_POINTER(i)	((ppointer)  (i))
@@ -341,7 +341,7 @@ typedef pint64 poffset;
 #if defined (P_OS_WIN) && defined (P_CC_MSVC)
   #define PINT16_MODIFIER	"h"
 #else
-  #define PINT16_MODIFIER	""	
+  #define PINT16_MODIFIER	""
 #endif
 
 #define PINT16_FORMAT		"hi"
@@ -359,7 +359,7 @@ typedef pint64 poffset;
 #  if PLIB_SIZEOF_LONG == 8
      #define PINT64_MODIFIER    "l"
      #define PINT64_FORMAT      "li"
-     #define PUINT64_FORMAT     "lu"     
+     #define PUINT64_FORMAT     "lu"
 #  else
      #define PINT64_MODIFIER	"ll"
      #define PINT64_FORMAT	"lli"
