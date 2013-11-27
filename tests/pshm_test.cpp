@@ -57,6 +57,12 @@ BOOST_AUTO_TEST_CASE (pshm_general_test)
 	BOOST_REQUIRE (addr != NULL);
 
 	shm2 = p_shm_new ("p_shm_test_memory_block", 1024, P_SHM_ACCESS_READONLY);
+
+	if (shm2 == NULL) {
+		/* OK, some systems may want exactly the same permissions */
+		shm2 = p_shm_new ("p_shm_test_memory_block", 1024, P_SHM_ACCESS_READWRITE);
+	}
+
 	BOOST_REQUIRE (shm2 != NULL);
 	BOOST_REQUIRE (p_shm_get_size (shm2) == 1024);
 
