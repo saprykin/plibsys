@@ -19,14 +19,20 @@ endif()
 
 include (${PROJECT_SOURCE_DIR}/platforms/${PLIB_TARGET_PLATFORM}/platform.cmake)
 
+get_filename_component (PLIB_PLATFORM_CONFIG_FILE
+			${PROJECT_SOURCE_DIR}/platforms/${PLIB_TARGET_PLATFORM}/${PLIB_PLATFORM_CONFIG_PATH}
+			ABSOLUTE)
+
+if (NOT EXISTS ${PLIB_PLATFORM_CONFIG_FILE})
+	message (FATAL_ERROR "PLib platform config file ${PLIB_PLATFORM_CONFIG_FILE} doesn't exist")
+endif()
+
 # Copy platform dependent files to binary dir
-file (COPY
-      ${PROJECT_SOURCE_DIR}/platforms/${PLIB_TARGET_PLATFORM}/pplatform.h
-      DESTINATION ${PROJECT_BINARY_DIR})
+file (COPY ${PLIB_PLATFORM_CONFIG_FILE} DESTINATION ${PROJECT_BINARY_DIR})
 
 set (PLIB_INCLUDE_DIRS
 	${PROJECT_SOURCE_DIR}/src
-	${PROJECT_SOURCE_DIR}/platforms/${PLIB_TARGET_PLATFORM}
+	${PROJECT_BINARY_DIR}
 )
 
 include_directories (
@@ -64,7 +70,7 @@ set (PLIB_PUBLIC_HDRS
 )
 
 set (PLIB_PRIVATE_HDRS
-	${PROJECT_SOURCE_DIR}/platforms/${PLIB_TARGET_PLATFORM}/pplatform.h
+	${PLIB_PLATFORM_CONFIG_FILE}
 	${CMAKE_BINARY_DIR}/plibconfig.h
 )
 
@@ -450,7 +456,7 @@ install (TARGETS plib plibstatic
 install (FILES
 	${PLIB_PUBLIC_HDRS}
 	${CMAKE_BINARY_DIR}/plibconfig.h
-	${PROJECT_SOURCE_DIR}/platforms/${PLIB_TARGET_PLATFORM}/pplatform.h
+	${PLIB_PLATFORM_CONFIG_FILE}
 	DESTINATION include/PLib
 	COMPONENT Core
 )

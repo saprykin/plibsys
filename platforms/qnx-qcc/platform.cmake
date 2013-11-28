@@ -1,6 +1,9 @@
 set (PLIB_THREAD_MODEL posix)
 set (PLIB_IPC_MODEL posix)
-set (PLIB_TIME_PROFILER_MODEL mach)
+set (PLIB_TIME_PROFILER_MODEL posix)
+set (PLIB_PLATFORM_CONFIG_PATH "../common/posix/pplatform.h")
+
+set (PLIB_PLATFORM_LINK_LIBRARIES socket)
 
 set (PLIB_PLATFORM_DEFINES
 	-D_REENTRANT
