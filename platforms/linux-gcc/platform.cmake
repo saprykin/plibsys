@@ -3,6 +3,8 @@ set (PLIB_IPC_MODEL posix)
 set (PLIB_TIME_PROFILER_MODEL posix)
 set (PLIB_PLATFORM_CONFIG_PATH "../common/posix/pplatform.h")
 
+set (PLIB_PLATFORM_LINK_LIBRARIES -pthread rt)
+
 set (PLIB_PLATFORM_DEFINES
 	-D_REENTRANT
 	-D_POSIX4_DRAFT_SOURCE
