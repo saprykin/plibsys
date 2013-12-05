@@ -5,11 +5,12 @@
 
 #include <stdlib.h>
 #include <time.h>
+
 #include <boost/test/unit_test.hpp>
 
 static void * shm_test_thread (void *arg)
 {
-	pint		i, rand_num;
+	pint		rand_num;
 	psize		shm_size;
 	ppointer	addr;
 	PShm		*shm;
@@ -28,7 +29,7 @@ static void * shm_test_thread (void *arg)
 	if (!p_shm_lock (shm))
 		p_uthread_exit (1);
 
-	for (i = 0; i < shm_size; ++i)
+	for (puint i = 0; i < shm_size; ++i)
 		*(((pchar *) addr) + i) = (pchar) rand_num;
 
 	if (!p_shm_unlock (shm))
