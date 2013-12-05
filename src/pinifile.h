@@ -28,6 +28,7 @@
  * are comments and wouldn't be read. If you want to use them in values
  * take value inside "" or '' symbols. Parameters related to section
  * until another section name is occured.
+ * List of values can be stored between {} symbol separated with spaces.
  * To parse file, create #PIniFile with p_ini_file_new() and then
  * parse it with p_ini_file_parse() functions. Boolean values can
  * be written in form of 'true/false' or 'TRUE/FALSE', or simply '0/1'.
