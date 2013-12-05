@@ -70,6 +70,7 @@ set (PLIB_PUBLIC_HDRS
 )
 
 set (PLIB_PRIVATE_HDRS
+	plib-private.h
 	${PLIB_PLATFORM_CONFIG_FILE}
 	${CMAKE_BINARY_DIR}/plibconfig.h
 )

@@ -16,6 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA.
  */
 
+#include "plib-private.h"
 #include "pmem.h"
 #include "psemaphore.h"
 #include "psha1.h"
@@ -30,11 +31,6 @@
 #include <sys/sem.h>
 #include <sys/types.h>
 #include <sys/ipc.h>
-
-extern pint	__p_ipc_unix_create_key_file	(const pchar	*file_name);
-extern pint	__p_ipc_unix_get_ftok_key	(const pchar	*file_name);
-extern pchar *	__p_ipc_get_platform_key	(const pchar	*name,
-						 pboolean	posix);
 
 #define P_SEM_SUFFIX		"_p_sem_object"
 #define P_SEM_ERROR_BUF_SIZE	255

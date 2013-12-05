@@ -18,6 +18,7 @@
 
 /* TODO: error report system */
 
+#include "plib-private.h"
 #include "pmem.h"
 #include "pshm.h"
 #include "psemaphore.h"
@@ -29,9 +30,6 @@
 #include <fcntl.h>
 #include <sys/stat.h>
 #include <sys/mman.h>
-
-extern pchar *	__p_ipc_get_platform_key	(const pchar	*name,
-						 pboolean	posix);
 
 #define P_SHM_SUFFIX		"_p_shm_object"
 #define P_SHM_INVALID_HDL	-1

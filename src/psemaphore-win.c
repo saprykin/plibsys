@@ -16,6 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA.
  */
 
+#include "plib-private.h"
 #include "pmem.h"
 #include "psemaphore.h"
 #include "psha1.h"
@@ -38,9 +39,6 @@ struct _PSemaphore {
 	pchar			error_str[P_SEM_ERROR_BUF_SIZE];
 	pint			init_val;
 };
-
-extern pchar *	__p_ipc_get_platform_key	(const pchar	*name,
-						 pboolean	posix);
 
 static pboolean __p_semaphore_create_handle (PSemaphore *sem);
 static void __p_semaphore_clean_handle (PSemaphore *sem);

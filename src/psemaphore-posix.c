@@ -16,6 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA.
  */
 
+#include "plib-private.h"
 #include "pmem.h"
 #include "psemaphore.h"
 #include "psha1.h"
@@ -27,9 +28,6 @@
 #include <errno.h>
 #include <fcntl.h>
 #include <semaphore.h>
-
-extern pchar *	__p_ipc_get_platform_key	(const pchar	*name,
-						 pboolean	posix);
 
 #define P_SEM_SUFFIX		"_p_sem_object"
 #define P_SEM_ERROR_BUF_SIZE	255

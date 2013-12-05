@@ -18,6 +18,7 @@
 
 /* TODO: error report system */
 
+#include "plib-private.h"
 #include "pmem.h"
 #include "pshm.h"
 #include "psemaphore.h"
@@ -31,11 +32,6 @@
 #include <sys/shm.h>
 #include <sys/types.h>
 #include <sys/ipc.h>
-
-extern pint	__p_ipc_unix_create_key_file	(const pchar	*file_name);
-extern pint	__p_ipc_unix_get_ftok_key	(const pchar	*file_name);
-extern pchar *	__p_ipc_get_platform_key	(const pchar	*name,
-						 pboolean	posix);
 
 #define P_SHM_SUFFIX		"_p_shm_object"
 
