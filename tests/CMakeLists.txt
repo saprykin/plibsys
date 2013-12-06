@@ -20,6 +20,11 @@ add_executable (pcryptohash_test ${PCRYPTOHASH_TEST_SRCS})
 target_link_libraries (pcryptohash_test ${Boost_LIBRARIES} plib)
 set_target_properties (pcryptohash_test PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${OUTPUT_DIR})
 
+set (PFILE_TEST_SRCS pfile_test.cpp)
+add_executable (pfile_test ${PFILE_TEST_SRCS})
+target_link_libraries (pfile_test ${Boost_LIBRARIES} plib)
+set_target_properties (pfile_test PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${OUTPUT_DIR})
+
 set (PHASHTABLE_TEST_SRCS phashtable_test.cpp)
 add_executable (phashtable_test ${PHASHTABLE_TEST_SRCS})
 target_link_libraries (phashtable_test ${Boost_LIBRARIES} plib)
@@ -72,6 +77,7 @@ set_target_properties (ptimeprofiler_test PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${
 
 add_test (NAME pcondvariable_test COMMAND pcondvariable_test)
 add_test (NAME pcryptohash_test COMMAND pcryptohash_test)
+add_test (NAME pfile_test COMMAND pfile_test)
 add_test (NAME phashtable_test COMMAND phashtable_test)
 add_test (NAME pinifile_test COMMAND pinifile_test)
 add_test (NAME plist_test COMMAND plist_test)
