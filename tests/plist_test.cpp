@@ -33,6 +33,8 @@ BOOST_AUTO_TEST_CASE (plist_general_test)
 	PList		*list = NULL;
 	TestData	test_data;
 
+	p_lib_init ();
+
 	/* Testing append */
 	list = p_list_append (list, P_INT_TO_POINTER (32));
 	list = p_list_append (list, P_INT_TO_POINTER (64));
@@ -84,6 +86,8 @@ BOOST_AUTO_TEST_CASE (plist_general_test)
 	BOOST_CHECK (p_list_length (list) == 0);
 
 	p_list_free (list);
+
+	p_lib_shutdown ();
 }
 
 BOOST_AUTO_TEST_SUITE_END()

@@ -11,15 +11,21 @@ BOOST_AUTO_TEST_SUITE (BOOST_TEST_MODULE)
 
 BOOST_AUTO_TEST_CASE (strdup_test)
 {
+	p_lib_init ();
+
 	const pchar *test_str_1 = "Test string";
 
 	pchar *new_string = p_strdup (test_str_1);
 	BOOST_CHECK (new_string != NULL);
 	p_free (new_string);
+
+	p_lib_shutdown ();
 }
 
 BOOST_AUTO_TEST_CASE (strchomp_test)
 {
+	p_lib_init ();
+
 	const pchar *test_chomp_str_orig = "Test chomp string";
 	const pchar *test_chomp_str_1 = "Test chomp string  ";
 	const pchar *test_chomp_str_2 = "\n\nTest chomp string  ";
@@ -85,6 +91,8 @@ BOOST_AUTO_TEST_CASE (strchomp_test)
 
 	new_string = p_strchomp (test_chomp_str_11);
 	BOOST_CHECK (new_string == NULL);
+
+	p_lib_shutdown ();
 }
 
 BOOST_AUTO_TEST_SUITE_END()

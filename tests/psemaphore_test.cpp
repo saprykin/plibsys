@@ -43,6 +43,8 @@ BOOST_AUTO_TEST_CASE (psemaphore_general_test)
 	PSemaphore	*sem = NULL;
 	pint		i;
 
+	p_lib_init ();
+
 	BOOST_REQUIRE (p_semaphore_acquire (sem) == FALSE);
 	BOOST_REQUIRE (p_semaphore_acquire (sem) == FALSE);
 	p_semaphore_take_ownership (sem);
@@ -62,12 +64,16 @@ BOOST_AUTO_TEST_CASE (psemaphore_general_test)
 	}
 
 	p_semaphore_free (sem);
+
+	p_lib_shutdown ();
 }
 
 BOOST_AUTO_TEST_CASE (psemaphore_thread_test)
 {
 	PUThread	*thr1, *thr2;
 	PSemaphore	*sem = NULL;
+
+	p_lib_init ();
 
 	thr1 = p_uthread_create ((PUThreadFunc) semaphore_test_thread, NULL, true);
 	BOOST_REQUIRE (thr1 != NULL);
@@ -92,6 +98,8 @@ BOOST_AUTO_TEST_CASE (psemaphore_thread_test)
 
 	p_uthread_free (thr1);
 	p_uthread_free (thr2);
+
+	p_lib_shutdown ();
 }
 
 BOOST_AUTO_TEST_SUITE_END()

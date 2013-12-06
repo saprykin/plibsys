@@ -12,6 +12,8 @@ BOOST_AUTO_TEST_CASE (ptimeprofiler_general_test)
 	PTimeProfiler	*profiler = NULL;
 	pint64		prev_val, val;
 
+	p_lib_init ();
+
 	BOOST_CHECK (p_time_profiler_elapsed_usecs (profiler) == 0);
 	p_time_profiler_reset (profiler);
 	p_time_profiler_free (profiler);
@@ -43,6 +45,8 @@ BOOST_AUTO_TEST_CASE (ptimeprofiler_general_test)
 	BOOST_CHECK (val > prev_val);
 
 	p_time_profiler_free (profiler);
+
+	p_lib_shutdown ();
 }
 
 BOOST_AUTO_TEST_SUITE_END()

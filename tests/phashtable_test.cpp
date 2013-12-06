@@ -19,6 +19,8 @@ BOOST_AUTO_TEST_CASE (phashtable_general_test)
 	PHashTable	*table = NULL;
 	PList		*list = NULL;
 
+	p_lib_init ();
+
 	BOOST_CHECK (p_hash_table_keys (table) == NULL);
 	BOOST_CHECK (p_hash_table_values (table) == NULL);
 	BOOST_CHECK (p_hash_table_lookup (table, NULL) == NULL);
@@ -119,6 +121,8 @@ BOOST_AUTO_TEST_CASE (phashtable_general_test)
 	BOOST_REQUIRE (p_hash_table_values (table) == NULL);
 
 	p_hash_table_free (table);
+
+	p_lib_shutdown ();
 }
 
 BOOST_AUTO_TEST_SUITE_END()

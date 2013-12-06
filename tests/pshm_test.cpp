@@ -46,6 +46,8 @@ BOOST_AUTO_TEST_CASE (pshm_general_test)
 	ppointer	addr, addr2;
 	pint		i;
 
+	p_lib_init ();
+
 	BOOST_REQUIRE (p_shm_get_address (shm) == NULL);
 	BOOST_REQUIRE (p_shm_get_size (shm) == 0);
 	p_shm_take_ownership (shm);
@@ -117,6 +119,8 @@ BOOST_AUTO_TEST_CASE (pshm_general_test)
 
 	p_shm_free (shm);
 	p_shm_free (shm2);
+
+	p_lib_shutdown ();
 }
 
 BOOST_AUTO_TEST_CASE (pshm_thread_test)
@@ -126,6 +130,8 @@ BOOST_AUTO_TEST_CASE (pshm_thread_test)
 	ppointer	addr;
 	pint		i, val;
 	pboolean	test_ok;
+
+	p_lib_init ();
 
 	srand ((puint) time (NULL));
 
@@ -172,6 +178,8 @@ BOOST_AUTO_TEST_CASE (pshm_thread_test)
 	p_uthread_free (thr2);
 	p_uthread_free (thr3);
 	p_shm_free (shm);
+
+	p_lib_shutdown ();
 }
 
 BOOST_AUTO_TEST_SUITE_END()

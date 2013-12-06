@@ -13,11 +13,15 @@ BOOST_AUTO_TEST_CASE (pcryptohash_general_test)
 {
 	PCryptoHash *hash = NULL;
 
+	p_lib_init ();
+
 	p_crypto_hash_get_digest (hash, NULL, NULL);
 	BOOST_REQUIRE (p_crypto_hash_get_length (hash) == 0);
 	BOOST_REQUIRE (p_crypto_hash_get_string (hash) == NULL);
 	BOOST_REQUIRE ((pint) p_crypto_hash_get_type (hash) == -1);
 	p_crypto_hash_reset (hash);
+
+	p_lib_shutdown ();
 }
 
 BOOST_AUTO_TEST_CASE (md5_test)
@@ -25,6 +29,8 @@ BOOST_AUTO_TEST_CASE (md5_test)
 	PCryptoHash	*md5_hash;
 	pchar		*hash_str;
 	pint		i;
+
+	p_lib_init ();
 
 	md5_hash = p_crypto_hash_new (P_CRYPTO_HASH_TYPE_MD5);
 
@@ -60,6 +66,8 @@ BOOST_AUTO_TEST_CASE (md5_test)
 	BOOST_REQUIRE (p_crypto_hash_get_string (md5_hash) == NULL);
 
 	p_crypto_hash_free (md5_hash);
+
+	p_lib_shutdown ();
 }
 
 BOOST_AUTO_TEST_CASE (sha1_test)
@@ -67,6 +75,8 @@ BOOST_AUTO_TEST_CASE (sha1_test)
 	PCryptoHash	*sha1_hash;
 	pchar		*hash_str;
 	pint		i;
+
+	p_lib_init ();
 
 	sha1_hash = p_crypto_hash_new (P_CRYPTO_HASH_TYPE_SHA1);
 
@@ -102,12 +112,16 @@ BOOST_AUTO_TEST_CASE (sha1_test)
 	BOOST_REQUIRE (p_crypto_hash_get_string (sha1_hash) == NULL);
 
 	p_crypto_hash_free (sha1_hash);
+
+	p_lib_shutdown ();
 }
 
 BOOST_AUTO_TEST_CASE (gost3411_94_test)
 {
 	PCryptoHash	*gost3411_94_hash;
 	pchar		*hash_str;
+
+	p_lib_init ();
 
 	gost3411_94_hash = p_crypto_hash_new (P_CRYPTO_HASH_TYPE_GOST);
 
@@ -133,6 +147,8 @@ BOOST_AUTO_TEST_CASE (gost3411_94_test)
 	p_free (hash_str);
 
 	p_crypto_hash_free (gost3411_94_hash);
+
+	p_lib_shutdown ();
 }
 
 BOOST_AUTO_TEST_SUITE_END()

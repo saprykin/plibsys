@@ -36,6 +36,8 @@ BOOST_AUTO_TEST_CASE (pmutex_general_test)
 {
 	PUThread	*thr1, *thr2;
 
+	p_lib_init ();
+
 	BOOST_REQUIRE (p_mutex_lock (global_mutex) == FALSE);
 	BOOST_REQUIRE (p_mutex_unlock (global_mutex) == FALSE);
 	BOOST_REQUIRE (p_mutex_trylock (global_mutex) == FALSE);
@@ -58,6 +60,8 @@ BOOST_AUTO_TEST_CASE (pmutex_general_test)
 	p_uthread_free (thr1);
 	p_uthread_free (thr2);
 	p_mutex_free (global_mutex);
+
+	p_lib_shutdown ();
 }
 
 BOOST_AUTO_TEST_SUITE_END()

@@ -58,6 +58,8 @@ BOOST_AUTO_TEST_CASE (pinifile_bad_input_test)
 {
 	PIniFile *ini = NULL;
 
+	p_lib_init ();
+
 	p_ini_file_free (ini);
 	BOOST_CHECK (p_ini_file_parse (ini) == FALSE);
 	BOOST_CHECK (p_ini_file_is_parsed (ini) == FALSE);
@@ -71,10 +73,14 @@ BOOST_AUTO_TEST_CASE (pinifile_bad_input_test)
 	BOOST_CHECK (p_ini_file_parameter_string (ini, "string_section", "string_parameter_1", NULL) == NULL);
 
 	BOOST_REQUIRE (create_test_ini_file ());
+
+	p_lib_shutdown ();
 }
 
 BOOST_AUTO_TEST_CASE (pinifile_read_test)
 {
+	p_lib_init ();
+
 	PIniFile *ini = p_ini_file_new ("."P_DIR_SEPARATOR"p_ini_test_file.ini");
 	BOOST_REQUIRE (ini != NULL);
 	BOOST_CHECK (p_ini_file_is_parsed (ini) == FALSE);
@@ -196,6 +202,8 @@ BOOST_AUTO_TEST_CASE (pinifile_read_test)
 	p_ini_file_free (ini);
 
 	BOOST_CHECK (p_file_remove ("."P_DIR_SEPARATOR"p_ini_test_file.ini"));
+
+	p_lib_shutdown ();
 }
 
 BOOST_AUTO_TEST_SUITE_END()

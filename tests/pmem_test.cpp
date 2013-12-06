@@ -15,6 +15,8 @@ BOOST_AUTO_TEST_CASE (pmem_general_test)
 	ppointer	ptr = NULL;
 	pint		i;
 
+	p_lib_init ();
+
 	vtable.free = NULL;
 	vtable.malloc = NULL;
 	vtable.realloc = NULL;
@@ -40,6 +42,8 @@ BOOST_AUTO_TEST_CASE (pmem_general_test)
 
 	BOOST_CHECK (p_mem_munmap (NULL, 1024) == FALSE);
 	BOOST_CHECK (p_mem_munmap (ptr, 1024) == TRUE);
+
+	p_lib_shutdown ();
 }
 
 BOOST_AUTO_TEST_SUITE_END()

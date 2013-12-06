@@ -100,6 +100,8 @@ BOOST_AUTO_TEST_CASE (pcondvariable_general_test)
 {
 	PUThread	*thr1, *thr2, *thr3;
 
+	p_lib_init ();
+
 	BOOST_REQUIRE (p_cond_variable_broadcast (queue_empty_cond) == FALSE);
 	BOOST_REQUIRE (p_cond_variable_signal (queue_empty_cond) == FALSE);
 	BOOST_REQUIRE (p_cond_variable_wait (queue_empty_cond, cond_mutex) == FALSE);
@@ -139,6 +141,8 @@ BOOST_AUTO_TEST_CASE (pcondvariable_general_test)
 	p_cond_variable_free (queue_empty_cond);
 	p_cond_variable_free (queue_full_cond);
 	p_mutex_free (cond_mutex);
+
+	p_lib_shutdown ();
 }
 
 BOOST_AUTO_TEST_SUITE_END()
