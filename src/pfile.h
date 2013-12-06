@@ -1,5 +1,5 @@
 /* 
- * Copyright (C) 2010 Alexander Saprykin <xelfium@gmail.com>
+ * Copyright (C) 2010-2013 Alexander Saprykin <xelfium@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,6 +30,7 @@
 #define __PFILE_H__
 
 #include <pmacros.h>
+#include <ptypes.h>
 
 /**
  * @def P_DIR_SEPARATOR
@@ -42,6 +43,28 @@
 #endif
 
 P_BEGIN_DECLS
+
+/**
+ * @brief Checks whether the file is exists or not.
+ * @param file File name to check.
+ * @return TRUE if file exists, FALSE otherwise.
+ * @since 0.0.1
+ *
+ *  On Windows this call doesn't resolve symbolic links, while
+ *  on UNIX systems does.
+ */
+P_LIB_API pboolean p_file_is_exists	(const pchar *file);
+
+/**
+ * @brief Removes file from the disk.
+ * @param file File name to remove.
+ * @return TRUE if file was successully removed, FALSE otherwise.
+ * @since 0.0.1
+ *
+ * This call doesn't resolve symbolic links and remove symbolic link
+ * if given path points to it.
+ */
+P_LIB_API pboolean p_file_remove	(const pchar *file);
 
 P_END_DECLS
 

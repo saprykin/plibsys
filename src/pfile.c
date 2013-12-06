@@ -1,5 +1,5 @@
 /* 
- * Copyright (C) 2010 Alexander Saprykin <xelfium@gmail.com>
+ * Copyright (C) 2010-2013 Alexander Saprykin <xelfium@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,3 +17,35 @@
  */
 
 #include "pfile.h"
+
+P_LIB_API pboolean
+p_file_is_exists (const pchar *file)
+{
+#ifdef P_OS_WIN
+	DWORD attrs;
+#endif
+
+	if (file == NULL)
+		return FALSE;
+
+#ifdef P_OS_WIN
+	attrs = GetFileAttributes ((LPCTSTR) file);
+
+	return (attrs != INVALID_FILE_ATTRIBUTES && (attrs & FILE_ATTRIBUTE_DIRECTORY) == 0);
+#else
+	return access (file, F_OK) == 0;
+#endif
+}
+
+P_LIB_API pboolean
+p_file_remove (const pchar *file)
+{
+	if (file == NULL)
+		return FALSE;
+
+#ifdef P_OS_WIN
+	return DeleteFile ((LPCTSTR) file);
+#else
+	return (unlink () == 0);
+#endif
+}
