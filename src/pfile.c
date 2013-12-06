@@ -46,6 +46,6 @@ p_file_remove (const pchar *file)
 #ifdef P_OS_WIN
 	return DeleteFile ((LPCTSTR) file);
 #else
-	return (unlink () == 0);
+	return (unlink (file) == 0);
 #endif
 }
