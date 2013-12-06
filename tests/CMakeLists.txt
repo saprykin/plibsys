@@ -1,9 +1,14 @@
 project (tests CXX)
 set (OUTPUT_DIR ${CMAKE_BINARY_DIR})
+include (${PROJECT_SOURCE_DIR}/../cmake/PlatformDetect.cmake)
 
+plib_detect_c_compiler (PLIB_C_COMPILER)
 find_package (Boost COMPONENTS unit_test_framework REQUIRED)
-
 include_directories (${Boost_INCLUDE_DIR} ${PROJECT_SOURCE_DIR}/../src ${CMAKE_BINARY_DIR})
+
+if (PLIB_C_COMPILER STREQUAL msvc)
+	add_definitions (-D_CRT_SECURE_NO_WARNINGS)
+endif()
 
 set (PCONDVARIABLE_TEST_SRCS pcondvariable_test.cpp)
 add_executable (pcondvariable_test ${PCONDVARIABLE_TEST_SRCS})
@@ -19,6 +24,11 @@ set (PHASHTABLE_TEST_SRCS phashtable_test.cpp)
 add_executable (phashtable_test ${PHASHTABLE_TEST_SRCS})
 target_link_libraries (phashtable_test ${Boost_LIBRARIES} plib)
 set_target_properties (phashtable_test PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${OUTPUT_DIR})
+
+set (PINI_TEST_SRCS pinifile_test.cpp)
+add_executable (pinifile_test ${PINI_TEST_SRCS})
+target_link_libraries (pinifile_test ${Boost_LIBRARIES} plib)
+set_target_properties (pinifile_test PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${OUTPUT_DIR})
 
 set (PLIST_TEST_SRCS plist_test.cpp)
 add_executable (plist_test ${PLIST_TEST_SRCS})
@@ -63,6 +73,7 @@ set_target_properties (ptimeprofiler_test PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${
 add_test (NAME pcondvariable_test COMMAND pcondvariable_test)
 add_test (NAME pcryptohash_test COMMAND pcryptohash_test)
 add_test (NAME phashtable_test COMMAND phashtable_test)
+add_test (NAME pinifile_test COMMAND pinifile_test)
 add_test (NAME plist_test COMMAND plist_test)
 add_test (NAME pmem_test COMMAND pmem_test)
 add_test (NAME pmutex_test COMMAND pmutex_test)
