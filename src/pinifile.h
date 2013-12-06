@@ -29,10 +29,15 @@
  * take value inside "" or '' symbols. Parameters related to section
  * until another section name is occured.
  * List of values can be stored between {} symbol separated with spaces.
+ * List only supports string values, so you should convert them to numbers
+ * manually.
+ * Empty sections (with no parameters) and parameters are skipped while
+ * parsing. If the section has two parameters with the same name than the
+ * last occurred value will be used.
  * To parse file, create #PIniFile with p_ini_file_new() and then
  * parse it with p_ini_file_parse() functions. Boolean values can
  * be written in form of 'true/false' or 'TRUE/FALSE', or simply '0/1'.
- * @warning Be carefull that UTF-8 BOM couldn't be recognized while parsing.
+ * @note #PIniFile handles (skips) UTF-8/16/32 BOM characters.
  */
 
 #if !defined (__PLIB_H_INSIDE__) && !defined (PLIB_COMPILATION)
