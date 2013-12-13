@@ -135,6 +135,9 @@ p_uthread_set_priority (PUThread		*thread,
 {
 	P_WARNING ("PUThread: priorities for bound threads are not implemented in Solaris");
 
+	if (thread == NULL)
+		return -1;
+
 	thread->prio = prio;
 
 	return 0;
