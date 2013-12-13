@@ -31,7 +31,6 @@
  * preempted by another thread.
  */
 
-
 #if !defined (__PLIB_H_INSIDE__) && !defined (PLIB_COMPILATION)
 #  error "Header files shouldn't be included directly, consider using <plib.h> instead."
 #endif
