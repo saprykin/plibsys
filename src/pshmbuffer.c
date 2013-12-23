@@ -128,6 +128,15 @@ p_shm_buffer_free (PShmBuffer *buf)
 	p_free (buf);
 }
 
+P_LIB_API void
+p_shm_buffer_take_ownership (PShmBuffer *buf)
+{
+	if (buf == NULL)
+		return;
+
+	p_shm_take_ownership (buf->shm);
+}
+
 P_LIB_API pint
 p_shm_buffer_read (PShmBuffer *buf, ppointer storage, psize len)
 {

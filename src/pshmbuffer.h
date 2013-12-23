@@ -64,9 +64,26 @@ P_LIB_API PShmBuffer *	p_shm_buffer_new		(const pchar *name, psize size);
 P_LIB_API void		p_shm_buffer_free		(PShmBuffer *buf);
 
 /**
+ * @brief Takes ownership of the shared memory buffer.
+ * @param buf Shared memory buffer.
+ * @since 0.0.1
+ *
+ * If you take ownership of the shared memory buffer, p_shm_buffer_free()
+ * will try to completely unlink it and remove from the system.
+ * This is useful on UNIX systems with POSIX and System V IPC implementations, where shared
+ * memory can survive the application crash. On Windows platform this call has no effect.
+ * The common usage of this call is upon application startup to ensure that
+ * memory segment from the previous crash can be unlinked from the system. To
+ * do that, call p_shm_buffer_new(), and check if its condition is OK (used space,
+ * free space). If not, take ownership of the shared memory buffer object and remove it with
+ * p_shm_buffer_free() call. After that, create it again.
+ */
+P_LIB_API void		p_shm_buffer_take_ownership	(PShmBuffer *buf);
+
+/**
  * @brief Tries to read data from shared memory buffer.
  * @param buf #PShmBuffer to read data from.
- * @param storage Output buffer to put data in.
+ * @param[out] storage Output buffer to put data in.
  * @param len @a storage size in bytes.
  * @return Number of read bytes (can be 0 if buffer is empty), or -1 if error occured. 
  * @since 0.0.1
