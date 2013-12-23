@@ -24,8 +24,8 @@
 #include "pshm.h"
 
 #define SHM_BUFFER_READ_OFFSET	0
-#define SHM_BUFFER_WRITE_OFFSET	sizeof (puint32)
-#define SHM_BUFFER_DATA_OFFSET	sizeof (puint32) * 2
+#define SHM_BUFFER_WRITE_OFFSET	sizeof (psize)
+#define SHM_BUFFER_DATA_OFFSET	sizeof (psize) * 2
 
 struct _PShmBuffer {
 	PShm *shm;
@@ -39,7 +39,7 @@ static pssize __p_shm_buffer_get_used_space (PShmBuffer *buf);
 static psize
 __p_shm_buffer_get_free_space (PShmBuffer *buf)
 {
-	puint32		read_pos, write_pos;
+	psize		read_pos, write_pos;
 	ppointer	addr;
 
 	if (buf == NULL)
@@ -64,7 +64,7 @@ __p_shm_buffer_get_free_space (PShmBuffer *buf)
 static pssize
 __p_shm_buffer_get_used_space (PShmBuffer *buf)
 {
-	puint32		read_pos, write_pos;
+	psize		read_pos, write_pos;
 	ppointer	addr;
 
 	if (buf == NULL)
@@ -216,7 +216,7 @@ p_shm_buffer_write (PShmBuffer *buf, ppointer data, psize len)
 
 	/* TODO: Handle exceptions on Windows */
 	for (i = 0; i < len; ++i)
-		memcpy ((pchar *) addr + SHM_BUFFER_DATA_OFFSET + ((write_pos + i) % buf->size), (char *) data + i, 1);
+		memcpy ((pchar *) addr + SHM_BUFFER_DATA_OFFSET + ((write_pos + i) % buf->size), (pchar *) data + i, 1);
 
 	write_pos = (write_pos + len) % buf->size;
 	memcpy ((pchar *) addr + SHM_BUFFER_WRITE_OFFSET, &write_pos, sizeof (write_pos));
