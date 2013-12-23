@@ -71,7 +71,7 @@ p_shm_unlock (PShm *shm)
 }
 
 P_LIB_API ppointer
-p_shm_get_address (PShm *shm)
+p_shm_get_address (const PShm *shm)
 {
 	P_UNUSED (shm);
 
@@ -79,7 +79,7 @@ p_shm_get_address (PShm *shm)
 }
 
 P_LIB_API psize
-p_shm_get_size (PShm *shm)
+p_shm_get_size (const PShm *shm)
 {
 	P_UNUSED (shm);
 

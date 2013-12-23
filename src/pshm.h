@@ -115,7 +115,7 @@ P_LIB_API pboolean	p_shm_unlock		(PShm *shm);
  * @return Pointer to starting address in case of success, NULL otherwise.
  * @since 0.0.1
  */
-P_LIB_API ppointer	p_shm_get_address	(PShm *shm);
+P_LIB_API ppointer	p_shm_get_address	(const PShm *shm);
 
 /**
  * @brief Gets size of the #PShm memory segment.
@@ -126,7 +126,7 @@ P_LIB_API ppointer	p_shm_get_address	(PShm *shm);
  * Note that returned size would be a slight bigger then specified during
  * p_shm_new() call due to service information stored there.
  */
-P_LIB_API psize		p_shm_get_size		(PShm *shm);
+P_LIB_API psize		p_shm_get_size		(const PShm *shm);
 
 P_END_DECLS
 
