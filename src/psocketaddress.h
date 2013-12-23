@@ -121,7 +121,7 @@ P_LIB_API pboolean		p_socket_address_to_native		(PSocketAddress	*addr,
 /**
  * @brief Gets size of the native socket address raw data, in bytes.
  * @param addr #PSocketAddress to get size of the native address raw data for.
- * @return Size of the native socket address raw data in case of success, -1 otherwise.
+ * @return Size of the native socket address raw data in case of success, 0 otherwise.
  * @since 0.0.1
  */
 P_LIB_API psize			p_socket_address_get_native_size	(PSocketAddress *addr);

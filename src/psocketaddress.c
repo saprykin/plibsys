@@ -38,7 +38,6 @@ struct _PSocketAddress {
 	puint16 	port;
 };
 
-
 P_LIB_API PSocketAddress *
 p_socket_address_new_from_native (ppointer	native,
 				  psize		len)
@@ -141,7 +140,7 @@ p_socket_address_new_any (PSocketFamily	family,
 #endif
 
 	if (family == P_SOCKET_FAMILY_UNKNOWN)
-		return FALSE;
+		return NULL;
 
 	if ((ret = p_malloc0 (sizeof (PSocketAddress))) == NULL) {
 		P_ERROR ("PSocketAddress: failed to allocate memory");
@@ -172,7 +171,7 @@ p_socket_address_new_loopback (PSocketFamily	family,
 #endif
 
 	if (family == P_SOCKET_FAMILY_UNKNOWN)
-		return FALSE;
+		return NULL;
 
 	if ((ret = p_malloc0 (sizeof (PSocketAddress))) == NULL) {
 		P_ERROR ("PSocketAddress: failed to allocate memory");
