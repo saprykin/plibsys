@@ -181,7 +181,7 @@ p_crypto_hash_get_digest (PCryptoHash *hash, puchar *buf, psize *len)
 }
 
 P_LIB_API pssize
-p_crypto_hash_get_length (PCryptoHash *hash)
+p_crypto_hash_get_length (const PCryptoHash *hash)
 {
 	if (hash == NULL)
 		return 0;
@@ -190,7 +190,7 @@ p_crypto_hash_get_length (PCryptoHash *hash)
 }
 
 P_LIB_API PCryptoHashType
-p_crypto_hash_get_type (PCryptoHash *hash)
+p_crypto_hash_get_type (const PCryptoHash *hash)
 {
 	if (hash == NULL)
 		return -1;

@@ -120,7 +120,7 @@ P_LIB_API void			p_crypto_hash_get_digest	(PCryptoHash		*hash,
  * @note This length doesn't not match string hash representation.
  * @since 0.0.1
  */
-P_LIB_API pssize		p_crypto_hash_get_length	(PCryptoHash		*hash);
+P_LIB_API pssize		p_crypto_hash_get_length	(const PCryptoHash	*hash);
 
 /**
  * @brief Gets hash function type.
@@ -128,7 +128,7 @@ P_LIB_API pssize		p_crypto_hash_get_length	(PCryptoHash		*hash);
  * @return Hash function type used in given context.
  * @since 0.0.1
  */
-P_LIB_API PCryptoHashType	p_crypto_hash_get_type		(PCryptoHash		*hash);
+P_LIB_API PCryptoHashType	p_crypto_hash_get_type		(const PCryptoHash	*hash);
 
 /**
  * @brief Frees previously initialized hash context.
