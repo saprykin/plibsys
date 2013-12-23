@@ -23,7 +23,7 @@
  *
  * Mutex is a thread synchronization primitive. It's a binary semaphore in other
  * words. PLib supports different mutex implementations: System V, POSIX, Sun Solaris
- * and Win32. PLib is compiled using one of them (depend which of implementations
+ * and Windows. PLib is compiled using one of them (depend which of implementations
  * are available on target system). Because of that some non-usual actions (double-lock,
  * unlock non-locked mutex) can lead to unpredictable behaviour. Do not rely on such
  * features when writing cross-platform applications.
