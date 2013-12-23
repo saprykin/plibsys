@@ -39,7 +39,7 @@ struct _PSocketAddress {
 };
 
 P_LIB_API PSocketAddress *
-p_socket_address_new_from_native (ppointer	native,
+p_socket_address_new_from_native (pconstpointer	native,
 				  psize		len)
 {
 	PSocketAddress	*ret;
@@ -73,8 +73,8 @@ p_socket_address_new_from_native (ppointer	native,
 }
 
 P_LIB_API PSocketAddress *
-p_socket_address_new (pchar	*address,
-		      puint16	port)
+p_socket_address_new (const pchar	*address,
+		      puint16		port)
 {
 	PSocketAddress		*ret;
 #ifdef P_OS_WIN
@@ -192,9 +192,9 @@ p_socket_address_new_loopback (PSocketFamily	family,
 }
 
 P_LIB_API pboolean
-p_socket_address_to_native (PSocketAddress	*addr,
-			    ppointer		dest,
-			    psize		destlen)
+p_socket_address_to_native (const PSocketAddress	*addr,
+			    ppointer			dest,
+			    psize			destlen)
 {
 	struct sockaddr_in	*sin;
 #ifdef AF_INET6
@@ -242,7 +242,7 @@ p_socket_address_to_native (PSocketAddress	*addr,
 }
 
 P_LIB_API psize
-p_socket_address_get_native_size (PSocketAddress *addr)
+p_socket_address_get_native_size (const PSocketAddress *addr)
 {
 	if (!addr)
 		return 0;
@@ -260,7 +260,7 @@ p_socket_address_get_native_size (PSocketAddress *addr)
 }
 
 P_LIB_API PSocketFamily
-p_socket_address_get_family (PSocketAddress *addr)
+p_socket_address_get_family (const PSocketAddress *addr)
 {
 	if (!addr)
 		return P_SOCKET_FAMILY_UNKNOWN;
@@ -269,7 +269,7 @@ p_socket_address_get_family (PSocketAddress *addr)
 }
 
 P_LIB_API pchar *
-p_socket_address_get_address (PSocketAddress *addr)
+p_socket_address_get_address (const PSocketAddress *addr)
 {
 #ifdef AF_INET6
 	pchar			buffer[INET6_ADDRSTRLEN];
@@ -327,7 +327,7 @@ p_socket_address_get_address (PSocketAddress *addr)
 }
 
 P_LIB_API puint16
-p_socket_address_get_port (PSocketAddress *addr)
+p_socket_address_get_port (const PSocketAddress *addr)
 {
 	if (!addr)
 		return 0;
@@ -336,7 +336,7 @@ p_socket_address_get_port (PSocketAddress *addr)
 }
 
 P_LIB_API pboolean
-p_socket_address_is_any (PSocketAddress *addr)
+p_socket_address_is_any (const PSocketAddress *addr)
 {
 	puint32 addr4;
 
@@ -355,7 +355,7 @@ p_socket_address_is_any (PSocketAddress *addr)
 }
 
 P_LIB_API pboolean
-p_socket_address_is_loopback (PSocketAddress *addr)
+p_socket_address_is_loopback (const PSocketAddress *addr)
 {
 	puint32 addr4;
 
