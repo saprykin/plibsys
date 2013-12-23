@@ -85,7 +85,7 @@ P_LIB_API void		p_hash_table_insert		(PHashTable	*table,
  * (ppointer) -1 if no value was found.
  * @since 0.0.1
  */
-P_LIB_API ppointer	p_hash_table_lookup		(PHashTable *table, pconstpointer key);
+P_LIB_API ppointer	p_hash_table_lookup		(const PHashTable *table, pconstpointer key);
 
 /**
  * @brief Gives the list of all stored keys in hash-table.
@@ -94,7 +94,7 @@ P_LIB_API ppointer	p_hash_table_lookup		(PHashTable *table, pconstpointer key);
  * You should manually free this list with p_list_free() after using it.
  * @since 0.0.1
  */
-P_LIB_API PList *	p_hash_table_keys		(PHashTable *table);
+P_LIB_API PList *	p_hash_table_keys		(const PHashTable *table);
 
 /**
  * @brief Gives the list of all stored values in hash-table.
@@ -103,7 +103,7 @@ P_LIB_API PList *	p_hash_table_keys		(PHashTable *table);
  * You should manually free this list with p_list_free() after using.
  * @since 0.0.1
  */
-P_LIB_API PList *	p_hash_table_values		(PHashTable *table);
+P_LIB_API PList *	p_hash_table_values		(const PHashTable *table);
 
 /**
  * @brief Frees previously initialized #PHashTable.
@@ -134,9 +134,9 @@ P_LIB_API void		p_hash_table_remove		(PHashTable *table, pconstpointer key);
  * is accepted related to the given lookup value (second parameter),
  * and -1 or 1 otherwise.
  */
-P_LIB_API PList *	p_hash_table_lookup_by_value	(PHashTable	*table,
-							 pconstpointer	val,
-							 PCompareFunc	func);
+P_LIB_API PList *	p_hash_table_lookup_by_value	(const PHashTable	*table,
+							 pconstpointer		val,
+							 PCompareFunc		func);
 
 P_END_DECLS
 
