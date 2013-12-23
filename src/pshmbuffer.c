@@ -43,11 +43,11 @@ __p_shm_buffer_get_free_space (PShmBuffer *buf)
 	ppointer	addr;
 
 	if (buf == NULL)
-		return 0;
+		return -1;
 
 	if ((addr = p_shm_get_address (buf->shm)) == NULL) {
 		P_ERROR ("PShmBuffer: failed to get memory address");
-		return 0;
+		return -1;
 	}
 
 	memcpy (&read_pos, (pchar *) addr + SHM_BUFFER_READ_OFFSET, sizeof (read_pos));
@@ -227,17 +227,17 @@ p_shm_buffer_write (PShmBuffer *buf, ppointer data, psize len)
 	return len;
 }
 
-P_LIB_API psize
+P_LIB_API pssize
 p_shm_buffer_get_free_space (PShmBuffer *buf)
 {
 	psize space;
 
 	if (buf == NULL)
-		return 0;
+		return -1;
 
 	if (!p_shm_lock (buf->shm)) {
 		P_ERROR ("PShmBuffer: failed to lock memory to get free space");
-		return 0;
+		return -1;
 	}
 
 	space = __p_shm_buffer_get_free_space (buf);

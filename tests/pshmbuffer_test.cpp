@@ -75,7 +75,7 @@ BOOST_AUTO_TEST_CASE (pshmbuffer_bad_input_test)
 	BOOST_CHECK (p_shm_buffer_new (NULL, 0) == NULL);
 	BOOST_CHECK (p_shm_buffer_read (NULL, NULL, 0) == -1);
 	BOOST_CHECK (p_shm_buffer_read (NULL, NULL, 0) == -1);
-	BOOST_CHECK (p_shm_buffer_get_free_space (NULL) == 0);
+	BOOST_CHECK (p_shm_buffer_get_free_space (NULL) == -1);
 	BOOST_CHECK (p_shm_buffer_get_used_space (NULL) == -1);
 
 	p_shm_buffer_clear (NULL);

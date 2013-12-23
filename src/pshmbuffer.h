@@ -103,10 +103,10 @@ P_LIB_API pssize	p_shm_buffer_write		(PShmBuffer *buf, ppointer data, psize len)
 /**
  * @brief Gets free space in shared memory buffer.
  * @param buf #PShmBuffer to check space in.
- * @return Free space in bytes in case of success, 0 otherwise. 
+ * @return Free space in bytes in case of success, -1 otherwise.
  * @since 0.0.1
  */
-P_LIB_API psize		p_shm_buffer_get_free_space	(PShmBuffer *buf);
+P_LIB_API pssize	p_shm_buffer_get_free_space	(PShmBuffer *buf);
 
 /**
  * @brief Gets used space in shared memory buffer.
