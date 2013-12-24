@@ -110,13 +110,13 @@ P_LIB_API PSocketAddress *	p_socket_address_new_loopback		(PSocketFamily	family,
  * @brief Converts #PSocketAddress to native socket address raw data.
  * @param addr #PSocketAddress to convert.
  * @param[out] dest Output buffer for raw data.
- * @param len Length of the @a dest buffer.
+ * @param destlen Length of the @a dest buffer.
  * @return TRUE in case of success, FALSE otherwise.
  * @since 0.0.1
  */
 P_LIB_API pboolean		p_socket_address_to_native		(const PSocketAddress	*addr,
 									 ppointer		dest,
-									 psize			len);
+									 psize			destlen);
 
 /**
  * @brief Gets size of the native socket address raw data, in bytes.
