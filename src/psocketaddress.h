@@ -24,7 +24,7 @@
  * #PSocketAddress is a socket address wrapper depending on the underlying system.
  * Currently it supports IPv4 and IPv6 addresses, which consist of IP address and
  * corresponding port number.
- * Also you can you convinient methods to create addresses for loopback interface
+ * Also you can use convenient methods to create addresses for loopback interface
  * using p_socket_address_new_loopback() or to specify address to any interface
  * using p_socket_address_new_any(). If you want to get native socket address data
  * for further usage in system calls use p_socket_address_to_native() and vice versa.
