@@ -23,11 +23,57 @@ BOOST_AUTO_TEST_CASE (pmem_general_test)
 
 	BOOST_CHECK (p_malloc (0) == NULL);
 	BOOST_CHECK (p_malloc0 (0) == NULL);
-	BOOST_CHECK (p_realloc (0, 0) == NULL);
+	BOOST_CHECK (p_realloc (NULL, 0) == NULL);
 	BOOST_CHECK (p_mem_set_vtable (NULL) == FALSE);
 	BOOST_CHECK (p_mem_set_vtable (&vtable) == FALSE);
 	p_free (NULL);
 
+	/* Test memory allocation using system functions */
+	ptr = p_malloc (1024);
+	BOOST_REQUIRE (ptr != NULL);
+
+	for (int i = 0; i < 1024; ++i)
+		*(((pchar *) ptr) + i) = (pchar) (i % 127);
+
+	for (int i = 0; i < 1024; ++i)
+		BOOST_CHECK (*(((pchar *) ptr) + i) == (pchar) (i % 127));
+
+	p_free (ptr);
+
+	ptr = p_malloc0 (2048);
+	BOOST_REQUIRE (ptr != NULL);
+
+	for (int i = 0; i < 2048; ++i)
+		BOOST_CHECK (*(((pchar *) ptr) + i) == 0);
+
+	for (int i = 0; i < 2048; ++i)
+		*(((pchar *) ptr) + i) = (pchar) (i % 127);
+
+	for (int i = 0; i < 2048; ++i)
+		BOOST_CHECK (*(((pchar *) ptr) + i) == (pchar) (i % 127));
+
+	p_free (ptr);
+
+	ptr = p_realloc (NULL, 1024);
+	BOOST_REQUIRE (ptr != NULL);
+
+	for (int i = 0; i < 1024; ++i)
+		*(((pchar *) ptr) + i) = (pchar) (i % 127);
+
+	ptr = p_realloc (ptr, 2048);
+
+	for (int i = 1024; i < 2048; ++i)
+		*(((pchar *) ptr) + i) = (pchar) ((i - 1) % 127);
+
+	for (int i = 0; i < 1024; ++i)
+		BOOST_CHECK (*(((pchar *) ptr) + i) == (pchar) (i % 127));
+
+	for (int i = 1024; i < 2048; ++i)
+		BOOST_CHECK (*(((pchar *) ptr) + i) == (pchar) ((i - 1) % 127));
+
+	p_free (ptr);
+
+	/* Test memory mapping */
 	ptr = p_mem_mmap (0);
 	BOOST_CHECK (ptr == NULL);
 
