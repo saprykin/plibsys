@@ -97,7 +97,7 @@ static void * udp_socket_sender_thread (void *arg)
 	if (skt_sender == NULL)
 		p_uthread_exit (-1);
 
-	PSocketAddress *addr_sender = p_socket_address_new_loopback (P_SOCKET_FAMILY_INET, data->sender_port);
+	PSocketAddress *addr_sender = p_socket_address_new ("127.0.0.1", data->sender_port);
 
 	if (addr_sender == NULL) {
 		p_socket_free (skt_sender);
@@ -266,7 +266,7 @@ static void * tcp_socket_sender_thread (void *arg)
 		continue;
 	}
 
-	PSocketAddress *addr_sender = p_socket_address_new_loopback (P_SOCKET_FAMILY_INET, data->sender_port);
+	PSocketAddress *addr_sender = p_socket_address_new ("127.0.0.1", data->sender_port);
 
 	if (addr_sender == NULL) {
 		p_socket_free (skt_sender);
