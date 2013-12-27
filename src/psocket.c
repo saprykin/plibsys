@@ -1097,7 +1097,7 @@ p_socket_receive_from (PSocket		*socket,
 	struct pollfd		pfd;
 #endif
 
-	if (!socket || !address || !buffer)
+	if (!socket || !address || !buffer || buflen <= 0)
 		return -1;
 
 	if (!__p_socket_check (socket))
@@ -1179,11 +1179,12 @@ p_socket_send (PSocket		*socket,
 	struct pollfd		pfd;
 #endif
 
-	if (!socket || !buffer)
+	if (!socket || !buffer || buflen <= 0)
 		return -1;
 
 	if (!__p_socket_check (socket))
 		return -1;
+
 	timeout = (socket->blocking) ? 250 : 1;
 
 #ifdef P_OS_WIN
