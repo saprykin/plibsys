@@ -274,14 +274,6 @@ P_LIB_API pboolean		p_socket_connect		(PSocket		*socket,
 								 PSocketAddress		*address);
 
 /**
- * @brief Checks socket's connection state.
- * @param socket #PSocket to check connection for.
- * @return TRUE if @a socket is connected, FALSE otherwise.
- * @since 0.0.1
- */
-P_LIB_API pboolean		p_socket_check_connect_result	(PSocket 		*socket);
-
-/**
  * @brief Puts socket in listen state.
  * @param socket #PSocket to start listening.
  * @return TRUE in case of success, FALSE otherwise.

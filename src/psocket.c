@@ -904,32 +904,6 @@ p_socket_connect (PSocket		*socket,
 }
 
 P_LIB_API pboolean
-p_socket_check_connect_result (PSocket *socket)
-{
-	socklen_t	optlen;
-	pint		value;
-
-	if (!socket)
-		return FALSE;
-
-	optlen = sizeof (value);
-	if (getsockopt (socket->fd, SOL_SOCKET, SO_ERROR, (void *)&value, &optlen) != 0) {
-		P_ERROR ("PSocket: failed to check connect result");
-
-		__p_socket_set_error (socket);
-
-		return FALSE;
-	}
-
-	if (value != 0) {
-		P_ERROR ("PSocket: connection not established");
-		return FALSE;
-	}
-
-	return TRUE;
-}
-
-P_LIB_API pboolean
 p_socket_listen (PSocket *socket)
 {
 	if (!socket)
