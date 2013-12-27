@@ -10,10 +10,8 @@
 volatile static pboolean is_working = TRUE;
 static pchar test_str[] = "This is a test string!";
 
-static void * shm_buffer_test_write_thread (void *arg)
+static void * shm_buffer_test_write_thread (void *)
 {
-	P_UNUSED (arg);
-
 	PShmBuffer *buffer = p_shm_buffer_new ("pshm_test_buffer", 1024);
 
 	if (buffer == NULL)
@@ -35,10 +33,8 @@ static void * shm_buffer_test_write_thread (void *arg)
 	p_uthread_exit (0);
 }
 
-static void * shm_buffer_test_read_thread (void *arg)
+static void * shm_buffer_test_read_thread (void *)
 {
-	P_UNUSED (arg);
-
 	PShmBuffer	*buffer = p_shm_buffer_new ("pshm_test_buffer", 1024);
 	pchar		test_buf[sizeof (test_str)];
 
