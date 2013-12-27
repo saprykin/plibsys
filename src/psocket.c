@@ -380,7 +380,7 @@ __p_socket_set_fd_blocking (pint	fd,
 		arg = 0;
 	}
 
-	arg = (!blocking) ? (arg | O_NONBLOCK) : (arg | ~O_NONBLOCK);
+	arg = (!blocking) ? (arg | O_NONBLOCK) : (arg & ~O_NONBLOCK);
 
 	if (fcntl (fd, F_SETFL, arg) < 0) {
 #else
