@@ -389,7 +389,7 @@ __p_socket_set_fd_blocking (pint	fd,
 	if (ioctlsocket (fd, FIONBIO, &arg) == SOCKET_ERROR) {
 #endif
 		P_ERROR ("PSocket: error setting socket flags");
-		return __p_socket_get_errno();
+		return __p_socket_get_errno ();
 	}
 
 	return 0;
@@ -1044,6 +1044,10 @@ p_socket_receive (PSocket	*socket,
 			}
 		} else if (evret == WSA_WAIT_EVENT_0) {
 			ret = recv (socket->fd, buffer, (pint) buflen, 0);
+
+			if (ret < 0)
+				__p_socket_set_error (socket);
+
 			break;
 		}
 	}
@@ -1057,6 +1061,10 @@ p_socket_receive (PSocket	*socket,
 
 		if (evret == 1) {
 			ret = recv (socket->fd, buffer, buflen, 0);
+
+			if (ret < 0)
+				__p_socket_set_error (socket);
+
 			break;
 		} else if (evret == 0) {
 			if (!socket->blocking) {
@@ -1118,6 +1126,10 @@ p_socket_receive_from (PSocket		*socket,
 			}
 		} else if (evret == WSA_WAIT_EVENT_0) {
 			ret = recvfrom (socket->fd, buffer, (pint) buflen, 0, (struct sockaddr *) &sa, &optlen);
+
+			if (ret < 0)
+				__p_socket_set_error (socket);
+
 			break;
 		}
 	}
@@ -1131,6 +1143,10 @@ p_socket_receive_from (PSocket		*socket,
 
 		if (evret == 1) {
 			ret = recvfrom (socket->fd, buffer, buflen, 0, (struct sockaddr *) &sa, &optlen);
+
+			if (ret < 0)
+				__p_socket_set_error (socket);
+
 			break;
 		} else if (evret == 0) {
 			if (!socket->blocking) {
@@ -1190,6 +1206,10 @@ p_socket_send (PSocket		*socket,
 			}
 		} else if (evret == WSA_WAIT_EVENT_0) {
 			ret = send (socket->fd, buffer, (pint) buflen, P_SOCKET_DEFAULT_SEND_FLAGS);
+
+			if (ret < 0)
+				__p_socket_set_error (socket);
+
 			break;
 		}
 	}
@@ -1203,6 +1223,10 @@ p_socket_send (PSocket		*socket,
 
 		if (evret == 1) {
 			ret = send (socket->fd, buffer, buflen, P_SOCKET_DEFAULT_SEND_FLAGS);
+
+			if (ret < 0)
+				__p_socket_set_error (socket);
+
 			break;
 		} else if (evret == 0) {
 			if (!socket->blocking) {
@@ -1267,6 +1291,10 @@ p_socket_send_to (PSocket		*socket,
 			}
 		} else if (evret == WSA_WAIT_EVENT_0) {
 			ret = sendto (socket->fd, buffer, (pint) buflen, 0, (struct sockaddr *) &sa, (pint) optlen);
+
+			if (ret < 0)
+				__p_socket_set_error (socket);
+
 			break;
 		}
 	}
@@ -1280,6 +1308,10 @@ p_socket_send_to (PSocket		*socket,
 
 		if (evret == 1) {
 			ret = sendto (socket->fd, buffer, buflen, 0, (struct sockaddr *) &sa, optlen);
+
+			if (ret < 0)
+				__p_socket_set_error (socket);
+
 			break;
 		} else if (evret == 0) {
 			if (!socket->blocking) {
