@@ -92,6 +92,10 @@ P_LIB_API PSocketAddress *	p_socket_address_new			(const pchar	*address,
  * @param port Port number.
  * @return Pointer to #PSocketAddress in case of success, NULL otherwise.
  * @since 0.0.1
+ * @note This call creates network address for a set of all possible addresses,
+ * so you can't use it for receiving or sending data on a particular network
+ * address. If you need to bind a socket to specific address (e.g. 127.0.0.1)
+ * use p_socket_address_new() instead.
  */
 P_LIB_API PSocketAddress *	p_socket_address_new_any		(PSocketFamily	family,
 									 puint16	port);
@@ -102,6 +106,10 @@ P_LIB_API PSocketAddress *	p_socket_address_new_any		(PSocketFamily	family,
  * @param port Port number.
  * @return Pointer to #PSocketAddress in case of success, NULL otherwise.
  * @since 0.0.1
+ * @note This call creates network address for an entire loopback network interface,
+ * so you can't use it for receiving or sending data on a particular network
+ * address. If you need to bind a socket to specific address (e.g. 127.0.0.1)
+ * use p_socket_address_new() instead.
  */
 P_LIB_API PSocketAddress *	p_socket_address_new_loopback		(PSocketFamily	family,
 									 puint16	port);
@@ -157,6 +165,7 @@ P_LIB_API puint16		p_socket_address_get_port		(const PSocketAddress *addr);
  * @param addr #PSocketAddress to check.
  * @return TRUE if @a addr is for any interface representation, FALSE otherwise.
  * @since 0.0.1
+ * @sa p_socket_address_new_any()
  */
 P_LIB_API pboolean		p_socket_address_is_any			(const PSocketAddress *addr);
 
@@ -166,6 +175,7 @@ P_LIB_API pboolean		p_socket_address_is_any			(const PSocketAddress *addr);
  * @param addr #PSocketAddress to check.
  * @return TRUE if @a addr is for loopback interface, FALSE otherwise.
  * @since 0.0.1
+ * @sa p_socket_address_new_loopback()
  */
 P_LIB_API pboolean		p_socket_address_is_loopback		(const PSocketAddress *addr);
 
