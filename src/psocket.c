@@ -781,7 +781,7 @@ P_LIB_API void
 p_socket_set_keepalive (PSocket		*socket,
 			pboolean	keepalive)
 {
-	pchar val;
+	pint val;
 
 	if (!socket)
 		return;
@@ -789,16 +789,15 @@ p_socket_set_keepalive (PSocket		*socket,
 	if (socket->keepalive == keepalive)
 		return;
 
-	val = (pchar) keepalive;
+	val = !! (pint) keepalive;
 	if (setsockopt (socket->fd, SOL_SOCKET, SO_KEEPALIVE, &val, sizeof (val)) < 0) {
 		P_ERROR ("PSocket: failed to set keepalive flag");
-
 		__p_socket_set_error (socket);
 
 		return;
 	}
 
-	socket->keepalive = !! (int) keepalive;
+	socket->keepalive = !! (pint) keepalive;
 }
 
 P_LIB_API void
@@ -835,7 +834,7 @@ p_socket_bind (PSocket		*socket,
 {
 	struct sockaddr_storage	addr;
 #ifndef P_OS_WIN
-	pchar			value;
+	pint			value;
 #endif
 
 	if (!socket || !address)
@@ -847,10 +846,10 @@ p_socket_bind (PSocket		*socket,
 	/* SO_REUSEADDR on Windows means something else and is not what we want.
 	   It always allows the UNIX variant of SO_REUSEADDR anyway */
 #ifndef P_OS_WIN
-		value = (pchar) allow_reuse;
-		/* Ignore errors here, the only likely error is "not supported", and
-		   this is a "best effort" thing mainly */
-		setsockopt (socket->fd, SOL_SOCKET, SO_REUSEADDR, &value, sizeof (value));
+	value = !! (pint) allow_reuse;
+	/* Ignore errors here, the only likely error is "not supported", and
+	   this is a "best effort" thing mainly */
+	setsockopt (socket->fd, SOL_SOCKET, SO_REUSEADDR, &value, sizeof (value));
 #endif
 
 	if (!p_socket_address_to_native (address, &addr, sizeof addr))
@@ -884,7 +883,7 @@ p_socket_connect (PSocket		*socket,
 
 	while (TRUE) {
 		if (connect (socket->fd, (struct sockaddr *) &buffer,
-				(pint) p_socket_address_get_native_size (address)) < 0) {
+			     (pint) p_socket_address_get_native_size (address)) < 0) {
 #ifndef P_OS_WIN
 			if (__p_socket_get_errno () == EINTR)
 				continue;
