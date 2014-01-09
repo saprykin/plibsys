@@ -297,39 +297,27 @@ static void * tcp_socket_sender_thread (void *arg)
 	send_total = 0;
 	send_now = 0;
 
-	while (data->receiver_port == 0) {
+	while (is_sender_working && data->receiver_port == 0) {
 		p_uthread_sleep (1);
 		continue;
 	}
 
 	PSocketAddress *addr_receiver = NULL;
 
-	if (data->receiver_port != 0)
+	if (data->receiver_port != 0) {
 		addr_receiver = p_socket_address_new ("127.0.0.1", data->receiver_port);
+		is_connected = p_socket_connect (skt_sender, addr_receiver, 4000);
+
+		if (is_connected == TRUE && p_socket_shutdown (skt_sender, FALSE, data->shutdown_channel) == FALSE)
+			is_connected = FALSE;
+	}
 
 	while (is_sender_working == TRUE) {
-		if (data->receiver_port == 0)
+		if (data->receiver_port == 0 || is_connected == FALSE)
 			break;
 
-		if (is_connected == FALSE) {
-			is_connected = p_socket_connect (skt_sender, addr_receiver);
-
-			if (is_connected == FALSE) {
-				p_uthread_sleep (1);
-				continue;
-			} else {
-				if (test_socket_address (skt_sender, data->receiver_port) == FALSE)
-					break;
-
-				p_socket_set_keepalive (skt_sender, TRUE);
-
-				if (p_socket_get_keepalive (skt_sender) == FALSE)
-					break;
-
-				if (p_socket_shutdown (skt_sender, TRUE, data->shutdown_channel) == FALSE)
-					break;
-			}
-		}
+		if (test_socket_address (skt_sender, data->receiver_port) == FALSE)
+			break;
 
 		if (data->shutdown_channel == FALSE && p_socket_is_connected (skt_sender) == FALSE) {
 			p_socket_free (skt_sender);
@@ -425,7 +413,7 @@ static void * tcp_socket_receiver_thread (void *arg)
 				if (test_socket_address (conn_socket, data->sender_port) == FALSE)
 					break;
 
-				if (p_socket_shutdown (conn_socket, data->shutdown_channel, TRUE) == FALSE)
+				if (p_socket_shutdown (conn_socket, data->shutdown_channel, FALSE) == FALSE)
 					break;
 			}
 		}
@@ -493,7 +481,7 @@ BOOST_AUTO_TEST_CASE (psocket_bad_input_test)
 	p_socket_set_listen_backlog (NULL, 0);
 
 	BOOST_CHECK (p_socket_bind (NULL, NULL, FALSE) == FALSE);
-	BOOST_CHECK (p_socket_connect (NULL, NULL) == FALSE);
+	BOOST_CHECK (p_socket_connect (NULL, NULL, 0) == FALSE);
 	BOOST_CHECK (p_socket_listen (NULL) == FALSE);
 	BOOST_CHECK (p_socket_accept (NULL) == NULL);
 	BOOST_CHECK (p_socket_receive (NULL, NULL, 0) == -1);
