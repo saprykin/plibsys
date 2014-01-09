@@ -811,7 +811,11 @@ P_LIB_API void
 p_socket_set_keepalive (PSocket		*socket,
 			pboolean	keepalive)
 {
+#ifdef P_OS_WIN
+	pchar val;
+#else
 	pint val;
+#endif
 
 	if (!socket)
 		return;
@@ -819,7 +823,11 @@ p_socket_set_keepalive (PSocket		*socket,
 	if (socket->keepalive == keepalive)
 		return;
 
+#ifdef P_OS_WIN
+	val = !! (pchar) keepalive;
+#else
 	val = !! (pint) keepalive;
+#endif
 	if (setsockopt (socket->fd, SOL_SOCKET, SO_KEEPALIVE, &val, sizeof (val)) < 0) {
 		P_ERROR ("PSocket: failed to set keepalive flag");
 		__p_socket_set_error (socket);
@@ -1498,13 +1506,15 @@ p_socket_free (PSocket *socket)
 P_LIB_API PSocketError
 p_socket_get_last_error (PSocket *socket)
 {
+	PSocketError sock_error;
+
 	if (!socket)
 		return P_SOCKET_ERROR_NONE;
 
-	PSocketError error = socket->error;
+	sock_error = socket->error;
 	socket->error = P_SOCKET_ERROR_NONE;
 
-	return error;
+	return sock_error;
 }
 
 P_LIB_API pboolean
