@@ -383,10 +383,13 @@ P_LIB_API pboolean		p_socket_shutdown		(PSocket		*socket,
 P_LIB_API void			p_socket_free			(PSocket 		*socket);
 
 /**
- * @brief Gets last socket's error.
+ * @brief Gets last socket's error and clears it.
  * @param socket #PSocket to get error for.
  * @return Last error occurred.
  * @since 0.0.1
+ *
+ * After calling this function error state for @a socket will be cleared to
+ * #P_SOCKET_ERROR_NONE.
  */
 P_LIB_API PSocketError		p_socket_get_last_error		(PSocket		*socket);
 

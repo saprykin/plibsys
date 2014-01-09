@@ -1412,7 +1412,10 @@ p_socket_get_last_error (PSocket *socket)
 	if (!socket)
 		return P_SOCKET_ERROR_NONE;
 
-	return socket->error;
+	PSocketError error = socket->error;
+	socket->error = P_SOCKET_ERROR_NONE;
+
+	return error;
 }
 
 P_LIB_API pboolean
