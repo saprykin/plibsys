@@ -365,7 +365,11 @@ static void * tcp_socket_receiver_thread (void *arg)
 	PSocket *skt_receiver = p_socket_new_from_fd (fd);
 
 	if (skt_receiver == NULL) {
+#ifdef P_OS_WIN
+		closesocket (fd);
+#else
 		close (fd);
+#endif
 		p_uthread_exit (-1);
 	}
 
