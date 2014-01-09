@@ -898,9 +898,15 @@ p_socket_bind (PSocket		*socket,
 
 P_LIB_API pboolean
 p_socket_connect (PSocket		*socket,
-		  PSocketAddress	*address)
+		  PSocketAddress	*address,
+		  pint			timeout)
 {
 	struct sockaddr_storage	buffer;
+#ifndef P_OS_WIN
+	struct pollfd		pfd;
+#endif
+	pint			evret;
+	pboolean		need_return = FALSE;
 
 	if (!socket || !address)
 		return FALSE;
@@ -911,23 +917,76 @@ p_socket_connect (PSocket		*socket,
 	if (!p_socket_address_to_native (address, &buffer, sizeof buffer))
 		return FALSE;
 
-	while (TRUE) {
+	while (need_return == FALSE) {
 		if (connect (socket->fd, (struct sockaddr *) &buffer,
 			     (pint) p_socket_address_get_native_size (address)) < 0) {
 #ifndef P_OS_WIN
 			if (__p_socket_get_errno () == EINTR)
 				continue;
 #endif
-			P_ERROR ("PSocket: failed to connect");
+			if (!socket->blocking && timeout == 0) {
+				P_ERROR ("PSocket: failed to connect");
+				__p_socket_set_error (socket);
 
-			__p_socket_set_error (socket);
+				return FALSE;
+			}
 
-			return FALSE;
+			if (socket->blocking)
+				timeout = 250;
+
+#ifdef P_OS_WIN
+			if (timeout < 0)
+				timeout = WSA_INFINITE;
+
+			WSAResetEvent (socket->events);
+			WSAEventSelect (socket->fd, socket->events, FD_WRITE);
+
+			while (TRUE) {
+				evret = WSAWaitForMultipleEvents (1, (const HANDLE*) &socket->events, TRUE, timeout, FALSE);
+
+				if (evret == WSA_WAIT_FAILED) {
+					__p_socket_set_error (socket);
+					P_ERROR ("PSocket: WSAWaitForMultipleEvents failed");
+
+					return FALSE;
+				} else if (evret == WSA_WAIT_TIMEOUT) {
+					if (!socket->blocking) {
+						socket->error = P_SOCKET_ERROR_CONNECTING;
+						return FALSE;
+					}
+				} else if (evret == WSA_WAIT_EVENT_0) {
+					need_return = TRUE;
+					break;
+				}
+			}
+#else
+			pfd.fd = socket->fd;
+			pfd.events = POLLOUT;
+			pfd.revents = 0;
+
+			while (TRUE) {
+				evret = poll (&pfd, 1, timeout);
+
+				if (evret == 1) {
+					need_return = TRUE;
+					break;
+				} else if (evret == 0) {
+					if (!socket->blocking) {
+						socket->error = P_SOCKET_ERROR_CONNECTING;
+						return FALSE;
+					}
+				} else if (evret == -1 && errno != EINTR) {
+					__p_socket_set_error (socket);
+					return FALSE;
+				}
+			}
+#endif
 		}
 
-		break;
+		need_return = TRUE;
 	}
 
+	socket->error = P_SOCKET_ERROR_NONE;
 	socket->connected = TRUE;
 	return TRUE;
 }

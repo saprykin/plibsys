@@ -287,11 +287,14 @@ P_LIB_API pboolean		p_socket_bind			(PSocket 		*socket,
  * @brief Connects socket to given remote address.
  * @param socket #PSocket to connect.
  * @param address #PSocketAddress to connect @a socket to.
+ * @param timeout Connection timeout in milliseconds, used only in non-blocking
+ * mode. Negative value means that socket will be used as blocking one.
  * @return TRUE in case of success, FALSE otherwise.
  * @since 0.0.1
  */
 P_LIB_API pboolean		p_socket_connect		(PSocket		*socket,
-								 PSocketAddress		*address);
+								 PSocketAddress		*address,
+								 pint			timeout);
 
 /**
  * @brief Puts socket in listen state.
