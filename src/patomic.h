@@ -1,5 +1,5 @@
 /* 
- * Copyright (C) 2010 Alexander Saprykin <xelfium@gmail.com>
+ * Copyright (C) 2010-2014 Alexander Saprykin <xelfium@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -51,8 +51,8 @@ P_BEGIN_DECLS
  * @return Value before addtition.
  * @since 0.0.1
  */
-pint		p_atomic_int_exchange_and_add		(volatile pint		*atomic,
-							 pint			val);
+P_LIB_API pint		p_atomic_int_exchange_and_add		(volatile pint		*atomic,
+								 pint			val);
 
 /**
  * @brief Atomically adds value.
@@ -60,8 +60,8 @@ pint		p_atomic_int_exchange_and_add		(volatile pint		*atomic,
  * @param val Integer to add to @a atomic integer.
  * @since 0.0.1
  */
-void		p_atomic_int_add			(volatile pint		*atomic,
-							 pint			val);
+P_LIB_API void		p_atomic_int_add			(volatile pint		*atomic,
+								 pint			val);
 
 /**
  * @brief Compares @a oldval with value pointed to by @a atomic and if they are equal,
@@ -72,9 +72,9 @@ void		p_atomic_int_add			(volatile pint		*atomic,
  * @return TRUE if @a *atomic was equiled @a oldval, FALSE otherwise.
  * @since 0.0.1
  */
-pboolean	p_atomic_int_compare_and_exchange	(volatile pint		*atomic,
-							 pint			oldval,
-							 pint			newval);
+P_LIB_API pboolean	p_atomic_int_compare_and_exchange	(volatile pint		*atomic,
+								 pint			oldval,
+								 pint			newval);
 
 /**
  * @brief Compares @a oldval pointer with value pointed to by @a atomic pointer
@@ -85,9 +85,9 @@ pboolean	p_atomic_int_compare_and_exchange	(volatile pint		*atomic,
  * @return TRUE if @a *atomic was equiled @a oldval, FALSE otherwise.
  * @since 0.0.1
  */
-pboolean	p_atomic_pointer_compare_and_exchange	(volatile ppointer	*atomic, 
-							 ppointer 		oldval, 
-							 ppointer		newval);
+P_LIB_API pboolean	p_atomic_pointer_compare_and_exchange	(volatile ppointer	*atomic,
+								 ppointer 		oldval,
+								 ppointer		newval);
 
 /**
  * @brief Gets integer value from @a *atomic atomically.
@@ -95,7 +95,7 @@ pboolean	p_atomic_pointer_compare_and_exchange	(volatile ppointer	*atomic,
  * @return Integer value.
  * @since 0.0.1
  */
-pint		p_atomic_int_get			(volatile pint		*atomic);
+P_LIB_API pint		p_atomic_int_get			(volatile pint		*atomic);
 
 /**
  * @brief Sets integer value to @a *atomic atomically.
@@ -103,8 +103,8 @@ pint		p_atomic_int_get			(volatile pint		*atomic);
  * @param newval New value.
  * @since 0.0.1
  */
-void		p_atomic_int_set			(volatile pint		*atomic,
-							 pint			newval);
+P_LIB_API void		p_atomic_int_set			(volatile pint		*atomic,
+								 pint			newval);
 
 /**
  * @brief Gets pointer value from @a *atomic atomically.
@@ -112,7 +112,7 @@ void		p_atomic_int_set			(volatile pint		*atomic,
  * @return Pointer value.
  * @since 0.0.1
  */
-ppointer	p_atomic_pointer_get			(volatile ppointer	*atomic);
+P_LIB_API ppointer	p_atomic_pointer_get			(volatile ppointer	*atomic);
 
 /**
  * @brief Sets pointer value to @a *atomic atomically.
@@ -120,14 +120,14 @@ ppointer	p_atomic_pointer_get			(volatile ppointer	*atomic);
  * @param newval New pointer value.
  * @since 0.0.1
  */
-void		p_atomic_pointer_set			(volatile ppointer	*atomic,
-							 ppointer		newval);
+P_LIB_API void		p_atomic_pointer_set			(volatile ppointer	*atomic,
+								 ppointer		newval);
 
 /**
  * @brief Memory barrier function.
  * @since 0.0.1
  */
-void		p_atomic_memory_barrier			(void);
+P_LIB_API void		p_atomic_memory_barrier			(void);
 
 #ifndef P_ATOMIC_OP_MEMORY_BARRIER_NEEDED
 /**

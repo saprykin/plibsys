@@ -1,5 +1,5 @@
 /* 
- * Copyright (C) 2010-2013 Alexander Saprykin <xelfium@gmail.com>
+ * Copyright (C) 2010-2014 Alexander Saprykin <xelfium@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,21 +23,21 @@
 
 #include "plib.h"
 
-pint
+P_LIB_API pint
 p_atomic_int_exchange_and_add (volatile pint	*atomic,
 			       pint		val)
 {
 	return __sync_fetch_and_add (atomic, val);
 }
 
-void
+P_LIB_API void
 p_atomic_int_add (volatile pint	*atomic,
 		  pint		val)
 {
 	__sync_fetch_and_add (atomic, val);
 }
 
-pboolean
+P_LIB_API pboolean
 p_atomic_int_compare_and_exchange (volatile pint	*atomic,
 				   pint			oldval,
 				   pint			newval)
@@ -45,7 +45,7 @@ p_atomic_int_compare_and_exchange (volatile pint	*atomic,
 	return __sync_bool_compare_and_swap (atomic, oldval, newval);
 }
 
-pboolean
+P_LIB_API pboolean
 p_atomic_pointer_compare_and_exchange (volatile ppointer	*atomic,
 				       ppointer			oldval,
 				       ppointer			newval)
@@ -53,24 +53,14 @@ p_atomic_pointer_compare_and_exchange (volatile ppointer	*atomic,
 	return __sync_bool_compare_and_swap (atomic, oldval, newval);
 }
 
-void
-_p_atomic_thread_init (void)
-{
-}
-
-void
-_p_atomic_thread_shutdown (void)
-{
-}
-
-pint
+P_LIB_API pint
 (p_atomic_int_get) (volatile pint *atomic)
 {
 	__sync_synchronize ();
 	return *atomic;
 }
 
-void
+P_LIB_API void
 (p_atomic_int_set) (volatile pint	*atomic,
 		    pint		newval)
 {
@@ -78,14 +68,14 @@ void
 	__sync_synchronize ();
 }
 
-ppointer
+P_LIB_API ppointer
 (p_atomic_pointer_get) (volatile ppointer *atomic)
 {
 	__sync_synchronize ();
 	return *atomic;
 }
 
-void
+P_LIB_API void
 (p_atomic_pointer_set) (volatile ppointer	*atomic,
 			ppointer		newval)
 {
@@ -93,7 +83,7 @@ void
 	__sync_synchronize ();
 }
 
-void
+P_LIB_API void
 p_atomic_memory_barrier (void)
 {
 	__sync_synchronize ();
