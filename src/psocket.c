@@ -777,6 +777,36 @@ p_socket_is_connected (PSocket *socket)
 	return socket->connected;
 }
 
+P_LIB_API pboolean
+p_socket_check_connect_result (PSocket *socket)
+{
+	socklen_t	optlen;
+	pint		val;
+
+	if (!socket)
+		return FALSE;
+
+	optlen = sizeof (val);
+
+	if (getsockopt (socket->fd, SOL_SOCKET, SO_ERROR, (ppointer) &val, &optlen) < 0) {
+		P_ERROR ("PSocket: failed to get error status");
+		__p_socket_set_error (socket);
+
+		return FALSE;
+	}
+
+	if (val != 0)
+#ifdef P_OS_WIN
+		socket->error = __p_socket_get_error_win (val);
+#else
+		socket->error = __p_socket_get_error_unix (val);
+#endif
+	else
+		socket->error = P_SOCKET_ERROR_NONE;
+
+	return TRUE;
+}
+
 P_LIB_API void
 p_socket_set_keepalive (PSocket		*socket,
 			pboolean	keepalive)
