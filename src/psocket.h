@@ -26,7 +26,7 @@
  * using #PSocket API you must call p_lib_init() in order to initialize system
  * resources (on UNIX this will do nothing, but on Windows this routine is required),
  * and p_lib_shutdown() after #PSocket API usage. Commonly first routine called on
- * the program's start, and second one is before application termination. Here is an
+ * the program's start, and the second one before application termination. Here is an
  * example of #PSocket usage:
  * @code
  * PSocketAddress *addr;
@@ -141,7 +141,7 @@ P_LIB_API PSocket *		p_socket_new 			(PSocketFamily		family,
 /**
  * @brief Gets underlying file descriptor of the socket.
  * @param socket #PSocket to get file descriptor for.
- * @return File descriptor in case of success, NULL otherwise.
+ * @return File descriptor in case of success, -1 otherwise.
  * @since 0.0.1
  */
 P_LIB_API pint			p_socket_get_fd 		(PSocket 		*socket);
@@ -223,6 +223,26 @@ P_LIB_API PSocketAddress *	p_socket_get_remote_address	(PSocket 		*socket);
 P_LIB_API pboolean		p_socket_is_connected		(PSocket 		*socket);
 
 /**
+ * @brief Checks connection state after calling p_socket_connect().
+ * @param socket #PSocket to check connection state for.
+ * @return TRUE if checking was successfull, FALSE otherwise.
+ * @since 0.0.1
+ *
+ * Usually this call is used after calling p_socket_connect() on the socket in
+ * non-blocking mode to check connection state. If call returns FALSE result then
+ * connection checking call has failed and you should stop using this socket or
+ * try to create another one and reconnect.
+ * In case of TRUE  return you should check for last socket error using p_socket_get_last_error().
+ * If socket is still pending for connection you will get #P_SOCKET_ERROR_CONNECTING, otherwise
+ * you can get another error code or #P_SOCKET_ERROR_NONE in case of success connection.
+ *
+ * @warning Non-blocking mode is still under development, so calling this function in a loop after
+ * p_socket_connect() is not useful a lot because if socket will be establishing connection between
+ * calls you will receive #P_SOCKET_ERROR_NONE.
+ */
+P_LIB_API pboolean		p_socket_check_connect_result	(PSocket		*socket);
+
+/**
  * @brief Sets socket's keep alive flag.
  * @param socket #PSocket to set keep alive flag for.
  * @param keepalive Value for keep alive flag.
@@ -246,6 +266,9 @@ P_LIB_API void			p_socket_set_blocking		(PSocket 		*socket,
  * @brief Sets socket's listen backlog parameter.
  * @param socket #PSocket to set listen backlog parameter for.
  * @param backlog Value for listen backlog parameter.
+ * @note This parameter can take effect only if it was set before calling
+ * p_socket_listen(). Otherwise it will be ignored by underlying socket
+ * system calls.
  * @since 0.0.1
  */
 P_LIB_API void			p_socket_set_listen_backlog	(PSocket		*socket,
@@ -267,19 +290,14 @@ P_LIB_API pboolean		p_socket_bind			(PSocket 		*socket,
  * @brief Connects socket to given remote address.
  * @param socket #PSocket to connect.
  * @param address #PSocketAddress to connect @a socket to.
+ * @param timeout Connection timeout in milliseconds, used only in non-blocking
+ * mode. Negative value means that socket will be used as blocking one.
  * @return TRUE in case of success, FALSE otherwise.
  * @since 0.0.1
  */
 P_LIB_API pboolean		p_socket_connect		(PSocket		*socket,
-								 PSocketAddress		*address);
-
-/**
- * @brief Checks socket's connection state.
- * @param socket #PSocket to check connection for.
- * @return TRUE if @a socket is connected, FALSE otherwise.
- * @since 0.0.1
- */
-P_LIB_API pboolean		p_socket_check_connect_result	(PSocket 		*socket);
+								 PSocketAddress		*address,
+								 pint			timeout);
 
 /**
  * @brief Puts socket in listen state.
@@ -333,9 +351,12 @@ P_LIB_API pssize		p_socket_receive_from		(PSocket 		*socket,
  * @param socket #PSocket to send data through.
  * @param buffer Buffer with data to send.
  * @param buflen Length of @a buffer.
- * @return Size of sent data.
+ * @return Size of sent data in case of success, -1 otherwise.
  * @note If @a socket is in blocking mode, then the caller will be blocked
  * until data sent.
+ * @warning Do not use this call for UDP sockets because it will always fail:
+ * when using UDP you must explicily specify destination address, so use
+ * p_socket_send_to() instead.
  * @since 0.0.1
  */
 P_LIB_API pssize		p_socket_send			(PSocket		*socket,
@@ -348,9 +369,11 @@ P_LIB_API pssize		p_socket_send			(PSocket		*socket,
  * @param address #PSocketAddress to send data to.
  * @param buffer Buffer with data to send.
  * @param buflen Length of @a buffer.
- * @return Size of sent data.
+ * @return Size of sent data in case of success, -1 otherwise.
  * @note If @a socket is in blocking mode, then the caller will be blocked
  * until data sent.
+ * @warning This call is commonly used when dealing with UDP sockets. If you
+ * are working with TCP sockets use p_socket_send() after establishing connection.
  * @since 0.0.1
  */
 P_LIB_API pssize		p_socket_send_to		(PSocket		*socket,
@@ -361,7 +384,7 @@ P_LIB_API pssize		p_socket_send_to		(PSocket		*socket,
 /**
  * @brief Closes socket.
  * @param socket #PSocket to close.
- * @return TRUE in case of success, false otherwise.
+ * @return TRUE in case of success, FALSE otherwise.
  * @since 0.0.1
  */
 P_LIB_API pboolean		p_socket_close			(PSocket		*socket);
@@ -372,6 +395,8 @@ P_LIB_API pboolean		p_socket_close			(PSocket		*socket);
  * @param shutdown_read Whether to shutdown read data transfer direction.
  * @param shutdown_write Whether to shutdown write data transfer direction.
  * @return TRUE in case of success, FALSE otherwise.
+ * @note Shutdown of any direction is possible only on socket in connected
+ * state. Otherwise call will fail.
  * @since 0.0.1
  */
 P_LIB_API pboolean		p_socket_shutdown		(PSocket		*socket,
@@ -386,17 +411,20 @@ P_LIB_API pboolean		p_socket_shutdown		(PSocket		*socket,
 P_LIB_API void			p_socket_free			(PSocket 		*socket);
 
 /**
- * @brief Gets last socket's error.
+ * @brief Gets last socket's error and clears it.
  * @param socket #PSocket to get error for.
  * @return Last error occurred.
  * @since 0.0.1
+ *
+ * After calling this function error state for @a socket will be cleared to
+ * #P_SOCKET_ERROR_NONE.
  */
 P_LIB_API PSocketError		p_socket_get_last_error		(PSocket		*socket);
 
 /**
- * @brief Sets socket's buffer for given data transfer direction.
- * @param socket #PSocket to set buffer for.
- * @param dir Direction to set buffer on.
+ * @brief Sets socket's buffer size for given data transfer direction.
+ * @param socket #PSocket to set buffer size for.
+ * @param dir Direction to set buffer size on.
  * @param size Size of buffer to set.
  * @return TRUE in case of success, FALSE otherwise.
  * @since 0.0.1
@@ -408,4 +436,3 @@ P_LIB_API pboolean		p_socket_set_buffer_size	(PSocket		*socket,
 P_END_DECLS
 
 #endif /* __PSOCKET_H__ */
-

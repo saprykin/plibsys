@@ -23,9 +23,9 @@
  *
  * Shared memory is an interprocess communication primitive. It can be used to transfer data
  * between several processes. PLib supports different shared memory implementations: System V,
- * POSIX and Win32. PLib is compiled using one of them (depend which of implementations
- * are available on target system). Windows IPC system different from Unix one: Windows doesn't
- * own IPC objects (processes own them), while Unix systems do. Because of that Unix IPC
+ * POSIX and Windows. PLib is compiled using one of them (depend which of implementations
+ * are available on target system). Windows IPC system different from UNIX one: Windows doesn't
+ * own IPC objects (processes own them), while UNIX systems do. Because of that UNIX IPC
  * objects can survive application crash: opened shared memory can contain data from previous
  * working session. Keep this fact in mind while developing cross-platform applications.
  * Also note that you must synchronize multi-thread access to shared memory by youself or
@@ -72,7 +72,7 @@ P_LIB_API PShm *	p_shm_new		(const pchar		*name,
  *
  * If you take ownership of the shared memory object, p_shm_free()
  * will try to completely unlink it and remove from the system.
- * This is useful on Unix systems with POSIX and SysV IPC implementation, where shared
+ * This is useful on UNIX systems with POSIX and System V IPC implementations, where shared
  * memory can survive the application crash. On Windows platform this call has no effect.
  * The common usage of this call is upon application startup to ensure that
  * memory segment from the previous crash can be unlinked from the system. To
@@ -115,7 +115,7 @@ P_LIB_API pboolean	p_shm_unlock		(PShm *shm);
  * @return Pointer to starting address in case of success, NULL otherwise.
  * @since 0.0.1
  */
-P_LIB_API ppointer	p_shm_get_address	(PShm *shm);
+P_LIB_API ppointer	p_shm_get_address	(const PShm *shm);
 
 /**
  * @brief Gets size of the #PShm memory segment.
@@ -126,7 +126,7 @@ P_LIB_API ppointer	p_shm_get_address	(PShm *shm);
  * Note that returned size would be a slight bigger then specified during
  * p_shm_new() call due to service information stored there.
  */
-P_LIB_API psize		p_shm_get_size		(PShm *shm);
+P_LIB_API psize		p_shm_get_size		(const PShm *shm);
 
 P_END_DECLS
 

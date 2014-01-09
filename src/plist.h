@@ -65,6 +65,7 @@
 #define __PLIBLIST_H__
 
 #include <pmacros.h>
+#include <ptypes.h>
 
 P_BEGIN_DECLS
 
@@ -151,7 +152,7 @@ P_LIB_API PList *	p_list_last	(PList *list);
  * @note This function will iterate through the whole @a list, so don't use it
  * in condition of the for-loop or in code which repeats a lot of time.
  */
-P_LIB_API psize		p_list_length	(PList *list);
+P_LIB_API psize		p_list_length	(const PList *list);
 
 /**
  * @brief Prepends data to the list.

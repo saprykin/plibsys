@@ -109,10 +109,10 @@ p_list_last (PList *list)
 }
 
 P_LIB_API psize
-p_list_length (PList *list)
+p_list_length (const PList *list)
 {
-	PList	*cur;
-	psize	ret;
+	const PList	*cur;
+	psize		ret;
 
 	if (!list)
 		return 0;
