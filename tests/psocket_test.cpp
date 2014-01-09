@@ -310,6 +310,9 @@ static void * tcp_socket_sender_thread (void *arg)
 
 		if (is_connected == TRUE && p_socket_shutdown (skt_sender, FALSE, data->shutdown_channel) == FALSE)
 			is_connected = FALSE;
+
+		if (is_connected == TRUE && p_socket_check_connect_result (skt_sender) == FALSE)
+			is_connected = FALSE;
 	}
 
 	while (is_sender_working == TRUE) {
@@ -479,6 +482,7 @@ BOOST_AUTO_TEST_CASE (psocket_bad_input_test)
 	BOOST_CHECK (p_socket_get_local_address (NULL) == NULL);
 	BOOST_CHECK (p_socket_get_remote_address (NULL) == NULL);
 	BOOST_CHECK (p_socket_is_connected (NULL) == FALSE);
+	BOOST_CHECK (p_socket_check_connect_result (NULL) == FALSE);
 
 	p_socket_set_keepalive (NULL, FALSE);
 	p_socket_set_blocking (NULL, FALSE);
@@ -538,7 +542,9 @@ BOOST_AUTO_TEST_CASE (psocket_general_test)
 	BOOST_CHECK (p_socket_set_buffer_size (socket, P_SOCKET_DIRECTION_RCV, 72 * 1024) == TRUE);
 	BOOST_CHECK (p_socket_set_buffer_size (socket, P_SOCKET_DIRECTION_SND, 72 * 1024) == TRUE);
 
+	/* In case of success p_socket_check_connect_result() marks socket as connected */
 	BOOST_CHECK (p_socket_is_connected (socket) == FALSE);
+	BOOST_CHECK (p_socket_check_connect_result (socket) == TRUE);
 	BOOST_CHECK (p_socket_close (socket));
 	p_socket_free (socket);
 
@@ -574,7 +580,9 @@ BOOST_AUTO_TEST_CASE (psocket_general_test)
 	BOOST_CHECK (p_socket_set_buffer_size (socket, P_SOCKET_DIRECTION_RCV, 72 * 1024) == TRUE);
 	BOOST_CHECK (p_socket_set_buffer_size (socket, P_SOCKET_DIRECTION_SND, 72 * 1024) == TRUE);
 
+	/* In case of success p_socket_check_connect_result() marks socket as connected */
 	BOOST_CHECK (p_socket_is_connected (socket) == FALSE);
+	BOOST_CHECK (p_socket_check_connect_result (socket) == TRUE);
 	BOOST_CHECK (p_socket_close (socket));
 	p_socket_free (socket);
 
