@@ -307,15 +307,14 @@ P_LIB_API pboolean		p_socket_is_connected		(PSocket 		*socket);
 /**
  * @brief Checks connection state after calling p_socket_connect().
  * @param socket #PSocket to check connection state for.
- * @return TRUE if checking was successfull, FALSE otherwise.
+ * @return TRUE if was no error, FALSE otherwise.
  * @since 0.0.1
  *
  * Usually this call is used after calling p_socket_connect() on the socket in
  * non-blocking mode to check connection state. If call returns FALSE result then
- * connection checking call has failed and you should stop using this socket or
- * try to create another one and reconnect.
+ * connection checking call has failed or there was an error during connection and
+ * you should check last error using p_socket_get_last_error();
  *
- * In case of TRUE  return you should check for last socket error using p_socket_get_last_error().
  * If socket is still pending for connection you will get #P_SOCKET_ERROR_CONNECTING, otherwise
  * you can get another error code or #P_SOCKET_ERROR_NONE in case of success connection.
  *

@@ -795,14 +795,17 @@ p_socket_check_connect_result (PSocket *socket)
 		return FALSE;
 	}
 
-	if (val != 0)
+	if (val != 0) {
 #ifdef P_OS_WIN
 		socket->error = __p_socket_get_error_win (val);
 #else
 		socket->error = __p_socket_get_error_unix (val);
 #endif
-	else
-		socket->error = P_SOCKET_ERROR_NONE;
+		return FALSE;
+	}
+
+	socket->connected = TRUE;
+	socket->error = P_SOCKET_ERROR_NONE;
 
 	return TRUE;
 }
