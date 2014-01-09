@@ -266,6 +266,9 @@ P_LIB_API void			p_socket_set_blocking		(PSocket 		*socket,
  * @brief Sets socket's listen backlog parameter.
  * @param socket #PSocket to set listen backlog parameter for.
  * @param backlog Value for listen backlog parameter.
+ * @note This parameter can take effect only if it was set before calling
+ * p_socket_listen(). Otherwise it will be ignored by underlying socket
+ * system calls.
  * @since 0.0.1
  */
 P_LIB_API void			p_socket_set_listen_backlog	(PSocket		*socket,
@@ -381,7 +384,7 @@ P_LIB_API pssize		p_socket_send_to		(PSocket		*socket,
 /**
  * @brief Closes socket.
  * @param socket #PSocket to close.
- * @return TRUE in case of success, false otherwise.
+ * @return TRUE in case of success, FALSE otherwise.
  * @since 0.0.1
  */
 P_LIB_API pboolean		p_socket_close			(PSocket		*socket);
@@ -392,6 +395,8 @@ P_LIB_API pboolean		p_socket_close			(PSocket		*socket);
  * @param shutdown_read Whether to shutdown read data transfer direction.
  * @param shutdown_write Whether to shutdown write data transfer direction.
  * @return TRUE in case of success, FALSE otherwise.
+ * @note Shutdown of any direction is possible only on socket in connected
+ * state. Otherwise call will fail.
  * @since 0.0.1
  */
 P_LIB_API pboolean		p_socket_shutdown		(PSocket		*socket,

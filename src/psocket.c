@@ -424,7 +424,7 @@ __p_socket_set_details_from_fd (PSocket *socket)
 #endif
 
 	fd = socket->fd;
-	optlen = sizeof value;
+	optlen = sizeof (value);
 	if (getsockopt (fd, SOL_SOCKET, SO_TYPE, (void *) &value, &optlen) != 0) {
 		P_ERROR ("PSocket: failed to get socket info for fd");
 
