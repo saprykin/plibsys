@@ -19,8 +19,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA.
  */
 
-/* TODO: handle SIGPIPE signal */
-
 #include "pmem.h"
 #include "psocket.h"
 
@@ -48,6 +46,7 @@ struct _PSocket {
 	PSocketError	error;
 	pint		fd;
 	pint		listen_backlog;
+	pint		timeout;
 	puint		inited		: 1;
 	puint		blocking	: 1;
 	puint		keepalive	: 1;
@@ -90,7 +89,6 @@ static void __p_socket_set_error_from_errno (PSocket *socket, pint errcode);
 static pint __p_socket_set_fd_blocking (pint fd, pboolean blocking);
 static pboolean __p_socket_check (const PSocket *socket);
 static void __p_socket_set_details_from_fd (PSocket *socket);
-
 
 #ifdef P_OS_WIN
 static PSocketError __p_socket_get_error_win (pint err_code)
@@ -553,6 +551,7 @@ p_socket_new_from_fd (pint fd)
 
 	p_socket_set_listen_backlog (ret, P_SOCKET_DEFAULT_BACKLOG);
 	
+	ret->timeout = 0;
 	ret->blocking = TRUE;
 	ret->inited = TRUE;
 
@@ -647,6 +646,7 @@ p_socket_new (PSocketFamily	family,
 		return NULL;
 	}
 
+	ret->timeout = 0;
 	ret->blocking = TRUE;
 	ret->family = family;
 	ret->protocol = protocol;
@@ -727,6 +727,15 @@ p_socket_get_listen_backlog (const PSocket *socket)
 		return -1;
 
 	return socket->listen_backlog;
+}
+
+P_LIB_API pint
+p_socket_get_timeout (const PSocket *socket)
+{
+	if (!socket)
+		return -1;
+
+	return socket->timeout;
 }
 
 P_LIB_API PSocketAddress *
@@ -850,6 +859,19 @@ p_socket_set_listen_backlog (PSocket	*socket,
 		return;
 
 	socket->listen_backlog = backlog;
+}
+
+P_LIB_API void
+p_socket_set_timeout (PSocket	*socket,
+		      pint	timeout)
+{
+	if (!socket)
+		return;
+
+	if (timeout < 0)
+		timeout = 0;
+
+	socket->timeout = timeout;
 }
 
 P_LIB_API pboolean
@@ -1359,16 +1381,12 @@ p_socket_io_condition_wait (PSocket		*socket,
 	if (__p_socket_check (socket) == FALSE)
 		return FALSE;
 
+#ifdef P_OS_WIN
 	if (socket->blocking)
-#ifdef P_OS_WIN
 		timeout = WSA_INFINITE;
-#else
-		timeout = -1;
-#endif
 	else
-		timeout = 0;
+		timeout = socket->timeout > 0 ? socket->timeout : WSA_INFINITE;
 
-#ifdef P_OS_WIN
 	if (condition == P_SOCKET_IO_CONDITION_POLLIN)
 		network_events = FD_READ | FD_ACCEPT;
 	else
@@ -1390,6 +1408,11 @@ p_socket_io_condition_wait (PSocket		*socket,
 		return FALSE;
 	}
 #else
+	if (socket->blocking)
+		timeout = -1;
+	else
+		timeout = socket->timeout > 0 ? socket->timeout : -1;
+
 	pfd.fd = socket->fd;
 	pfd.revents = 0;
 

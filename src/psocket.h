@@ -279,6 +279,25 @@ P_LIB_API pboolean		p_socket_get_blocking		(PSocket 		*socket);
 P_LIB_API pint			p_socket_get_listen_backlog	(const PSocket 		*socket);
 
 /**
+ * @brief Gets @a socket timeout for blocking IO operations.
+ * @param socket #PSocket to get timeout for.
+ * @return Timeout for blocking IO operations in milliseconds, -1 in case of fail.
+ * @since 0.0.1
+ * @sa p_socket_set_timeout(), p_socket_io_condition_wait()
+ *
+ * For blocking socket timeout value means maximum amount of time for which blocking
+ * call will be waiting until newtwork IO operation completed. If operation is not finished
+ * after timeout, blocking call returns with error set to #P_SOCKET_ERROR_TIMED_OUT.
+ *
+ * For non-blocking socket timeout affects only on p_socket_io_condition_wait() maximum
+ * waiting time.
+ *
+ * Zero timeout means that operation which requires time to complete network IO will be blocked
+ * until operation finished of error occured.
+ */
+P_LIB_API pint			p_socket_get_timeout		(const PSocket		*socket);
+
+/**
  * @brief Gets socket's local (binded) address.
  * @param socket #PSocket to get local address for.
  * @return #PSocketAddress with socket's local address in case of success,
@@ -315,18 +334,14 @@ P_LIB_API pboolean		p_socket_is_connected		(const PSocket		*socket);
  * @param socket #PSocket to check connection state for.
  * @return TRUE if was no error, FALSE otherwise.
  * @since 0.0.1
+ * @sa p_socket_io_condition_wait()
  *
  * Usually this call is used after calling p_socket_connect() on the socket in
  * non-blocking mode to check connection state. If call returns FALSE result then
  * connection checking call has failed or there was an error during connection and
- * you should check last error using p_socket_get_last_error();
+ * you should check last error using p_socket_get_last_error().
  *
- * If socket is still pending for connection you will get #P_SOCKET_ERROR_CONNECTING, otherwise
- * you can get another error code or #P_SOCKET_ERROR_NONE in case of success connection.
- *
- * @warning Non-blocking mode is still under development, so calling this function in a loop after
- * p_socket_connect() is not useful a lot because if socket will be establishing connection between
- * calls you will receive #P_SOCKET_ERROR_NONE.
+ * If socket is still pending for connection you will get #P_SOCKET_ERROR_CONNECTING.
  */
 P_LIB_API pboolean		p_socket_check_connect_result	(PSocket		*socket);
 
@@ -367,6 +382,18 @@ P_LIB_API void			p_socket_set_blocking		(PSocket 		*socket,
  */
 P_LIB_API void			p_socket_set_listen_backlog	(PSocket		*socket,
 								 pint			backlog);
+
+/**
+ * @brief Sets @a socket timeout value for blocking IO operations.
+ * @param socket #PSocket to set @a timeout for.
+ * @param timeout Timeout value in milliseconds.
+ * @since 0.0.1
+ * @sa p_socket_get_timeoout(), p_socket_io_condition_wait()
+ *
+ * See p_socket_get_timeout() documentation for description of this option.
+ */
+P_LIB_API void			p_socket_set_timeout		(PSocket		*socket,
+								 pint			timeout);
 
 /**
  * @brief Binds socket to given local address.
@@ -591,10 +618,11 @@ P_LIB_API pboolean		p_socket_set_buffer_size	(PSocket		*socket,
  * @param condition An IO condition to wait for on @a socket.
  * @return TRUE if @a condition has been met, FALSE otherwise.
  * @since 0.0.1
+ * @sa p_socket_get_timeout(), p_socket_set_timeout()
  *
- * If @a socket is blocking then this call will wait until a @a condition will
- * be met or an error occured. On a non-blocking socket @a condition would be checked
- * immediately.
+ * Waits until a @a condition will be met on @a socket or an error occured. If timeout
+ * was set using p_socket_set_timeout() and network IO operation doesn't finish until
+ * timeout expired, call will fail with #P_SOCKET_ERROR_TIMED_OUT.
  */
 P_LIB_API pboolean		p_socket_io_condition_wait	(PSocket		*socket,
 								 PSocketIOCondition	condition);
