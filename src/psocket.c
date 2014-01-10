@@ -1098,7 +1098,7 @@ p_socket_receive_from (PSocket		*socket,
 	pssize			ret;
 	pint			err_code;
 
-	if (!socket || !address || !buffer || buflen <= 0)
+	if (!socket || !buffer || buflen <= 0)
 		return -1;
 
 	if (!__p_socket_check (socket))
@@ -1129,7 +1129,8 @@ p_socket_receive_from (PSocket		*socket,
 		break;
 	}
 
-	*address = p_socket_address_new_from_native (&sa, optlen);
+	if (address != NULL)
+		*address = p_socket_address_new_from_native (&sa, optlen);
 	
 	return ret;
 }
