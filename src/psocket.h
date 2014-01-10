@@ -198,7 +198,7 @@ P_LIB_API PSocket *		p_socket_new 			(PSocketFamily		family,
  * @since 0.0.1
  * @sa p_socket_new_from_fd()
  */
-P_LIB_API pint			p_socket_get_fd 		(PSocket 		*socket);
+P_LIB_API pint			p_socket_get_fd 		(const PSocket		*socket);
 
 /**
  * @brief Gets socket's family.
@@ -206,7 +206,7 @@ P_LIB_API pint			p_socket_get_fd 		(PSocket 		*socket);
  * @return #PSocketFamily in case of success, #P_SOCKET_FAMILY_UNKNOWN otherwise.
  * @since 0.0.1
  */
-P_LIB_API PSocketFamily		p_socket_get_family 		(PSocket 		*socket);
+P_LIB_API PSocketFamily		p_socket_get_family 		(const PSocket		*socket);
 
 /**
  * @brief Gets socket's type.
@@ -214,7 +214,7 @@ P_LIB_API PSocketFamily		p_socket_get_family 		(PSocket 		*socket);
  * @return #PSocketType in case of success, #P_SOCKET_TYPE_UNKNOWN otherwise.
  * @since 0.0.1
  */
-P_LIB_API PSocketType		p_socket_get_type 		(PSocket 		*socket);
+P_LIB_API PSocketType		p_socket_get_type 		(const PSocket		*socket);
 
 /**
  * @brief Gets socket's data transfer protocol.
@@ -222,7 +222,7 @@ P_LIB_API PSocketType		p_socket_get_type 		(PSocket 		*socket);
  * @return #PSocketProtocol in case of success, #P_SOCKET_PROTOCOL_UNKNOWN otherwise.
  * @since 0.0.1
  */
-P_LIB_API PSocketProtocol	p_socket_get_protocol		(PSocket 		*socket);
+P_LIB_API PSocketProtocol	p_socket_get_protocol		(const PSocket		*socket);
 
 /**
  * @brief Checks whether keep alive flag is enabled.
@@ -245,7 +245,7 @@ P_LIB_API PSocketProtocol	p_socket_get_protocol		(PSocket 		*socket);
  *
  * Use p_socket_check_connect_result() to check for last connection errors.
  */
-P_LIB_API pboolean		p_socket_get_keepalive		(PSocket 		*socket);
+P_LIB_API pboolean		p_socket_get_keepalive		(const PSocket		*socket);
 
 /**
  * @brief Checks whether socket is used in blocking mode.
@@ -276,7 +276,7 @@ P_LIB_API pboolean		p_socket_get_blocking		(PSocket 		*socket);
  * This parameter is system dependent, some systems may not allow to set it to
  * some values. By default #PSocket attempts to set it to 5.
  */
-P_LIB_API pint			p_socket_get_listen_backlog	(PSocket 		*socket);
+P_LIB_API pint			p_socket_get_listen_backlog	(const PSocket 		*socket);
 
 /**
  * @brief Gets socket's local (binded) address.
@@ -308,7 +308,7 @@ P_LIB_API PSocketAddress *	p_socket_get_remote_address	(PSocket 		*socket);
  * This function doesn't check if socket is still connected, it only checks whether
  * a p_socket_connect() call was successfully performed on the @a socket.
  */
-P_LIB_API pboolean		p_socket_is_connected		(PSocket 		*socket);
+P_LIB_API pboolean		p_socket_is_connected		(const PSocket		*socket);
 
 /**
  * @brief Checks connection state after calling p_socket_connect().
@@ -557,15 +557,21 @@ P_LIB_API pboolean		p_socket_shutdown		(PSocket		*socket,
 P_LIB_API void			p_socket_free			(PSocket 		*socket);
 
 /**
- * @brief Gets last socket's error and clears it.
+ * @brief Gets last socket error.
  * @param socket #PSocket to get error for.
  * @return Last error occurred.
  * @since 0.0.1
- *
- * After calling this function error state for @a socket will be cleared to
- * #P_SOCKET_ERROR_NONE.
+ * @sa p_socket_clear_last_error()
  */
-P_LIB_API PSocketError		p_socket_get_last_error		(PSocket		*socket);
+P_LIB_API PSocketError		p_socket_get_last_error		(const PSocket		*socket);
+
+/**
+ * @brief Clears @a socket error state to #P_SOCKET_ERROR_NONE.
+ * @param socket #PSocket to clear error for.
+ * @since 0.0.1
+ * @sa p_socket_get_last_error()
+ */
+P_LIB_API void			p_socket_clear_last_error	(PSocket		*socket);
 
 /**
  * @brief Sets socket's buffer size for given data transfer direction.
