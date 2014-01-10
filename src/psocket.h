@@ -60,7 +60,7 @@
  * and use p_socket_send() instead of p_socket_send_to().
  *
  * #PSocket can operate in blocking and non-blocking (async) modes. By default it is in
- * non-blocking mode. When using #PSocket in blocking mode each non-immediate call on it
+ * blocking mode. When using #PSocket in blocking mode each non-immediate call on it
  * will block caller thread until operation will be completed. For example, p_socket_accept()
  * call can wait for incoming connection for some time, and calling it on blocking socket
  * will prevent caller thread from further execution until it receives new incoming connection.
@@ -156,6 +156,12 @@ typedef enum _PSocketDirection {
 	P_SOCKET_DIRECTION_SND			= 0,	/**< Send direction.	*/
 	P_SOCKET_DIRECTION_RCV			= 1	/**< Receive direction.	*/
 } PSocketDirection;
+
+/** Socket IO waiting (polling) conditions */
+typedef enum _PSocketIOCondition {
+	P_SOCKET_IO_CONDITION_POLLIN		= 1,	/**< Ready to read.	*/
+	P_SOCKET_IO_CONDITION_POLLOUT		= 2	/**< Ready to write.	*/
+} PSocketIOCondition;
 
 /** Typedef for opaque #PSocket structure */
 typedef struct _PSocket PSocket;
@@ -401,8 +407,6 @@ P_LIB_API pboolean		p_socket_bind			(PSocket 		*socket,
  * @brief Connects socket to given remote address.
  * @param socket #PSocket to connect.
  * @param address #PSocketAddress to connect @a socket to.
- * @param timeout Connection timeout in milliseconds, used only in non-blocking
- * mode. Negative value means that socket will be used as blocking one.
  * @return TRUE in case of success, FALSE otherwise.
  * @since 0.0.1
  * @sa p_socket_is_connected(), p_socket_check_connect_result(), p_socket_get_remote_address()
@@ -416,8 +420,7 @@ P_LIB_API pboolean		p_socket_bind			(PSocket 		*socket,
  * and will fail.
  */
 P_LIB_API pboolean		p_socket_connect		(PSocket		*socket,
-								 PSocketAddress		*address,
-								 pint			timeout);
+								 PSocketAddress		*address);
 
 /**
  * @brief Puts socket in listen state.
@@ -575,6 +578,20 @@ P_LIB_API PSocketError		p_socket_get_last_error		(PSocket		*socket);
 P_LIB_API pboolean		p_socket_set_buffer_size	(PSocket		*socket,
 								 PSocketDirection	dir,
 								 psize			size);
+
+/**
+ * @brief Wait for specified IO @a condition on @a socket.
+ * @param socket #PSocket to wait for a @a condition on.
+ * @param condition An IO condition to wait for on @a socket.
+ * @return TRUE if @a condition has been met, FALSE otherwise.
+ * @since 0.0.1
+ *
+ * If @a socket is blocking then this call will wait until a @a condition will
+ * be met or an error occured. On a non-blocking socket @a condition would be checked
+ * immediately.
+ */
+P_LIB_API pboolean		p_socket_io_condition_wait	(PSocket		*socket,
+								 PSocketIOCondition	condition);
 
 P_END_DECLS
 
