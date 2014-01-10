@@ -69,6 +69,8 @@ p_socket_address_new_from_native (pconstpointer	native,
 	}
 #endif
 
+	p_free (ret);
+
 	return NULL;
 }
 
