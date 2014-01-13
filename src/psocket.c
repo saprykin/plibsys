@@ -1383,10 +1383,7 @@ p_socket_io_condition_wait (PSocket		*socket,
 		return FALSE;
 
 #ifdef P_OS_WIN
-	if (socket->blocking)
-		timeout = WSA_INFINITE;
-	else
-		timeout = socket->timeout > 0 ? socket->timeout : WSA_INFINITE;
+	timeout = socket->timeout > 0 ? socket->timeout : WSA_INFINITE;
 
 	if (condition == P_SOCKET_IO_CONDITION_POLLIN)
 		network_events = FD_READ | FD_ACCEPT;
@@ -1409,10 +1406,7 @@ p_socket_io_condition_wait (PSocket		*socket,
 		return FALSE;
 	}
 #else
-	if (socket->blocking)
-		timeout = -1;
-	else
-		timeout = socket->timeout > 0 ? socket->timeout : -1;
+	timeout = socket->timeout > 0 ? socket->timeout : -1;
 
 	pfd.fd = socket->fd;
 	pfd.revents = 0;
