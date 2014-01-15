@@ -161,10 +161,10 @@ typedef enum _PSocketError {
 
 /** Socket types */
 typedef enum _PSocketType {
-	P_SOCKET_TYPE_UNKNOWN			= 0,	/**< Unknown type.	*/
-	P_SOCKET_TYPE_STREAM			= 1,	/**< Stream type.	*/
-	P_SOCKET_TYPE_DATAGRAM			= 2,	/**< Datagram type.	*/
-	P_SOCKET_TYPE_SEQPACKET			= 3	/**< SeqPacket type.	*/
+	P_SOCKET_TYPE_UNKNOWN			= 0,	/**< Unknown type.							*/
+	P_SOCKET_TYPE_STREAM			= 1,	/**< Connection oritented, reliable, stream of bytes (i.e. TCP).	*/
+	P_SOCKET_TYPE_DATAGRAM			= 2,	/**< Connection-less, unreliable, datagram passing (i.e. UDP).		*/
+	P_SOCKET_TYPE_SEQPACKET			= 3	/**< Connection-less, reliable, datagram passing (i.e. SCTP).		*/
 } PSocketType;
 
 /** Socket direction for data operations */
