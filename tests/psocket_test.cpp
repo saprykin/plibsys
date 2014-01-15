@@ -561,8 +561,23 @@ BOOST_AUTO_TEST_CASE (psocket_general_test)
 	BOOST_CHECK (p_socket_get_blocking (fd_socket) == TRUE);
 	BOOST_CHECK (p_socket_get_type (fd_socket) == P_SOCKET_TYPE_DATAGRAM);
 	BOOST_CHECK (p_socket_get_keepalive (fd_socket) == FALSE);
+
+	/* Test UDP local address */
 	PSocketAddress *addr = p_socket_get_local_address (socket);
 	BOOST_CHECK (addr != NULL);
+
+	BOOST_CHECK (compare_socket_addresses (sock_addr, addr) == TRUE);
+
+	p_socket_address_free (sock_addr);
+	p_socket_address_free (addr);
+
+	/* Test UDP connecting to remote address */
+	addr = p_socket_address_new ("127.0.0.1", 32115);
+	BOOST_CHECK (addr != NULL);
+	BOOST_CHECK (p_socket_connect (socket, addr) == TRUE);
+
+	sock_addr = p_socket_get_remote_address (socket);
+	BOOST_CHECK (sock_addr != NULL);
 
 	BOOST_CHECK (compare_socket_addresses (sock_addr, addr) == TRUE);
 
@@ -572,8 +587,7 @@ BOOST_AUTO_TEST_CASE (psocket_general_test)
 	BOOST_CHECK (p_socket_set_buffer_size (socket, P_SOCKET_DIRECTION_RCV, 72 * 1024) == TRUE);
 	BOOST_CHECK (p_socket_set_buffer_size (socket, P_SOCKET_DIRECTION_SND, 72 * 1024) == TRUE);
 
-	/* In case of success p_socket_check_connect_result() marks socket as connected */
-	BOOST_CHECK (p_socket_is_connected (socket) == FALSE);
+	BOOST_CHECK (p_socket_is_connected (socket) == TRUE);
 	BOOST_CHECK (p_socket_check_connect_result (socket) == TRUE);
 	BOOST_CHECK (p_socket_close (socket));
 	p_socket_free (socket);
