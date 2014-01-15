@@ -491,7 +491,7 @@ __p_socket_set_details_from_fd (PSocket *socket)
 		/* Experimentation indicates that the SO_KEEPALIVE value is
 		 * actually a char on Windows, even if documentation claims it
 		 * to be a BOOL which is a typedef for int. */
-		if (optlen != sizeof (bool_val)
+		if (optlen != sizeof (bool_val))
 			P_WARNING ("PSocket: failed to get socket keepalive flag");
 #endif
 		socket->keepalive = !!bool_val;
