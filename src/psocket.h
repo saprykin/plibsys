@@ -190,6 +190,10 @@ typedef struct _PSocket PSocket;
  *
  * Given file descriptor @a fd will be put in non-blocking mode. #PSocket will
  * emulate blocking mode if need.
+ *
+ * If socket was not binded yet then on some systems (i.e. Windows) call may
+ * fail to get socket family from descriptor thus failing to construct #PSocket
+ * object.
  */
 P_LIB_API PSocket *		p_socket_new_from_fd		(pint 			fd);
 
