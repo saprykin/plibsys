@@ -136,7 +136,8 @@ typedef enum _PSocketProtocol {
 	P_SOCKET_PROTOCOL_UNKNOWN		= -1,	/**< Unknown protocol.	*/
 	P_SOCKET_PROTOCOL_DEFAULT		= 0,	/**< Default protocol.	*/
 	P_SOCKET_PROTOCOL_TCP			= 6,	/**< TCP protocol.	*/
-	P_SOCKET_PROTOCOL_UDP			= 17	/**< UDP protocol.	*/
+	P_SOCKET_PROTOCOL_UDP			= 17,	/**< UDP protocol.	*/
+	P_SOCKET_PROTOCOL_SCTP			= 132	/**< SCTP protocol.	*/
 } PSocketProtocol;
 
 /** Socket errors */
