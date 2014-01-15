@@ -109,11 +109,12 @@ static void * udp_socket_sender_thread (void *arg)
 		p_socket_address_free (addr_sender);
 		p_uthread_exit (-1);
 	} else {
+		p_socket_address_free (addr_sender);
+
 		PSocketAddress *local_addr = p_socket_get_local_address (skt_sender);
 
 		if (local_addr == NULL) {
 			p_socket_free (skt_sender);
-			p_socket_address_free (addr_sender);
 			p_uthread_exit (-1);
 		}
 
@@ -122,8 +123,7 @@ static void * udp_socket_sender_thread (void *arg)
 		p_socket_address_free (local_addr);
 	}
 
-	p_socket_set_blocking (skt_sender, FALSE);
-	p_socket_address_free (addr_sender);
+	p_socket_set_timeout (skt_sender, 50);
 
 	/* Test that remote address is NULL */
 	PSocketAddress *remote_addr = p_socket_get_remote_address (skt_sender);
@@ -193,11 +193,12 @@ static void * udp_socket_receiver_thread (void *arg)
 		p_socket_address_free (addr_receiver);
 		p_uthread_exit (-1);
 	} else {
+		p_socket_address_free (addr_receiver);
+
 		PSocketAddress *local_addr = p_socket_get_local_address (skt_receiver);
 
 		if (local_addr == NULL) {
 			p_socket_free (skt_receiver);
-			p_socket_address_free (addr_receiver);
 			p_uthread_exit (-1);
 		}
 
@@ -206,8 +207,7 @@ static void * udp_socket_receiver_thread (void *arg)
 		p_socket_address_free (local_addr);
 	}
 
-	p_socket_set_blocking (skt_receiver, FALSE);
-	p_socket_address_free (addr_receiver);
+	p_socket_set_timeout (skt_receiver, 50);
 
 	/* Test that remote address is NULL */
 	PSocketAddress *remote_addr = p_socket_get_remote_address (skt_receiver);
@@ -225,7 +225,16 @@ static void * udp_socket_receiver_thread (void *arg)
 	}
 
 	while (is_receiver_working == TRUE) {
-		pssize received = p_socket_receive (skt_receiver, recv_buffer, sizeof (recv_buffer));
+		PSocketAddress *remote_addr = NULL;
+
+		pssize received = p_socket_receive_from (skt_receiver, &remote_addr, recv_buffer, sizeof (recv_buffer));
+
+		if (remote_addr != NULL && test_socket_address_directly (remote_addr, data->sender_port) == FALSE) {
+			p_socket_address_free (remote_addr);
+			break;
+		}
+
+		p_socket_address_free (remote_addr);
 
 		if (received == sizeof (socket_data))
 			++recv_counter;
@@ -258,8 +267,12 @@ static void * tcp_socket_sender_thread (void *arg)
 	if (skt_sender == NULL)
 		p_uthread_exit (-1);
 
-	if (p_socket_get_fd (skt_sender) < 0)
+	p_socket_set_timeout (skt_sender, 2000);
+
+	if (p_socket_get_fd (skt_sender) < 0) {
+		p_socket_free (skt_sender);
 		p_uthread_exit (-1);
+	}
 
 	while (is_sender_working == TRUE && data->receiver_port == 0) {
 		p_uthread_sleep (1);
@@ -278,11 +291,12 @@ static void * tcp_socket_sender_thread (void *arg)
 		p_socket_address_free (addr_sender);
 		p_uthread_exit (-1);
 	} else {
+		p_socket_address_free (addr_sender);
+
 		PSocketAddress *local_addr = p_socket_get_local_address (skt_sender);
 
 		if (local_addr == NULL) {
 			p_socket_free (skt_sender);
-			p_socket_address_free (addr_sender);
 			p_uthread_exit (-1);
 		}
 
@@ -291,29 +305,39 @@ static void * tcp_socket_sender_thread (void *arg)
 		p_socket_address_free (local_addr);
 	}
 
-	p_socket_set_blocking (skt_sender, FALSE);
-	p_socket_address_free (addr_sender);
-
 	send_total = 0;
 	send_now = 0;
 
-	while (is_sender_working && data->receiver_port == 0) {
+	while (is_sender_working == TRUE && data->receiver_port == 0) {
 		p_uthread_sleep (1);
 		continue;
 	}
 
 	PSocketAddress *addr_receiver = NULL;
 
+	/* Try to connect in non-blocking mode */
+	p_socket_set_blocking (skt_sender, FALSE);
+
 	if (data->receiver_port != 0) {
 		addr_receiver = p_socket_address_new ("127.0.0.1", data->receiver_port);
-		is_connected = p_socket_connect (skt_sender, addr_receiver, 4000);
+		is_connected = p_socket_connect (skt_sender, addr_receiver);
+
+		if (is_connected == FALSE) {
+			if (p_socket_io_condition_wait (skt_sender, P_SOCKET_IO_CONDITION_POLLOUT) == TRUE &&
+			    p_socket_check_connect_result (skt_sender) == FALSE) {
+				p_socket_address_free (addr_receiver);
+				p_socket_free (skt_sender);
+				p_uthread_exit (-1);
+			}
+		}
+
+		is_connected = p_socket_is_connected (skt_sender);
 
 		if (is_connected == TRUE && p_socket_shutdown (skt_sender, FALSE, data->shutdown_channel) == FALSE)
 			is_connected = FALSE;
-
-		if (is_connected == TRUE && p_socket_check_connect_result (skt_sender) == FALSE)
-			is_connected = FALSE;
 	}
+
+	p_socket_set_blocking (skt_sender, TRUE);
 
 	while (is_sender_working == TRUE) {
 		if (data->receiver_port == 0 || is_connected == FALSE)
@@ -323,6 +347,7 @@ static void * tcp_socket_sender_thread (void *arg)
 			break;
 
 		if (data->shutdown_channel == FALSE && p_socket_is_connected (skt_sender) == FALSE) {
+			p_socket_address_free (addr_receiver);
 			p_socket_free (skt_sender);
 			p_uthread_exit (-1);
 		}
@@ -360,21 +385,10 @@ static void * tcp_socket_receiver_thread (void *arg)
 	SocketTestData *data = (SocketTestData *) (arg);
 
 	/* Create receiving socket */
-	pint fd = socket (P_SOCKET_FAMILY_INET, SOCK_STREAM, P_SOCKET_PROTOCOL_TCP);
+	PSocket *skt_receiver = p_socket_new (P_SOCKET_FAMILY_INET, P_SOCKET_TYPE_STREAM, P_SOCKET_PROTOCOL_TCP);
 
-	if (fd < 0)
+	if (skt_receiver == NULL)
 		p_uthread_exit (-1);
-
-	PSocket *skt_receiver = p_socket_new_from_fd (fd);
-
-	if (skt_receiver == NULL) {
-#ifdef P_OS_WIN
-		closesocket (fd);
-#else
-		close (fd);
-#endif
-		p_uthread_exit (-1);
-	}
 
 	PSocketAddress *addr_receiver = p_socket_address_new ("127.0.0.1", data->receiver_port);
 
@@ -383,17 +397,20 @@ static void * tcp_socket_receiver_thread (void *arg)
 		p_uthread_exit (-1);
 	}
 
+	p_socket_set_timeout (skt_receiver, 2000);
+
 	if (p_socket_bind (skt_receiver, addr_receiver, TRUE) == FALSE ||
 	    p_socket_listen (skt_receiver) == FALSE) {
 		p_socket_free (skt_receiver);
 		p_socket_address_free (addr_receiver);
 		p_uthread_exit (-1);
 	} else {
+		p_socket_address_free (addr_receiver);
+
 		PSocketAddress *local_addr = p_socket_get_local_address (skt_receiver);
 
 		if (local_addr == NULL) {
 			p_socket_free (skt_receiver);
-			p_socket_address_free (addr_receiver);
 			p_uthread_exit (-1);
 		}
 
@@ -401,9 +418,6 @@ static void * tcp_socket_receiver_thread (void *arg)
 
 		p_socket_address_free (local_addr);
 	}
-
-	p_socket_set_blocking (skt_receiver, FALSE);
-	p_socket_address_free (addr_receiver);
 
 	PSocket *conn_socket = NULL;
 	recv_total = 0;
@@ -422,6 +436,8 @@ static void * tcp_socket_receiver_thread (void *arg)
 
 				if (p_socket_shutdown (conn_socket, data->shutdown_channel, FALSE) == FALSE)
 					break;
+
+				p_socket_set_timeout (conn_socket, 2000);
 			}
 		}
 
@@ -431,14 +447,7 @@ static void * tcp_socket_receiver_thread (void *arg)
 			p_uthread_exit (-1);
 		}
 
-		PSocketAddress *remote_addr = NULL;
-
-		recv_now = p_socket_receive_from (conn_socket, &remote_addr, recv_buffer + recv_total, sizeof (recv_buffer) - recv_total);
-
-		if (remote_addr != NULL && test_socket_address_directly (remote_addr, data->sender_port) == TRUE)
-			break;
-
-		p_socket_address_free (remote_addr);
+		recv_now = p_socket_receive (conn_socket, recv_buffer + recv_total, sizeof (recv_buffer) - recv_total);
 
 		if (recv_now > 0)
 			recv_total += recv_now;
@@ -478,6 +487,7 @@ BOOST_AUTO_TEST_CASE (psocket_bad_input_test)
 	BOOST_CHECK (p_socket_get_protocol (NULL) == P_SOCKET_PROTOCOL_UNKNOWN);
 	BOOST_CHECK (p_socket_get_keepalive (NULL) == FALSE);
 	BOOST_CHECK (p_socket_get_blocking (NULL) == FALSE);
+	BOOST_CHECK (p_socket_get_timeout (NULL) == -1);
 	BOOST_CHECK (p_socket_get_listen_backlog (NULL) == -1);
 	BOOST_CHECK (p_socket_get_local_address (NULL) == NULL);
 	BOOST_CHECK (p_socket_get_remote_address (NULL) == NULL);
@@ -486,10 +496,11 @@ BOOST_AUTO_TEST_CASE (psocket_bad_input_test)
 
 	p_socket_set_keepalive (NULL, FALSE);
 	p_socket_set_blocking (NULL, FALSE);
+	p_socket_set_timeout (NULL, 0);
 	p_socket_set_listen_backlog (NULL, 0);
 
 	BOOST_CHECK (p_socket_bind (NULL, NULL, FALSE) == FALSE);
-	BOOST_CHECK (p_socket_connect (NULL, NULL, 0) == FALSE);
+	BOOST_CHECK (p_socket_connect (NULL, NULL) == FALSE);
 	BOOST_CHECK (p_socket_listen (NULL) == FALSE);
 	BOOST_CHECK (p_socket_accept (NULL) == NULL);
 	BOOST_CHECK (p_socket_receive (NULL, NULL, 0) == -1);
@@ -513,18 +524,24 @@ BOOST_AUTO_TEST_CASE (psocket_general_test)
 
 	/* Test UDP socket */
 	PSocket *socket = p_socket_new (P_SOCKET_FAMILY_INET, P_SOCKET_TYPE_DATAGRAM, P_SOCKET_PROTOCOL_UDP);
-	p_socket_set_listen_backlog (socket, 12);
 
 	BOOST_CHECK (socket != NULL);
 	BOOST_CHECK (p_socket_get_family (socket) == P_SOCKET_FAMILY_INET);
 	BOOST_CHECK (p_socket_get_fd (socket) >= 0);
-	BOOST_CHECK (p_socket_get_listen_backlog (socket) == 12);
+	BOOST_CHECK (p_socket_get_listen_backlog (socket) == 5);
+	BOOST_CHECK (p_socket_get_timeout (socket) == 0);
 	BOOST_CHECK (p_socket_get_last_error (socket) == P_SOCKET_ERROR_NONE);
 	BOOST_CHECK (p_socket_get_remote_address (socket) == NULL);
 	BOOST_CHECK (p_socket_get_protocol (socket) == P_SOCKET_PROTOCOL_UDP);
-	BOOST_CHECK (p_socket_get_blocking (socket) == FALSE);
+	BOOST_CHECK (p_socket_get_blocking (socket) == TRUE);
 	BOOST_CHECK (p_socket_get_type (socket) == P_SOCKET_TYPE_DATAGRAM);
 	BOOST_CHECK (p_socket_get_keepalive (socket) == FALSE);
+
+	p_socket_set_listen_backlog (socket, 12);
+	p_socket_set_timeout (socket, 10);
+
+	BOOST_CHECK (p_socket_get_listen_backlog (socket) == 12);
+	BOOST_CHECK (p_socket_get_timeout (socket) == 10);
 
 	PSocketAddress *sock_addr = p_socket_address_new ("127.0.0.1", 32111);
 	BOOST_CHECK (sock_addr != NULL);
@@ -550,17 +567,19 @@ BOOST_AUTO_TEST_CASE (psocket_general_test)
 
 	/* Test TCP socket */
 	socket = p_socket_new (P_SOCKET_FAMILY_INET, P_SOCKET_TYPE_STREAM, P_SOCKET_PROTOCOL_TCP);
-	p_socket_set_blocking (socket, TRUE);
+	p_socket_set_blocking (socket, FALSE);
 	p_socket_set_listen_backlog (socket, 11);
+	p_socket_set_timeout (socket, 12);
 
 	BOOST_CHECK (socket != NULL);
 	BOOST_CHECK (p_socket_get_family (socket) == P_SOCKET_FAMILY_INET);
 	BOOST_CHECK (p_socket_get_fd (socket) >= 0);
 	BOOST_CHECK (p_socket_get_listen_backlog (socket) == 11);
+	BOOST_CHECK (p_socket_get_timeout (socket) == 12);
 	BOOST_CHECK (p_socket_get_last_error (socket) == P_SOCKET_ERROR_NONE);
 	BOOST_CHECK (p_socket_get_remote_address (socket) == NULL);
 	BOOST_CHECK (p_socket_get_protocol (socket) == P_SOCKET_PROTOCOL_TCP);
-	BOOST_CHECK (p_socket_get_blocking (socket) == TRUE);
+	BOOST_CHECK (p_socket_get_blocking (socket) == FALSE);
 	BOOST_CHECK (p_socket_get_type (socket) == P_SOCKET_TYPE_STREAM);
 	BOOST_CHECK (p_socket_get_keepalive (socket) == FALSE);
 
