@@ -513,6 +513,26 @@ __p_socket_set_details_from_fd (PSocket *socket)
 		break;
 	}
 
+#ifdef AF_INET6
+	if (socket->family == P_SOCKET_FAMILY_INET6 || socket->family == P_SOCKET_FAMILY_INET) {
+#else
+	if (socket->family == P_SOCKET_FAMILY_INET) {
+#endif
+		switch (socket->type) {
+		case P_SOCKET_TYPE_STREAM:
+			socket->protocol = P_SOCKET_PROTOCOL_TCP;
+			break;
+		case P_SOCKET_TYPE_DATAGRAM:
+			socket->protocol = P_SOCKET_PROTOCOL_UDP;
+			break;
+		case P_SOCKET_TYPE_SEQPACKET:
+			socket->protocol = P_SOCKET_PROTOCOL_SCTP;
+			break;
+		default:
+			break;
+		}
+	}
+
 	if (socket->family != P_SOCKET_FAMILY_UNKNOWN) {
 		addrlen = sizeof (address);
 
