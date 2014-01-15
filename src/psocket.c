@@ -96,26 +96,62 @@ static PSocketError __p_socket_get_error_win (pint err_code)
 	switch (err_code) {
 	case 0:
 		return P_SOCKET_ERROR_NONE;
+#ifdef WSAEADDRINUSE
 	case WSAEADDRINUSE:
 		return P_SOCKET_ERROR_ADDRESS_IN_USE;
+#endif
+#ifdef WSAEWOULDBLOCK
 	case WSAEWOULDBLOCK:
 		return P_SOCKET_ERROR_WOULD_BLOCK;
+#endif
+#ifdef WSAEACCES
 	case WSAEACCES:
 		return P_SOCKET_ERROR_ACCESS_DENIED;
+#endif
+#ifdef WSA_INVALID_HANDLE
 	case WSA_INVALID_HANDLE:
+		return P_SOCKET_ERROR_INVALID_ARGUMENT;
+#endif
+#ifdef WSA_INVALID_PARAMETER
 	case WSA_INVALID_PARAMETER:
+		return P_SOCKET_ERROR_INVALID_ARGUMENT;
+#endif
+#ifdef WSAEBADF
 	case WSAEBADF:
+		return P_SOCKET_ERROR_INVALID_ARGUMENT;
+#endif
+#ifdef WSAENOTSOCK
 	case WSAENOTSOCK:
+		return P_SOCKET_ERROR_INVALID_ARGUMENT;
+#endif
+#ifdef WSAEINVAL
 	case WSAEINVAL:
 		return P_SOCKET_ERROR_INVALID_ARGUMENT;
+#endif
+#ifdef WSAESOCKTNOSUPPORT
 	case WSAESOCKTNOSUPPORT:
+		return P_SOCKET_ERROR_NOT_SUPPORTED;
+#endif
+#ifdef WSAEOPNOTSUPP
 	case WSAEOPNOTSUPP:
+		return P_SOCKET_ERROR_NOT_SUPPORTED;
+#endif
+#ifdef WSAEPFNOSUPPORT
 	case WSAEPFNOSUPPORT:
+		return P_SOCKET_ERROR_NOT_SUPPORTED;
+#endif
+#ifdef WSAEAFNOSUPPORT
 	case WSAEAFNOSUPPORT:
+		return P_SOCKET_ERROR_NOT_SUPPORTED;
+#endif
+#ifdef WSAEPROTONOSUPPORT
 	case WSAEPROTONOSUPPORT:
 		return P_SOCKET_ERROR_NOT_SUPPORTED;
+#endif
+#ifdef WSAECANCELLED
 	case WSAECANCELLED:
 		return P_SOCKET_ERROR_ABORTED;
+#endif
 	default:
 		return P_SOCKET_ERROR_FAILED;
 	}
@@ -952,7 +988,7 @@ p_socket_connect (PSocket		*socket,
 		if (connect (socket->fd, (struct sockaddr *) &buffer,
 			     (pint) p_socket_address_get_native_size (address)) < 0) {
 			err_code = __p_socket_get_errno ();
-#ifndef P_OS_WIN
+#if !defined (P_OS_WIN) && defined (EINTR)
 			if (err_code == EINTR)
 				continue;
 #endif
@@ -1020,7 +1056,7 @@ p_socket_accept (PSocket *socket)
 
 		if ((res = (pint) accept (socket->fd, NULL, 0)) < 0) {
 			err_code = __p_socket_get_errno ();
-#ifndef P_OS_WIN
+#if !defined (P_OS_WIN) && defined (EINTR)
 			if (__p_socket_get_errno () == EINTR)
 				continue;
 #endif
@@ -1083,7 +1119,7 @@ p_socket_receive (PSocket	*socket,
 		if ((ret = recv (socket->fd, buffer, buflen, 0)) < 0) {
 			err_code = __p_socket_get_errno ();
 
-#ifndef P_OS_WIN
+#if !defined (P_OS_WIN) && defined (EINTR)
 			if (err_code == EINTR)
 				continue;
 #endif
@@ -1129,7 +1165,7 @@ p_socket_receive_from (PSocket		*socket,
 		if ((ret = recvfrom (socket->fd, buffer, buflen, 0, (struct sockaddr *) &sa, &optlen)) < 0) {
 			err_code = __p_socket_get_errno ();
 
-#ifndef P_OS_WIN
+#if !defined (P_OS_WIN) && defined (EINTR)
 			if (err_code == EINTR)
 				continue;
 #endif
@@ -1173,7 +1209,7 @@ p_socket_send (PSocket		*socket,
 		if ((ret = send (socket->fd, buffer, (pint) buflen, P_SOCKET_DEFAULT_SEND_FLAGS)) < 0) {
 			err_code = __p_socket_get_errno ();
 
-#ifndef P_OS_WIN
+#if !defined (P_OS_WIN) && defined (EINTR)
 			if (err_code == EINTR)
 				continue;
 #endif
@@ -1222,7 +1258,7 @@ p_socket_send_to (PSocket		*socket,
 		if ((ret = sendto (socket->fd, buffer, buflen, 0, (struct sockaddr *) &sa, optlen)) < 0) {
 			err_code = __p_socket_get_errno ();
 
-#ifndef P_OS_WIN
+#if !defined (P_OS_WIN) && defined (EINTR)
 			if (err_code == EINTR)
 				continue;
 #endif
@@ -1264,7 +1300,7 @@ p_socket_close (PSocket *socket)
 #endif
 		if (res == -1) {
 			err_code = __p_socket_get_errno ();
-#ifndef P_OS_WIN
+#if !defined (P_OS_WIN) && defined (EINTR)
 			if (err_code == EINTR)
 				continue;
 #endif
@@ -1435,8 +1471,10 @@ p_socket_io_condition_wait (PSocket		*socket,
 	while (TRUE) {
 		evret = poll (&pfd, 1, timeout);
 
+#ifdef EINTR
 		if (evret == -1 && errno == EINTR)
 			continue;
+#endif
 
 		if (evret == 1)
 			return TRUE;
