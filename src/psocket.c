@@ -397,6 +397,7 @@ __p_socket_check (const PSocket *socket)
 static void
 __p_socket_set_details_from_fd (PSocket *socket)
 {
+	PSocketFamily		family;
 	struct sockaddr_storage	address;
 	pint			fd, value;
 	socklen_t		addrlen, optlen;
@@ -446,6 +447,20 @@ __p_socket_set_details_from_fd (PSocket *socket)
 		P_ERROR ("PSocket: failed to get socket address info");
 		__p_socket_set_error (socket);
 		return;
+	}
+
+	if (addrlen > 0)
+		family = address.ss_family;
+	else {
+#ifdef SO_DOMAIN
+		optlen = sizeof (family);
+
+		if (getsockopt (socket->fd, SOL_SOCKET, SO_DOMAIN, (ppointer) &family, &optlen) != 0) {
+			P_ERROR ("PSocket: failed to get socket SO_DOMAIN option");
+			__p_socket_set_error (socket);
+			return;
+		}
+#endif
 	}
 
 	switch (address.ss_family) {
