@@ -106,6 +106,7 @@ static PSocketError __p_socket_get_error_win (pint err_code)
 	case WSA_INVALID_PARAMETER:
 	case WSAEBADF:
 	case WSAENOTSOCK:
+	case WSAEINVAL:
 		return P_SOCKET_ERROR_INVALID_ARGUMENT;
 	case WSAESOCKTNOSUPPORT:
 	case WSAEOPNOTSUPP:
