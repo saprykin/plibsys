@@ -548,6 +548,19 @@ BOOST_AUTO_TEST_CASE (psocket_general_test)
 
 	BOOST_CHECK (p_socket_bind (socket, sock_addr, TRUE) == TRUE);
 
+	/* Test creating socket from descriptor */
+	PSocket *fd_socket = p_socket_new_from_fd (p_socket_get_fd (socket));
+	BOOST_CHECK (fd_socket != NULL);
+	BOOST_CHECK (p_socket_get_family (fd_socket) == P_SOCKET_FAMILY_INET);
+	BOOST_CHECK (p_socket_get_fd (fd_socket) >= 0);
+	BOOST_CHECK (p_socket_get_listen_backlog (fd_socket) == 5);
+	BOOST_CHECK (p_socket_get_timeout (fd_socket) == 0);
+	BOOST_CHECK (p_socket_get_last_error (fd_socket) == P_SOCKET_ERROR_NONE);
+	BOOST_CHECK (p_socket_get_remote_address (fd_socket) == NULL);
+	BOOST_CHECK (p_socket_get_protocol (fd_socket) == P_SOCKET_PROTOCOL_UDP);
+	BOOST_CHECK (p_socket_get_blocking (fd_socket) == TRUE);
+	BOOST_CHECK (p_socket_get_type (fd_socket) == P_SOCKET_TYPE_DATAGRAM);
+	BOOST_CHECK (p_socket_get_keepalive (fd_socket) == FALSE);
 	PSocketAddress *addr = p_socket_get_local_address (socket);
 	BOOST_CHECK (addr != NULL);
 
@@ -564,6 +577,7 @@ BOOST_AUTO_TEST_CASE (psocket_general_test)
 	BOOST_CHECK (p_socket_check_connect_result (socket) == TRUE);
 	BOOST_CHECK (p_socket_close (socket));
 	p_socket_free (socket);
+	p_socket_free (fd_socket);
 
 	/* Test TCP socket */
 	socket = p_socket_new (P_SOCKET_FAMILY_INET, P_SOCKET_TYPE_STREAM, P_SOCKET_PROTOCOL_TCP);
