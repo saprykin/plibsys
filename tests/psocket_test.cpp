@@ -518,7 +518,7 @@ BOOST_AUTO_TEST_CASE (psocket_bad_input_test)
 	p_lib_shutdown ();
 }
 
-BOOST_AUTO_TEST_CASE (psocket_general_test)
+BOOST_AUTO_TEST_CASE (psocket_general_udp_test)
 {
 	p_lib_init ();
 
@@ -572,6 +572,7 @@ BOOST_AUTO_TEST_CASE (psocket_general_test)
 	p_socket_address_free (addr);
 
 	/* Test UDP connecting to remote address */
+	p_socket_set_timeout (socket, 1000);
 	addr = p_socket_address_new ("127.0.0.1", 32115);
 	BOOST_CHECK (addr != NULL);
 	BOOST_CHECK (p_socket_connect (socket, addr) == TRUE);
@@ -593,8 +594,15 @@ BOOST_AUTO_TEST_CASE (psocket_general_test)
 	p_socket_free (socket);
 	p_socket_free (fd_socket);
 
+	p_lib_shutdown ();
+}
+
+BOOST_AUTO_TEST_CASE (psocket_general_tcp_test)
+{
+	p_lib_init ();
+
 	/* Test TCP socket */
-	socket = p_socket_new (P_SOCKET_FAMILY_INET, P_SOCKET_TYPE_STREAM, P_SOCKET_PROTOCOL_TCP);
+	PSocket *socket = p_socket_new (P_SOCKET_FAMILY_INET, P_SOCKET_TYPE_STREAM, P_SOCKET_PROTOCOL_TCP);
 	p_socket_set_blocking (socket, FALSE);
 	p_socket_set_listen_backlog (socket, 11);
 	p_socket_set_timeout (socket, 12);
@@ -611,12 +619,12 @@ BOOST_AUTO_TEST_CASE (psocket_general_test)
 	BOOST_CHECK (p_socket_get_type (socket) == P_SOCKET_TYPE_STREAM);
 	BOOST_CHECK (p_socket_get_keepalive (socket) == FALSE);
 
-	sock_addr = p_socket_address_new ("127.0.0.1", 0);
+	PSocketAddress *sock_addr = p_socket_address_new ("127.0.0.1", 0);
 	BOOST_CHECK (sock_addr != NULL);
 
 	BOOST_CHECK (p_socket_bind (socket, sock_addr, TRUE) == TRUE);
 
-	addr = p_socket_get_local_address (socket);
+	PSocketAddress *addr = p_socket_get_local_address (socket);
 	BOOST_CHECK (addr != NULL);
 
 	BOOST_CHECK (compare_socket_addresses (sock_addr, addr) == TRUE);
