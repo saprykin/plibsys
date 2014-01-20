@@ -34,6 +34,130 @@
 
 #include <stdio.h>
 
+/**
+ * @def P_OS_DARWIN
+ * @brief Darwin based operating system (i.e. Mac OS X)
+ * @since 0.0.1
+ */
+
+/**
+ * @def P_OS_DARWIN32
+ * @brief Darwin based 32-bit operating system
+ * @since 0.0.1
+ */
+
+/**
+ * @def P_OS_DARWIN64
+ * @brief Darwin based 64-bit operating system
+ * @since 0.0.1
+ */
+
+/**
+ * @def P_OS_BSD
+ * @brief BSD 4.x based operating system
+ * @since 0.0.1
+ */
+
+/**
+ * @def P_OS_FREEBSD
+ * @brief FreeBSD based operating system
+ * @since 0.0.1
+ */
+
+/**
+ * @def P_OS_NETBSD
+ * @brief NetBSD operating system
+ * @since 0.0.1
+ */
+
+/**
+ * @def P_OS_OPENBSD
+ * @brief OpenBSD operating system
+ * @since 0.0.1
+ */
+
+/**
+ * @def P_OS_SOLARIS
+ * @brief Sun (Oracle) Solaris operating system
+ * @since 0.0.1
+ */
+
+/**
+ * @def P_OS_QNX
+ * @brief QNX 4.x operating system
+ * @since 0.0.1
+ */
+
+/**
+ * @def P_OS_QNX6
+ * @brief QNX Neutrino 6.x operating system
+ * @since 0.0.1
+ */
+
+/**
+ * @def P_OS_UNIX
+ * @brief UNIX based operating system
+ * @since 0.0.1
+ */
+
+/**
+ * @def P_OS_LINUX
+ * @brief Linux based operating system
+ * @since 0.0.1
+ */
+
+/**
+ * @def P_OS_MAC
+ * @brief Apple's Mac OS X operating system
+ * @since 0.0.1
+ */
+
+/**
+ * @def P_OS_MAC32
+ * @brief Apple's Mac OS X 32-bit operating system
+ * @since 0.0.1
+ */
+
+/**
+ * @def P_OS_MAC64
+ * @brief Apple's Mac OS X 64-bit operating system
+ * @since 0.0.1
+ */
+
+/**
+ * @def P_OS_WIN
+ * @brief Microsoft's Windows 32-bit operating system
+ * @since 0.0.1
+ */
+
+/**
+ * @def P_OS_WIN64
+ * @brief Microsoft's Windows 64-bit operating system
+ * @since 0.0.1
+ */
+
+/* We need this to disable Doxygen warnings */
+
+#ifdef DOXYGEN
+#  define P_OS_DARWIN
+#  define P_OS_DARWIN32
+#  define P_OS_DARWIN64
+#  define P_OS_BSD
+#  define P_OS_FREEBSD
+#  define P_OS_NETBSD
+#  define P_OS_OPENBSD
+#  define P_OS_SOLARIS
+#  define P_OS_QNX
+#  define P_OS_QNX6
+#  define P_OS_UNIX
+#  define P_OS_LINUX
+#  define P_OS_MAC
+#  define P_OS_MAC32
+#  define P_OS_MAC64
+#  define P_OS_WIN
+#  define P_OS_WIN64
+#endif
+
 /* Operating systems */
 /* Darwin and BSD4 */
 #if defined(__APPLE__) && (defined(__GNUC__) || defined(__xlC__) || defined(__xlc__))
