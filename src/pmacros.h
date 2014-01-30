@@ -34,6 +34,8 @@
 
 #include <stdio.h>
 
+/* Operating systems */
+
 /**
  * @def P_OS_DARWIN
  * @brief Darwin based operating system (i.e. Mac OS X)
@@ -158,7 +160,6 @@
 #  define P_OS_WIN64
 #endif
 
-/* Operating systems */
 /* Darwin and BSD4 */
 #if defined(__APPLE__) && (defined(__GNUC__) || defined(__xlC__) || defined(__xlc__))
 #  define P_OS_DARWIN
@@ -219,6 +220,58 @@
 #endif
 
 /* Compilers */
+
+/**
+ * @def P_CC_MSVC
+ * @brief Microsoft Visual Studio compiler
+ * @since 0.0.1
+ */
+
+/**
+ * @def P_CC_GNU
+ * @brief GNU C compiler
+ * @since 0.0.1
+ */
+
+/**
+ * @def P_CC_MINGW
+ * @brief MinGW compiler
+ * @since 0.0.1
+ */
+
+/**
+ * @def P_CC_INTEL
+ * @brief Intel C compiler
+ * @since 0.0.1
+ */
+
+/**
+ * @def P_CC_CLANG
+ * @brief LLVM Clang compiler
+ * @since 0.0.1
+ */
+
+/**
+ * @def P_CC_SUN
+ * @brief Sun WorkShop/Studio C compiler
+ * @since 0.0.1
+ */
+
+/**
+ * @def P_CC_WATCOM
+ * @brief Watcom C compiler
+ * @since 0.0.1
+ */
+
+#ifdef DOXYGEN
+#  define P_CC_MSVC
+#  define P_CC_GNU
+#  define P_CC_MINGW
+#  define P_CC_INTEL
+#  define P_CC_CLANG
+#  define P_CC_SUN
+#  define P_CC_WATCOM
+#endif
 
 /* Microsoft Visual C/C++ */
 #if defined(_MSC_VER)
