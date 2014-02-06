@@ -1136,7 +1136,7 @@ p_socket_receive (PSocket	*socket,
 		if (socket->blocking && p_socket_io_condition_wait (socket, P_SOCKET_IO_CONDITION_POLLIN) == FALSE)
 			return -1;
 
-		if ((ret = recv (socket->fd, buffer, buflen, 0)) < 0) {
+		if ((ret = recv (socket->fd, buffer, (pint32) buflen, 0)) < 0) {
 			err_code = __p_socket_get_errno ();
 
 #if !defined (P_OS_WIN) && defined (EINTR)
@@ -1182,7 +1182,7 @@ p_socket_receive_from (PSocket		*socket,
 		if (socket->blocking && p_socket_io_condition_wait (socket, P_SOCKET_IO_CONDITION_POLLIN) == FALSE)
 			return -1;
 
-		if ((ret = recvfrom (socket->fd, buffer, buflen, 0, (struct sockaddr *) &sa, &optlen)) < 0) {
+		if ((ret = recvfrom (socket->fd, buffer, (pint32) buflen, 0, (struct sockaddr *) &sa, &optlen)) < 0) {
 			err_code = __p_socket_get_errno ();
 
 #if !defined (P_OS_WIN) && defined (EINTR)
@@ -1269,13 +1269,13 @@ p_socket_send_to (PSocket		*socket,
 	if (!p_socket_address_to_native (address, &sa, sizeof (sa)))
 		return -1;
 
-	optlen = p_socket_address_get_native_size (address);
+	optlen = (socklen_t) p_socket_address_get_native_size (address);
 
 	while (TRUE) {
 		if (socket->blocking && p_socket_io_condition_wait (socket, P_SOCKET_IO_CONDITION_POLLOUT) == FALSE)
 			return -1;
 
-		if ((ret = sendto (socket->fd, buffer, buflen, 0, (struct sockaddr *) &sa, optlen)) < 0) {
+		if ((ret = sendto (socket->fd, buffer, (pint32) buflen, 0, (struct sockaddr *) &sa, optlen)) < 0) {
 			err_code = __p_socket_get_errno ();
 
 #if !defined (P_OS_WIN) && defined (EINTR)
