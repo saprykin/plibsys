@@ -55,7 +55,7 @@
  */
 
 /**
- * @def P_OS_BSD
+ * @def P_OS_BSD4
  * @brief BSD 4.x based operating system
  * @since 0.0.1
  */
@@ -144,7 +144,7 @@
 #  define P_OS_DARWIN
 #  define P_OS_DARWIN32
 #  define P_OS_DARWIN64
-#  define P_OS_BSD
+#  define P_OS_BSD4
 #  define P_OS_FREEBSD
 #  define P_OS_NETBSD
 #  define P_OS_OPENBSD
