@@ -415,7 +415,7 @@ set_target_properties (plib PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${OUTPUT_DIR})
 set_target_properties (plibstatic PROPERTIES ARCHIVE_OUTPUT_DIRECTORY ${OUTPUT_DIR})
 
 if (PLIB_C_COMPILER STREQUAL msvc)
-	add_definitions (-D_CRT_SECURE_NO_WARNINGS)
+
 endif()
 
 set_target_properties (plib PROPERTIES SOVERSION ${PLIB_VERSION})
@@ -424,6 +424,18 @@ set_target_properties (plibstatic PROPERTIES SOVERSION ${PLIB_VERSION})
 if (PLIB_PLATFORM_CFLAGS)
 	set_target_properties (plib PROPERTIES COMPILE_FLAGS ${PLIB_PLATFORM_CFLAGS})
 	set_target_properties (plibstatic PROPERTIES COMPILE_FLAGS ${PLIB_PLATFORM_CFLAGS})
+endif()
+
+if (PLIB_C_COMPILER STREQUAL msvc)
+	add_definitions (-D_CRT_SECURE_NO_WARNINGS)
+
+	if (CMAKE_CXX_FLAGS MATCHES "/W[0-4]")
+		string (REGEX REPLACE "/W[0-4]" "/W4" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
+	else()
+		set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W4")
+	endif()
+elseif (PLIB_C_COMPILER STREQUAL gcc OR PLIB_C_COMPILER STREQUAL qcc)
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wno-long-long -Wpedantic")
 endif()
 
 target_link_libraries (plib ${PLIB_PLATFORM_LINK_LIBRARIES})
