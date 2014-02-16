@@ -32,11 +32,11 @@ struct _PShmBuffer {
 	psize size;
 };
 
-static psize __p_shm_buffer_get_free_space (PShmBuffer *buf);
+static pssize __p_shm_buffer_get_free_space (PShmBuffer *buf);
 static pssize __p_shm_buffer_get_used_space (PShmBuffer *buf);
 
 /* Warning: this function is not thread-safe, only for internal usage */
-static psize
+static pssize
 __p_shm_buffer_get_free_space (PShmBuffer *buf)
 {
 	psize		read_pos, write_pos;
@@ -207,7 +207,7 @@ p_shm_buffer_write (PShmBuffer *buf, ppointer data, psize len)
 	memcpy (&read_pos, (pchar *) addr + SHM_BUFFER_READ_OFFSET, sizeof (read_pos));
 	memcpy (&write_pos, (pchar *) addr + SHM_BUFFER_WRITE_OFFSET, sizeof (write_pos));
 
-	if (__p_shm_buffer_get_free_space (buf) < len) {
+	if ((psize) __p_shm_buffer_get_free_space (buf) < len) {
 		if (!p_shm_unlock (buf->shm))
 			P_ERROR ("PShmBuffer: failed to unlock memory after writing");
 

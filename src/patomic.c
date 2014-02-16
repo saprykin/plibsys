@@ -799,14 +799,14 @@ P_LIB_API pint
 p_atomic_int_exchange_and_add (volatile pint32	*atomic,
 			       pint32           val)
 {
-	return InterlockedExchangeAdd (atomic, val);
+	return InterlockedExchangeAdd ((volatile LONG *) atomic, val);
 }
 
 P_LIB_API void
 p_atomic_int_add (volatile pint32	*atomic,
 		  pint32		val)
 {
-	InterlockedExchangeAdd (atomic, val);
+	InterlockedExchangeAdd ((volatile LONG *) atomic, val);
 }
 
 P_LIB_API pboolean
@@ -819,7 +819,7 @@ p_atomic_int_compare_and_exchange (volatile pint32	*atomic,
                                                (PVOID) newval, 
                                                (PVOID) oldval) == oldval;
 #  else
-  return InterlockedCompareExchange (atomic, 
+  return InterlockedCompareExchange ((volatile LONG *) atomic,
                                      newval, 
                                      oldval) == oldval;
 #  endif

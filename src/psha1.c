@@ -94,7 +94,9 @@ static void
 __p_sha1_swap_bytes (puint32	*data,
 		 puint		words)
 {
-	if (P_BYTE_ORDER == P_BIG_ENDIAN)
+	pint byte_order = P_BYTE_ORDER;
+
+	if (byte_order == P_BIG_ENDIAN)
 		return;
 
 	while (words-- > 0) {

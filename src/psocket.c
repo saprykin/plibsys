@@ -896,7 +896,7 @@ p_socket_set_keepalive (PSocket		*socket,
 	if (!socket)
 		return;
 
-	if (socket->keepalive == keepalive)
+	if (socket->keepalive == (puint) !!keepalive)
 		return;
 
 #ifdef P_OS_WIN
@@ -1004,7 +1004,7 @@ p_socket_connect (PSocket		*socket,
 	if (!p_socket_address_to_native (address, &buffer, sizeof buffer))
 		return FALSE;
 
-	while (TRUE) {
+	for (;;) {
 		if (connect (socket->fd, (struct sockaddr *) &buffer,
 			     (pint) p_socket_address_get_native_size (address)) < 0) {
 			err_code = __p_socket_get_errno ();
@@ -1070,7 +1070,7 @@ p_socket_accept (PSocket *socket)
 	if (!__p_socket_check (socket))
 		return NULL;
 
-	while (TRUE) {
+	for (;;) {
 		if (socket->blocking && p_socket_io_condition_wait (socket, P_SOCKET_IO_CONDITION_POLLIN) == FALSE)
 			return NULL;
 
@@ -1132,7 +1132,7 @@ p_socket_receive (PSocket	*socket,
 	if (!__p_socket_check (socket))
 		return -1;
 
-	while (TRUE) {
+	for (;;) {
 		if (socket->blocking && p_socket_io_condition_wait (socket, P_SOCKET_IO_CONDITION_POLLIN) == FALSE)
 			return -1;
 
@@ -1178,7 +1178,7 @@ p_socket_receive_from (PSocket		*socket,
 
 	optlen = sizeof (sa);
 
-	while (TRUE) {
+	for (;;) {
 		if (socket->blocking && p_socket_io_condition_wait (socket, P_SOCKET_IO_CONDITION_POLLIN) == FALSE)
 			return -1;
 
@@ -1222,7 +1222,7 @@ p_socket_send (PSocket		*socket,
 	if (!__p_socket_check (socket))
 		return -1;
 
-	while (TRUE) {
+	for (;;) {
 		if (socket->blocking && p_socket_io_condition_wait (socket, P_SOCKET_IO_CONDITION_POLLOUT) == FALSE)
 			return -1;
 
@@ -1271,7 +1271,7 @@ p_socket_send_to (PSocket		*socket,
 
 	optlen = (socklen_t) p_socket_address_get_native_size (address);
 
-	while (TRUE) {
+	for (;;) {
 		if (socket->blocking && p_socket_io_condition_wait (socket, P_SOCKET_IO_CONDITION_POLLOUT) == FALSE)
 			return -1;
 
@@ -1312,7 +1312,7 @@ p_socket_close (PSocket *socket)
 	if (!__p_socket_check (socket))
 		return FALSE;
 
-	while (TRUE) {
+	for (;;) {
 #ifdef P_OS_WIN
 		res = closesocket (socket->fd);
 #else

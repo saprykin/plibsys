@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2013 Alexander Saprykin <xelfium@gmail.com>
+ * Copyright (C) 2010-2014 Alexander Saprykin <xelfium@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -167,9 +167,11 @@ static void __p_gost3411_process (PHashGOST3411 *ctx, const puint32 data[8]);
 
 static void
 __p_gost3411_swap_bytes (puint32	*data,
-		     puint	words)
+			 puint		words)
 {
-	if (P_BYTE_ORDER == P_LITTLE_ENDIAN)
+	pint byte_order = P_BYTE_ORDER;
+
+	if (byte_order == P_LITTLE_ENDIAN)
 		return;
 
 	while (words-- > 0) {
@@ -180,8 +182,8 @@ __p_gost3411_swap_bytes (puint32	*data,
 
 /* 256-bit sum */
 static void
-__p_gost3411_sum_256 (puint32	a[8],
-		  const puint32	b[8])
+__p_gost3411_sum_256 (puint32		a[8],
+		      const puint32	b[8])
 {
 	puint		i;
 	puint32		old;
@@ -438,7 +440,7 @@ p_gost3411_update (PHashGOST3411	*ctx,
 P_LIB_API void
 p_gost3411_finish (PHashGOST3411	*ctx)
 {
-	puint32		left, last;
+	puint32 left, last;
 
 	if (ctx == NULL)
 		return;
