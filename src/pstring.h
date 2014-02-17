@@ -1,5 +1,5 @@
 /* 
- * Copyright (C) 2011 Alexander Saprykin <xelfium@gmail.com>
+ * Copyright (C) 2011-2014 Alexander Saprykin <xelfium@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,6 +53,42 @@ P_LIB_API pchar *	p_strdup	(const pchar *str);
  * @since 0.0.1
  */
 P_LIB_API pchar *	p_strchomp	(const pchar *str);
+
+/**
+ * @brief Tokenizes string by given delimiters.
+ * @param[in, out] str String to tokenize.
+ * @param delim List of delimiters to split the string.
+ * @param buf Context to store tokenize info.
+ * @return Pointer to splitted zero-terminated string in case of success, NULL
+ * otherwise.
+ * @since 0.0.1
+ * @note @a str is modified by this call, so take care for that.
+ * Returned pointer points on the @a str substring, so you do not need
+ * to call p_free() on it.
+ *
+ * The common usage of this call is following:
+ * @code
+ * pchar *token, *buf;
+ * pchar str[] = "This is a test string"
+ * pchar delim[] = " \t"
+ * ...
+ * token = p_strtok (str, delim, &buf);
+ *
+ * while (token != NULL) {
+ *     printf ("Splitted string: %s\n", token);
+ *     token = p_strtok (NULL, delim, &buf);
+ * }
+ * @endcode
+ * Take an attention that you need to pass original string only
+ * once, then you should pass NULL instead. You can also pass
+ * different delimiters each time.
+ *
+ * Some platforms do not support third parameter and it can be
+ * remained unused. In that case this call wouldn't be thread-safe.
+ */
+P_LIB_API pchar *	p_strtok	(pchar		*str,
+					 const pchar	*delim,
+					 pchar		**buf);
 
 P_END_DECLS
 

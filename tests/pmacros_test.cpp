@@ -106,25 +106,6 @@ BOOST_AUTO_TEST_CASE (pmacros_general_test)
 	P_ERROR ("Test error output");
 	P_DEBUG ("Test debug output");
 
-	pchar test_string[] = "1,2,3";
-	pchar test_delim[] = ",";
-	pchar *token, *next_token;
-
-	token = P_STRTOK (test_string, test_delim, &next_token);
-	BOOST_CHECK (token != NULL);
-	BOOST_CHECK (strcmp (token, "1") == 0);
-
-	token = P_STRTOK (NULL, test_delim, &next_token);
-	BOOST_CHECK (token != NULL);
-	BOOST_CHECK (strcmp (token, "2") == 0);
-
-	token = P_STRTOK (NULL, test_delim, &next_token);
-	BOOST_CHECK (token != NULL);
-	BOOST_CHECK (strcmp (token, "3") == 0);
-
-	token = P_STRTOK (NULL, test_delim, &next_token);
-	BOOST_CHECK (token == NULL);
-
 	p_lib_shutdown ();
 }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Alexander Saprykin <xelfium@gmail.com>
+ * Copyright (C) 2013-2014 Alexander Saprykin <xelfium@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -109,6 +109,80 @@ BOOST_AUTO_TEST_CASE (strchomp_test)
 
 	new_string = p_strchomp (test_chomp_str_11);
 	BOOST_CHECK (new_string == NULL);
+
+	p_lib_shutdown ();
+}
+
+BOOST_AUTO_TEST_CASE (strtok_test)
+{
+	p_lib_init ();
+
+	BOOST_CHECK (p_strtok (NULL, NULL, NULL) == NULL);
+
+	/* First string */
+	pchar test_string[] = "1,2,3";
+	pchar *token, *next_token;
+
+	token = p_strtok (test_string, ",", &next_token);
+	BOOST_CHECK (token != NULL);
+	BOOST_CHECK (strcmp (token, "1") == 0);
+
+	token = p_strtok (NULL, ",", &next_token);
+	BOOST_CHECK (token != NULL);
+	BOOST_CHECK (strcmp (token, "2") == 0);
+
+	token = p_strtok (NULL, ",", &next_token);
+	BOOST_CHECK (token != NULL);
+	BOOST_CHECK (strcmp (token, "3") == 0);
+
+	token = p_strtok (NULL, ",", &next_token);
+	BOOST_CHECK (token == NULL);
+
+	/* Second string */
+	pchar test_string_2[] = "Test string, to test";
+
+	token = p_strtok (test_string_2, " ", &next_token);
+	BOOST_CHECK (token != NULL);
+	BOOST_CHECK (strcmp (token, "Test") == 0);
+
+	token = p_strtok (NULL, ", ", &next_token);
+	BOOST_CHECK (token != NULL);
+	BOOST_CHECK (strcmp (token, "string") == 0);
+
+	token = p_strtok (NULL, ", ", &next_token);
+	BOOST_CHECK (token != NULL);
+	BOOST_CHECK (strcmp (token, "to") == 0);
+
+	token = p_strtok (NULL, ", \t\n", &next_token);
+	BOOST_CHECK (token != NULL);
+	BOOST_CHECK (strcmp (token, "test") == 0);
+
+	token = p_strtok (NULL, ", \t\n", &next_token);
+	BOOST_CHECK (token == NULL);
+
+	/* Third string */
+	pchar test_string_3[] = "compile\ttest\ndeploy";
+
+	token = p_strtok (test_string_3, "\t\n", &next_token);
+	BOOST_CHECK (token != NULL);
+	BOOST_CHECK (strcmp (token, "compile") == 0);
+
+	token = p_strtok (NULL, "\t\n", &next_token);
+	BOOST_CHECK (token != NULL);
+	BOOST_CHECK (strcmp (token, "test") == 0);
+
+	token = p_strtok (NULL, "\t\n", &next_token);
+	BOOST_CHECK (token != NULL);
+	BOOST_CHECK (strcmp (token, "deploy") == 0);
+
+	token = p_strtok (NULL, ", \t\n", &next_token);
+	BOOST_CHECK (token == NULL);
+
+	/* Fourth string */
+	pchar test_string_4[] = "\t  \t\n  \t";
+
+	token = p_strtok (test_string_4, "\t\n ", &next_token);
+	BOOST_CHECK (token == NULL);
 
 	p_lib_shutdown ();
 }

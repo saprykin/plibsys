@@ -1,5 +1,5 @@
-/* 
- * Copyright (C) 2011-2013 Alexander Saprykin <xelfium@gmail.com>
+/*
+ * Copyright (C) 2011-2014 Alexander Saprykin <xelfium@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -79,4 +79,28 @@ p_strchomp (const pchar *str)
 	*(ret + str_len - 1) = '\0';
 
 	return ret;
+}
+
+P_LIB_API pchar *
+p_strtok (pchar *str, const pchar *delim, pchar **buf)
+{
+	if (delim == NULL)
+		return str;
+
+#ifdef P_OS_WIN
+#  ifdef P_CC_MSVC
+	if (buf == NULL)
+		return str;
+
+	return strtok_s (str, delim, buf);
+#  else
+	P_UNUSED (buf);
+	return strtok (str, delim);
+#  endif
+#else
+	if (buf == NULL)
+		return str;
+
+	return strtok_r (str, delim, buf);
+#endif
 }
