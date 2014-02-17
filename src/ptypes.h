@@ -83,19 +83,19 @@ typedef signed int	pboolean;
 typedef char		pchar;
 /** Type for short */
 typedef short		pshort;
+/** Type for int */
+typedef int		pint;
 /** Type for long */
 typedef long		plong;
-/** Type long */
-typedef int		pint;
 
 /** Type for unsigned char */
 typedef unsigned char	puchar;
 /** Type for unsigned short */
 typedef unsigned short	pushort;
-/** Type for unsigned long */
-typedef unsigned long	pulong;
 /** Type for unsigned int */
 typedef unsigned int	puint;
+/** Type for unsigned long */
+typedef unsigned long	pulong;
 
 /** Type for float */
 typedef float		pfloat;
@@ -114,20 +114,30 @@ typedef double		pdouble;
 
 /**
   * @def PSIZE_MODIFIER
-  * @brief Modifier for #psize type used to specify literal length:
+  * @brief Platform dependent length modifier for conversion specifiers
+  * of #psize or #pssize type for printing and scanning values. It is
+  * a string literal, but doesn't include percent sign so you can add
+  * precision and length modifiers and append a conversion specifier.
   * @code
-  * psize lvar = 1024524#PSIZE_MODIFIER;
+  * psize size_val = 256;
+  * printf ("%#" PSIZE_MODIFIER "x", size_val);
   * @endcode
   */
 
 /**
   * @def PSSIZE_FORMAT
-  * @brief Format of #pssize type used to i.e. printf() such a variable
+  * @brief Platform dependent conversion specifier of #pssize type
+  * for printing and scanning values.
+  * @code
+  * pssize size_val = 100;
+  * printf ("%" PSSIZE_FORMAT, size_val);
+  * @endcode
   */
 
 /**
   * @def PSIZE_FORMAT
-  * @brief Format of #psize type used to i.e. printf() such a variable
+  * @brief Platform dependent conversion specifier of #psize type
+  * for printing and scanning values.
   */
 
 /**
@@ -199,17 +209,22 @@ typedef double		pdouble;
 
 /**
   * @def PINTPTR_MODIFIER
-  * @brief Modifier for #pintptr type used to specify literal length
+  * @brief Platform dependent length modifier for conversion specifiers
+  * of #pintptr or #puintptr type for printing and scanning values. It is
+  * a string literal, but doesn't include percent sign so you can add
+  * precision and length modifiers and append a conversion specifier.
   */
 
 /**
   * @def PINTPTR_FORMAT
-  * @brief Format of #pintptr type used to i.e. printf() such a variable
+  * @brief Platform dependent conversion specifier of #pintptr type
+  * for printing and scanning values.
   */
 
 /**
   * @def PUINTPTR_FORMAT
-  * @brief Format of #puintptr type used to i.e. printf() such a variable
+  * @brief Platform dependent conversion specifier of #puintptr type
+  * for printing and scanning values.
   */
 
 #if PLIB_SIZEOF_VOID_P == 8
@@ -244,6 +259,11 @@ typedef double		pdouble;
 
 /** Platform independent offset_t definition */
 typedef pint64 poffset;
+
+/** Casts int to 32-bit pointer */
+#define P_INT_TO_POINTER(i) ((void *) (long)(i))
+/** Casts 32-bit pointer to int */
+#define P_POINTER_TO_INT(p) ((int) (long)(p))
 
 /** Casts #ppointer to #pint value */
 #define PPOINTER_TO_INT(p)	((pint)   ((plong) (p)))
@@ -290,57 +310,76 @@ typedef pint64 poffset;
 
 /**
   * @def PINT16_MODIFIER
-  * @brief Modifier for #pint16 type used to specify literal length
+  * @brief Platform dependent length modifier for conversion specifiers
+  * of #pint16 or #puint16 type for printing and scanning values. It is
+  * a string literal, but doesn't include percent sign so you can add
+  * precision and length modifiers and append a conversion specifier.
   */
 
 /**
   * @def PINT16_FORMAT
-  * @brief Format of #pint16 type used to i.e. printf() such a variable
+  * @brief Platform dependent conversion specifier of #pint16 type
+  * for printing and scanning values.
   */
 
 /**
   * @def PUINT16_FORMAT
-  * @brief Format of #puint16 type used to i.e. printf() such a variable
+  * @brief Platform dependent conversion specifier of #puint16 type
+  * for printing and scanning values.
   */
 
 /**
   * @def PINT32_MODIFIER
-  * @brief Modifier for #pint32 type used to specify literal length
+  * @brief Platform dependent length modifier for conversion specifiers
+  * of #pint32 or #puint32 type for printing and scanning values. It is
+  * a string literal, but doesn't include percent sign so you can add
+  * precision and length modifiers and append a conversion specifier.
   */
 
 /**
   * @def PINT32_FORMAT
-  * @brief Format of #pint32 type used to i.e. printf() such a variable
+  * @brief Platform dependent conversion specifier of #pint32 type
+  * for printing and scanning values.
   */
 
 /**
   * @def PUINT32_FORMAT
-  * @brief Format of #puint32 type used to i.e. printf() such a variable
+  * @brief Platform dependent conversion specifier of #puint32 type
+  * for printing and scanning values.
   */
 
 /**
   * @def PINT64_MODIFIER
-  * @brief Modifier for #pint64 type used to specify literal length
+  * @brief Platform dependent length modifier for conversion specifiers
+  * of #pint64 or #puint64 type for printing and scanning values. It is
+  * a string literal, but doesn't include percent sign so you can add
+  * precision and length modifiers and append a conversion specifier.
   */
 
 /**
   * @def PINT64_FORMAT
-  * @brief Format of #pint64 type used to i.e. printf() such a variable
+  * @brief Platform dependent conversion specifier of #pint64 type
+  * for printing and scanning values.
   */
 
 /**
   * @def PUINT64_FORMAT
-  * @brief Format of #puint64 type used to i.e. printf() such a variable
+  * @brief Platform dependent conversion specifier of #puint64 type
+  * for printing and scanning values.
   */
 
 /**
   * @def POFFSET_MODIFIER
-  * @brief Modifier for #poffset type used to specify literal length
+  * @brief Platform dependent length modifier for conversion specifiers
+  * of #poffset type for printing and scanning values. It is
+  * a string literal, but doesn't include percent sign so you can add
+  * precision and length modifiers and append a conversion specifier.
   */
 
 /**
   * @def POFFSET_FORMAT
-  * @brief Format of #poffset type used to i.e. printf() such a variable
+  * @brief Platform dependent conversion specifier of #poffset type
+  * for printing and scanning values.
   */
 
 #if defined (P_OS_WIN) && defined (P_CC_MSVC)

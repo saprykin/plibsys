@@ -99,9 +99,6 @@ BOOST_AUTO_TEST_CASE (pmacros_general_test)
 
 	pint result = unused_result_test_func ();
 
-	ppointer pointer = PINT_TO_POINTER (128);
-	BOOST_CHECK (PPOINTER_TO_INT (pointer) == 128);
-
 	P_WARNING ("Test warning output");
 	P_ERROR ("Test error output");
 	P_DEBUG ("Test debug output");

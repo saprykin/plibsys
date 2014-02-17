@@ -334,11 +334,6 @@
 #  define P_NO_RETURN
 #endif
 
-/** Casts int to 32-bit pointer */
-#define P_INT_TO_POINTER(i) ((void *) (long)(i))
-/** Casts 32-bit pointer to int */
-#define P_POINTER_TO_INT(p) ((int) (long)(p))
-
 /**
  * @def P_UNUSED
  * @brief Macro to by-pass compiler warning on unused variables
