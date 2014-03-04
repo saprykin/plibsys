@@ -102,6 +102,7 @@ __p_shm_create_handle (PShm *shm)
 
 	if ((shm->addr = mmap (NULL, shm->size, flags, MAP_SHARED, fd, 0)) == (void *) -1) {
 		P_ERROR ("PShm: mmap failed");
+		shm->addr = NULL;
 		close (fd);
 		__p_shm_clean_handle (shm);
 		return FALSE;
@@ -126,7 +127,7 @@ __p_shm_clean_handle (PShm *shm)
 	if (shm == NULL)
 		return;
 
-	if (shm->addr > 0 && munmap (shm->addr, shm->size) == -1)
+	if (shm->addr != NULL && munmap (shm->addr, shm->size) == -1)
 		P_ERROR ("PShm: failed to unmap shared memory");
 
 	if (shm->shm_created && shm_unlink (shm->platform_key) == -1)

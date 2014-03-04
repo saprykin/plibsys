@@ -181,7 +181,6 @@ p_shm_new (const pchar		*name,
 
 	ret->platform_key = __p_ipc_get_platform_key (new_name, FALSE);
 	ret->perms = perms;
-
 	ret->size = size;
 
 	p_free (new_name);
