@@ -438,6 +438,10 @@ elseif (PLIB_C_COMPILER STREQUAL gcc OR PLIB_C_COMPILER STREQUAL qcc)
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wno-long-long -Wpedantic")
 endif()
 
+if (PLIB_TARGET_OS STREQUAL windows)
+	add_definitions (-D_WIN32_WINNT=0x0501)
+endif()
+
 target_link_libraries (plib ${PLIB_PLATFORM_LINK_LIBRARIES})
 target_link_libraries (plibstatic ${PLIB_PLATFORM_LINK_LIBRARIES})
 
