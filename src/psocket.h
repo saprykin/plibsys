@@ -404,6 +404,8 @@ P_LIB_API void			p_socket_set_keepalive		(PSocket 		*socket,
  * @param blocking Whether to set @a socket to blocking mode.
  * @note Blocking socket will wait for I/O operation to be completed before
  * returning to caller function.
+ * @note On some OS blocking timeout may be less than threads scheduling
+ * granularity, so actual timeout can be greater than specified one.
  * @since 0.0.1
  * @sa p_socket_get_blocking()
  */
