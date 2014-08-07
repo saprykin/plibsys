@@ -1,5 +1,5 @@
 /* 
- * Copyright (C) 2010-2013 Alexander Saprykin <xelfium@gmail.com>
+ * Copyright (C) 2010-2014 Alexander Saprykin <xelfium@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,7 +26,8 @@
  * (like malloc, free, etc). But this approach gives you much more power to
  * control memory allocation inside application. If you want to use your own allocator
  * consider using #PMemVTable structure and p_mem_set_vtable() method. This way
- * you can easly change memory management in the whole PLib.
+ * you can easly change memory management in the whole PLib. Do not forget to set
+ * default memory management functions before calling p_lib_shutdown().
  */
 
 #if !defined (__PLIB_H_INSIDE__) && !defined (PLIB_COMPILATION)
@@ -93,6 +94,9 @@ P_LIB_API void		p_free			(ppointer mem);
  * @param table Table of memory functions to use.
  * @return TRUE if table was accepted, FALSE otherwise.
  * @note All members of @a table must be non-NULL.
+ * @warning Do not forget to set default memory management functions
+ * before calling p_lib_shutdown() because p_lib_init() always use
+ * system allocator.
  * @since 0.0.1
  *
  * In most cases you do not need to use this function. Use it only
