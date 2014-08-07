@@ -91,8 +91,12 @@ p_strtok (pchar *str, const pchar *delim, pchar **buf)
 #  ifdef P_CC_MSVC
 	if (buf == NULL)
 		return str;
-
+#    if _MSC_VER < 1400
+	P_UNUSED (buf);
+	return strtok (str, delim);
+#    else
 	return strtok_s (str, delim, buf);
+#    endif
 #  else
 	P_UNUSED (buf);
 	return strtok (str, delim);
