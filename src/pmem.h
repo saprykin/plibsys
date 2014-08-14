@@ -85,7 +85,7 @@ P_LIB_API ppointer	p_realloc		(ppointer mem, psize n_bytes);
  *
  * You should only call this function for pointers which were obtained using
  * p_malloc(), p_malloc0() and p_realloc() function, otherwise behaviour
- * is unpredictable.
+ * is unpredictable. It checks pointer for NULL value.
  */
 P_LIB_API void		p_free			(ppointer mem);
 
