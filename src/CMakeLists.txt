@@ -130,6 +130,9 @@ endif()
 
 if (PLIB_HAS_GETTICKCOUNT_64)
 	add_definitions (-DPLIB_HAS_GETTICKCOUNT_64)
+	add_definitions (-D_WIN32_WINNT=0x0600)
+else()
+	add_definitions (-D_WIN32_WINNT=0x0501)
 endif()
 
 # Detect atomic operations
@@ -436,10 +439,6 @@ if (PLIB_C_COMPILER STREQUAL msvc)
 	endif()
 elseif (PLIB_C_COMPILER STREQUAL gcc OR PLIB_C_COMPILER STREQUAL qcc)
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wno-long-long -Wpedantic")
-endif()
-
-if (PLIB_TARGET_OS STREQUAL windows)
-	add_definitions (-D_WIN32_WINNT=0x0501)
 endif()
 
 target_link_libraries (plib ${PLIB_PLATFORM_LINK_LIBRARIES})
