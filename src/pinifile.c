@@ -1,5 +1,5 @@
 /* 
- * Copyright (C) 2012-2013 Alexander Saprykin <xelfium@gmail.com>
+ * Copyright (C) 2012-2015 Alexander Saprykin <xelfium@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -387,7 +387,7 @@ p_ini_file_parameter_double (const PIniFile	*file,
 	if ((val = __p_ini_find_parameter (file, section, key)) == NULL)
 		return default_val;
 
-	ret = atof (val);
+	ret = p_strtod (val);
 	p_free (val);
 
 	return ret;
