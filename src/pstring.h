@@ -1,5 +1,5 @@
 /* 
- * Copyright (C) 2011-2014 Alexander Saprykin <xelfium@gmail.com>
+ * Copyright (C) 2011-2015 Alexander Saprykin <xelfium@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -89,6 +89,18 @@ P_LIB_API pchar *	p_strchomp	(const pchar *str);
 P_LIB_API pchar *	p_strtok	(pchar		*str,
 					 const pchar	*delim,
 					 pchar		**buf);
+
+/**
+ * @brief Converts string to @a double without locale dependency
+ * @param str String to convert.
+ * @return Floating point value in case of success, 0 otherwise.
+ * @since 0.0.1
+ *
+ * Since atof() system call is locale dependent, you can use this
+ * call to convert string variables to @a double values. The
+ * decimal point is '.' as in 'C' locale.
+ */
+P_LIB_API double	p_strtod	(const pchar	*str);
 
 P_END_DECLS
 

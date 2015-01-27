@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2011-2014 Alexander Saprykin <xelfium@gmail.com>
+ * Copyright (C) 2011-2015 Alexander Saprykin <xelfium@gmail.com>
+ * Copyright (C) 2009 Tom Van Baak (tvb) www.LeapSecond.com
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,6 +22,8 @@
 
 #include "pstring.h"
 #include "pmem.h"
+
+#define P_STR_MAX_EXPON		308
 
 P_LIB_API pchar *
 p_strdup (const pchar *str)
@@ -107,4 +110,91 @@ p_strtok (pchar *str, const pchar *delim, pchar **buf)
 
 	return strtok_r (str, delim, buf);
 #endif
+}
+
+P_LIB_API double
+p_strtod (const pchar *str)
+{
+	double		sign;
+	double		value;
+	double		scale;
+	double		pow10;
+	unsigned int	expon;
+	int		frac;
+	pchar		*orig_str, *strp;
+
+	orig_str = p_strchomp (str);
+
+	if (orig_str == NULL)
+		return 0.0;
+
+	strp = orig_str;
+	sign = 1.0;
+
+	if (*strp == '-') {
+		sign = -1.0;
+		strp += 1;
+	} else if (*strp == '+')
+		strp += 1;
+
+	/* Get digits before decimal point or exponent, if any */
+	for (value = 0.0; isdigit ((int) *strp); strp += 1)
+		value = value * 10.0 + (*strp - '0');
+
+	/* Get digits after decimal point, if any */
+	if (*strp == '.') {
+		pow10 = 10.0;
+		strp += 1;
+
+		while (isdigit ((int) *strp)) {
+			value += (*strp - '0') / pow10;
+			pow10 *= 10.0;
+			strp += 1;
+		}
+	}
+
+	/* Handle exponent, if any */
+	frac	= 0;
+	scale	= 1.0;
+
+	if ((*strp == 'e') || (*strp == 'E')) {
+		/* Get sign of exponent, if any */
+		strp += 1;
+
+		if (*strp == '-') {
+			frac = 1;
+			strp += 1;
+
+		} else if (*strp == '+')
+			strp += 1;
+
+		/* Get digits of exponent, if any */
+		for (expon = 0; isdigit ((int) *strp); strp += 1) {
+			expon = expon * 10 + (*strp - '0');
+		}
+
+		if (expon > P_STR_MAX_EXPON)
+			expon = P_STR_MAX_EXPON;
+
+		/* Calculate scaling factor */
+		while (expon >= 50) {
+			scale *= 1e50;
+			expon -= 50;
+		}
+
+		while (expon >= 8) {
+			scale *= 1e8;
+			expon -= 8;
+		}
+
+		while (expon > 0) {
+			scale *= 10.0;
+			expon -= 1;
+		}
+	}
+
+	p_free (orig_str);
+
+	/* Return signed and scaled floating point result */
+	return sign * (frac ? (value / scale) : (value * scale));
 }
