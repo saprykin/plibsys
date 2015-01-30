@@ -261,9 +261,9 @@ typedef double		pdouble;
 typedef pint64 poffset;
 
 /** Casts int to 32-bit pointer */
-#define P_INT_TO_POINTER(i) ((void *) (long)(i))
+#define P_INT_TO_POINTER(i) ((void *) (long) (i))
 /** Casts 32-bit pointer to int */
-#define P_POINTER_TO_INT(p) ((int) (long)(p))
+#define P_POINTER_TO_INT(p) ((int) (long) (p))
 
 /** Casts #ppointer to #pint value */
 #define PPOINTER_TO_INT(p)	((pint)   ((plong) (p)))
@@ -271,9 +271,9 @@ typedef pint64 poffset;
 #define PPOINTER_TO_UINT(p)	((puint)  ((pulong) (p)))
 
 /** Casts #pint value to #ppointer */
-#define PINT_TO_POINTER(i)	((ppointer)  (i))
+#define PINT_TO_POINTER(i)	((ppointer)  (plong) (i))
 /** Casts #puint value to #ppointer */
-#define PUINT_TO_POINTER(u)	((ppointer)  (u))
+#define PUINT_TO_POINTER(u)	((ppointer)  (pulong) (u))
 
 /** Casts #psize value to #ppointer */
 #define PSIZE_TO_POINTER(i)	((ppointer)  ((psize) (i)))

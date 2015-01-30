@@ -23,7 +23,7 @@
 
 #include <boost/test/unit_test.hpp>
 
-static pint unused_result_test_func () P_GNUC_WARN_UNUSED_RESULT
+static P_GNUC_WARN_UNUSED_RESULT pint unused_result_test_func ()
 {
 	return 0;
 }
