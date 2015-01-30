@@ -13,6 +13,21 @@ plib_detect_target_platform (PLIB_TARGET_PLATFORM)
 plib_detect_c_compiler (PLIB_C_COMPILER)
 string (TOLOWER ${CMAKE_SYSTEM_NAME} PLIB_TARGET_OS)
 
+# CMP0042, see http://www.cmake.org/Wiki/CMake_RPATH_handling
+if (PLIB_TARGET_OS STREQUAL darwin)
+	set (CMAKE_MACOSX_RPATH TRUE)
+	set (CMAKE_SKIP_BUILD_RPATH  FALSE)
+	set (CMAKE_BUILD_WITH_INSTALL_RPATH FALSE) 
+	set (CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
+	set (CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
+
+	list (FIND CMAKE_PLATFORM_IMPLICIT_LINK_DIRECTORIES "${CMAKE_INSTALL_PREFIX}/lib" isSystemDir)
+
+	if ("${isSystemDir}" STREQUAL "-1")
+		set (CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
+	endif ("${isSystemDir}" STREQUAL "-1")
+endif()
+
 if (NOT EXISTS "${PROJECT_SOURCE_DIR}/platforms/${PLIB_TARGET_PLATFORM}/")
 	message (FATAL_ERROR "PLib doesn't support unknown platform ${PLIB_TARGET_PLATFORM}")
 endif()
