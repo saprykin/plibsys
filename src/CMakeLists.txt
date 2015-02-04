@@ -62,6 +62,7 @@ set (PLIB_PUBLIC_HDRS
 	pmacros.h
 	pcondvariable.h
 	pcryptohash.h
+	pdir.h
 	pfile.h
 	pgost3411.h
 	phashtable.h
@@ -92,6 +93,7 @@ set (PLIB_PRIVATE_HDRS
 
 set (PLIB_SRCS
 	pcryptohash.c
+	pdir.c
 	pfile.c
 	pgost3411.c
 	phashtable.c
@@ -123,6 +125,10 @@ if (PLIB_TIME_PROFILER_MODEL STREQUAL "")
 	set (PLIB_TIME_PROFILER_MODEL generic)
 endif()
 
+if (PLIB_DIR_MODEL STREQUAL "")
+	set (PLIB_DIR_MODEL none)
+endif()
+
 set (PLIB_PLATFORM_SRCS
 	pcondvariable-${PLIB_THREAD_MODEL}.c
 	pmutex-${PLIB_THREAD_MODEL}.c
@@ -130,6 +136,7 @@ set (PLIB_PLATFORM_SRCS
 	pshm-${PLIB_IPC_MODEL}.c
 	puthread-${PLIB_THREAD_MODEL}.c
 	ptimeprofiler-${PLIB_TIME_PROFILER_MODEL}.c
+	pdir-${PLIB_DIR_MODEL}.c
 )
 
 if (PLIB_TARGET_OS STREQUAL windows)

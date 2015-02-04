@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2013 Alexander Saprykin <xelfium@gmail.com>
+ * Copyright (C) 2015 Alexander Saprykin <xelfium@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,33 +16,15 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA.
  */
 
-#ifndef __PLIB_H__
-#define __PLIB_H__
-
-#define __PLIB_H_INSIDE__
-
-#include "plibconfig.h"
-#include "patomic.h"
-#include "pcondvariable.h"
-#include "pcryptohash.h"
-#include "pdir.h"
-#include "pfile.h"
-#include "phashtable.h"
-#include "pinifile.h"
-#include "plist.h"
-#include "pmacros.h"
-#include "pmain.h"
 #include "pmem.h"
-#include "pmutex.h"
-#include "pprocess.h"
-#include "psemaphore.h"
-#include "pshm.h"
-#include "pshmbuffer.h"
-#include "psocket.h"
-#include "psocketaddress.h"
-#include "pstring.h"
-#include "ptimeprofiler.h"
-#include "ptypes.h"
-#include "puthread.h"
+#include "pdir.h"
 
-#endif /* __PLIB_H__ */
+P_LIB_API void
+p_dir_entry_free (PDirEntry *entry)
+{
+	if (entry == NULL)
+		return;
+
+	p_free (entry->name);
+	p_free (entry);
+}
