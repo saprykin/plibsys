@@ -302,11 +302,11 @@ typedef pint64 poffset;
 #define P_MAXUINT32	((puint32) 0xFFFFFFFF)
 
 /** Min value for 64-bit int */
-#define P_MININT64	((pint64)  0x8000000000000000)
+#define P_MININT64	((pint64)  0x8000000000000000LL)
 /** Max value for 64-bit int */
-#define P_MAXINT64	((pint64)  0x7FFFFFFFFFFFFFFF)
+#define P_MAXINT64	((pint64)  0x7FFFFFFFFFFFFFFFLL)
 /** Max value for 64-bit unsigned int */
-#define P_MAXUINT64	((puint64) 0xFFFFFFFFFFFFFFFFU)
+#define P_MAXUINT64	((puint64) 0xFFFFFFFFFFFFFFFFULL)
 
 /**
   * @def PINT16_MODIFIER
@@ -725,12 +725,12 @@ typedef pint64 poffset;
  */
 #define PUINT64_SWAP_BYTES(val) ((puint64) (				\
 	(((puint64) (val))  >> 56) |					\
-	((((puint64) (val)) << 40) & ((puint64) 0x00FF000000000000U)) |	\
-	((((puint64) (val)) << 24) & ((puint64) 0x0000FF0000000000U)) |	\
-	((((puint64) (val)) <<  8) & ((puint64) 0x000000FF00000000U)) |	\
-	((((puint64) (val)) >>  8) & ((puint64) 0x00000000FF000000U)) |	\
-	((((puint64) (val)) >> 24) & ((puint64) 0x0000000000FF0000U)) |	\
-	((((puint64) (val)) >> 40) & ((puint64) 0x000000000000FF00U)) |	\
+	((((puint64) (val)) << 40) & ((puint64) 0x00FF000000000000ULL)) |	\
+	((((puint64) (val)) << 24) & ((puint64) 0x0000FF0000000000ULL)) |	\
+	((((puint64) (val)) <<  8) & ((puint64) 0x000000FF00000000ULL)) |	\
+	((((puint64) (val)) >>  8) & ((puint64) 0x00000000FF000000ULL)) |	\
+	((((puint64) (val)) >> 24) & ((puint64) 0x0000000000FF0000ULL)) |	\
+	((((puint64) (val)) >> 40) & ((puint64) 0x000000000000FF00ULL)) |	\
 	(((puint64) (val))  << 56)))
 
 /* Functions, similar to ?_TO_? functions */
