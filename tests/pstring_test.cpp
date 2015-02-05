@@ -194,28 +194,28 @@ BOOST_AUTO_TEST_CASE (strtod_test)
 	p_lib_init ();
 
 	/* Incorrect input */
-	BOOST_CHECK (fabs (p_strtod (NULL)) <= DBL_EPSILON);
-	BOOST_CHECK (fabs (p_strtod ("e2")) <= DBL_EPSILON);
-	BOOST_CHECK (fabs (p_strtod ("e-2")) <= DBL_EPSILON);
-	BOOST_CHECK (fabs (p_strtod ("-e2")) <= DBL_EPSILON);
-	BOOST_CHECK (fabs (p_strtod ("-e-2")) <= DBL_EPSILON);
-	BOOST_CHECK (fabs (p_strtod ("0,3")) <= DBL_EPSILON);
-	BOOST_CHECK (fabs (p_strtod ("12,3") - 12.0) <= DBL_EPSILON);
+	BOOST_CHECK_CLOSE (p_strtod (NULL), 0.0, 0.0001);
+	BOOST_CHECK_CLOSE (p_strtod ("e2"), 0.0, 0.0001);
+	BOOST_CHECK_CLOSE (p_strtod ("e-2"), 0.0, 0.0001);
+	BOOST_CHECK_CLOSE (p_strtod ("-e2"), 0.0, 0.0001);
+	BOOST_CHECK_CLOSE (p_strtod ("-e-2"), 0.0, 0.0001);
+	BOOST_CHECK_CLOSE (p_strtod ("0,3"), 0.0, 0.0001);
+	BOOST_CHECK_CLOSE (p_strtod ("12,3"), 12.0, 0.0001);
 
 	/* Correct input */
-	BOOST_CHECK (fabs (p_strtod ("0")) <= DBL_EPSILON);
-	BOOST_CHECK (fabs (p_strtod ("0.0")) <= DBL_EPSILON);
-	BOOST_CHECK (fabs (p_strtod ("-0")) <= DBL_EPSILON);
-	BOOST_CHECK (fabs (p_strtod ("-0.0")) <= DBL_EPSILON);
-	BOOST_CHECK (fabs (p_strtod ("3.14") - 3.14) <= DBL_EPSILON);
-	BOOST_CHECK (fabs (p_strtod ("-12.256") - (-12.256)) <= DBL_EPSILON);
-	BOOST_CHECK (fabs (p_strtod ("0.056") - 0.056) <= DBL_EPSILON);
-	BOOST_CHECK (fabs (p_strtod ("-0.057") - (-0.057)) <= DBL_EPSILON);
-	BOOST_CHECK (fabs (p_strtod ("1.5423e2") - 154.23) <= DBL_EPSILON);
-	BOOST_CHECK (fabs (p_strtod ("1e3") - 1000.0) <= DBL_EPSILON);
-	BOOST_CHECK (fabs (p_strtod ("-2.56e1") - (-25.6)) <= DBL_EPSILON);
-	BOOST_CHECK (fabs (p_strtod ("123e-2") - 1.23) <= DBL_EPSILON);
-	BOOST_CHECK (fabs (p_strtod ("3.14e-1") - 0.314) <= DBL_EPSILON);
+	BOOST_CHECK_CLOSE (p_strtod ("0"), 0.0, 0.0001);
+	BOOST_CHECK_CLOSE (p_strtod ("0.0"), 0.0, 0.0001);
+	BOOST_CHECK_CLOSE (p_strtod ("-0"), 0.0, 0.0001);
+	BOOST_CHECK_CLOSE (p_strtod ("-0.0"), 0.0, 0.0001);
+	BOOST_CHECK_CLOSE (p_strtod ("3.14"), 3.14, 0.0001);
+	BOOST_CHECK_CLOSE (p_strtod ("-12.256"), -12.256, 0.0001);
+	BOOST_CHECK_CLOSE (p_strtod ("0.056"), 0.056, 0.0001);
+	BOOST_CHECK_CLOSE (p_strtod ("-0.057"), -0.057, 0.0001);
+	BOOST_CHECK_CLOSE (p_strtod ("1.5423e2"), 154.23, 0.0001);
+	BOOST_CHECK_CLOSE (p_strtod ("1e3"), 1000.0, 0.0001);
+	BOOST_CHECK_CLOSE (p_strtod ("-2.56e1"), -25.6, 0.0001);
+	BOOST_CHECK_CLOSE (p_strtod ("123e-2"), 1.23, 0.0001);
+	BOOST_CHECK_CLOSE (p_strtod ("3.14e-1"), 0.314, 0.0001);
 
 	p_lib_shutdown ();
 }

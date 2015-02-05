@@ -85,7 +85,7 @@ BOOST_AUTO_TEST_CASE (pinifile_bad_input_test)
 	BOOST_CHECK (p_ini_file_sections (ini) == NULL);
 	BOOST_CHECK (p_ini_file_keys (ini, "string_section") == NULL);
 	BOOST_CHECK (p_ini_file_parameter_boolean (ini, "boolean_section", "boolean_parameter_1", FALSE) == FALSE);
-	BOOST_CHECK_CLOSE_FRACTION (p_ini_file_parameter_double (ini, "numeric_section", "float_parameter_1", 1.0), 1.0, DBL_EPSILON);
+	BOOST_CHECK_CLOSE (p_ini_file_parameter_double (ini, "numeric_section", "float_parameter_1", 1.0), 1.0, 0.0001);
 	BOOST_CHECK (p_ini_file_parameter_int (ini, "numeric_section", "int_parameter_1", 0) == 0);
 	BOOST_CHECK (p_ini_file_parameter_list (ini, "list_section", "list_parameter_1") == NULL);
 	BOOST_CHECK (p_ini_file_parameter_string (ini, "string_section", "string_parameter_1", NULL) == NULL);
@@ -127,8 +127,8 @@ BOOST_AUTO_TEST_CASE (pinifile_read_test)
 	BOOST_CHECK (p_ini_file_parameter_int (ini, "numeric_section", "int_parameter_1", -1) == 4);
 	BOOST_CHECK (p_ini_file_parameter_int (ini, "numeric_section", "int_parameter_2", -1) == 5);
 	BOOST_CHECK (p_ini_file_parameter_int (ini, "numeric_section", "int_parameter_3", -1) == 6);
-	BOOST_CHECK_CLOSE_FRACTION (p_ini_file_parameter_double (ini, "numeric_section", "float_parameter_1", -1.0), 3.24, DBL_EPSILON);
-	BOOST_CHECK_CLOSE_FRACTION (p_ini_file_parameter_double (ini, "numeric_section", "float_parameter_2", -1.0), 0.15, DBL_EPSILON);
+	BOOST_CHECK_CLOSE (p_ini_file_parameter_double (ini, "numeric_section", "float_parameter_1", -1.0), 3.24, 0.0001);
+	BOOST_CHECK_CLOSE (p_ini_file_parameter_double (ini, "numeric_section", "float_parameter_2", -1.0), 0.15, 0.0001);
 	BOOST_CHECK (p_ini_file_is_key_exists (ini, "numeric_section", "int_parameter_1") == TRUE);
 	BOOST_CHECK (p_ini_file_is_key_exists (ini, "numeric_section", "float_parameter_1") == TRUE);
 
@@ -200,7 +200,7 @@ BOOST_AUTO_TEST_CASE (pinifile_read_test)
 	for (PList *iter = list_val; iter != NULL; iter = iter->next)
 		flt_sum +=  atof ((const pchar *) (iter->data));
 
-	BOOST_CHECK_CLOSE_FRACTION (flt_sum, 10.0, DBL_EPSILON);
+	BOOST_CHECK_CLOSE (flt_sum, 10.0, 0.0001);
 	p_list_foreach (list_val, (PFunc) p_free, NULL);
 	p_list_free (list_val);
 
