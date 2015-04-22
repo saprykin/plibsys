@@ -29,6 +29,7 @@
 #include "pfile.h"
 #include "phashtable.h"
 #include "pinifile.h"
+#include "plibraryloader.h"
 #include "plist.h"
 #include "pmacros.h"
 #include "pmain.h"

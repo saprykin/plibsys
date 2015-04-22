@@ -4,7 +4,7 @@ set (PLIB_TIME_PROFILER_MODEL posix)
 set (PLIB_DIR_MODEL posix)
 set (PLIB_PLATFORM_CONFIG_PATH "../common/posix/pplatform.h")
 
-set (PLIB_PLATFORM_LINK_LIBRARIES -pthread rt)
+set (PLIB_PLATFORM_LINK_LIBRARIES -pthread rt dl)
 
 set (PLIB_PLATFORM_DEFINES
 	-D_REENTRANT

@@ -68,6 +68,7 @@ set (PLIB_PUBLIC_HDRS
 	phashtable.h
 	pinifile.h
 	plib.h
+	plibraryloader.h
 	plist.h
 	pmain.h
 	pmd5.h
@@ -98,6 +99,7 @@ set (PLIB_SRCS
 	pgost3411.c
 	phashtable.c
 	pinifile.c
+	plibraryloader.c
 	plist.c
 	pmain.c
 	pmem.c
