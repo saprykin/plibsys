@@ -61,7 +61,7 @@ BOOST_AUTO_TEST_CASE (puthread_bad_input_test)
 	p_lib_init ();
 
 	BOOST_CHECK (p_uthread_create (NULL, NULL, false) == NULL);
-	BOOST_CHECK (p_uthread_create_full(NULL, NULL, false, P_UTHREAD_PRIORITY_NORMAL) == NULL);
+	BOOST_CHECK (p_uthread_create_full (NULL, NULL, false, P_UTHREAD_PRIORITY_NORMAL) == NULL);
 	BOOST_CHECK (p_uthread_join (NULL) == -1);
 	BOOST_CHECK (p_uthread_set_priority (NULL, P_UTHREAD_PRIORITY_NORMAL));
 	p_uthread_free (NULL);
