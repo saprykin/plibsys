@@ -439,6 +439,7 @@ endif()
 
 set_target_properties (plib PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${OUTPUT_DIR})
 set_target_properties (plib PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${OUTPUT_DIR})
+set_target_properties (plib PROPERTIES ARCHIVE_OUTPUT_DIRECTORY ${OUTPUT_DIR})
 set_target_properties (plibstatic PROPERTIES ARCHIVE_OUTPUT_DIRECTORY ${OUTPUT_DIR})
 
 if (PLIB_C_COMPILER STREQUAL msvc)
