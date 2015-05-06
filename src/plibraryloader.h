@@ -44,6 +44,9 @@ P_BEGIN_DECLS
 /** PLibraryLoader opaque data struct */
 typedef struct _PLibraryLoader PLibraryLoader;
 
+/** Pointer to function address */
+typedef void (*PFuncAddr) (void);
+
 /**
  * @brief Loads dynamic library.
  * @param path Path to the library file.
@@ -68,7 +71,7 @@ P_LIB_API PLibraryLoader *	p_library_loader_new		(const pchar *path);
  * actually doesn't mean the failed result. You can additionally check error
  * result using p_library_loader_get_last_error().
  */
-P_LIB_API ppointer		p_library_loader_get_symbol	(PLibraryLoader *loader, const pchar *sym);
+P_LIB_API PFuncAddr		p_library_loader_get_symbol	(PLibraryLoader *loader, const pchar *sym);
 
 /**
  * @brief Frees memory and allocated resources of #PLibraryLoader.

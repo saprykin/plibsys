@@ -73,18 +73,18 @@ p_library_loader_new (const pchar *path)
 	return loader;
 }
 
-P_LIB_API ppointer
+P_LIB_API PFuncAddr
 p_library_loader_get_symbol (PLibraryLoader *loader, const pchar *sym)
 {
-	ppointer ret_sym = NULL;
+	PFuncAddr ret_sym = NULL;
 
 	if (loader == NULL || sym == NULL || loader->handle == NULL)
 		return NULL;
 
 #ifdef P_OS_WIN
-	ret_sym = GetProcAddress (loader->handle, sym);
+	ret_sym = (PFuncAddr) GetProcAddress (loader->handle, sym);
 #else
-	ret_sym = dlsym (loader->handle, sym);
+	ret_sym = (PFuncAddr) dlsym (loader->handle, sym);
 #endif
 
 	return ret_sym;
