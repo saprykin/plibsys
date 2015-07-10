@@ -1,31 +1,51 @@
 ======= About PLib =======
-PLib is a C library with some helpful routines, especially for IPC.
+PLib is a cross-platform C library with some helpful routines.
 Do not confuse with PLIB which is using for game and 3D development.
 
-PLib is a cross-platform library, it was tested on the following
-platforms:
-
-* GNU/Linux
-* Solaris 2.5.1
-* Windows (XP, 7)
-* QNX 6.4.1
-
-It should also work on other *nix systems (e.g. Mac OS X), but it
-wasn't tested yet.
-
+======= Features =======
 PLib gives you:
 
+* Platform independent data types
+* Threads: POSIX, Solaris and Win32
+* Mutexes: POSIX, Solaris and Win32
+* Conditional variables: POSIX, Solaris and Win32
 * System-wide semaphores: POSIX, System V and Win32
 * System-wide shared memory: POSIX, System V and Win32
-* Basic threads support: POSIX, Solaris and Win32
-* Mutexes: POSIX, Solaris and Win32
+* Atomic operations
+* Sockets support (UDP, TCP, SCTP)
 * Hash functions: MD5, SHA-1, GOST (R 34.11-94)
-* Socket support (UDP, TCP)
-* Some others useful routines
+* INI files parser
+* High resolution time profiler
+* Files and directories
+* Useful routines for linked lists, strings, hash tables
+* Macros for OS and compiler detection
 
+======= Platforms =======
+PLib is a cross-platform, highly portable library, it was tested on
+the following platforms:
 
-======= Patches ========
-You can send patches directly to my email:
-+-----------------------------------------+
-| xelfium@gmail.com (Alexander Saprykin). |
-+-----------------------------------------+
+* GNU/Linux
+* OS X
+* Windows
+* FreeBSD, NetBSD, OpenBSD
+* Solaris 10
+* QNX 6
+
+It should also work on other *nix systems with or without minimal
+efforts.
+
+======= Compilers =======
+PLib was tested with the following compilers:
+
+* MSVC (x32, x64) 2003 and above
+* MinGW
+* GCC (x32, x64)
+* CLang
+* QCC
+
+======= Building =======
+Use CMake to build PLib for any target platform.
+
+======= License =======
+PLib is distributed under the terms of GNU GPLv2 license.
+
