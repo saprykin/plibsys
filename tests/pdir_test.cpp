@@ -67,7 +67,7 @@ BOOST_AUTO_TEST_CASE (pdir_general_test)
 	BOOST_CHECK (p_dir_is_exists (PDIR_TEST_DIR) == TRUE);
 	BOOST_CHECK (p_dir_is_exists (PDIR_TEST_DIR_IN) == TRUE);
 
-	PDir *dir = p_dir_new (PDIR_TEST_DIR);
+	PDir *dir = p_dir_new (PDIR_TEST_DIR"/");
 
 	BOOST_CHECK (dir != NULL);
 
@@ -155,7 +155,7 @@ BOOST_AUTO_TEST_CASE (pdir_general_test)
 	BOOST_CHECK (p_dir_is_exists (PDIR_TEST_DIR) == FALSE);
 
 	pchar *orig_path = p_dir_get_path (dir);
-	BOOST_CHECK (strcmp (orig_path, PDIR_TEST_DIR) == 0);
+	BOOST_CHECK (strcmp (orig_path, PDIR_TEST_DIR"/") == 0);
 	p_free (orig_path);
 
 	p_dir_free (dir);
