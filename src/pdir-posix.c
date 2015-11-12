@@ -62,7 +62,7 @@ p_dir_new (const pchar	*path)
 	pathp = ret->path + strlen (ret->path) - 1;
 
 	if (*pathp == '/' || *pathp == '\\')
-		pathp = '\0';
+		*pathp = '\0';
 
 	return ret;
 }
