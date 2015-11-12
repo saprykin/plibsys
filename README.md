@@ -17,6 +17,7 @@ PLib gives you:
 * INI files parser
 * High resolution time profiler
 * Files and directories
+* Dynamic library loading
 * Useful routines for linked lists, strings, hash tables
 * Macros for OS and compiler detection
 * Fully covered with unit tests robust code
