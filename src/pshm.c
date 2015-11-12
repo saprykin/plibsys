@@ -22,3 +22,8 @@
 
 #include <stdlib.h>
 #include <string.h>
+
+/* Just to shut up OS X linker */
+void pshm_osx_linker_shut_up ()
+{
+}
