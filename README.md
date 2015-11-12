@@ -19,6 +19,7 @@ PLib gives you:
 * Files and directories
 * Useful routines for linked lists, strings, hash tables
 * Macros for OS and compiler detection
+* Fully covered with unit tests robust code
 
 ======= Platforms =======
 PLib is a cross-platform, highly portable library, it was tested on
