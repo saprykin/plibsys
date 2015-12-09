@@ -1,8 +1,10 @@
 ======= About PLib =======
+
 PLib is a cross-platform C library with some helpful routines.
 Do not confuse with PLIB which is using for game and 3D development.
 
 ======= Features =======
+
 PLib gives you:
 
 * Platform independent data types
@@ -23,6 +25,7 @@ PLib gives you:
 * Fully covered with unit tests robust code
 
 ======= Platforms =======
+
 PLib is a cross-platform, highly portable library, it was tested on
 the following platforms:
 
@@ -37,6 +40,7 @@ It should also work on other *nix systems with or without minimal
 efforts.
 
 ======= Compilers =======
+
 PLib was tested with the following compilers:
 
 * MSVC (x32, x64) 2003 and above
@@ -46,8 +50,10 @@ PLib was tested with the following compilers:
 * QCC
 
 ======= Building =======
+
 Use CMake to build PLib for any target platform.
 
 ======= License =======
+
 PLib is distributed under the terms of GNU GPLv2 license.
 
