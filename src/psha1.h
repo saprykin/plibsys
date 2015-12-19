@@ -1,5 +1,5 @@
-/* 
- * Copyright (C) 2010 Alexander Saprykin <xelfium@gmail.com>
+/*
+ * Copyright (C) 2010-2015 Alexander Saprykin <xelfium@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,21 +25,20 @@
 #ifndef __PSHA1_H__
 #define __PSHA1_H__
 
-#include <ptypes.h>
-#include <pmacros.h>
+#include "ptypes.h"
+#include "pmacros.h"
 
 typedef struct _PHashSHA1 PHashSHA1;
 
 P_BEGIN_DECLS
 
-P_LIB_API PHashSHA1 *		p_sha1_new	(void);
-P_LIB_API void			p_sha1_update	(PHashSHA1 *ctx, const puchar *data, psize len);
-P_LIB_API void			p_sha1_finish	(PHashSHA1 *ctx);
-P_LIB_API const puchar *	p_sha1_digest	(PHashSHA1 *ctx);
-P_LIB_API void			p_sha1_reset	(PHashSHA1 *ctx);
-P_LIB_API void			p_sha1_free	(PHashSHA1 *ctx);
+PHashSHA1 *	__p_sha1_new	(void);
+void		__p_sha1_update	(PHashSHA1 *ctx, const puchar *data, psize len);
+void		__p_sha1_finish	(PHashSHA1 *ctx);
+const puchar *	__p_sha1_digest	(PHashSHA1 *ctx);
+void		__p_sha1_reset	(PHashSHA1 *ctx);
+void		__p_sha1_free	(PHashSHA1 *ctx);
 
 P_END_DECLS
 
 #endif /* __PSHA1_H__ */
-

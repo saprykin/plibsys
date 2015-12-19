@@ -1,5 +1,5 @@
-/* 
- * Copyright (C) 2010-2013 Alexander Saprykin <xelfium@gmail.com>
+/*
+ * Copyright (C) 2010-2015 Alexander Saprykin <xelfium@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -167,8 +167,8 @@ __p_md5_process (PHashMD5		*ctx,
 	ctx->hash[3] += D;
 }
 
-P_LIB_API void
-p_md5_reset (PHashMD5 *ctx)
+void
+__p_md5_reset (PHashMD5 *ctx)
 {
 	if (ctx == NULL)
 		return;
@@ -184,23 +184,23 @@ p_md5_reset (PHashMD5 *ctx)
 	ctx->hash[3] = 0x10325476;
 }
 
-P_LIB_API PHashMD5 *
-p_md5_new (void)
+PHashMD5 *
+__p_md5_new (void)
 {
 	PHashMD5 *ret;
 
 	if ((ret = p_malloc0 (sizeof (PHashMD5))) == NULL)
 		return NULL;
 
-	p_md5_reset (ret);
+	__p_md5_reset (ret);
 
 	return ret;
 }
 
-P_LIB_API void
-p_md5_update (PHashMD5			*ctx,
-	      const puchar		*data,
-	      psize			len)
+void
+__p_md5_update (PHashMD5	*ctx,
+	      const puchar	*data,
+	      psize		len)
 {
 	puint32	left, to_fill;
 
@@ -237,11 +237,11 @@ p_md5_update (PHashMD5			*ctx,
 		memcpy (ctx->buf.buf + left, data, len);
 }
 
-P_LIB_API void
-p_md5_finish (PHashMD5		*ctx)
+void
+__p_md5_finish (PHashMD5 *ctx)
 {
-	puint32		high, low;
-	pint		left, last;
+	puint32	high, low;
+	pint	left, last;
 
 	if (ctx == NULL)
 		return;
@@ -254,7 +254,7 @@ p_md5_finish (PHashMD5		*ctx)
 	     | ctx->len_low >> 29;
 
 	if (last > 0)
-		p_md5_update (ctx, md5_pad, last);
+		__p_md5_update (ctx, md5_pad, last);
 
 	ctx->buf.buf_w[14] = low;
 	ctx->buf.buf_w[15] = high;
@@ -265,8 +265,8 @@ p_md5_finish (PHashMD5		*ctx)
 	__p_md5_swap_bytes (ctx->hash, 4);
 }
 
-P_LIB_API const puchar *
-p_md5_digest (PHashMD5 *ctx)
+const puchar *
+__p_md5_digest (PHashMD5 *ctx)
 {
 	if (ctx == NULL)
 		return NULL;
@@ -274,8 +274,8 @@ p_md5_digest (PHashMD5 *ctx)
 	return (const puchar *) ctx->hash;
 }
 
-P_LIB_API void
-p_md5_free (PHashMD5 *ctx)
+void
+__p_md5_free (PHashMD5 *ctx)
 {
 	if (ctx == NULL)
 		return;

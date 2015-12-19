@@ -32,12 +32,12 @@
 #define P_MAX_HASH_LENGTH	32
 
 #define P_HASH_FUNCS(ctx, type) \
-	ctx->create = (void * (*) (void)) p_##type##_new;				\
-	ctx->update = (void (*) (void *, const puchar *, psize)) p_##type##_update;	\
-	ctx->finish = (void (*) (void *)) p_##type##_finish;				\
-	ctx->digest = (const puchar * (*) (void *)) p_##type##_digest;			\
-	ctx->reset = (void (*) (void *)) p_##type##_reset;				\
-	ctx->free = (void (*) (void *)) p_##type##_free;
+	ctx->create = (void * (*) (void)) __p_##type##_new;				\
+	ctx->update = (void (*) (void *, const puchar *, psize)) __p_##type##_update;	\
+	ctx->finish = (void (*) (void *)) __p_##type##_finish;				\
+	ctx->digest = (const puchar * (*) (void *)) __p_##type##_digest;		\
+	ctx->reset = (void (*) (void *)) __p_##type##_reset;				\
+	ctx->free = (void (*) (void *)) __p_##type##_free;
 
 struct _PCryptoHash {
 	PCryptoHashType	type;

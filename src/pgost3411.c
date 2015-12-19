@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2014 Alexander Saprykin <xelfium@gmail.com>
+ * Copyright (C) 2010-2015 Alexander Saprykin <xelfium@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -75,7 +75,7 @@ static void __p_gost3411_process (PHashGOST3411 *ctx, const puint32 data[8]);
 	    |  (puint32) K_block [5][(CM1 >> 20) & 0xF] << 20		\
 	    |  (puint32) K_block [6][(CM1 >> 24) & 0xF] << 24		\
 	    |  (puint32) K_block [7][(CM1 >> 28) & 0xF] << 28);		\
-		 	 	 	 	 	 	 	\
+									\
 	CM1 = ((CM1 << 11) | (CM1 >> 21)) ^ (N)[1];			\
 	(N)[1] = (N)[0];						\
 	(N)[0] = CM1;							\
@@ -152,17 +152,17 @@ static void __p_gost3411_process (PHashGOST3411 *ctx, const puint32 data[8]);
 		 | (((data)[5] << 16)	& 0x00FF0000)			\
 		 | (((data)[7] << 24)	& 0xFF000000);			\
 	(out)[5] = (((data)[1] >> 8)	& 0x000000FF)			\
-	 	 | ((data) [3]		& 0x0000FF00)			\
-	 	 | (((data)[5] << 8)	& 0x00FF0000)			\
-	 	 | (((data)[7] << 16)	& 0xFF000000);			\
+		 | ((data) [3]		& 0x0000FF00)			\
+		 | (((data)[5] << 8)	& 0x00FF0000)			\
+		 | (((data)[7] << 16)	& 0xFF000000);			\
 	(out)[6] = (((data)[1] >> 16)	& 0x000000FF)			\
-	 	 | (((data)[3] >> 8)	& 0x0000FF00)			\
-	 	 | ((data) [5]		& 0x00FF0000)			\
-	 	 | (((data)[7] << 8)	& 0xFF000000);			\
+		 | (((data)[3] >> 8)	& 0x0000FF00)			\
+		 | ((data) [5]		& 0x00FF0000)			\
+		 | (((data)[7] << 8)	& 0xFF000000);			\
 	(out)[7] = (((data)[1] >> 24)	& 0x000000FF)			\
-	 	 | (((data)[3] >> 16)	& 0x0000FF00)			\
-	 	 | (((data)[5] >> 8)	& 0x00FF0000)			\
-	 	 | ((data) [7]		& 0xFF000000);			\
+		 | (((data)[3] >> 16)	& 0x0000FF00)			\
+		 | (((data)[5] >> 8)	& 0x00FF0000)			\
+		 | ((data) [7]		& 0xFF000000);			\
 }
 
 static void
@@ -279,9 +279,9 @@ static void __p_gost3411_process (PHashGOST3411	*ctx,
 	U[1] = data[1] ^ S[7];
 
 	U[2] = data[2] ^ (S[0] & 0x0000FFFF)	^ (S[0] >> 16) ^ (S[0] << 16)
-	               ^ (S[1] & 0x0000FFFF)	^ (S[1] >> 16) ^ (S[2] << 16)
-	               ^ (S[7] & 0xFFFF0000)	^ (S[6] << 16) ^ (S[7] >> 16)
-	               ^  S[6];
+		       ^ (S[1] & 0x0000FFFF)	^ (S[1] >> 16) ^ (S[2] << 16)
+		       ^ (S[7] & 0xFFFF0000)	^ (S[6] << 16) ^ (S[7] >> 16)
+		       ^  S[6];
 
 	U[3] = data[3] ^ (S[0] & 0x0000FFFF)	^ (S[0] << 16) ^ (S[2] << 16)
 		       ^ (S[1] & 0x0000FFFF)	^ (S[1] << 16) ^ (S[1] >> 16)
@@ -380,23 +380,23 @@ static void __p_gost3411_process (PHashGOST3411	*ctx,
  * initializing you can calculate hash using p_gost3411_update() and
  * p_gost3411_finish() functions.
  */
-P_LIB_API PHashGOST3411 *
-p_gost3411_new	(void)
+PHashGOST3411 *
+__p_gost3411_new (void)
 {
 	PHashGOST3411 *ret;
 
 	if ((ret = p_malloc0 (sizeof (PHashGOST3411))) == NULL)
 		return NULL;
 
-	p_gost3411_reset (ret);
+	__p_gost3411_reset (ret);
 
 	return ret;
 }
 
-P_LIB_API void
-p_gost3411_update (PHashGOST3411	*ctx,
-		   const puchar		*data,
-		   psize		len)
+void
+__p_gost3411_update (PHashGOST3411	*ctx,
+		     const puchar	*data,
+		     psize		len)
 {
 	puint32	left, to_fill, len256[8];
 
@@ -437,8 +437,8 @@ p_gost3411_update (PHashGOST3411	*ctx,
 		memcpy ((pchar *) ctx->buf + left, data, len);
 }
 
-P_LIB_API void
-p_gost3411_finish (PHashGOST3411	*ctx)
+void
+__p_gost3411_finish (PHashGOST3411 *ctx)
 {
 	puint32 left, last;
 
@@ -460,8 +460,8 @@ p_gost3411_finish (PHashGOST3411	*ctx)
 	__p_gost3411_swap_bytes (ctx->hash, 8);
 }
 
-P_LIB_API const puchar *
-p_gost3411_digest (PHashGOST3411 *ctx)
+const puchar *
+__p_gost3411_digest (PHashGOST3411 *ctx)
 {
 	if (ctx == NULL)
 		return NULL;
@@ -469,8 +469,8 @@ p_gost3411_digest (PHashGOST3411 *ctx)
 	return (const puchar *) ctx->hash;
 }
 
-P_LIB_API void
-p_gost3411_reset (PHashGOST3411 *ctx)
+void
+__p_gost3411_reset (PHashGOST3411 *ctx)
 {
 	if (ctx == NULL)
 		return;
@@ -481,8 +481,8 @@ p_gost3411_reset (PHashGOST3411 *ctx)
 	memset (ctx->sum, 0, 32);
 }
 
-P_LIB_API void
-p_gost3411_free	(PHashGOST3411 *ctx)
+void
+__p_gost3411_free (PHashGOST3411 *ctx)
 {
 	if (ctx == NULL)
 		return;

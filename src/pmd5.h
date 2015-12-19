@@ -1,6 +1,5 @@
-/* 
- * 27.10.2010
- * Copyright (C) 2010 Alexander Saprykin <xelfium@gmail.com>
+/*
+ * Copyright (C) 2010-2015 Alexander Saprykin <xelfium@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,19 +25,19 @@
 #ifndef __PMD5_H__
 #define __PMD5_H__
 
-#include <ptypes.h>
-#include <pmacros.h>
+#include "ptypes.h"
+#include "pmacros.h"
 
 typedef struct _PHashMD5 PHashMD5;
 
 P_BEGIN_DECLS
 
-P_LIB_API PHashMD5 *		p_md5_new	(void);
-P_LIB_API void			p_md5_update	(PHashMD5 *ctx, const puchar *data, psize len);
-P_LIB_API void			p_md5_finish	(PHashMD5 *ctx);
-P_LIB_API const puchar *	p_md5_digest	(PHashMD5 *ctx);
-P_LIB_API void			p_md5_reset	(PHashMD5 *ctx);
-P_LIB_API void			p_md5_free	(PHashMD5 *ctx);
+PHashMD5 *	__p_md5_new	(void);
+void		__p_md5_update	(PHashMD5 *ctx, const puchar *data, psize len);
+void		__p_md5_finish	(PHashMD5 *ctx);
+const puchar *	__p_md5_digest	(PHashMD5 *ctx);
+void		__p_md5_reset	(PHashMD5 *ctx);
+void		__p_md5_free	(PHashMD5 *ctx);
 
 P_END_DECLS
 

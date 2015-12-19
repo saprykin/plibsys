@@ -64,19 +64,16 @@ set (PLIB_PUBLIC_HDRS
 	pcryptohash.h
 	pdir.h
 	pfile.h
-	pgost3411.h
 	phashtable.h
 	pinifile.h
 	plib.h
 	plibraryloader.h
 	plist.h
 	pmain.h
-	pmd5.h
 	pmem.h
 	pmutex.h
 	pprocess.h
 	psemaphore.h
-	psha1.h
 	pshm.h
 	pshmbuffer.h
 	psocket.h
@@ -87,7 +84,10 @@ set (PLIB_PUBLIC_HDRS
 )
 
 set (PLIB_PRIVATE_HDRS
+	pgost3411.h
 	plib-private.h
+	pmd5.h
+	psha1.h
 	${PLIB_PLATFORM_CONFIG_FILE}
 	${CMAKE_BINARY_DIR}/plibconfig.h
 )

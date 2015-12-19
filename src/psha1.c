@@ -1,5 +1,5 @@
-/* 
- * Copyright (C) 2010-2013 Alexander Saprykin <xelfium@gmail.com>
+/*
+ * Copyright (C) 2010-2015 Alexander Saprykin <xelfium@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -213,8 +213,8 @@ __p_sha1_process (PHashSHA1		*ctx,
 	ctx->hash[4] += E;
 }
 
-P_LIB_API void
-p_sha1_reset (PHashSHA1 *ctx)
+void
+__p_sha1_reset (PHashSHA1 *ctx)
 {
 	if (ctx == NULL)
 		return;
@@ -231,23 +231,23 @@ p_sha1_reset (PHashSHA1 *ctx)
 	ctx->hash[4] = 0xC3D2E1F0;
 }
 
-P_LIB_API PHashSHA1 *
-p_sha1_new (void)
+PHashSHA1 *
+__p_sha1_new (void)
 {
 	PHashSHA1 *ret;
 
 	if ((ret = p_malloc0 (sizeof (PHashSHA1))) == NULL)
 		return NULL;
 
-	p_sha1_reset (ret);
+	__p_sha1_reset (ret);
 
 	return ret;
 }
 
-P_LIB_API void
-p_sha1_update (PHashSHA1		*ctx,
-	       const puchar		*data,
-	       psize			len)
+void
+__p_sha1_update (PHashSHA1	*ctx,
+		 const puchar	*data,
+		 psize		len)
 {
 	puint32	left, to_fill;
 
@@ -284,11 +284,11 @@ p_sha1_update (PHashSHA1		*ctx,
 		memcpy (ctx->buf.buf + left, data, len);
 }
 
-P_LIB_API void
-p_sha1_finish (PHashSHA1	*ctx)
+void
+__p_sha1_finish (PHashSHA1 *ctx)
 {
-	puint32		high, low;
-	pint		left, last;
+	puint32	high, low;
+	pint	left, last;
 
 	if (ctx == NULL)
 		return;
@@ -301,7 +301,7 @@ p_sha1_finish (PHashSHA1	*ctx)
 	     | ctx->len_low >> 29;
 
 	if (last > 0)
-		p_sha1_update (ctx, sha1_pad, last);
+		__p_sha1_update (ctx, sha1_pad, last);
 
 	ctx->buf.buf_w[14] = high;
 	ctx->buf.buf_w[15] = low;
@@ -312,8 +312,8 @@ p_sha1_finish (PHashSHA1	*ctx)
 	__p_sha1_swap_bytes (ctx->hash, 5);
 }
 
-P_LIB_API const puchar *
-p_sha1_digest (PHashSHA1 *ctx)
+const puchar *
+__p_sha1_digest (PHashSHA1 *ctx)
 {
 	if (ctx == NULL)
 		return NULL;
@@ -321,8 +321,8 @@ p_sha1_digest (PHashSHA1 *ctx)
 	return (const puchar *) ctx->hash;
 }
 
-P_LIB_API void
-p_sha1_free (PHashSHA1 *ctx)
+void
+__p_sha1_free (PHashSHA1 *ctx)
 {
 	if (ctx == NULL)
 		return;
