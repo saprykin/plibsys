@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Alexander Saprykin <xelfium@gmail.com>
+ * Copyright (C) 2013-2015 Alexander Saprykin <xelfium@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,10 +23,8 @@
 
 #include <boost/test/unit_test.hpp>
 
-static int test_hash_table_values (pconstpointer a, pconstpointer b, ppointer data)
+static int test_hash_table_values (pconstpointer a, pconstpointer b)
 {
-	P_UNUSED (data);
-
 	return a > b ? 0 : (a < b ? -1 : 1);
 }
 
