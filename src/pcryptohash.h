@@ -1,5 +1,5 @@
-/* 
- * Copyright (C) 2010 Alexander Saprykin <xelfium@gmail.com>
+/*
+ * Copyright (C) 2010-2015 Alexander Saprykin <xelfium@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -52,9 +52,9 @@ typedef struct _PCryptoHash PCryptoHash;
  * @since 0.0.1
  */
 typedef enum {
-	P_CRYPTO_HASH_TYPE_MD5		= 0, /**< MD5 hash function. */
-	P_CRYPTO_HASH_TYPE_SHA1		= 1, /**< SHA-1 hash function. */
-	P_CRYPTO_HASH_TYPE_GOST		= 2  /**< GOST (R 34.11-94) hash function.*/
+	P_CRYPTO_HASH_TYPE_MD5		= 0, /**< MD5 hash function.			*/
+	P_CRYPTO_HASH_TYPE_SHA1		= 1, /**< SHA-1 hash function.			*/
+	P_CRYPTO_HASH_TYPE_GOST		= 2  /**< GOST (R 34.11-94) hash function.	*/
 } PCryptoHashType;
 
 /**
@@ -139,4 +139,4 @@ P_LIB_API void			p_crypto_hash_free		(PCryptoHash		*hash);
 
 P_END_DECLS
 
-#endif /* __PFILE_H__ */
+#endif /* __PCRYPTOHASH_H__ */
