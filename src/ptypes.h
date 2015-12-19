@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2013 Alexander Saprykin <xelfium@gmail.com>
+ * Copyright (C) 2010-2015 Alexander Saprykin <xelfium@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -976,6 +976,35 @@ typedef pint64 poffset;
 /** Type definition for true boolean value */
 #  define TRUE (!FALSE)
 #endif
+
+/**
+ * @brief General purpose function.
+ * @param data Main argument related to context value.
+ * @param user_data Additional (maybe NULL) user-provided data.
+ * @since 0.0.1
+ */
+typedef void (*PFunc) (ppointer data, ppointer user_data);
+
+/**
+ * @brief Compares two values.
+ * @param a First value to compare.
+ * @param b Second value to compare.
+ * @return -1 if first value less then second, 1 if first value
+ * greater then second, 0 otherwise.
+ * @since 0.0.1
+ */
+typedef pint (*PCompareFunc) (pconstpointer a, pconstpointer b);
+
+/**
+ * @brief Compares two values with additional data.
+ * @param a First value to compare.
+ * @param b Second value to compare.
+ * @param data Addition data, may be NULL.
+ * @return -1 if first value less then second, 1 if first value
+ * greater then second, 0 otherwise.
+ * @since 0.0.1
+ */
+typedef pint (*PCompareDataFunc) (pconstpointer a, pconstpointer b, ppointer data);
 
 P_END_DECLS
 

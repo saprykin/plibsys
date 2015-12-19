@@ -1,5 +1,5 @@
-/* 
- * Copyright (C) 2010 Alexander Saprykin <xelfium@gmail.com>
+/*
+ * Copyright (C) 2010-2015 Alexander Saprykin <xelfium@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,7 +49,7 @@
  * @code
  * PList    *list;
  * pint     a;
- * 
+ *
  * list = p_list_append (list, P_INT_TO_POINTER (12));
  * a = P_POINTER_TO_INT (list->data);
  * @endcode
@@ -68,9 +68,6 @@
 #include <ptypes.h>
 
 P_BEGIN_DECLS
-
-/** General purpose function */
-typedef void (*PFunc) (ppointer data, ppointer user_data);
 
 /** Typedef for list node */
 typedef struct _PList PList;

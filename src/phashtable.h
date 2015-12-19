@@ -1,5 +1,5 @@
-/* 
- * Copyright (C) 2010-2013 Alexander Saprykin <xelfium@gmail.com>
+/*
+ * Copyright (C) 2010-2015 Alexander Saprykin <xelfium@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  * @file phashtable.h
  * @brief Simple hash-table implememtation
  * @author Alexander Saprykin
- * 
+ *
  * Hash-table is using to store key-value pairs. You can perform
  * fast lookup for value associated with the given key. Note, that
  * #PHashTable stores keys and values only as pointers, so you need
@@ -37,23 +37,13 @@
 #define __PHASHTABLE_H__
 
 #include <pmacros.h>
+#include <ptypes.h>
 #include <plist.h>
 
 P_BEGIN_DECLS
 
 /** Opaque data structure for hash-table. */
 typedef struct _PHashTable PHashTable;
-
-/**
- * @brief Compares two values.
- * @param a First value to compare.
- * @param b Second value to compare.
- * @param data Addition data, may be NULL.
- * @return -1 if first value less then second, 1 if first value
- * greater then second, 0 otherwise.
- * @since 0.0.1
- */
-typedef int (*PCompareFunc) (pconstpointer a, pconstpointer b, ppointer data);
 
 /**
  * @brief Initializes new hash-table. Free with p_hash_table_free() after using.

@@ -1,5 +1,5 @@
-/* 
- * Copyright (C) 2010-2013 Alexander Saprykin <xelfium@gmail.com>
+/*
+ * Copyright (C) 2010-2015 Alexander Saprykin <xelfium@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,7 +53,7 @@ __p_hash_table_calc_hash (pconstpointer pointer, psize modulo)
 	return (puint) ((P_POINTER_TO_INT (pointer) + 37) % modulo);
 }
 
-static PHashTableNode * 
+static PHashTableNode *
 __p_hash_table_find_node (const PHashTable *table, pconstpointer key)
 {
 	puint		hash;
@@ -63,7 +63,7 @@ __p_hash_table_find_node (const PHashTable *table, pconstpointer key)
 		return NULL;
 
 	hash = __p_hash_table_calc_hash (key, table->size);
- 
+
 	for (ret = table->table[hash]; ret != NULL; ret = ret->next)
 		if (ret->key == key)
 			return ret;
@@ -71,7 +71,7 @@ __p_hash_table_find_node (const PHashTable *table, pconstpointer key)
 	return NULL;
 }
 
-P_LIB_API PHashTable * 
+P_LIB_API PHashTable *
 p_hash_table_new (void)
 {
 	PHashTable *ret;
@@ -92,7 +92,7 @@ p_hash_table_new (void)
 	return ret;
 }
 
-P_LIB_API void 
+P_LIB_API void
 p_hash_table_insert (PHashTable *table, ppointer key, ppointer value)
 {
 	PHashTableNode	*node;
@@ -106,9 +106,9 @@ p_hash_table_insert (PHashTable *table, ppointer key, ppointer value)
 			P_ERROR ("PHashTable: failed to allocate memory");
 			return;
 		}
-		
+
 		hash = __p_hash_table_calc_hash (key, table->size);
-		
+
 		/* Insert new node in front of other */
 		node->key = key;
 		node->value = value;
@@ -231,8 +231,8 @@ p_hash_table_lookup_by_value (const PHashTable *table, pconstpointer val, PCompa
 			if (func == NULL)
 				res = (node->value == val);
 			else
-				res = (func (node->value, val, NULL) == 0);
-			
+				res = (func (node->value, val) == 0);
+
 			if (res)
 				ret = p_list_append (ret, node->key);
 		}
