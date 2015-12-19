@@ -978,12 +978,31 @@ typedef pint64 poffset;
 #endif
 
 /**
+ * @brief Function to traverse through a key-value container.
+ * @param key The key of the item.
+ * @param value The value of the item.
+ * @param user_data Data provided by user, maybe NULL.
+ * @return FALSE to continue traversing, TRUE to stop it.
+ * @since 0.0.1
+ */
+typedef pboolean (*PTraverseFunc) (ppointer key,
+				   ppointer value,
+				   ppointer user_data);
+
+/**
  * @brief General purpose function.
  * @param data Main argument related to context value.
  * @param user_data Additional (maybe NULL) user-provided data.
  * @since 0.0.1
  */
 typedef void (*PFunc) (ppointer data, ppointer user_data);
+
+/**
+ * @brief Object destroy notification function.
+ * @param data Pointer to object to be destroyed.
+ * @since 0.0.1
+ */
+typedef void (*PDestroyFunc) (ppointer data);
 
 /**
  * @brief Compares two values.
