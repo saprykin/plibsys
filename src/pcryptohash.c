@@ -1,5 +1,5 @@
-/* 
- * Copyright (C) 2010-2013 Alexander Saprykin <xelfium@gmail.com>
+/*
+ * Copyright (C) 2010-2015 Alexander Saprykin <xelfium@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,7 +32,7 @@
 #define P_MAX_HASH_LENGTH	32
 
 #define P_HASH_FUNCS(ctx, type) \
-	ctx->new = (void * (*) (void)) p_##type##_new;					\
+	ctx->create = (void * (*) (void)) p_##type##_new;				\
 	ctx->update = (void (*) (void *, const puchar *, psize)) p_##type##_update;	\
 	ctx->finish = (void (*) (void *)) p_##type##_finish;				\
 	ctx->digest = (const puchar * (*) (void *)) p_##type##_digest;			\
@@ -41,11 +41,11 @@
 
 struct _PCryptoHash {
 	PCryptoHashType	type;
-	void		*context;
+	ppointer	context;
 	puint		hash_len;
 	pboolean	closed;
 	pboolean	reseted;
-	void *		(*new)		(void);
+	ppointer	(*create)	(void);
 	void		(*update)	(void *hash, const puchar *data, psize len);
 	void		(*finish)	(void *hash);
 	const puchar *	(*digest)	(void *hash);
@@ -83,7 +83,7 @@ p_crypto_hash_new (PCryptoHashType type)
 	ret->closed = FALSE;
 	ret->reseted = TRUE;
 
-	if ((ret->context = ret->new ()) == NULL) {
+	if ((ret->context = ret->create ()) == NULL) {
 		p_free (ret);
 		return NULL;
 	}
