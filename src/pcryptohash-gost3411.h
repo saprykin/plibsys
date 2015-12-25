@@ -22,8 +22,8 @@
 #  error "Header files shouldn't be included directly, consider using <plib.h> instead."
 #endif
 
-#ifndef __PGOST3411_H__
-#define __PGOST3411_H__
+#ifndef __PCRYPTOHASHGOST3411_H__
+#define __PCRYPTOHASHGOST3411_H__
 
 #include "ptypes.h"
 #include "pmacros.h"
@@ -43,4 +43,4 @@ void		__p_gost3411_free	(PHashGOST3411		*ctx);
 
 P_END_DECLS
 
-#endif /* __PGOST3411_H__ */
+#endif /* __PCRYPTOHASHGOST3411_H__ */

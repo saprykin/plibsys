@@ -17,7 +17,7 @@ string (TOLOWER ${CMAKE_SYSTEM_NAME} PLIB_TARGET_OS)
 if (PLIB_TARGET_OS STREQUAL darwin)
 	set (CMAKE_MACOSX_RPATH TRUE)
 	set (CMAKE_SKIP_BUILD_RPATH FALSE)
-	set (CMAKE_BUILD_WITH_INSTALL_RPATH FALSE) 
+	set (CMAKE_BUILD_WITH_INSTALL_RPATH FALSE)
 	set (CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
 	set (CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 
@@ -85,10 +85,10 @@ set (PLIB_PUBLIC_HDRS
 )
 
 set (PLIB_PRIVATE_HDRS
-	pgost3411.h
+	pcryptohash-gost3411.h
+	pcryptohash-md5.h
+	pcryptohash-sha1.h
 	plib-private.h
-	pmd5.h
-	psha1.h
 	ptree-bst.h
 	${PLIB_PLATFORM_CONFIG_FILE}
 	${CMAKE_BINARY_DIR}/plibconfig.h
@@ -96,18 +96,18 @@ set (PLIB_PRIVATE_HDRS
 
 set (PLIB_SRCS
 	pcryptohash.c
+	pcryptohash-gost3411.c
+	pcryptohash-md5.c
+	pcryptohash-sha1.c
 	pdir.c
 	pfile.c
-	pgost3411.c
 	phashtable.c
 	pinifile.c
 	plibraryloader.c
 	plist.c
 	pmain.c
-	pmem.c
-	pmd5.c
+	pmem.c	
 	pprocess.c
-	psha1.c
 	pshmbuffer.c
 	psemaphore.c
 	pshm.c
@@ -185,7 +185,7 @@ if (PLIB_C_COMPILER MATCHES "gcc|qcc")
 	else()
 		message (STATUS "Checking for GCC builtin atomic operations - not works")
 	endif()
-	
+
 	if (PLIB_HAS_BUILTIN_ATOMIC_OPERATIONS)
 		set (PLIB_MEMORY_BARRIER_NEEDED true)
 	else()
@@ -482,7 +482,7 @@ if (PLIB_TARGET_OS STREQUAL windows)
 	set (CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS_SKIP TRUE)
 	include (InstallRequiredSystemLibraries)
 	
-	install (PROGRAMS ${CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS} 
+	install (PROGRAMS ${CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS}
 		DESTINATION lib
 		COMPONENT Core
 	)

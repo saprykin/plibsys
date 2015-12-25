@@ -17,7 +17,7 @@
  */
 
 #include "pmem.h"
-#include "pgost3411.h"
+#include "pcryptohash-gost3411.h"
 
 #include <string.h>
 #include <stdlib.h>

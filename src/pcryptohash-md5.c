@@ -19,7 +19,7 @@
 /* TODO: error reporting */
 
 #include "pmem.h"
-#include "pmd5.h"
+#include "pcryptohash-md5.h"
 
 #include <string.h>
 #include <stdlib.h>

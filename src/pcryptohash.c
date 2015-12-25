@@ -21,9 +21,9 @@
 
 #include "pmem.h"
 #include "pcryptohash.h"
-#include "pgost3411.h"
-#include "pmd5.h"
-#include "psha1.h"
+#include "pcryptohash-gost3411.h"
+#include "pcryptohash-md5.h"
+#include "pcryptohash-sha1.h"
 
 #include <stdio.h>
 #include <string.h>

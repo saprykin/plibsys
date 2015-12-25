@@ -22,8 +22,8 @@
 #  error "Header files shouldn't be included directly, consider using <plib.h> instead."
 #endif
 
-#ifndef __PMD5_H__
-#define __PMD5_H__
+#ifndef __PCRYPTOHASHMD5_H__
+#define __PCRYPTOHASHMD5_H__
 
 #include "ptypes.h"
 #include "pmacros.h"
@@ -41,4 +41,4 @@ void		__p_md5_free	(PHashMD5 *ctx);
 
 P_END_DECLS
 
-#endif /* __PMD5_H__ */
+#endif /* __PCRYPTOHASHMD5_H__ */

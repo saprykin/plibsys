@@ -22,8 +22,8 @@
 #  error "Header files shouldn't be included directly, consider using <plib.h> instead."
 #endif
 
-#ifndef __PSHA1_H__
-#define __PSHA1_H__
+#ifndef __PCRYPTOHASHSHA1_H__
+#define __PCRYPTOHASHSHA1_H__
 
 #include "ptypes.h"
 #include "pmacros.h"
@@ -41,4 +41,4 @@ void		__p_sha1_free	(PHashSHA1 *ctx);
 
 P_END_DECLS
 
-#endif /* __PSHA1_H__ */
+#endif /* __PCRYPTOHASHSHA1_H__ */

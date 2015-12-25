@@ -23,7 +23,7 @@
 #include <stdlib.h>
 
 #include "pmem.h"
-#include "psha1.h"
+#include "pcryptohash-sha1.h"
 
 struct _PHashSHA1 {
 	union _buf {
