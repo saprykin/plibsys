@@ -28,6 +28,14 @@
 
 P_BEGIN_DECLS
 
+/** Base tree leaf structure */
+typedef struct _PTreeBaseNode {
+	struct _PTreeBaseNode	*left;	/**< Left child		*/
+	struct _PTreeBaseNode	*right;	/**< Right child	*/
+	ppointer		key;	/**< Node key		*/
+	ppointer		value;	/**< Node value		*/
+} __PTreeBaseNode;
+
 #ifndef P_OS_WIN
 /**
  * @brief Gets temporary directory on UNIX systems.

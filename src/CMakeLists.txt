@@ -80,6 +80,7 @@ set (PLIB_PUBLIC_HDRS
 	psocketaddress.h
 	pstring.h
 	ptimeprofiler.h
+	ptree.h
 	puthread.h
 )
 
@@ -88,6 +89,7 @@ set (PLIB_PRIVATE_HDRS
 	plib-private.h
 	pmd5.h
 	psha1.h
+	ptree-bst.h
 	${PLIB_PLATFORM_CONFIG_FILE}
 	${CMAKE_BINARY_DIR}/plibconfig.h
 )
@@ -112,6 +114,8 @@ set (PLIB_SRCS
 	psocket.c
 	psocketaddress.c
 	pstring.c
+	ptree.c
+	ptree-bst.c
 	puthread.c
 )
 

@@ -43,6 +43,7 @@
 #include "psocketaddress.h"
 #include "pstring.h"
 #include "ptimeprofiler.h"
+#include "ptree.h"
 #include "ptypes.h"
 #include "puthread.h"
 
