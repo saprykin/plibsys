@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Alexander Saprykin <xelfium@gmail.com>
+ * Copyright (C) 2013-2015 Alexander Saprykin <xelfium@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,8 +23,8 @@
 #ifndef __PLIBPRIVATE_H__
 #define __PLIBPRIVATE_H__
 
-#include <pmacros.h>
-#include <ptypes.h>
+#include "pmacros.h"
+#include "ptypes.h"
 
 P_BEGIN_DECLS
 
@@ -35,7 +35,6 @@ P_BEGIN_DECLS
  * @since 0.0.1
  */
 pchar *	__p_ipc_unix_get_temp_dir	(void);
-
 
 /* Create file for System V IPC, if needed
  * Returns: -1 = error, 0 = file successfully created, 1 = file already exists */
