@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Alexander Saprykin <xelfium@gmail.com>
+ * Copyright (C) 2015-2016 Alexander Saprykin <xelfium@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -79,29 +79,24 @@ __p_tree_bst_remove (__PTreeBaseNode	**root_node,
 {
 	__PTreeBaseNode	*cur_node;
 	__PTreeBaseNode	*prev_node;
-	__PTreeBaseNode	*prev_parent_node;
-	__PTreeBaseNode	**parent_node;
-	ppointer	new_key;
-	ppointer	new_value;
+	__PTreeBaseNode	**node_pointer;
 	pint		cmp_result;
-	pint		child_count;
-	pboolean	result;
 
 	if (root_node == NULL || *root_node == NULL || compare_func == NULL)
 		return FALSE;
 
-	cur_node	= *root_node;
-	parent_node	= root_node;
+	cur_node     = *root_node;
+	node_pointer = root_node;
 
 	while (cur_node != NULL) {
 		cmp_result = compare_func (key, cur_node->key, data);
 
 		if (cmp_result < 0) {
-			parent_node	= &cur_node->left;
-			cur_node	= cur_node->left;
+			node_pointer = &cur_node->left;
+			cur_node     = cur_node->left;
 		} else if (cmp_result > 0) {
-			parent_node	= &cur_node->right;
-			cur_node	= cur_node->right;
+			node_pointer = &cur_node->right;
+			cur_node     = cur_node->right;
 		} else
 			break;
 	}
@@ -109,42 +104,22 @@ __p_tree_bst_remove (__PTreeBaseNode	**root_node,
 	if (cur_node == NULL)
 		return FALSE;
 
-	child_count = 0;
+	if (cur_node->left != NULL && cur_node->right != NULL) {
+		node_pointer = &cur_node->left;
+		prev_node    = cur_node->left;
 
-	if (cur_node->left != NULL)
-		++child_count;
-
-	if (cur_node->right != NULL)
-		++child_count;
-
-	if (child_count == 0)
-		*parent_node = NULL;
-	else if (child_count == 1)
-		*parent_node = cur_node->left == NULL ? cur_node->right : cur_node->left;
-	else {
-		prev_node		= cur_node->right;
-		prev_parent_node	= cur_node;
-
-		while (prev_node->left != NULL) {
-			prev_parent_node	= prev_node;
-			prev_node		= prev_node->left;
+		while (prev_node->right != NULL) {
+			node_pointer = &prev_node->right;
+			prev_node    = prev_node->right;
 		}
 
-		new_key		= prev_node->key;
-		new_value	= prev_node->value;
+		cur_node->key   = prev_node->key;
+		cur_node->value = prev_node->value;
 
-		result = __p_tree_bst_remove (&prev_parent_node,
-					      compare_func,
-					      data,
-					      key_destroy_func,
-					      value_destroy_func,
-					      prev_node->key);
-
-		cur_node->key	= new_key;
-		cur_node->value	= new_value;
-
-		return result;
+		cur_node = prev_node;
 	}
+
+	*node_pointer = cur_node->left == NULL ? cur_node->right : cur_node->left;
 
 	if (key_destroy_func != NULL)
 		key_destroy_func (cur_node->key);
