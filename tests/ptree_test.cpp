@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Alexander Saprykin <xelfium@gmail.com>
+ * Copyright (C) 2015-2016 Alexander Saprykin <xelfium@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,6 +23,7 @@
 
 #include <stdlib.h>
 #include <time.h>
+#include <math.h>
 
 #include <boost/test/unit_test.hpp>
 
@@ -47,6 +48,22 @@ typedef struct _TreeData {
 } TreeData;
 
 static TreeData tree_data = {0, 0, 0, 0, 0, 0, 0, 0, 0};
+
+static pint
+tree_complexity (PTree *tree)
+{
+	if (tree == NULL)
+		return 0;
+
+	switch (p_tree_get_type (tree)) {
+	case P_TREE_TYPE_BINARY:
+		return p_tree_get_nnodes (tree);
+	case P_TREE_TYPE_RB:
+		return 2 * ((pint) (log2 ((double) p_tree_get_nnodes (tree))) + 1);
+	default:
+		return p_tree_get_nnodes (tree);
+	}
+}
 
 static pint
 compare_keys (pconstpointer a, pconstpointer b)
@@ -123,14 +140,14 @@ tree_traverse_thres (ppointer key, ppointer value, ppointer data)
 static bool
 check_tree_data_is_zero ()
 {
-	return tree_data.cmp_counter	       == 0	&&
-	       tree_data.key_destroy_counter   == 0	&&
-	       tree_data.value_destroy_counter == 0	&&
-	       tree_data.traverse_counter      == 0	&&
-	       tree_data.traverse_thres	       == 0	&&
-	       tree_data.key_sum	       == 0	&&
-	       tree_data.value_sum	       == 0	&&
-	       tree_data.last_key	       == 0	&&
+	return tree_data.cmp_counter           == 0 &&
+	       tree_data.key_destroy_counter   == 0 &&
+	       tree_data.value_destroy_counter == 0 &&
+	       tree_data.traverse_counter      == 0 &&
+	       tree_data.traverse_thres	       == 0 &&
+	       tree_data.key_sum               == 0 &&
+	       tree_data.value_sum             == 0 &&
+	       tree_data.last_key              == 0 &&
 	       tree_data.key_order_errors      == 0;
 }
 
@@ -180,8 +197,8 @@ general_tree_test (PTree *tree, PTreeType type, bool check_cmp, bool check_notif
 	else
 		BOOST_CHECK (tree_data.cmp_counter == 0);
 
-	BOOST_CHECK (tree_data.key_sum		== 0);
-	BOOST_CHECK (tree_data.value_sum	== 0);
+	BOOST_CHECK (tree_data.key_sum          == 0);
+	BOOST_CHECK (tree_data.value_sum        == 0);
 	BOOST_CHECK (tree_data.traverse_counter == 0);
 	BOOST_CHECK (tree_data.key_order_errors == 0);
 
@@ -190,9 +207,9 @@ general_tree_test (PTree *tree, PTreeType type, bool check_cmp, bool check_notif
 	p_tree_foreach (tree, (PTraverseFunc) tree_traverse, &tree_data);
 	BOOST_CHECK (p_tree_get_nnodes (tree) == 6);
 
-	BOOST_CHECK (tree_data.cmp_counter	== 0);
-	BOOST_CHECK (tree_data.key_sum		== 21);
-	BOOST_CHECK (tree_data.value_sum	== 210);
+	BOOST_CHECK (tree_data.cmp_counter      == 0);
+	BOOST_CHECK (tree_data.key_sum          == 21);
+	BOOST_CHECK (tree_data.value_sum        == 210);
 	BOOST_CHECK (tree_data.traverse_counter == 6);
 	BOOST_CHECK (tree_data.key_order_errors == 0);
 
@@ -206,8 +223,8 @@ general_tree_test (PTree *tree, PTreeType type, bool check_cmp, bool check_notif
 	else
 		BOOST_CHECK (tree_data.cmp_counter == 0);
 
-	BOOST_CHECK (tree_data.key_sum		== 0);
-	BOOST_CHECK (tree_data.value_sum	== 0);
+	BOOST_CHECK (tree_data.key_sum          == 0);
+	BOOST_CHECK (tree_data.value_sum        == 0);
 	BOOST_CHECK (tree_data.key_order_errors == 0);
 
 	tree_data.cmp_counter = 0;
@@ -216,12 +233,12 @@ general_tree_test (PTree *tree, PTreeType type, bool check_cmp, bool check_notif
 
 	if (check_cmp)
 		BOOST_CHECK (tree_data.cmp_counter > 0 &&
-			     tree_data.cmp_counter < p_tree_get_nnodes (tree));
+			     tree_data.cmp_counter <= tree_complexity (tree));
 	else
 		BOOST_CHECK (tree_data.cmp_counter == 0);
 
 	if (check_notify) {
-		BOOST_CHECK (tree_data.key_sum	 == 0);
+		BOOST_CHECK (tree_data.key_sum   == 0);
 		BOOST_CHECK (tree_data.value_sum == 0);
 	}
 
@@ -235,8 +252,8 @@ general_tree_test (PTree *tree, PTreeType type, bool check_cmp, bool check_notif
 	else
 		BOOST_CHECK (tree_data.cmp_counter == 0);
 
-	BOOST_CHECK (tree_data.key_sum		== 0);
-	BOOST_CHECK (tree_data.value_sum	== 0);
+	BOOST_CHECK (tree_data.key_sum          == 0);
+	BOOST_CHECK (tree_data.value_sum        == 0);
 	BOOST_CHECK (tree_data.key_order_errors == 0);
 
 	memset (&tree_data, 0, sizeof (tree_data));
@@ -246,9 +263,9 @@ general_tree_test (PTree *tree, PTreeType type, bool check_cmp, bool check_notif
 	p_tree_foreach (tree, (PTraverseFunc) tree_traverse_thres, &tree_data);
 	BOOST_CHECK (p_tree_get_nnodes (tree) == 6);
 
-	BOOST_CHECK (tree_data.cmp_counter	== 0);
-	BOOST_CHECK (tree_data.key_sum		== 15);
-	BOOST_CHECK (tree_data.value_sum	== 150);
+	BOOST_CHECK (tree_data.cmp_counter      == 0);
+	BOOST_CHECK (tree_data.key_sum          == 15);
+	BOOST_CHECK (tree_data.value_sum        == 150);
 	BOOST_CHECK (tree_data.traverse_counter == 5);
 	BOOST_CHECK (tree_data.key_order_errors == 0);
 
@@ -259,9 +276,9 @@ general_tree_test (PTree *tree, PTreeType type, bool check_cmp, bool check_notif
 	p_tree_foreach (tree, (PTraverseFunc) tree_traverse_thres, &tree_data);
 	BOOST_CHECK (p_tree_get_nnodes (tree) == 6);
 
-	BOOST_CHECK (tree_data.cmp_counter	== 0);
-	BOOST_CHECK (tree_data.key_sum		== 6);
-	BOOST_CHECK (tree_data.value_sum	== 60);
+	BOOST_CHECK (tree_data.cmp_counter      == 0);
+	BOOST_CHECK (tree_data.key_sum          == 6);
+	BOOST_CHECK (tree_data.value_sum        == 60);
 	BOOST_CHECK (tree_data.traverse_counter == 3);
 	BOOST_CHECK (tree_data.key_order_errors == 0);
 
@@ -278,10 +295,10 @@ general_tree_test (PTree *tree, PTreeType type, bool check_cmp, bool check_notif
 		BOOST_CHECK (tree_data.cmp_counter == 0);
 
 	if (check_notify) {
-		BOOST_CHECK (tree_data.key_sum	 == 7);
+		BOOST_CHECK (tree_data.key_sum   == 7);
 		BOOST_CHECK (tree_data.value_sum == 70);
 	} else {
-		BOOST_CHECK (tree_data.key_sum	 == 0);
+		BOOST_CHECK (tree_data.key_sum   == 0);
 		BOOST_CHECK (tree_data.value_sum == 0);
 	}
 
@@ -296,10 +313,10 @@ general_tree_test (PTree *tree, PTreeType type, bool check_cmp, bool check_notif
 		BOOST_CHECK (tree_data.cmp_counter == 0);
 
 	if (check_notify) {
-		BOOST_CHECK (tree_data.key_sum	 == 7);
+		BOOST_CHECK (tree_data.key_sum   == 7);
 		BOOST_CHECK (tree_data.value_sum == 70);
 	} else {
-		BOOST_CHECK (tree_data.key_sum	 == 0);
+		BOOST_CHECK (tree_data.key_sum   == 0);
 		BOOST_CHECK (tree_data.value_sum == 0);
 	}
 
@@ -309,19 +326,19 @@ general_tree_test (PTree *tree, PTreeType type, bool check_cmp, bool check_notif
 
 	p_tree_foreach (tree, NULL, NULL);
 
-	BOOST_CHECK (tree_data.cmp_counter	== 0);
+	BOOST_CHECK (tree_data.cmp_counter      == 0);
 	BOOST_CHECK (tree_data.key_order_errors == 0);
 
 	p_tree_clear (tree);
 
-	BOOST_CHECK (tree_data.cmp_counter	== 0);
+	BOOST_CHECK (tree_data.cmp_counter      == 0);
 	BOOST_CHECK (tree_data.key_order_errors == 0);
 
 	if (check_notify) {
-		BOOST_CHECK (tree_data.key_sum	 == 21);
+		BOOST_CHECK (tree_data.key_sum   == 21);
 		BOOST_CHECK (tree_data.value_sum == 210);
 	} else {
-		BOOST_CHECK (tree_data.key_sum	 == 0);
+		BOOST_CHECK (tree_data.key_sum   == 0);
 		BOOST_CHECK (tree_data.value_sum == 0);
 	}
 
@@ -362,7 +379,7 @@ stress_tree_test (PTree *tree, int node_count)
 
 		if (counter > 0)
 			BOOST_CHECK (tree_data.cmp_counter > 0 &&
-				     tree_data.cmp_counter <= counter);
+				     tree_data.cmp_counter <= tree_complexity (tree));
 
 		memset (&tree_data, 0, sizeof (tree_data));
 
@@ -373,7 +390,7 @@ stress_tree_test (PTree *tree, int node_count)
 
 		if (counter > 0)
 			BOOST_CHECK (tree_data.cmp_counter > 0 &&
-				     tree_data.cmp_counter <= counter);
+				     tree_data.cmp_counter <= tree_complexity (tree));
 
 		++counter;
 	}
@@ -382,7 +399,7 @@ stress_tree_test (PTree *tree, int node_count)
 		memset (&tree_data, 0, sizeof (tree_data));
 
 		tree_data.traverse_thres = i + 1;
-		tree_data.last_key	 = -1;
+		tree_data.last_key       = -1;
 
 		p_tree_foreach (tree, (PTraverseFunc) tree_traverse_thres, &tree_data);
 
@@ -396,7 +413,8 @@ stress_tree_test (PTree *tree, int node_count)
 		BOOST_CHECK (p_tree_lookup (tree, PINT_TO_POINTER (keys[i])) ==
 			     PINT_TO_POINTER (values[i]));
 
-		BOOST_CHECK (tree_data.cmp_counter <= p_tree_get_nnodes (tree));
+		BOOST_CHECK (tree_data.cmp_counter > 0 &&
+			     tree_data.cmp_counter <= tree_complexity (tree));
 
 		BOOST_CHECK (p_tree_remove (tree, PINT_TO_POINTER (keys[i])) == TRUE);
 		BOOST_CHECK (p_tree_lookup (tree, PINT_TO_POINTER (keys[i])) == NULL);
@@ -423,40 +441,42 @@ BOOST_AUTO_TEST_CASE (ptree_invalid_test)
 {
 	p_lib_init ();
 
-	/* Invalid usage */
-	BOOST_CHECK (p_tree_new (P_TREE_TYPE_BINARY, NULL) == NULL);
-	BOOST_CHECK (p_tree_new ((PTreeType) -1, compare_keys) == NULL);
-	BOOST_CHECK (p_tree_new ((PTreeType) -1, NULL) == NULL);
+	for (int i = (int) P_TREE_TYPE_BINARY; i <= (int) P_TREE_TYPE_RB; ++i) {
+		/* Invalid usage */
+		BOOST_CHECK (p_tree_new ((PTreeType) i, NULL) == NULL);
+		BOOST_CHECK (p_tree_new ((PTreeType) -1, compare_keys) == NULL);
+		BOOST_CHECK (p_tree_new ((PTreeType) -1, NULL) == NULL);
 
-	BOOST_CHECK (p_tree_new_with_data (P_TREE_TYPE_BINARY, NULL, NULL) == NULL);
-	BOOST_CHECK (p_tree_new_with_data ((PTreeType) -1, (PCompareDataFunc) compare_keys, NULL) == NULL);
-	BOOST_CHECK (p_tree_new_with_data ((PTreeType) -1, NULL, NULL) == NULL);
+		BOOST_CHECK (p_tree_new_with_data ((PTreeType) i, NULL, NULL) == NULL);
+		BOOST_CHECK (p_tree_new_with_data ((PTreeType) -1, (PCompareDataFunc) compare_keys, NULL) == NULL);
+		BOOST_CHECK (p_tree_new_with_data ((PTreeType) -1, NULL, NULL) == NULL);
 
-	BOOST_CHECK (p_tree_new_full (P_TREE_TYPE_BINARY,
-				      NULL,
-				      NULL,
-				      NULL,
-				      NULL) == NULL);
-	BOOST_CHECK (p_tree_new_full ((PTreeType) -1,
-				      (PCompareDataFunc) compare_keys,
-				      NULL,
-				      NULL,
-				      NULL) == NULL);
-	BOOST_CHECK (p_tree_new_full ((PTreeType) -1,
-				      NULL,
-				      NULL,
-				      NULL,
-				      NULL) == NULL);
+		BOOST_CHECK (p_tree_new_full ((PTreeType) i,
+					      NULL,
+					      NULL,
+					      NULL,
+					      NULL) == NULL);
+		BOOST_CHECK (p_tree_new_full ((PTreeType) -1,
+					      (PCompareDataFunc) compare_keys,
+					      NULL,
+					      NULL,
+					      NULL) == NULL);
+		BOOST_CHECK (p_tree_new_full ((PTreeType) -1,
+					      NULL,
+					      NULL,
+					      NULL,
+					      NULL) == NULL);
 
-	BOOST_CHECK (p_tree_remove (NULL, NULL) == FALSE);
-	BOOST_CHECK (p_tree_lookup (NULL, NULL) == NULL);
-	BOOST_CHECK (p_tree_get_type (NULL) == (PTreeType) -1);
-	BOOST_CHECK (p_tree_get_nnodes (NULL) == 0);
+		BOOST_CHECK (p_tree_remove (NULL, NULL) == FALSE);
+		BOOST_CHECK (p_tree_lookup (NULL, NULL) == NULL);
+		BOOST_CHECK (p_tree_get_type (NULL) == (PTreeType) -1);
+		BOOST_CHECK (p_tree_get_nnodes (NULL) == 0);
 
-	p_tree_insert (NULL, NULL, NULL);
-	p_tree_foreach (NULL, NULL, NULL);
-	p_tree_clear (NULL);
-	p_tree_free (NULL);
+		p_tree_insert (NULL, NULL, NULL);
+		p_tree_foreach (NULL, NULL, NULL);
+		p_tree_clear (NULL);
+		p_tree_free (NULL);
+	}
 
 	p_lib_shutdown ();
 }
@@ -467,40 +487,42 @@ BOOST_AUTO_TEST_CASE (ptree_general_test)
 
 	p_lib_init ();
 
-	/* Test 1 */
-	tree = p_tree_new (P_TREE_TYPE_BINARY, compare_keys);
+	for (int i = (int) P_TREE_TYPE_BINARY; i <= (int) P_TREE_TYPE_RB; ++i) {
+		/* Test 1 */
+		tree = p_tree_new ((PTreeType) i, compare_keys);
 
-	BOOST_CHECK (general_tree_test (tree, P_TREE_TYPE_BINARY, false, false) == true);
+		BOOST_CHECK (general_tree_test (tree, (PTreeType) i, false, false) == true);
 
-	memset (&tree_data, 0, sizeof (tree_data));
-	p_tree_free (tree);
+		memset (&tree_data, 0, sizeof (tree_data));
+		p_tree_free (tree);
 
-	BOOST_CHECK (check_tree_data_is_zero () == true);
+		BOOST_CHECK (check_tree_data_is_zero () == true);
 
-	/* Test 2 */
-	tree = p_tree_new_with_data (P_TREE_TYPE_BINARY,
-				     (PCompareDataFunc) compare_keys_data,
-				     &tree_data);
+		/* Test 2 */
+		tree = p_tree_new_with_data ((PTreeType) i,
+					     (PCompareDataFunc) compare_keys_data,
+					     &tree_data);
 
-	BOOST_CHECK (general_tree_test (tree, P_TREE_TYPE_BINARY, true, false) == true);
+		BOOST_CHECK (general_tree_test (tree, (PTreeType) i, true, false) == true);
 
-	memset (&tree_data, 0, sizeof (tree_data));
-	p_tree_free (tree);
+		memset (&tree_data, 0, sizeof (tree_data));
+		p_tree_free (tree);
 
-	BOOST_CHECK (check_tree_data_is_zero () == true);
+		BOOST_CHECK (check_tree_data_is_zero () == true);
 
-	/* Test 3 */
-	tree = p_tree_new_full (P_TREE_TYPE_BINARY,
-				(PCompareDataFunc) compare_keys_data,
-				&tree_data,
-				(PDestroyFunc) key_destroy_notify,
-				(PDestroyFunc) value_destroy_notify);
-	BOOST_CHECK (general_tree_test (tree, P_TREE_TYPE_BINARY, true, true) == true);
+		/* Test 3 */
+		tree = p_tree_new_full ((PTreeType) i,
+					(PCompareDataFunc) compare_keys_data,
+					&tree_data,
+					(PDestroyFunc) key_destroy_notify,
+					(PDestroyFunc) value_destroy_notify);
+		BOOST_CHECK (general_tree_test (tree, (PTreeType) i, true, true) == true);
 
-	memset (&tree_data, 0, sizeof (tree_data));
-	p_tree_free (tree);
+		memset (&tree_data, 0, sizeof (tree_data));
+		p_tree_free (tree);
 
-	BOOST_CHECK (check_tree_data_is_zero () == true);
+		BOOST_CHECK (check_tree_data_is_zero () == true);
+	}
 
 	p_lib_shutdown ();
 }
@@ -511,16 +533,18 @@ BOOST_AUTO_TEST_CASE (ptree_stress_test)
 
 	p_lib_init ();
 
-	tree = p_tree_new_full (P_TREE_TYPE_BINARY,
-				(PCompareDataFunc) compare_keys_data,
-				&tree_data,
-				(PDestroyFunc) key_destroy_notify,
-				(PDestroyFunc) value_destroy_notify);
+	for (int i = (int) P_TREE_TYPE_BINARY; i <= (int) P_TREE_TYPE_RB; ++i) {
+		tree = p_tree_new_full ((PTreeType) i,
+					(PCompareDataFunc) compare_keys_data,
+					&tree_data,
+					(PDestroyFunc) key_destroy_notify,
+					(PDestroyFunc) value_destroy_notify);
 
-	for (int i = 0; i < PTREE_STRESS_ITERATIONS; ++i)
-		BOOST_CHECK (stress_tree_test (tree, PTREE_STRESS_NODES) == true);
+		for (int j = 0; j < PTREE_STRESS_ITERATIONS; ++j)
+			BOOST_CHECK (stress_tree_test (tree, PTREE_STRESS_NODES) == true);
 
-	p_tree_free (tree);
+		p_tree_free (tree);
+	}
 
 	p_lib_shutdown ();
 }
