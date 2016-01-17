@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Alexander Saprykin <xelfium@gmail.com>
+ * Copyright (C) 2015-2016 Alexander Saprykin <xelfium@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
 #include "pmem.h"
 #include "ptree.h"
 #include "ptree-bst.h"
+#include "ptree-rb.h"
 
 typedef pboolean	(*__PTreeInsertNode)	(__PTreeBaseNode	**root_node,
 						 PCompareDataFunc	compare_func,
@@ -74,7 +75,7 @@ p_tree_new_full (PTreeType		type,
 {
 	PTree *ret;
 
-	if (type != P_TREE_TYPE_BINARY)
+	if (type < P_TREE_TYPE_BINARY || type > P_TREE_TYPE_RB)
 		return NULL;
 
 	if (func == NULL)
@@ -83,17 +84,22 @@ p_tree_new_full (PTreeType		type,
 	if ((ret = p_malloc0 (sizeof (PTree))) == NULL)
 		return NULL;
 
-	ret->type		= type;
-	ret->compare_func	= func;
-	ret->data		= data;
-	ret->key_destroy_func	= key_destroy;
+	ret->type               = type;
+	ret->compare_func       = func;
+	ret->data               = data;
+	ret->key_destroy_func   = key_destroy;
 	ret->value_destroy_func	= value_destroy;
 
 	switch (type) {
 	case P_TREE_TYPE_BINARY:
-		ret->insert_node_func	= __p_tree_bst_insert;
-		ret->remove_node_func	= __p_tree_bst_remove;
-		ret->free_node_func	= __p_tree_bst_node_free;
+		ret->insert_node_func = __p_tree_bst_insert;
+		ret->remove_node_func = __p_tree_bst_remove;
+		ret->free_node_func   = __p_tree_bst_node_free;
+		break;
+	case P_TREE_TYPE_RB:
+		ret->insert_node_func = __p_tree_rb_insert;
+		ret->remove_node_func = __p_tree_rb_remove;
+		ret->free_node_func   = __p_tree_rb_node_free;
 		break;
 	default:
 		break;
@@ -187,9 +193,9 @@ p_tree_foreach (PTree		*tree,
 	if (tree->root == NULL)
 		return;
 
-	cur_node	= tree->root;
-	mod_counter	= 0;
-	need_stop	= FALSE;
+	cur_node    = tree->root;
+	mod_counter = 0;
+	need_stop   = FALSE;
 
 	while (cur_node != NULL) {
 		if (cur_node->left == NULL) {
@@ -207,7 +213,7 @@ p_tree_foreach (PTree		*tree,
 
 			if (prev_node->right == NULL) {
 				prev_node->right = cur_node;
-				cur_node = cur_node->left;
+				cur_node         = cur_node->left;
 
 				++mod_counter;
 			} else {
@@ -216,7 +222,7 @@ p_tree_foreach (PTree		*tree,
 								   cur_node->value,
 								   user_data);
 
-				cur_node = cur_node->right;
+				cur_node         = cur_node->right;
 				prev_node->right = NULL;
 
 				--mod_counter;
@@ -261,13 +267,13 @@ p_tree_clear (PTree *tree)
 				prev_node = prev_node->right;
 
 			if (prev_node->right == NULL) {
-				prev_node->right	= cur_node;
-				next_node		= cur_node->left;
-				cur_node->left	= NULL;
-				cur_node		= next_node;
+				prev_node->right = cur_node;
+				next_node        = cur_node->left;
+				cur_node->left   = NULL;
+				cur_node         = next_node;
 			} else {
-				next_node		= cur_node->right;
-				prev_node->right	= NULL;
+				next_node        = cur_node->right;
+				prev_node->right = NULL;
 
 				if (tree->key_destroy_func != NULL)
 					tree->key_destroy_func (cur_node->key);

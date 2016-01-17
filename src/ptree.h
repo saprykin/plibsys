@@ -27,7 +27,8 @@
  * the list).
  *
  * Currently #PTree supports the following tree types:
- * - unbalanced binary search tree.
+ * - unbalanced binary search tree;
+ * - red-black self-balancing tree.
  *
  * Use p_tree_new(), or its detailed variations like p_tree_new_with_data() and
  * p_tree_new_full() to create a tree structure. Take attention that a caller
@@ -63,7 +64,8 @@ typedef struct _PTree PTree;
 
 /** Internal data organization algorithm for #PTree. */
 typedef enum {
-	P_TREE_TYPE_BINARY	= 0	/**< Unbalanced binary tree.	*/
+	P_TREE_TYPE_BINARY	= 0,	/**< Unbalanced binary tree.		*/
+	P_TREE_TYPE_RB		= 1	/**< Red-black self-balancing tree.	*/
 } PTreeType;
 
 /**

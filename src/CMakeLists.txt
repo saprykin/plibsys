@@ -90,6 +90,7 @@ set (PLIB_PRIVATE_HDRS
 	pcryptohash-sha1.h
 	plib-private.h
 	ptree-bst.h
+	ptree-rb.h
 	${PLIB_PLATFORM_CONFIG_FILE}
 	${CMAKE_BINARY_DIR}/plibconfig.h
 )
@@ -116,6 +117,7 @@ set (PLIB_SRCS
 	pstring.c
 	ptree.c
 	ptree-bst.c
+	ptree-rb.c
 	puthread.c
 )
 
