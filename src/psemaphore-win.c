@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2013 Alexander Saprykin <xelfium@gmail.com>
+ * Copyright (C) 2010-2016 Alexander Saprykin <xelfium@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,7 +19,6 @@
 #include "plib-private.h"
 #include "pmem.h"
 #include "psemaphore.h"
-#include "psha1.h"
 
 #include <stdlib.h>
 #include <string.h>
