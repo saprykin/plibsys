@@ -51,6 +51,12 @@ p_cond_variable_new (void)
 
 	ret->waiters_count	= 0;
 	ret->waiters_sema	= CreateSemaphore (NULL, 0, MAXLONG, NULL);
+
+	if (ret->waiters_sema == NULL) {
+		P_ERROR ("PCondVariable: failed to initialize semaphore");
+		p_free (ret);
+		return NULL;
+	}
 	
 	return ret;
 }
