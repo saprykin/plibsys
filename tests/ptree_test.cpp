@@ -52,14 +52,14 @@ static TreeData tree_data = {0, 0, 0, 0, 0, 0, 0, 0, 0};
 static pint
 tree_complexity (PTree *tree)
 {
-	if (tree == NULL)
+	if (tree == NULL || p_tree_get_nnodes (tree) == 0)
 		return 0;
 
 	switch (p_tree_get_type (tree)) {
 	case P_TREE_TYPE_BINARY:
 		return p_tree_get_nnodes (tree);
 	case P_TREE_TYPE_RB:
-		return 2 * ((pint) (log2 ((double) p_tree_get_nnodes (tree))) + 1);
+		return 2 * ((pint) (log ((double) p_tree_get_nnodes (tree)) / log (2.0)) + 1);
 	default:
 		return p_tree_get_nnodes (tree);
 	}
