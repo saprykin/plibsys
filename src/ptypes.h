@@ -252,9 +252,9 @@ typedef double		pdouble;
 #else
   typedef signed int		pintptr;
   typedef unsigned int		puintptr;
-  #define PINTPTR_MODIFIER      ""
-  #define PINTPTR_FORMAT        "i"
-  #define PUINTPTR_FORMAT       "u"
+  #define PINTPTR_MODIFIER	""
+  #define PINTPTR_FORMAT	"i"
+  #define PUINTPTR_FORMAT	"u"
 #endif
 
 /** Platform independent offset_t definition */
@@ -358,78 +358,78 @@ typedef pint64 poffset;
 #define P_MAXUINT64	((puint64) 0xFFFFFFFFFFFFFFFFULL)
 
 /**
-  * @def PINT16_MODIFIER
-  * @brief Platform dependent length modifier for conversion specifiers
-  * of #pint16 or #puint16 type for printing and scanning values. It is
-  * a string literal, but doesn't include percent sign so you can add
-  * precision and length modifiers and append a conversion specifier.
-  */
+ * @def PINT16_MODIFIER
+ * @brief Platform dependent length modifier for conversion specifiers
+ * of #pint16 or #puint16 type for printing and scanning values. It is
+ * a string literal, but doesn't include percent sign so you can add
+ * precision and length modifiers and append a conversion specifier.
+ */
 
 /**
-  * @def PINT16_FORMAT
-  * @brief Platform dependent conversion specifier of #pint16 type
-  * for printing and scanning values.
-  */
+ * @def PINT16_FORMAT
+ * @brief Platform dependent conversion specifier of #pint16 type
+ * for printing and scanning values.
+ */
 
 /**
-  * @def PUINT16_FORMAT
-  * @brief Platform dependent conversion specifier of #puint16 type
-  * for printing and scanning values.
-  */
+ * @def PUINT16_FORMAT
+ * @brief Platform dependent conversion specifier of #puint16 type
+ * for printing and scanning values.
+ */
 
 /**
-  * @def PINT32_MODIFIER
-  * @brief Platform dependent length modifier for conversion specifiers
-  * of #pint32 or #puint32 type for printing and scanning values. It is
-  * a string literal, but doesn't include percent sign so you can add
-  * precision and length modifiers and append a conversion specifier.
-  */
+ * @def PINT32_MODIFIER
+ * @brief Platform dependent length modifier for conversion specifiers
+ * of #pint32 or #puint32 type for printing and scanning values. It is
+ * a string literal, but doesn't include percent sign so you can add
+ * precision and length modifiers and append a conversion specifier.
+ */
 
 /**
-  * @def PINT32_FORMAT
-  * @brief Platform dependent conversion specifier of #pint32 type
-  * for printing and scanning values.
-  */
+ * @def PINT32_FORMAT
+ * @brief Platform dependent conversion specifier of #pint32 type
+ * for printing and scanning values.
+ */
 
 /**
-  * @def PUINT32_FORMAT
-  * @brief Platform dependent conversion specifier of #puint32 type
-  * for printing and scanning values.
-  */
+ * @def PUINT32_FORMAT
+ * @brief Platform dependent conversion specifier of #puint32 type
+ * for printing and scanning values.
+ */
 
 /**
-  * @def PINT64_MODIFIER
-  * @brief Platform dependent length modifier for conversion specifiers
-  * of #pint64 or #puint64 type for printing and scanning values. It is
-  * a string literal, but doesn't include percent sign so you can add
-  * precision and length modifiers and append a conversion specifier.
-  */
+ * @def PINT64_MODIFIER
+ * @brief Platform dependent length modifier for conversion specifiers
+ * of #pint64 or #puint64 type for printing and scanning values. It is
+ * a string literal, but doesn't include percent sign so you can add
+ * precision and length modifiers and append a conversion specifier.
+ */
 
 /**
-  * @def PINT64_FORMAT
-  * @brief Platform dependent conversion specifier of #pint64 type
-  * for printing and scanning values.
-  */
+ * @def PINT64_FORMAT
+ * @brief Platform dependent conversion specifier of #pint64 type
+ * for printing and scanning values.
+ */
 
 /**
-  * @def PUINT64_FORMAT
-  * @brief Platform dependent conversion specifier of #puint64 type
-  * for printing and scanning values.
-  */
+ * @def PUINT64_FORMAT
+ * @brief Platform dependent conversion specifier of #puint64 type
+ * for printing and scanning values.
+ */
 
 /**
-  * @def POFFSET_MODIFIER
-  * @brief Platform dependent length modifier for conversion specifiers
-  * of #poffset type for printing and scanning values. It is
-  * a string literal, but doesn't include percent sign so you can add
-  * precision and length modifiers and append a conversion specifier.
-  */
+ * @def POFFSET_MODIFIER
+ * @brief Platform dependent length modifier for conversion specifiers
+ * of #poffset type for printing and scanning values. It is
+ * a string literal, but doesn't include percent sign so you can add
+ * precision and length modifiers and append a conversion specifier.
+ */
 
 /**
-  * @def POFFSET_FORMAT
-  * @brief Platform dependent conversion specifier of #poffset type
-  * for printing and scanning values.
-  */
+ * @def POFFSET_FORMAT
+ * @brief Platform dependent conversion specifier of #poffset type
+ * for printing and scanning values.
+ */
 
 #if defined (P_OS_WIN) && defined (P_CC_MSVC)
   #define PINT16_MODIFIER	"h"
@@ -450,9 +450,9 @@ typedef pint64 poffset;
   #define PUINT64_FORMAT	"I64u"
 #else
 #  if PLIB_SIZEOF_LONG == 8
-     #define PINT64_MODIFIER    "l"
-     #define PINT64_FORMAT      "li"
-     #define PUINT64_FORMAT     "lu"
+     #define PINT64_MODIFIER	"l"
+     #define PINT64_FORMAT	"li"
+     #define PUINT64_FORMAT	"lu"
 #  else
      #define PINT64_MODIFIER	"ll"
      #define PINT64_FORMAT	"lli"
@@ -471,196 +471,196 @@ typedef pint64 poffset;
 #define P_BIG_ENDIAN	4321
 
 /**
-  * @def PINT16_TO_LE
-  * @brief Swaps #pint16 variable from host to little endian order
-  * @param val Value to swap.
-  * @return Swapped value.
-  * @since 0.0.1
-  */
+ * @def PINT16_TO_LE
+ * @brief Swaps #pint16 variable from host to little endian order
+ * @param val Value to swap.
+ * @return Swapped value.
+ * @since 0.0.1
+ */
 
 /**
-  * @def PUINT16_TO_LE
-  * @brief Swaps #puint16 variable from host to little endian order
-  * @param val Value to swap.
-  * @return Swapped value.
-  * @since 0.0.1
-  */
+ * @def PUINT16_TO_LE
+ * @brief Swaps #puint16 variable from host to little endian order
+ * @param val Value to swap.
+ * @return Swapped value.
+ * @since 0.0.1
+ */
 
 /**
-  * @def PINT16_TO_BE
-  * @brief Swaps #pint16 variable from host to big endian order
-  * @param val Value to swap.
-  * @return Swapped value.
-  * @since 0.0.1
-  */
+ * @def PINT16_TO_BE
+ * @brief Swaps #pint16 variable from host to big endian order
+ * @param val Value to swap.
+ * @return Swapped value.
+ * @since 0.0.1
+ */
 
 /**
-  * @def PUINT16_TO_BE
-  * @brief Swaps #puint16 variable from host to big endian order
-  * @param val Value to swap.
-  * @return Swapped value.
-  * @since 0.0.1
-  */
+ * @def PUINT16_TO_BE
+ * @brief Swaps #puint16 variable from host to big endian order
+ * @param val Value to swap.
+ * @return Swapped value.
+ * @since 0.0.1
+ */
 
 /**
-  * @def PINT32_TO_LE
-  * @brief Swaps #pint32 variable from host to little endian order
-  * @param val Value to swap.
-  * @return Swapped value.
-  * @since 0.0.1
-  */
+ * @def PINT32_TO_LE
+ * @brief Swaps #pint32 variable from host to little endian order
+ * @param val Value to swap.
+ * @return Swapped value.
+ * @since 0.0.1
+ */
 
 /**
-  * @def PUINT32_TO_LE
-  * @brief Swaps #puint32 variable from host to little endian order
-  * @param val Value to swap.
-  * @return Swapped value.
-  * @since 0.0.1
-  */
+ * @def PUINT32_TO_LE
+ * @brief Swaps #puint32 variable from host to little endian order
+ * @param val Value to swap.
+ * @return Swapped value.
+ * @since 0.0.1
+ */
 
 /**
-  * @def PINT32_TO_BE
-  * @brief Swaps #pint32 variable from host to big endian order
-  * @param val Value to swap.
-  * @return Swapped value.
-  * @since 0.0.1
-  */
+ * @def PINT32_TO_BE
+ * @brief Swaps #pint32 variable from host to big endian order
+ * @param val Value to swap.
+ * @return Swapped value.
+ * @since 0.0.1
+ */
 
 /**
-  * @def PUINT32_TO_BE
-  * @brief Swaps #puint32 variable from host to big endian order
-  * @param val Value to swap.
-  * @return Swapped value.
-  * @since 0.0.1
-  */
+ * @def PUINT32_TO_BE
+ * @brief Swaps #puint32 variable from host to big endian order
+ * @param val Value to swap.
+ * @return Swapped value.
+ * @since 0.0.1
+ */
 
 /**
-  * @def PINT64_TO_LE
-  * @brief Swaps #pint64 variable from host to little endian order
-  * @param val Value to swap.
-  * @return Swapped value.
-  * @since 0.0.1
-  */
+ * @def PINT64_TO_LE
+ * @brief Swaps #pint64 variable from host to little endian order
+ * @param val Value to swap.
+ * @return Swapped value.
+ * @since 0.0.1
+ */
 
 /**
-  * @def PUINT64_TO_LE
-  * @brief Swaps #puint64 variable from host to little endian order
-  * @param val Value to swap.
-  * @return Swapped value.
-  * @since 0.0.1
-  */
+ * @def PUINT64_TO_LE
+ * @brief Swaps #puint64 variable from host to little endian order
+ * @param val Value to swap.
+ * @return Swapped value.
+ * @since 0.0.1
+ */
 
 /**
-  * @def PINT64_TO_BE
-  * @brief Swaps #pint64 variable from host to big endian order
-  * @param val Value to swap.
-  * @return Swapped value.
-  * @since 0.0.1
-  */
+ * @def PINT64_TO_BE
+ * @brief Swaps #pint64 variable from host to big endian order
+ * @param val Value to swap.
+ * @return Swapped value.
+ * @since 0.0.1
+ */
 
 /**
-  * @def PUINT64_TO_BE
-  * @brief Swaps #puint64 variable from host to big endian order
-  * @param val Value to swap.
-  * @return Swapped value.
-  * @since 0.0.1
-  */
+ * @def PUINT64_TO_BE
+ * @brief Swaps #puint64 variable from host to big endian order
+ * @param val Value to swap.
+ * @return Swapped value.
+ * @since 0.0.1
+ */
 
 /**
-  * @def PLONG_TO_LE
-  * @brief Swaps #plong variable from host to little endian order
-  * @param val Value to swap.
-  * @return Swapped value.
-  * @since 0.0.1
-  */
+ * @def PLONG_TO_LE
+ * @brief Swaps #plong variable from host to little endian order
+ * @param val Value to swap.
+ * @return Swapped value.
+ * @since 0.0.1
+ */
 
 /**
-  * @def PULONG_TO_LE
-  * @brief Swaps #pulong variable from host to little endian order
-  * @param val Value to swap.
-  * @return Swapped value.
-  * @since 0.0.1
-  */
+ * @def PULONG_TO_LE
+ * @brief Swaps #pulong variable from host to little endian order
+ * @param val Value to swap.
+ * @return Swapped value.
+ * @since 0.0.1
+ */
 
 /**
-  * @def PLONG_TO_BE
-  * @brief Swaps #plong variable from host to big endian order
-  * @param val Value to swap.
-  * @return Swapped value.
-  * @since 0.0.1
-  */
+ * @def PLONG_TO_BE
+ * @brief Swaps #plong variable from host to big endian order
+ * @param val Value to swap.
+ * @return Swapped value.
+ * @since 0.0.1
+ */
 
 /**
-  * @def PULONG_TO_BE
-  * @brief Swaps #pulong variable from host to big endian order
-  * @param val Value to swap.
-  * @return Swapped value.
-  * @since 0.0.1
-  */
+ * @def PULONG_TO_BE
+ * @brief Swaps #pulong variable from host to big endian order
+ * @param val Value to swap.
+ * @return Swapped value.
+ * @since 0.0.1
+ */
 
 /**
-  * @def PSSIZE_TO_LE
-  * @brief Swaps #pssize variable from host to little endian order
-  * @param val Value to swap.
-  * @return Swapped value.
-  * @since 0.0.1
-  */
+ * @def PSSIZE_TO_LE
+ * @brief Swaps #pssize variable from host to little endian order
+ * @param val Value to swap.
+ * @return Swapped value.
+ * @since 0.0.1
+ */
 
 /**
-  * @def PSIZE_TO_LE
-  * @brief Swaps #psize variable from host to little endian order
-  * @param val Value to swap.
-  * @return Swapped value.
-  * @since 0.0.1
-  */
+ * @def PSIZE_TO_LE
+ * @brief Swaps #psize variable from host to little endian order
+ * @param val Value to swap.
+ * @return Swapped value.
+ * @since 0.0.1
+ */
 
 /**
-  * @def PSSIZE_TO_BE
-  * @brief Swaps #pssize variable from host to big endian order
-  * @param val Value to swap.
-  * @return Swapped value.
-  * @since 0.0.1
-  */
+ * @def PSSIZE_TO_BE
+ * @brief Swaps #pssize variable from host to big endian order
+ * @param val Value to swap.
+ * @return Swapped value.
+ * @since 0.0.1
+ */
 
 /**
-  * @def PSIZE_TO_BE
-  * @brief Swaps #psize variable from host to big endian order
-  * @param val Value to swap.
-  * @return Swapped value.
-  * @since 0.0.1
-  */
+ * @def PSIZE_TO_BE
+ * @brief Swaps #psize variable from host to big endian order
+ * @param val Value to swap.
+ * @return Swapped value.
+ * @since 0.0.1
+ */
 
 /**
-  * @def PINT_TO_LE
-  * @brief Swaps #pint variable from host to little endian order
-  * @param val Value to swap.
-  * @return Swapped value.
-  * @since 0.0.1
-  */
+ * @def PINT_TO_LE
+ * @brief Swaps #pint variable from host to little endian order
+ * @param val Value to swap.
+ * @return Swapped value.
+ * @since 0.0.1
+ */
 
 /**
-  * @def PUINT_TO_LE
-  * @brief Swaps #puint variable from host to little endian order
-  * @param val Value to swap.
-  * @return Swapped value.
-  * @since 0.0.1
-  */
+ * @def PUINT_TO_LE
+ * @brief Swaps #puint variable from host to little endian order
+ * @param val Value to swap.
+ * @return Swapped value.
+ * @since 0.0.1
+ */
 
 /**
-  * @def PINT_TO_BE
-  * @brief Swaps #pint variable from host to big endian order
-  * @param val Value to swap.
-  * @return Swapped value.
-  * @since 0.0.1
-  */
+ * @def PINT_TO_BE
+ * @brief Swaps #pint variable from host to big endian order
+ * @param val Value to swap.
+ * @return Swapped value.
+ * @since 0.0.1
+ */
 
 /**
-  * @def PUINT_TO_BE
-  * @brief Swaps #puint variable from host to big endian order
-  * @param val Value to swap.
-  * @return Swapped value.
-  * @since 0.0.1
-  */
+ * @def PUINT_TO_BE
+ * @brief Swaps #puint variable from host to big endian order
+ * @param val Value to swap.
+ * @return Swapped value.
+ * @since 0.0.1
+ */
 
 #if P_BYTE_ORDER == P_LITTLE_ENDIAN
   #define PINT16_TO_LE(val)	((pint16) (val))
