@@ -457,7 +457,7 @@ endif()
 
 if (PLIB_C_COMPILER STREQUAL msvc)
 	add_definitions (-D_CRT_SECURE_NO_WARNINGS)
-	add_definitions (-D_WINSOCK_DEPRECATED_NO_WARNINGS)	
+	add_definitions (-D_WINSOCK_DEPRECATED_NO_WARNINGS)
 
 	if (CMAKE_CXX_FLAGS MATCHES "/W[0-4]")
 		string (REGEX REPLACE "/W[0-4]" "/W4" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
