@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Alexander Saprykin <xelfium@gmail.com>
+ * Copyright (C) 2015-2016 Alexander Saprykin <xelfium@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,7 +50,7 @@ typedef void (*PFuncAddr) (void);
 /**
  * @brief Loads dynamic library.
  * @param path Path to the library file.
- * @return Pointer to #PLibraryHandle in case of success, NULL otherwise.
+ * @return Pointer to #PLibraryLoader in case of success, NULL otherwise.
  * @since 0.0.1
  *
  * If you are loading already loaded library, operating system increments
