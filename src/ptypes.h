@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2015 Alexander Saprykin <xelfium@gmail.com>
+ * Copyright (C) 2010-2016 Alexander Saprykin <xelfium@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -260,20 +260,69 @@ typedef double		pdouble;
 /** Platform independent offset_t definition */
 typedef pint64 poffset;
 
-/** Casts int to 32-bit pointer */
-#define P_INT_TO_POINTER(i) ((void *) (long) (i))
-/** Casts 32-bit pointer to int */
-#define P_POINTER_TO_INT(p) ((int) (long) (p))
+#if PLIB_SIZEOF_VOID_P == 8
+#  define P_INT_TO_POINTER(i)	((void *)	(long long) (i))
+#  define P_POINTER_TO_INT(p)	((int)		(long long) (p))
+#  define PPOINTER_TO_INT(p)	((pint)		((pint64) (p)))
+#  define PPOINTER_TO_UINT(p)	((puint)	((puint64) (p)))
+#  define PINT_TO_POINTER(i)	((ppointer)	(pint64) (i))
+#  define PUINT_TO_POINTER(u)	((ppointer)	(puint64) (u))
+#else
+#  define P_INT_TO_POINTER(i)	((void *)	(long) (i))
+#  define P_POINTER_TO_INT(p)	((int)		(long) (p))
+#  define PPOINTER_TO_INT(p)	((pint)		((plong) (p)))
+#  define PPOINTER_TO_UINT(p)	((puint)	((pulong) (p)))
+#  define PINT_TO_POINTER(i)	((ppointer)	(plong) (i))
+#  define PUINT_TO_POINTER(u)	((ppointer)	(pulong) (u))
+#endif
 
-/** Casts #ppointer to #pint value */
-#define PPOINTER_TO_INT(p)	((pint)   ((plong) (p)))
-/** Casts #ppointer to #puint value */
-#define PPOINTER_TO_UINT(p)	((puint)  ((pulong) (p)))
+/**
+ * @def P_INT_TO_POINTER
+ * @brief Casts int to pointer
+ * @param i Variable to cast.
+ * @return Casted variable.
+ * @since 0.0.1
+ */
 
-/** Casts #pint value to #ppointer */
-#define PINT_TO_POINTER(i)	((ppointer)  (plong) (i))
-/** Casts #puint value to #ppointer */
-#define PUINT_TO_POINTER(u)	((ppointer)  (pulong) (u))
+/**
+ * @def P_POINTER_TO_INT
+ * @brief Casts pointer to int
+ * @param p Pointer to cast.
+ * @return Casted pointer.
+ * @since 0.0.1
+ */
+
+/**
+ * @def PPOINTER_TO_INT
+ * @brief Casts #ppointer to #pint value
+ * @param p #ppointer to cast.
+ * @return Casted #ppointer.
+ * @since 0.0.1
+ */
+
+ /**
+  * @def PPOINTER_TO_UINT
+  * @brief Casts #ppointer to #pint value
+  * @param p #ppointer to cast.
+  * @return Casted #ppointer.
+  * @since 0.0.1
+  */
+
+ /**
+  * @def PINT_TO_POINTER
+  * @brief Casts #pint value to #ppointer
+  * @param i #pint to cast.
+  * @return Casted #pint.
+  * @since 0.0.1
+  */
+
+ /**
+  * @def PUINT_TO_POINTER
+  * @brief Casts #puint value to #ppointer
+  * @param u #puint to cast.
+  * @return Casted #puint.
+  * @since 0.0.1
+  */
 
 /** Casts #psize value to #ppointer */
 #define PSIZE_TO_POINTER(i)	((ppointer)  ((psize) (i)))
