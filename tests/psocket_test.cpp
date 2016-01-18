@@ -271,7 +271,8 @@ static void * udp_socket_receiver_thread (void *arg)
 static void * tcp_socket_sender_thread (void *arg)
 {
 	pint		send_counter = 0;
-	pint		send_total, send_now;
+	psize		send_total;
+	pssize		send_now;
 	pboolean	is_connected = FALSE;
 
 	if (arg == NULL)
@@ -395,7 +396,8 @@ static void * tcp_socket_receiver_thread (void *arg)
 {
 	pchar		recv_buffer[sizeof (socket_data)];
 	pint		recv_counter = 0;
-	pint		recv_total, recv_now;
+	psize		recv_total;
+	pssize		recv_now;
 
 	if (arg == NULL)
 		p_uthread_exit (-1);
