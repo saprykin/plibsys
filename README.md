@@ -16,6 +16,7 @@ PLib gives you:
 * Atomic operations
 * Sockets support (UDP, TCP, SCTP)
 * Hash functions: MD5, SHA-1, GOST (R 34.11-94)
+* Binary trees: BST, red-black
 * INI files parser
 * High resolution time profiler
 * Files and directories
