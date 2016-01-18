@@ -31,7 +31,7 @@ typedef struct _PTreeRBNode {
 	__PTreeRBColor		color;
 } __PTreeRBNode;
 
-inline static pboolean
+static pboolean
 __p_tree_rb_is_black (__PTreeRBNode *node)
 {
 	if (node == NULL)
@@ -40,7 +40,7 @@ __p_tree_rb_is_black (__PTreeRBNode *node)
 	return ((node->color) & P_TREE_RB_COLOR_BLACK) > 0 ? TRUE : FALSE;
 }
 
-inline static pboolean
+static pboolean
 __p_tree_rb_is_red (__PTreeRBNode *node)
 {
 	if (node == NULL)
@@ -49,7 +49,7 @@ __p_tree_rb_is_red (__PTreeRBNode *node)
 	return ((node->color) & P_TREE_RB_COLOR_RED) > 0 ? TRUE : FALSE;
 }
 
-inline static __PTreeRBNode *
+static __PTreeRBNode *
 __p_tree_rb_get_gparent (__PTreeRBNode *node)
 {
 	if (node == NULL || node->parent == NULL)
@@ -58,7 +58,7 @@ __p_tree_rb_get_gparent (__PTreeRBNode *node)
 		return node->parent->parent;
 }
 
-inline static __PTreeRBNode *
+static __PTreeRBNode *
 __p_tree_rb_get_uncle (__PTreeRBNode *node)
 {
 	__PTreeRBNode *gparent = __p_tree_rb_get_gparent (node);
@@ -72,7 +72,7 @@ __p_tree_rb_get_uncle (__PTreeRBNode *node)
 		return (__PTreeRBNode *) gparent->base.left;
 }
 
-inline static __PTreeRBNode *
+static __PTreeRBNode *
 __p_tree_rb_get_sibling (__PTreeRBNode *node)
 {
 	if (node == NULL || node->parent == NULL)
@@ -84,7 +84,7 @@ __p_tree_rb_get_sibling (__PTreeRBNode *node)
 		return (__PTreeRBNode *) node->parent->base.left;
 }
 
-inline static void
+static void
 __p_tree_rb_rotate_left (__PTreeRBNode *node, __PTreeBaseNode **root)
 {
 	__PTreeBaseNode *tmp_node;
@@ -111,7 +111,7 @@ __p_tree_rb_rotate_left (__PTreeRBNode *node, __PTreeBaseNode **root)
 		*root = tmp_node;
 }
 
-inline static void
+static void
 __p_tree_rb_rotate_right (__PTreeRBNode *node, __PTreeBaseNode **root)
 {
 	__PTreeBaseNode *tmp_node;
