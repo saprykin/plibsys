@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Alexander Saprykin <xelfium@gmail.com>
+ * Copyright (C) 2013-2016 Alexander Saprykin <xelfium@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@
 
 static bool create_test_ini_file ()
 {
-	FILE *file = fopen ("."P_DIR_SEPARATOR"p_ini_test_file.ini", "w");
+	FILE *file = fopen ("." P_DIR_SEPARATOR "p_ini_test_file.ini", "w");
 
 	if (file == NULL)
 		return false;
@@ -99,7 +99,7 @@ BOOST_AUTO_TEST_CASE (pinifile_read_test)
 {
 	p_lib_init ();
 
-	PIniFile *ini = p_ini_file_new ("."P_DIR_SEPARATOR"p_ini_test_file.ini");
+	PIniFile *ini = p_ini_file_new ("." P_DIR_SEPARATOR "p_ini_test_file.ini");
 	BOOST_REQUIRE (ini != NULL);
 	BOOST_CHECK (p_ini_file_is_parsed (ini) == FALSE);
 
@@ -219,7 +219,7 @@ BOOST_AUTO_TEST_CASE (pinifile_read_test)
 
 	p_ini_file_free (ini);
 
-	BOOST_CHECK (p_file_remove ("."P_DIR_SEPARATOR"p_ini_test_file.ini"));
+	BOOST_CHECK (p_file_remove ("." P_DIR_SEPARATOR "p_ini_test_file.ini"));
 
 	p_lib_shutdown ();
 }
