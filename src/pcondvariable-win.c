@@ -1,5 +1,5 @@
 /* 
- * Copyright (C) 2010-2013 Alexander Saprykin <xelfium@gmail.com>
+ * Copyright (C) 2010-2016 Alexander Saprykin <xelfium@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
 /* Taken from "Strategies for Implementing POSIX Condition Variables on Win32"
  * by Douglas C. Schmidt and Irfan Pyarali.
  * See: http://www.cse.wustl.edu/~schmidt/win32-cv-1.html
+ * See: https://github.com/python/cpython/blob/master/Python/condvar.h
  */
 
 /* TODO: Use native conditional variable if available */
@@ -34,11 +35,8 @@
 #include <windows.h>
 
 struct _PCondVariable {
-	CRITICAL_SECTION	waiters_count_lock;
-	HANDLE			waiters_sema;
-	HANDLE			waiters_done;
-	pboolean		was_broadcast;
-	pint			waiters_count;
+	HANDLE	waiters_sema;
+	pint	waiters_count;
 };
 
 P_LIB_API PCondVariable *
@@ -52,13 +50,8 @@ p_cond_variable_new (void)
 	}
 
 	ret->waiters_count	= 0;
-	ret->was_broadcast	= FALSE;
 	ret->waiters_sema	= CreateSemaphore (NULL, 0, MAXLONG, NULL);
 	
-	InitializeCriticalSection (&ret->waiters_count_lock);
-
-	ret->waiters_done = CreateEvent (NULL, FALSE, FALSE, NULL);
-
 	return ret;
 }
 
@@ -68,9 +61,7 @@ p_cond_variable_free (PCondVariable *cond)
 	if (cond == NULL)
 		return;
 
-	DeleteCriticalSection (&cond->waiters_count_lock);
 	CloseHandle (cond->waiters_sema);
-	CloseHandle (cond->waiters_done);
 
 	p_free (cond);
 }
@@ -79,48 +70,36 @@ P_LIB_API pboolean
 p_cond_variable_wait (PCondVariable	*cond,
 		      PMutex		*mutex)
 {
-	pboolean	last_waiter;
+	DWORD wait;
 
 	if (cond == NULL || mutex == NULL)
 		return FALSE;
 	
-	EnterCriticalSection (&cond->waiters_count_lock);
 	cond->waiters_count++;
-	LeaveCriticalSection (&cond->waiters_count_lock);
 
-	/* We can always cast PMutex to HANDLE since structure has only one HANDLE field */
-	SignalObjectAndWait (*((HANDLE *) mutex), cond->waiters_sema, INFINITE, FALSE);
-	
-	EnterCriticalSection (&cond->waiters_count_lock);
+	p_mutex_unlock (mutex);
+	wait = WaitForSingleObjectEx (cond->waiters_sema, INFINITE, FALSE);
+	p_mutex_lock (mutex);
 
-	cond->waiters_count--;
+	if (wait != WAIT_OBJECT_0)
+		--cond->waiters_count;
 
-	last_waiter = (cond->was_broadcast == TRUE && cond->waiters_count == 0) ? TRUE : FALSE;
+	if (wait == WAIT_FAILED)
+		return FALSE;
 
-	LeaveCriticalSection (&cond->waiters_count_lock);
-
-	if (last_waiter)
-		SignalObjectAndWait (cond->waiters_done, *((HANDLE *) mutex), INFINITE, FALSE);
-	else
-		WaitForSingleObject (*((HANDLE *) mutex), INFINITE);
-
-	return TRUE;
+	return wait == WAIT_OBJECT_0 ? TRUE : FALSE;
 }
 
 P_LIB_API pboolean
 p_cond_variable_signal (PCondVariable *cond)
 {
-	pboolean have_waiters;
-
 	if (cond == NULL)
 		return FALSE;
-
-	EnterCriticalSection (&cond->waiters_count_lock);
-  	have_waiters = (cond->waiters_count > 0) ? TRUE : FALSE;
-	LeaveCriticalSection (&cond->waiters_count_lock);
-
-	if (have_waiters)
-		ReleaseSemaphore (cond->waiters_sema, 1, 0);
+	
+	if (cond->waiters_count > 0) {
+		cond->waiters_count--;
+		return ReleaseSemaphore (cond->waiters_sema, 1, 0) != 0 ? TRUE : FALSE;
+	}
 
 	return TRUE;
 }
@@ -128,26 +107,17 @@ p_cond_variable_signal (PCondVariable *cond)
 P_LIB_API pboolean
 p_cond_variable_broadcast (PCondVariable *cond)
 {
-	pboolean have_waiters;
+	pint waiters;
 
 	if (cond == NULL)
 		return FALSE;
 
-	EnterCriticalSection (&cond->waiters_count_lock);
-	have_waiters = FALSE;
+	waiters = cond->waiters_count;
 
-	if (cond->waiters_count > 0) {
-		cond->was_broadcast = TRUE;
-		have_waiters = TRUE;
+	if (waiters > 0) {		
+		cond->waiters_count = 0;
+		ReleaseSemaphore (cond->waiters_sema, waiters, 0) != 0 ? TRUE : FALSE;
 	}
-
-	if (have_waiters) {
-		ReleaseSemaphore (cond->waiters_sema, cond->waiters_count, 0);
-		LeaveCriticalSection (&cond->waiters_count_lock);
-		WaitForSingleObject (cond->waiters_done, INFINITE);
-		cond->was_broadcast = FALSE;
-	} else
-		LeaveCriticalSection (&cond->waiters_count_lock);
 
 	return TRUE;
 }
