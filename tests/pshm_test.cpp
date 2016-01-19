@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Alexander Saprykin <xelfium@gmail.com>
+ * Copyright (C) 2013-2016 Alexander Saprykin <xelfium@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -69,6 +69,11 @@ BOOST_AUTO_TEST_CASE (pshm_general_test)
 	BOOST_REQUIRE (p_shm_get_address (shm) == NULL);
 	BOOST_REQUIRE (p_shm_get_size (shm) == 0);
 	p_shm_take_ownership (shm);
+
+	shm = p_shm_new ("p_shm_test_memory_block", 1024, P_SHM_ACCESS_READWRITE);
+	BOOST_REQUIRE (shm != NULL);
+	p_shm_take_ownership (shm);
+	p_shm_free (shm);
 
 	shm = p_shm_new ("p_shm_test_memory_block", 1024, P_SHM_ACCESS_READWRITE);
 	BOOST_REQUIRE (shm != NULL);
@@ -156,6 +161,10 @@ BOOST_AUTO_TEST_CASE (pshm_thread_test)
 	shm = p_shm_new ("p_shm_test_memory_block", 1024 * 1024, P_SHM_ACCESS_READWRITE);
 	BOOST_REQUIRE (shm != NULL);
 	p_shm_take_ownership (shm);
+	p_shm_free (shm);
+
+	shm = p_shm_new ("p_shm_test_memory_block", 1024 * 1024, P_SHM_ACCESS_READWRITE);
+	BOOST_REQUIRE (shm != NULL);
 
 	if (p_shm_get_size (shm) != 1024 * 1024) {
 		p_shm_free (shm);

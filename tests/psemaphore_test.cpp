@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Alexander Saprykin <xelfium@gmail.com>
+ * Copyright (C) 2013-2016 Alexander Saprykin <xelfium@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -69,6 +69,11 @@ BOOST_AUTO_TEST_CASE (psemaphore_general_test)
 
 	sem = p_semaphore_new ("p_semaphore_test_object", 10, P_SEM_ACCESS_CREATE);
 	BOOST_REQUIRE (sem != NULL);
+	p_semaphore_take_ownership (sem);
+	p_semaphore_free (sem);
+
+	sem = p_semaphore_new ("p_semaphore_test_object", 10, P_SEM_ACCESS_CREATE);
+	BOOST_REQUIRE (sem != NULL);
 
 	for (i = 0; i < 10; ++i)
 		BOOST_CHECK (p_semaphore_acquire (sem));
@@ -92,6 +97,11 @@ BOOST_AUTO_TEST_CASE (psemaphore_thread_test)
 	PSemaphore	*sem = NULL;
 
 	p_lib_init ();
+
+	sem = p_semaphore_new ("p_semaphore_test_object", 10, P_SEM_ACCESS_CREATE);
+	BOOST_REQUIRE (sem != NULL);
+	p_semaphore_take_ownership (sem);
+	p_semaphore_free (sem);
 
 	thr1 = p_uthread_create ((PUThreadFunc) semaphore_test_thread, NULL, true);
 	BOOST_REQUIRE (thr1 != NULL);
