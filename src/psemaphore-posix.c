@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2015 Alexander Saprykin <xelfium@gmail.com>
+ * Copyright (C) 2010-2016 Alexander Saprykin <xelfium@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -63,8 +63,7 @@ __p_semaphore_create_handle (PSemaphore *sem)
 		&& errno == EINTR)
 	;
 
-	if (sem->sem_hdl == P_SEM_INVALID_HDL)
-	{
+	if (sem->sem_hdl == P_SEM_INVALID_HDL) {
 		if (errno == EEXIST) {
 			if (sem->mode == P_SEM_ACCESS_CREATE)
 				sem_unlink (sem->platform_key);
