@@ -2,7 +2,7 @@
  * Copyright (C) 2008 Christian Kellner, Samuel Cormier-Iijima
  * Copyright (C) 2009 Codethink Limited
  * Copyright (C) 2009 Red Hat, Inc
- * Copyright (C) 2010-2014 Alexander Saprykin <xelfium@gmail.com>
+ * Copyright (C) 2010-2016 Alexander Saprykin <xelfium@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1421,14 +1421,16 @@ p_socket_set_buffer_size (PSocket		*socket,
 			  PSocketDirection	dir,
 			  psize			size)
 {
+	pint	optname;
 	pint	optval;
 
 	if (socket == NULL)
 		return FALSE;
 
-	optval = (dir == P_SOCKET_DIRECTION_RCV) ? SO_RCVBUF : SO_SNDBUF;
+	optname = (dir == P_SOCKET_DIRECTION_RCV) ? SO_RCVBUF : SO_SNDBUF;
+	optval	= (pint) size;
 
-	if (setsockopt (socket->fd, SOL_SOCKET, optval, (pconstpointer) &size, sizeof (size)) != 0) {
+	if (setsockopt (socket->fd, SOL_SOCKET, optname, (pconstpointer) &optval, sizeof (optval)) != 0) {
 		__p_socket_set_error (socket);
 		return FALSE;
 	}
