@@ -103,6 +103,8 @@ BOOST_AUTO_TEST_CASE (psemaphore_thread_test)
 	p_semaphore_take_ownership (sem);
 	p_semaphore_free (sem);
 
+	sem = NULL;
+
 	thr1 = p_uthread_create ((PUThreadFunc) semaphore_test_thread, NULL, true);
 	BOOST_REQUIRE (thr1 != NULL);
 
