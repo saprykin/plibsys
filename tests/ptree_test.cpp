@@ -59,7 +59,7 @@ tree_complexity (PTree *tree)
 	case P_TREE_TYPE_BINARY:
 		return p_tree_get_nnodes (tree);
 	case P_TREE_TYPE_RB:
-		return 2 * ((pint) (log ((double) p_tree_get_nnodes (tree)) / log (2.0)) + 1);
+		return 2 * ((pint) (log ((double) p_tree_get_nnodes (tree) + 1) / log (2.0)));
 	default:
 		return p_tree_get_nnodes (tree);
 	}
