@@ -1,6 +1,6 @@
 ======= About PLib =======
 
-PLib is a cross-platform C library with some helpful routines.
+PLib is a cross-platform system C library with some helpful routines.
 Do not confuse with PLIB which is using for game and 3D development.
 
 ======= Features =======
@@ -16,14 +16,14 @@ PLib gives you:
 * Atomic operations
 * Sockets support (UDP, TCP, SCTP)
 * Hash functions: MD5, SHA-1, GOST (R 34.11-94)
-* Binary trees: BST, red-black
+* Binary trees: BST, red-black, AVL
 * INI files parser
 * High resolution time profiler
 * Files and directories
 * Dynamic library loading
 * Useful routines for linked lists, strings, hash tables
 * Macros for OS and compiler detection
-* Fully covered with unit tests robust code
+* Fully covered with unit tests
 
 ======= Platforms =======
 
@@ -34,7 +34,8 @@ the following platforms:
 * OS X
 * Windows
 * FreeBSD, NetBSD, OpenBSD
-* Solaris 10
+* DragonFlyBSD
+* Solaris 10, 11
 * QNX 6
 
 It should also work on other *nix systems with or without minimal
@@ -45,10 +46,11 @@ efforts.
 PLib was tested with the following compilers:
 
 * MSVC (x32, x64) 2003 and above
-* MinGW
+* MinGW (x32, x64)
 * GCC (x32, x64)
-* CLang
+* CLang (x32, x64)
 * QCC
+* Oracle Solaris Studio (x32, x64)
 
 ======= Building =======
 
@@ -57,4 +59,3 @@ Use CMake to build PLib for any target platform.
 ======= License =======
 
 PLib is distributed under the terms of GNU GPLv2 license.
-
