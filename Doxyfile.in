@@ -57,12 +57,12 @@ RECURSIVE              = YES
 # EXCLUDE_PATTERNS tag to specify one or more wildcard patterns to exclude 
 # certain files from those directories.
 
-EXCLUDE_PATTERNS       = Makefile.*		\
-			 pcryptohash-*.*	\
-			 ptree-*.*		\
-			 plib.h			\
-			 plib-private.h		\
-			 CMakeLists.txt
+EXCLUDE_PATTERNS       = Makefile.*             \
+                         pcryptohash-*.*        \
+                         ptree-*.*              \
+                         plib.h                 \
+                         plib-private.h         \
+                         CMakeLists.txt
 
 # The EXAMPLE_PATH tag can be used to specify one or more files or 
 # directories that contain example code fragments that are included (see 
@@ -145,10 +145,10 @@ EXPAND_ONLY_PREDEF     = YES
 SEARCH_INCLUDES        = YES
 INCLUDE_PATH           = 
 INCLUDE_FILE_PATTERNS  = 
-PREDEFINED             = "P_BEGIN_DECLS=" 			\
-			 "P_END_DECLS=" 			\
-			 "DOXYGEN_SHOULD_SKIP_THIS"		\
-			 "DOXYGEN"
+PREDEFINED             = "P_BEGIN_DECLS="                       \
+                         "P_END_DECLS="                         \
+                         "DOXYGEN_SHOULD_SKIP_THIS"             \
+                         "DOXYGEN"
 SKIP_FUNCTION_MACROS   = YES
 #---------------------------------------------------------------------------
 # Configuration::addtions related to external references   
