@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Alexander Saprykin <xelfium@gmail.com>
+ * Copyright (C) 2015-2016 Alexander Saprykin <xelfium@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,7 +28,8 @@
  *
  * Currently #PTree supports the following tree types:
  * - unbalanced binary search tree;
- * - red-black self-balancing tree.
+ * - red-black self-balancing tree;
+ * - AVL self-balancing tree.
  *
  * Use p_tree_new(), or its detailed variations like p_tree_new_with_data() and
  * p_tree_new_full() to create a tree structure. Take attention that a caller
@@ -45,6 +46,9 @@
  * Release memory with p_tree_free() or clear a tree with p_tree_clear().
  * Keys and values would be destroyed only if corresponding notification
  * functions were provided.
+ *
+ * Note: all operations with a tree are non-recursive, only iterative calls are
+ * used.
  */
 
 #if !defined (__PLIB_H_INSIDE__) && !defined (PLIB_COMPILATION)
@@ -65,7 +69,8 @@ typedef struct _PTree PTree;
 /** Internal data organization algorithm for #PTree. */
 typedef enum {
 	P_TREE_TYPE_BINARY	= 0,	/**< Unbalanced binary tree.		*/
-	P_TREE_TYPE_RB		= 1	/**< Red-black self-balancing tree.	*/
+	P_TREE_TYPE_RB		= 1,	/**< Red-black self-balancing tree.	*/
+	P_TREE_TYPE_AVL		= 2	/**< AVL self-balancing tree		*/
 } PTreeType;
 
 /**

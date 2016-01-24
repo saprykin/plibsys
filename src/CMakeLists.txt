@@ -89,6 +89,7 @@ set (PLIB_PRIVATE_HDRS
 	pcryptohash-md5.h
 	pcryptohash-sha1.h
 	plib-private.h
+	ptree-avl.h
 	ptree-bst.h
 	ptree-rb.h
 	${PLIB_PLATFORM_CONFIG_FILE}
@@ -116,6 +117,7 @@ set (PLIB_SRCS
 	psocketaddress.c
 	pstring.c
 	ptree.c
+	ptree-avl.c
 	ptree-bst.c
 	ptree-rb.c
 	puthread.c

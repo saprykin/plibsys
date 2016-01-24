@@ -18,6 +18,7 @@
 
 #include "pmem.h"
 #include "ptree.h"
+#include "ptree-avl.h"
 #include "ptree-bst.h"
 #include "ptree-rb.h"
 
@@ -75,7 +76,7 @@ p_tree_new_full (PTreeType		type,
 {
 	PTree *ret;
 
-	if (type < P_TREE_TYPE_BINARY || type > P_TREE_TYPE_RB)
+	if (type < P_TREE_TYPE_BINARY || type > P_TREE_TYPE_AVL)
 		return NULL;
 
 	if (func == NULL)
@@ -100,6 +101,11 @@ p_tree_new_full (PTreeType		type,
 		ret->insert_node_func = __p_tree_rb_insert;
 		ret->remove_node_func = __p_tree_rb_remove;
 		ret->free_node_func   = __p_tree_rb_node_free;
+		break;
+	case P_TREE_TYPE_AVL:
+		ret->insert_node_func = __p_tree_avl_insert;
+		ret->remove_node_func = __p_tree_avl_remove;
+		ret->free_node_func   = __p_tree_avl_node_free;
 		break;
 	default:
 		break;
