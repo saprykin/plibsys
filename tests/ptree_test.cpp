@@ -60,6 +60,11 @@ tree_complexity (PTree *tree)
 		return p_tree_get_nnodes (tree);
 	case P_TREE_TYPE_RB:
 		return 2 * ((pint) (log ((double) p_tree_get_nnodes (tree) + 1) / log (2.0)));
+	case P_TREE_TYPE_AVL:
+	{
+		double phi = (1 + sqrt (5.0)) / 2.0;
+		return (pint) (log (sqrt (5.0) * (p_tree_get_nnodes (tree) + 2)) / log (phi) - 2);
+	}
 	default:
 		return p_tree_get_nnodes (tree);
 	}
@@ -441,7 +446,7 @@ BOOST_AUTO_TEST_CASE (ptree_invalid_test)
 {
 	p_lib_init ();
 
-	for (int i = (int) P_TREE_TYPE_BINARY; i <= (int) P_TREE_TYPE_RB; ++i) {
+	for (int i = (int) P_TREE_TYPE_BINARY; i <= (int) P_TREE_TYPE_AVL; ++i) {
 		/* Invalid usage */
 		BOOST_CHECK (p_tree_new ((PTreeType) i, NULL) == NULL);
 		BOOST_CHECK (p_tree_new ((PTreeType) -1, compare_keys) == NULL);
@@ -487,7 +492,7 @@ BOOST_AUTO_TEST_CASE (ptree_general_test)
 
 	p_lib_init ();
 
-	for (int i = (int) P_TREE_TYPE_BINARY; i <= (int) P_TREE_TYPE_RB; ++i) {
+	for (int i = (int) P_TREE_TYPE_BINARY; i <= (int) P_TREE_TYPE_AVL; ++i) {
 		/* Test 1 */
 		tree = p_tree_new ((PTreeType) i, compare_keys);
 
@@ -533,7 +538,7 @@ BOOST_AUTO_TEST_CASE (ptree_stress_test)
 
 	p_lib_init ();
 
-	for (int i = (int) P_TREE_TYPE_BINARY; i <= (int) P_TREE_TYPE_RB; ++i) {
+	for (int i = (int) P_TREE_TYPE_BINARY; i <= (int) P_TREE_TYPE_AVL; ++i) {
 		tree = p_tree_new_full ((PTreeType) i,
 					(PCompareDataFunc) compare_keys_data,
 					&tree_data,
