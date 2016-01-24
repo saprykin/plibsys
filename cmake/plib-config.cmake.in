@@ -6,16 +6,16 @@ message (STATUS "PLib configuration, version " ${PLib_VERSION})
 # Tell the user project where to find our headers and libraries.
 get_filename_component (_DIR ${CMAKE_CURRENT_LIST_FILE} PATH)
 if (IS_ABSOLUTE @PLIB_ROOT_DIR@)
-	# This is an uninstalled package (still in the build tree)
-	set (PLIB_ROOT_DIR @PLIB_ROOT_DIR@)
-	set (PLib_INCLUDE_DIRS @PLib_INCLUDE_DIRS@)
-	set (PLib_LIBRARY_DIRS ${PLIB_ROOT_DIR})
+        # This is an uninstalled package (still in the build tree)
+        set (PLIB_ROOT_DIR @PLIB_ROOT_DIR@)
+        set (PLib_INCLUDE_DIRS @PLib_INCLUDE_DIRS@)
+        set (PLib_LIBRARY_DIRS ${PLIB_ROOT_DIR})
 else()
-	# This is an installed package; figure out the paths relative to the
-	# current directory.
-	get_filename_component (PLIB_ROOT_DIR ${_DIR}/@PLIB_ROOT_DIR@ ABSOLUTE)
-	set (PLib_INCLUDE_DIRS ${PLIB_ROOT_DIR}/include)
-	set (PLib_LIBRARY_DIRS ${PLIB_ROOT_DIR}/lib)
+        # This is an installed package; figure out the paths relative to the
+        # current directory.
+        get_filename_component (PLIB_ROOT_DIR ${_DIR}/@PLIB_ROOT_DIR@ ABSOLUTE)
+        set (PLib_INCLUDE_DIRS ${PLIB_ROOT_DIR}/include)
+        set (PLib_LIBRARY_DIRS ${PLIB_ROOT_DIR}/lib)
 endif()
 
 # Read in the exported definition of the library.
@@ -23,4 +23,4 @@ include ("${_DIR}/plib-targets.cmake")
 set (PLib_LIBRARIES plib)
 
 # PLib_FOUND is set to 1 automatically.
-set (PLib_FOUND 1)	# for backwards compatibility
+set (PLib_FOUND 1) # for backwards compatibility

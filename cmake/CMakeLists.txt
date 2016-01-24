@@ -31,15 +31,15 @@ set (PLib_INCLUDE_DIRS IGNORE)
 configure_file (plib-config.cmake.in ${CMAKE_CURRENT_BINARY_DIR}/plib-config.cmake @ONLY)
 configure_file (plib-config-version.cmake.in ${CMAKE_CURRENT_BINARY_DIR}/plib-config-version.cmake @ONLY)
 install (FILES
-	${CMAKE_CURRENT_BINARY_DIR}/plib-config.cmake
-	${CMAKE_CURRENT_BINARY_DIR}/plib-config-version.cmake
-	DESTINATION ${INSTALL_CMAKE_DIR}
-	COMPONENT Core
+        ${CMAKE_CURRENT_BINARY_DIR}/plib-config.cmake
+        ${CMAKE_CURRENT_BINARY_DIR}/plib-config-version.cmake
+        DESTINATION ${INSTALL_CMAKE_DIR}
+        COMPONENT Core
 )
 
 # Make information about the cmake targets available.
 install (EXPORT plib-targets
-	FILE plib-targets.cmake
-	DESTINATION ${INSTALL_CMAKE_DIR}
-	COMPONENT Core
+        FILE plib-targets.cmake
+        DESTINATION ${INSTALL_CMAKE_DIR}
+        COMPONENT Core
 )

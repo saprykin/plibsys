@@ -7,7 +7,7 @@ find_package (Boost COMPONENTS unit_test_framework REQUIRED)
 include_directories (${Boost_INCLUDE_DIR} ${PROJECT_SOURCE_DIR}/../src ${CMAKE_BINARY_DIR})
 
 if (PLIB_C_COMPILER STREQUAL msvc)
-	add_definitions (-D_CRT_SECURE_NO_WARNINGS)
+        add_definitions (-D_CRT_SECURE_NO_WARNINGS)
 endif()
 
 set (PATOMIC_TEST_SRCS patomic_test.cpp)
