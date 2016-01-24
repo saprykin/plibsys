@@ -229,12 +229,12 @@ __p_tree_rb_balance_insert (__PTreeRBNode *node, __PTreeBaseNode **root)
 
 pboolean
 __p_tree_rb_insert (__PTreeBaseNode	**root_node,
-		     PCompareDataFunc	compare_func,
-		     ppointer		data,
-		     PDestroyFunc	key_destroy_func,
-		     PDestroyFunc	value_destroy_func,
-		     ppointer		key,
-		     ppointer		value)
+		    PCompareDataFunc	compare_func,
+		    ppointer		data,
+		    PDestroyFunc	key_destroy_func,
+		    PDestroyFunc	value_destroy_func,
+		    ppointer		key,
+		    ppointer		value)
 {
 	__PTreeBaseNode	**cur_node;
 	__PTreeBaseNode	*parent_node;
@@ -402,11 +402,11 @@ __p_tree_rb_balance_remove (__PTreeRBNode *node, __PTreeBaseNode **root)
 
 pboolean
 __p_tree_rb_remove (__PTreeBaseNode	**root_node,
-		     PCompareDataFunc	compare_func,
-		     ppointer		data,
-		     PDestroyFunc	key_destroy_func,
-		     PDestroyFunc	value_destroy_func,
-		     pconstpointer	key)
+		    PCompareDataFunc	compare_func,
+		    ppointer		data,
+		    PDestroyFunc	key_destroy_func,
+		    PDestroyFunc	value_destroy_func,
+		    pconstpointer	key)
 {
 	__PTreeBaseNode	*cur_node;
 	__PTreeBaseNode	*prev_node;
@@ -456,12 +456,12 @@ __p_tree_rb_remove (__PTreeBaseNode	**root_node,
 		*root_node   = child_node;
 		child_parent = NULL;
 	} else {
-		if (((__PTreeRBNode *) cur_node)->parent->base.left == cur_node)
-			((__PTreeRBNode *) cur_node)->parent->base.left = child_node;
-		else
-			((__PTreeRBNode *) cur_node)->parent->base.right = child_node;
-
 		child_parent = ((__PTreeRBNode *) cur_node)->parent;
+
+		if (child_parent->base.left == cur_node)
+			child_parent->base.left = child_node;
+		else
+			child_parent->base.right = child_node;
 	}
 
 	if (child_node != NULL) {
