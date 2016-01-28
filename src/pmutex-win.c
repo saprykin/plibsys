@@ -1,5 +1,5 @@
-/* 
- * Copyright (C) 2010-2013 Alexander Saprykin <xelfium@gmail.com>
+/*
+ * Copyright (C) 2010-2016 Alexander Saprykin <xelfium@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,13 +18,12 @@
 
 #include "pmem.h"
 #include "pmutex.h"
-#include "patomic.h"
 
 #include <stdlib.h>
 #include <winsock2.h>
 #include <windows.h>
 
-typedef HANDLE mutex_hdl;
+typedef CRITICAL_SECTION mutex_hdl;
 
 struct _PMutex {
 	mutex_hdl	hdl;
@@ -40,11 +39,7 @@ p_mutex_new (void)
 		return NULL;
 	}
 
-	if ((ret->hdl = CreateMutex (NULL, FALSE, NULL)) == NULL) {
-		P_ERROR ("PMutex: failed to initialize mutex object");
-		p_free (ret);
-		return NULL;
-	}
+	InitializeCriticalSection (&ret->hdl);
 
 	return ret;
 }
@@ -55,12 +50,9 @@ p_mutex_lock (PMutex *mutex)
 	if (!mutex)
 		return FALSE;
 
-	if (WaitForSingleObject (mutex->hdl, INFINITE) == WAIT_OBJECT_0)
-		return TRUE;
-	else {
-		P_ERROR ("PMutex: failed to lock mutex object");
-		return FALSE;
-	}
+	EnterCriticalSection (&mutex->hdl);
+
+	return TRUE;
 }
 
 P_LIB_API pboolean
@@ -69,12 +61,7 @@ p_mutex_trylock (PMutex *mutex)
 	if (!mutex)
 		return FALSE;
 
-	if (WaitForSingleObject (mutex->hdl, 0) == WAIT_OBJECT_0)
-		return TRUE;
-	else {
-		P_ERROR ("PMutex: failed to try lock mutex object");
-		return FALSE;
-	}
+	return TryEnterCriticalSection (&mutex->hdl) != 0 ? TRUE : FALSE;
 }
 
 P_LIB_API pboolean
@@ -83,12 +70,9 @@ p_mutex_unlock (PMutex *mutex)
 	if (!mutex)
 		return FALSE;
 
-	if (ReleaseMutex (mutex->hdl))
-		return TRUE;
-	else {
-		P_ERROR ("PMutex: failed to unlock mutex object");
-		return FALSE;
-	}
+	LeaveCriticalSection (&mutex->hdl);
+
+	return TRUE;
 }
 
 P_LIB_API void
@@ -97,8 +81,7 @@ p_mutex_free (PMutex *mutex)
 	if (!mutex)
 		return;
 
-	if (!CloseHandle (mutex->hdl))
-		P_ERROR ("PMutex: error while closing handle");
+	DeleteCriticalSection (&mutex->hdl);
 
 	p_free (mutex);
 }
