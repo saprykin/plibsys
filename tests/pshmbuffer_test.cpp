@@ -149,6 +149,9 @@ BOOST_AUTO_TEST_CASE (pshmbuffer_thread_test)
 	p_shm_buffer_take_ownership (buffer);
 	p_shm_buffer_free (buffer);
 
+	buffer = p_shm_buffer_new ("pshm_test_buffer", 1024);
+	BOOST_REQUIRE (buffer != NULL);
+
 	thr1 = p_uthread_create ((PUThreadFunc) shm_buffer_test_write_thread, NULL, TRUE);
 	BOOST_REQUIRE (thr1 != NULL);
 
@@ -162,6 +165,7 @@ BOOST_AUTO_TEST_CASE (pshmbuffer_thread_test)
 	BOOST_CHECK (p_uthread_join (thr1) == 0);
 	BOOST_CHECK (p_uthread_join (thr2) == 0);
 
+	p_shm_buffer_free (buffer);
 	p_uthread_free (thr1);
 	p_uthread_free (thr2);
 
