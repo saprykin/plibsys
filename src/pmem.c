@@ -1,5 +1,5 @@
-/* 
- * Copyright (C) 2010-2013 Alexander Saprykin <xelfium@gmail.com>
+/*
+ * Copyright (C) 2010-2016 Alexander Saprykin <xelfium@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +22,10 @@
 #include "pmacros.h"
 #include "pmem.h"
 
-#ifndef P_OS_WIN
+#ifdef P_OS_WIN
+#include <winsock2.h>
+#include <windows.h>
+#else
 #include <sys/mman.h>
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -91,7 +94,7 @@ p_realloc (ppointer mem, psize n_bytes)
 
 	if (mem == NULL)
 		return p_mem_table.malloc (n_bytes);
-	else 
+	else
 		return p_mem_table.realloc (mem, n_bytes);
 }
 

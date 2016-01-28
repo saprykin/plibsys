@@ -1,5 +1,5 @@
-/* 
- * Copyright (C) 2010-2013 Alexander Saprykin <xelfium@gmail.com>
+/*
+ * Copyright (C) 2010-2016 Alexander Saprykin <xelfium@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,6 +17,13 @@
  */
 
 #include "pfile.h"
+
+#ifdef P_OS_WIN
+#include <winsock2.h>
+#include <windows.h>
+#else
+#include <unistd.h>
+#endif
 
 P_LIB_API pboolean
 p_file_is_exists (const pchar *file)
