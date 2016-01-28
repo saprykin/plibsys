@@ -16,6 +16,11 @@ function (plib_detect_c_compiler result)
                 set (PLIB_C_COMPILER qcc)
         endif()
 
+        # Rename intel -> icc
+        if (PLIB_C_COMPILER STREQUAL intel)
+                set (PLIB_C_COMPILER icc)
+        endif()
+
         # Assign result
         set (${result} ${PLIB_C_COMPILER} PARENT_SCOPE)
 endfunction (plib_detect_c_compiler)
