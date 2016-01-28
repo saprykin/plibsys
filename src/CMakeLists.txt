@@ -6,12 +6,10 @@ include (${PROJECT_SOURCE_DIR}/cmake/PlatformDetect.cmake)
 set (OUTPUT_DIR ${CMAKE_BINARY_DIR})
 set (PLIB_CONFIG_FILE ${CMAKE_BINARY_DIR}/plibconfig.h)
 
-#Try to detect target platform
-string (TOLOWER ${CMAKE_SYSTEM_NAME} PLIB_TARGET_OS)
-
+# Try to detect target platform
 plib_detect_target_platform (PLIB_TARGET_PLATFORM)
 plib_detect_c_compiler (PLIB_C_COMPILER)
-string (TOLOWER ${CMAKE_SYSTEM_NAME} PLIB_TARGET_OS)
+plib_detect_target_os (PLIB_TARGET_OS)
 
 # CMP0042, see http://www.cmake.org/Wiki/CMake_RPATH_handling
 if (PLIB_TARGET_OS STREQUAL darwin)

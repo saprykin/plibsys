@@ -58,8 +58,20 @@ function (plib_detect_cpu_arch result)
         set (${result} ${PLIB_PROCESSOR_ARCH} PARENT_SCOPE)
 endfunction (plib_detect_cpu_arch)
 
-function (plib_detect_target_platform result)
+function (plib_detect_target_os result)
         string (TOLOWER ${CMAKE_SYSTEM_NAME} PLIB_TARGET_OS)
+
+        if ((PLIB_TARGET_OS STREQUAL msys) OR
+            (PLIB_TARGET_OS STREQUAL mingw) OR
+            (PLIB_TARGET_OS STREQUAL cygwin))
+                set (PLIB_TARGET_OS windows)
+        endif()
+
+        set (${result} ${PLIB_TARGET_OS} PARENT_SCOPE)
+endfunction (plib_detect_target_os)
+
+function (plib_detect_target_platform result)
+        plib_detect_target_os (PLIB_TARGET_OS)
         plib_detect_os_bits (PLIB_OS_BITS)
         plib_detect_c_compiler (PLIB_C_COMPILER)
 
