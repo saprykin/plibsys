@@ -61,9 +61,7 @@ endfunction (plib_detect_cpu_arch)
 function (plib_detect_target_os result)
         string (TOLOWER ${CMAKE_SYSTEM_NAME} PLIB_TARGET_OS)
 
-        if ((PLIB_TARGET_OS STREQUAL msys) OR
-            (PLIB_TARGET_OS STREQUAL mingw) OR
-            (PLIB_TARGET_OS STREQUAL cygwin))
+        if ((PLIB_TARGET_OS STREQUAL msys) OR (PLIB_TARGET_OS STREQUAL mingw))
                 set (PLIB_TARGET_OS windows)
         endif()
 
