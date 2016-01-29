@@ -19,9 +19,9 @@
 #include "ptimeprofiler.h"
 #include "pmem.h"
 
-#include <winsock2.h>
-#include <windows.h>
 #include <time.h>
+
+#include <windows.h>
 
 struct _PTimeProfiler {
 	puint64		counter;

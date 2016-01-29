@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Alexander Saprykin <xelfium@gmail.com>
+ * Copyright (C) 2015-2016 Alexander Saprykin <xelfium@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@
 #include "pdir.h"
 
 #include <stdlib.h>
+#include <string.h>
 #include <dirent.h>
 #include <unistd.h>
 #include <sys/stat.h>

@@ -1,5 +1,5 @@
-/* 
- * Copyright (C) 2010 Alexander Saprykin <xelfium@gmail.com>
+/*
+ * Copyright (C) 2010-2016 Alexander Saprykin <xelfium@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,7 +16,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA.
  */
 
-/* TODO: conditional variables */
 /* TODO: barriers */
 
 #include "puthread.h"
@@ -26,7 +25,6 @@
 #include <string.h>
 
 #ifdef P_OS_WIN
-#include <winsock2.h>
 #include <windows.h>
 #else
 #include <errno.h>
@@ -52,7 +50,7 @@ p_uthread_sleep (puint32 msec)
 		if ((result = nanosleep (&time_req, &time_rem)) != 0) {
 			if (errno == EINTR)
 				time_req = time_rem;
-			else 
+			else
 				return -1;
 		}
 	}

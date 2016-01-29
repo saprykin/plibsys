@@ -22,7 +22,7 @@
 
 #include <stdlib.h>
 #include <string.h>
-#include <winsock2.h>
+
 #include <windows.h>
 
 #define P_SEM_SUFFIX		"_p_sem_object"

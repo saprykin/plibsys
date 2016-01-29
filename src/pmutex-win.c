@@ -20,7 +20,7 @@
 #include "pmutex.h"
 
 #include <stdlib.h>
-#include <winsock2.h>
+
 #include <windows.h>
 
 typedef CRITICAL_SECTION mutex_hdl;

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Alexander Saprykin <xelfium@gmail.com>
+ * Copyright (C) 2013-2016 Alexander Saprykin <xelfium@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
 #include "ptimeprofiler.h"
 #include "pmem.h"
 
+#include <unistd.h>
 #include <time.h>
 #include <sys/time.h>
 

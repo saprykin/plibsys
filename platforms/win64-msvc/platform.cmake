@@ -2,6 +2,5 @@ set (PLIB_THREAD_MODEL win)
 set (PLIB_IPC_MODEL win)
 set (PLIB_TIME_PROFILER_MODEL win)
 set (PLIB_DIR_MODEL win)
-set (PLIB_PLATFORM_CONFIG_PATH "../common/win/pplatform.h")
 
 set (PLIB_PLATFORM_LINK_LIBRARIES ws2_32)

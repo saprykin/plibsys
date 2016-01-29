@@ -1,5 +1,5 @@
-/* 
- * Copyright (C) 2010 Alexander Saprykin <xelfium@gmail.com>
+/*
+ * Copyright (C) 2010-2016 Alexander Saprykin <xelfium@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,7 +19,6 @@
 #include "pprocess.h"
 
 #ifdef P_OS_WIN
-#include <winsock2.h>
 #include <windows.h>
 #else
 #include <sys/types.h>
@@ -46,7 +45,7 @@ p_process_is_running (puint32 pid)
 
 	if ((proc = OpenProcess (SYNCHRONIZE, FALSE, pid)) == NULL)
 		return FALSE;
-	
+
 	ret = WaitForSingleObject (proc, 0);
 	CloseHandle (proc);
 

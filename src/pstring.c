@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2015 Alexander Saprykin <xelfium@gmail.com>
+ * Copyright (C) 2011-2016 Alexander Saprykin <xelfium@gmail.com>
  * Copyright (C) 2009 Tom Van Baak (tvb) www.LeapSecond.com
  *
  * This program is free software; you can redistribute it and/or modify
@@ -17,11 +17,11 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA.
  */
 
-#include <string.h>
-#include <ctype.h>
-
 #include "pstring.h"
 #include "pmem.h"
+
+#include <string.h>
+#include <ctype.h>
 
 #define P_STR_MAX_EXPON		308
 

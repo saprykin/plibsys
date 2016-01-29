@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Alexander Saprykin <xelfium@gmail.com>
+ * Copyright (C) 2015-2016 Alexander Saprykin <xelfium@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +22,6 @@
 #include "pstring.h"
 
 #ifdef P_OS_WIN
-#include <winsock2.h>
 #include <windows.h>
 #else
 #include <dlfcn.h>

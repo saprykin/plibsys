@@ -1,5 +1,5 @@
-/* 
- * Copyright (C) 2010-2013 Alexander Saprykin <xelfium@gmail.com>
+/*
+ * Copyright (C) 2010-2016 Alexander Saprykin <xelfium@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,9 +15,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA.
  */
-
-/* Hash table organized like this: table[hash key]->[list with values]
- * Note: this implementation is not intended to use on huge loads */
 
 #include "pmem.h"
 #include "pmain.h"
@@ -38,7 +35,7 @@ p_lib_init (void)
 		return;
 
 	plib_inited = TRUE;
-	
+
 	__p_atomic_thread_init ();
 	__p_socket_init_once ();
 	__p_uthread_init ();

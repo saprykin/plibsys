@@ -1,5 +1,5 @@
-/* 
- * Copyright (C) 2010-2013 Alexander Saprykin <xelfium@gmail.com>
+/*
+ * Copyright (C) 2010-2016 Alexander Saprykin <xelfium@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,12 +16,12 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA.
  */
 
-#include <string.h>
-
 #include "pmem.h"
 #include "pshmbuffer.h"
 #include "ptypes.h"
 #include "pshm.h"
+
+#include <string.h>
 
 #define SHM_BUFFER_READ_OFFSET	0
 #define SHM_BUFFER_WRITE_OFFSET	sizeof (psize)
@@ -91,7 +91,7 @@ p_shm_buffer_new (const pchar *name, psize size)
 {
 	PShmBuffer	*ret;
 	PShm		*shm;
-	
+
 	if (name == NULL)
 		return NULL;
 
@@ -123,7 +123,7 @@ p_shm_buffer_free (PShmBuffer *buf)
 {
 	if (buf == NULL)
 		return;
-		
+
 	p_shm_free (buf->shm);
 	p_free (buf);
 }
@@ -164,7 +164,7 @@ p_shm_buffer_read (PShmBuffer *buf, ppointer storage, psize len)
 	if (read_pos == write_pos) {
 		if (!p_shm_unlock (buf->shm))
 			P_ERROR ("PShmBuffer: failed to unlock memory after reading");
-		
+
 		return 0;
 	}
 

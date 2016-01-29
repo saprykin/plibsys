@@ -4,7 +4,6 @@ include (CheckIncludeFile)
 include (TestBigEndian)
 include (${PROJECT_SOURCE_DIR}/cmake/PlatformDetect.cmake)
 set (OUTPUT_DIR ${CMAKE_BINARY_DIR})
-set (PLIB_CONFIG_FILE ${CMAKE_BINARY_DIR}/plibconfig.h)
 
 # Try to detect target platform
 plib_detect_target_platform (PLIB_TARGET_PLATFORM)
@@ -31,17 +30,6 @@ if (NOT EXISTS "${PROJECT_SOURCE_DIR}/platforms/${PLIB_TARGET_PLATFORM}/")
 endif()
 
 include (${PROJECT_SOURCE_DIR}/platforms/${PLIB_TARGET_PLATFORM}/platform.cmake)
-
-get_filename_component (PLIB_PLATFORM_CONFIG_FILE
-                        ${PROJECT_SOURCE_DIR}/platforms/${PLIB_TARGET_PLATFORM}/${PLIB_PLATFORM_CONFIG_PATH}
-                        ABSOLUTE)
-
-if (NOT EXISTS ${PLIB_PLATFORM_CONFIG_FILE})
-        message (FATAL_ERROR "PLib platform config file ${PLIB_PLATFORM_CONFIG_FILE} doesn't exist")
-endif()
-
-# Copy platform dependent files to binary dir
-file (COPY ${PLIB_PLATFORM_CONFIG_FILE} DESTINATION ${CMAKE_BINARY_DIR})
 
 set (PLIB_INCLUDE_DIRS
         ${PROJECT_SOURCE_DIR}/src
@@ -90,7 +78,6 @@ set (PLIB_PRIVATE_HDRS
         ptree-avl.h
         ptree-bst.h
         ptree-rb.h
-        ${PLIB_PLATFORM_CONFIG_FILE}
         ${CMAKE_BINARY_DIR}/plibconfig.h
 )
 
@@ -366,57 +353,11 @@ endif()
 check_type_size ("size_t" PLIB_SIZEOF_SIZE_T)
 check_type_size ("long" PLIB_SIZEOF_LONG)
 
-file (WRITE ${PLIB_CONFIG_FILE} "#ifndef __PLIBCONFIG_H__\n")
-file (APPEND ${PLIB_CONFIG_FILE} "#define __PLIBCONFIG_H__\n\n")
-
 if (PLIB_TARGET_OS STREQUAL windows)
-        file (APPEND ${PLIB_CONFIG_FILE} "#include <winsock2.h>\n")
-        file (APPEND ${PLIB_CONFIG_FILE} "#include <windows.h>\n")
+        set (PLIB_NEED_WINDOWS_H true)
 endif()
 
-file (APPEND ${PLIB_CONFIG_FILE} "#include <pmacros.h>\n")
-file (APPEND ${PLIB_CONFIG_FILE} "#include <pplatform.h>\n")
-
-if (PLIB_NEED_FLOAT_H)
-        file (APPEND ${PLIB_CONFIG_FILE} "#include <float.h>\n")
-endif()
-
-if (PLIB_NEED_LIMITS_H)
-        file (APPEND ${PLIB_CONFIG_FILE} "#include <limits.h>\n")
-endif()
-
-if (PLIB_NEED_VALUES_H)
-        file (APPEND ${PLIB_CONFIG_FILE} "#include <values.h>\n")
-endif()
-
-file (APPEND ${PLIB_CONFIG_FILE} "\nP_BEGIN_DECLS\n\n")
-
-file (APPEND ${PLIB_CONFIG_FILE} "#define P_MINFLOAT    ${PLIB_FLOAT_MIN}\n")
-file (APPEND ${PLIB_CONFIG_FILE} "#define P_MAXFLOAT    ${PLIB_FLOAT_MAX}\n")
-file (APPEND ${PLIB_CONFIG_FILE} "#define P_MINDOUBLE   ${PLIB_DOUBLE_MIN}\n")
-file (APPEND ${PLIB_CONFIG_FILE} "#define P_MAXDOUBLE   ${PLIB_DOUBLE_MAX}\n")
-file (APPEND ${PLIB_CONFIG_FILE} "#define P_MINSHORT    ${PLIB_SHORT_MIN}\n")
-file (APPEND ${PLIB_CONFIG_FILE} "#define P_MAXSHORT    ${PLIB_SHORT_MAX}\n")
-file (APPEND ${PLIB_CONFIG_FILE} "#define P_MAXUSHORT   ${PLIB_USHORT_MAX}\n")
-file (APPEND ${PLIB_CONFIG_FILE} "#define P_MININT      ${PLIB_INT_MIN}\n")
-file (APPEND ${PLIB_CONFIG_FILE} "#define P_MAXINT      ${PLIB_INT_MAX}\n")
-file (APPEND ${PLIB_CONFIG_FILE} "#define P_MAXUINT     ${PLIB_UINT_MAX}\n")
-file (APPEND ${PLIB_CONFIG_FILE} "#define P_MINLONG     ${PLIB_LONG_MIN}\n")
-file (APPEND ${PLIB_CONFIG_FILE} "#define P_MAXLONG     ${PLIB_LONG_MAX}\n")
-file (APPEND ${PLIB_CONFIG_FILE} "#define P_MAXULONG    ${PLIB_ULONG_MAX}\n\n")
-
-file (APPEND ${PLIB_CONFIG_FILE} "#define PLIB_SIZEOF_VOID_P ${CMAKE_SIZEOF_VOID_P}\n")
-file (APPEND ${PLIB_CONFIG_FILE} "${PLIB_SIZEOF_SIZE_T_CODE}\n")
-file (APPEND ${PLIB_CONFIG_FILE} "${PLIB_SIZEOF_LONG_CODE}\n")
-
-if (PLIB_IS_BIGENDIAN)
-        file (APPEND ${PLIB_CONFIG_FILE} "#define P_BYTE_ORDER P_BIG_ENDIAN\n")
-else()
-        file (APPEND ${PLIB_CONFIG_FILE} "#define P_BYTE_ORDER P_LITTLE_ENDIAN\n")
-endif()
-
-file (APPEND ${PLIB_CONFIG_FILE} "\nP_END_DECLS\n\n")
-file (APPEND ${PLIB_CONFIG_FILE} "#endif /* __PLIBCONFIG_H__ */\n")
+configure_file (${CMAKE_CURRENT_SOURCE_DIR}/plibconfig.h.in ${CMAKE_BINARY_DIR}/plibconfig.h)
 
 if (NOT PLIB_TARGET_OS STREQUAL windows)
         message (STATUS "Checking whether mmap has anonymous mapping")
@@ -482,7 +423,7 @@ if (PLIB_C_COMPILER STREQUAL msvc)
                 set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W4")
         endif()
 elseif (PLIB_C_COMPILER STREQUAL gcc OR PLIB_C_COMPILER STREQUAL qcc)
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wno-long-long -Wpedantic")
+        set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wno-long-long -Wpedantic")
 endif()
 
 target_link_libraries (plib ${PLIB_PLATFORM_LINK_LIBRARIES})
@@ -521,7 +462,6 @@ install (TARGETS plib plibstatic
 install (FILES
         ${PLIB_PUBLIC_HDRS}
         ${CMAKE_BINARY_DIR}/plibconfig.h
-        ${PLIB_PLATFORM_CONFIG_FILE}
         DESTINATION include/PLib
         COMPONENT Core
 )

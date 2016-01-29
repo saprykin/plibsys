@@ -1,4 +1,4 @@
-/* 
+/*
  * Copyright (C) 2008 Christian Kellner, Samuel Cormier-Iijima
  * Copyright (C) 2009 Codethink Limited
  * Copyright (C) 2009 Red Hat, Inc
@@ -22,6 +22,9 @@
 #include "pmem.h"
 #include "psocket.h"
 
+#include <stdlib.h>
+#include <string.h>
+
 #ifndef P_OS_WIN
 #include <fcntl.h>
 #include <errno.h>
@@ -32,9 +35,6 @@
 #include <winsock2.h>
 #include <windows.h>
 #endif
-
-#include <stdlib.h>
-#include <string.h>
 
 /* On old Solaris systems SOMAXCONN is set to 5 */
 #define P_SOCKET_DEFAULT_BACKLOG	5
@@ -563,12 +563,12 @@ __p_socket_init_once (void)
 	WORD	ver_req;
 	WSADATA	wsa_data;
 	pint	err;
- 
+
 	ver_req = MAKEWORD (2, 2);
- 
+
 	if ((err = WSAStartup (ver_req, &wsa_data)) != 0)
 		return FALSE;
- 
+
 	if (LOBYTE (wsa_data.wVersion) != 2 || HIBYTE (wsa_data.wVersion ) != 2 ) {
 		WSACleanup( );
 		return FALSE;
@@ -576,7 +576,7 @@ __p_socket_init_once (void)
 #else
 #  ifdef SIGPIPE
 	signal (SIGPIPE, SIG_IGN);
-#  endif	
+#  endif
 #endif
 	return TRUE;
 }
@@ -622,7 +622,7 @@ p_socket_new_from_fd (pint fd)
 	}
 
 	p_socket_set_listen_backlog (ret, P_SOCKET_DEFAULT_BACKLOG);
-	
+
 	ret->timeout = 0;
 	ret->blocking = TRUE;
 	ret->inited = TRUE;
@@ -692,7 +692,7 @@ p_socket_new (PSocketFamily	family,
 		fcntl (fd, F_SETFD, flags);
 	}
 #endif
-	
+
 	if ((ret = p_malloc0 (sizeof (PSocket))) == NULL) {
 		P_ERROR ("PSocket: failed to allocate memory");
 #ifndef P_OS_WIN
@@ -1203,7 +1203,7 @@ p_socket_receive_from (PSocket		*socket,
 
 	if (address != NULL)
 		*address = p_socket_address_new_from_native (&sa, optlen);
-	
+
 	return ret;
 }
 

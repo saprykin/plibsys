@@ -1,5 +1,5 @@
-/* 
- * Copyright (C) 2010-2014 Alexander Saprykin <xelfium@gmail.com>
+/*
+ * Copyright (C) 2010-2016 Alexander Saprykin <xelfium@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,42 +26,43 @@
 #include <sched.h>
 #endif
 
-#include "plib.h"
+#include "patomic.h"
+#include "pmutex.h"
 
 #if defined (__GNUC__)
 #  if defined (P_ATOMIC_I486)
 /* Adapted from CVS version 1.10 of glibc's sysdeps/i386/i486/bits/atomic.h */
 P_LIB_API pint
-p_atomic_int_exchange_and_add (volatile pint	*atomic, 
+p_atomic_int_exchange_and_add (volatile pint	*atomic,
 			       pint		val)
 {
 	pint result;
 
 	__asm__ __volatile__ ("lock; xaddl %0,%1"
-			      : "=r" (result), "=m" (*atomic) 
+			      : "=r" (result), "=m" (*atomic)
 			      : "0" (val), "m" (*atomic));
 	return result;
 }
- 
+
 P_LIB_API void
-p_atomic_int_add (volatile pint	*atomic, 
+p_atomic_int_add (volatile pint	*atomic,
 		  pint		val)
 {
 	__asm__ __volatile__ ("lock; addl %1,%0"
-			      : "=m" (*atomic) 
+			      : "=m" (*atomic)
 			      : "ir" (val), "m" (*atomic));
 }
 
 P_LIB_API pboolean
-p_atomic_int_compare_and_exchange (volatile pint	*atomic, 
-				   pint			oldval, 
+p_atomic_int_compare_and_exchange (volatile pint	*atomic,
+				   pint			oldval,
 				   pint			newval)
 {
 	pint result;
- 
+
 	__asm__ __volatile__ ("lock; cmpxchgl %2, %1"
 			      : "=a" (result), "=m" (*atomic)
-			      : "r" (newval), "m" (*atomic), "0" (oldval)); 
+			      : "r" (newval), "m" (*atomic), "0" (oldval));
 
 	return result == oldval;
 }
@@ -72,15 +73,15 @@ p_atomic_int_compare_and_exchange (volatile pint	*atomic,
  * arguments and calling the former function.
  */
 P_LIB_API pboolean
-p_atomic_pointer_compare_and_exchange (volatile ppointer	*atomic, 
-				       ppointer			oldval, 
+p_atomic_pointer_compare_and_exchange (volatile ppointer	*atomic,
+				       ppointer			oldval,
 				       ppointer			newval)
 {
 	ppointer result;
- 
+
 	__asm__ __volatile__ ("lock; cmpxchgl %2, %1"
 			      : "=a" (result), "=m" (*atomic)
-			      : "r" (newval), "m" (*atomic), "0" (oldval)); 
+			      : "r" (newval), "m" (*atomic), "0" (oldval));
 
 	return result == oldval;
 }
@@ -99,8 +100,8 @@ p_atomic_pointer_compare_and_exchange (volatile ppointer	*atomic,
 
 #    if PLIB_SIZEOF_VOID_P == 4 /* 32-bit system */
 P_LIB_API pboolean
-p_atomic_pointer_compare_and_exchange (volatile ppointer	*atomic, 
-				       ppointer			oldval, 
+p_atomic_pointer_compare_and_exchange (volatile ppointer	*atomic,
+				       ppointer			oldval,
 				       ppointer			newval)
 {
 	ppointer result;
@@ -112,8 +113,8 @@ p_atomic_pointer_compare_and_exchange (volatile ppointer	*atomic,
 }
 #    elif PLIB_SIZEOF_VOID_P == 8 /* 64-bit system */
 P_LIB_API pboolean
-p_atomic_pointer_compare_and_exchange (volatile ppointer	*atomic, 
-				       ppointer			oldval, 
+p_atomic_pointer_compare_and_exchange (volatile ppointer	*atomic,
+				       ppointer			oldval,
 				       ppointer			newval)
 {
 	ppointer result;
@@ -129,7 +130,7 @@ p_atomic_pointer_compare_and_exchange (volatile ppointer	*atomic,
 #    endif /* PLIB_SIZEOF_VOID_P */
 #    define P_ATOMIC_MEMORY_BARRIER					\
      __asm__ __volatile__ ("membar #LoadLoad | #LoadStore"		\
-                         " | #StoreLoad | #StoreStore" : : : "memory")
+			 " | #StoreLoad | #StoreStore" : : : "memory")
 
 #  elif defined (P_ATOMIC_ALPHA)
 /* Adapted from CVS version 1.3 of glibc's sysdeps/alpha/bits/atomic.h */
@@ -157,8 +158,8 @@ p_atomic_pointer_compare_and_exchange (volatile ppointer	*atomic,
 	})
 #    if PLIB_SIZEOF_VOID_P == 4 /* 32-bit system */
 P_LIB_API pboolean
-p_atomic_pointer_compare_and_exchange (volatile ppointer	*atomic, 
-				       ppointer			oldval, 
+p_atomic_pointer_compare_and_exchange (volatile ppointer	*atomic,
+				       ppointer			oldval,
 				       ppointer			newval)
 {
 	pint result;
@@ -173,7 +174,7 @@ p_atomic_pointer_compare_and_exchange (volatile ppointer	*atomic,
 		"       beq     %1,1b\n"
 		"       mb\n"
 		"2:"
-		: "=&r" (prev), 
+		: "=&r" (prev),
 		"=&r" (result)
 		: "m" (*atomic),
 		  "Ir" (oldval),
@@ -183,8 +184,8 @@ p_atomic_pointer_compare_and_exchange (volatile ppointer	*atomic,
 }
 #    elif PLIB_SIZEOF_VOID_P == 8 /* 64-bit system */
 P_LIB_API pboolean
-p_atomic_pointer_compare_and_exchange (volatile ppointer	*atomic, 
-				       ppointer			oldval, 
+p_atomic_pointer_compare_and_exchange (volatile ppointer	*atomic,
+				       ppointer			oldval,
 				       ppointer			newval)
 {
 	pint result;
@@ -199,7 +200,7 @@ p_atomic_pointer_compare_and_exchange (volatile ppointer	*atomic,
 		"       beq     %1,1b\n"
 		"       mb\n"
 		"2:"
-		: "=&r" (prev), 
+		: "=&r" (prev),
 		  "=&r" (result)
 		: "m" (*atomic),
 		  "Ir" (oldval),
@@ -220,53 +221,53 @@ p_atomic_int_exchange_and_add (volatile pint	*atomic,
 	pint result;
 
 	__asm__ __volatile__ ("lock; xaddl %0,%1"
-			      : "=r" (result), "=m" (*atomic) 
+			      : "=r" (result), "=m" (*atomic)
 			      : "0" (val), "m" (*atomic));
 	return result;
 }
- 
+
 P_LIB_API void
-p_atomic_int_add (volatile pint	*atomic, 
+p_atomic_int_add (volatile pint	*atomic,
 		  pint		val)
 {
 	__asm__ __volatile__ ("lock; addl %1,%0"
-			      : "=m" (*atomic) 
+			      : "=m" (*atomic)
 			      : "ir" (val), "m" (*atomic));
 }
 
 P_LIB_API pboolean
-p_atomic_int_compare_and_exchange (volatile pint	*atomic, 
-				   pint			oldval, 
+p_atomic_int_compare_and_exchange (volatile pint	*atomic,
+				   pint			oldval,
 				   pint			newval)
 {
 	pint result;
- 
+
 	__asm__ __volatile__ ("lock; cmpxchgl %2, %1"
 			      : "=a" (result), "=m" (*atomic)
-			      : "r" (newval), "m" (*atomic), "0" (oldval)); 
+			      : "r" (newval), "m" (*atomic), "0" (oldval));
 
 	return result == oldval;
 }
 
 P_LIB_API pboolean
-p_atomic_pointer_compare_and_exchange (volatile ppointer	*atomic, 
-				       ppointer			oldval, 
+p_atomic_pointer_compare_and_exchange (volatile ppointer	*atomic,
+				       ppointer			oldval,
 				       ppointer			newval)
 {
 	ppointer result;
- 
+
 	__asm__ __volatile__ ("lock; cmpxchgq %q2, %1"
 			      : "=a" (result), "=m" (*atomic)
-			      : "r" (newval), "m" (*atomic), "0" (oldval)); 
+			      : "r" (newval), "m" (*atomic), "0" (oldval));
 
 	return result == oldval;
 }
 
 #  elif defined (P_ATOMIC_POWERPC)
 /*
- * Adapted from CVS version 1.16 of glibc's sysdeps/powerpc/bits/atomic.h 
- * and CVS version 1.4 of glibc's sysdeps/powerpc/powerpc32/bits/atomic.h 
- * and CVS version 1.7 of glibc's sysdeps/powerpc/powerpc64/bits/atomic.h 
+ * Adapted from CVS version 1.16 of glibc's sysdeps/powerpc/bits/atomic.h
+ * and CVS version 1.4 of glibc's sysdeps/powerpc/powerpc32/bits/atomic.h
+ * and CVS version 1.7 of glibc's sysdeps/powerpc/powerpc64/bits/atomic.h
  */
 #    ifdef __OPTIMIZE__
 /*
@@ -274,7 +275,7 @@ p_atomic_pointer_compare_and_exchange (volatile ppointer	*atomic,
  * for reasons unknown to the author.
  */
 P_LIB_API pint
-p_atomic_int_exchange_and_add (volatile pint	*atomic, 
+p_atomic_int_exchange_and_add (volatile pint	*atomic,
 			       pint		val)
 {
 	pint result, temp;
@@ -297,13 +298,13 @@ p_atomic_int_exchange_and_add (volatile pint	*atomic,
 #endif
 	return result;
 }
- 
+
 /* The same as above, to save a function call repeated here. */
 P_LIB_API void
-p_atomic_int_add (volatile pint		*atomic, 
+p_atomic_int_add (volatile pint		*atomic,
 		  pint			val)
 {
-	pint result, temp;  
+	pint result, temp;
 #if ASM_NUMERIC_LABELS
 	__asm__ __volatile__ ("1:       lwarx   %0,0,%3\n"
 			      "         add     %1,%0,%4\n"
@@ -324,7 +325,7 @@ p_atomic_int_add (volatile pint		*atomic,
 }
 #    else /* !__OPTIMIZE__ */
 P_LIB_API pint
-p_atomic_int_exchange_and_add (volatile pint	*atomic, 
+p_atomic_int_exchange_and_add (volatile pint	*atomic,
 			       pint		val)
 {
 	pint result;
@@ -335,7 +336,7 @@ p_atomic_int_exchange_and_add (volatile pint	*atomic,
 
 	return result;
 }
- 
+
 P_LIB_API void
 p_atomic_int_add (volatile pint		*atomic,
 		  pint			val)
@@ -350,8 +351,8 @@ p_atomic_int_add (volatile pint		*atomic,
 
 #    if PLIB_SIZEOF_VOID_P == 4 /* 32-bit system */
 P_LIB_API pboolean
-p_atomic_int_compare_and_exchange (volatile pint	*atomic, 
-				   pint			oldval, 
+p_atomic_int_compare_and_exchange (volatile pint	*atomic,
+				   pint			oldval,
 				   pint			newval)
 {
 	pint result;
@@ -365,7 +366,7 @@ p_atomic_int_compare_and_exchange (volatile pint	*atomic,
 			      "2: isync"
 			      : "=&r" (result)
 			      : "b" (atomic), "r" (oldval), "r" (newval)
-			      : "cr0", "memory"); 
+			      : "cr0", "memory");
 #else
 	__asm__ __volatile__ ("sync\n"
 			      ".L1icae%=: lwarx   %0,0,%1\n"
@@ -376,14 +377,14 @@ p_atomic_int_compare_and_exchange (volatile pint	*atomic,
 			      ".L2icae%=: isync"
 			      : "=&r" (result)
 			      : "b" (atomic), "r" (oldval), "r" (newval)
-			      : "cr0", "memory"); 
+			      : "cr0", "memory");
 #endif
 	return result == 0;
 }
 
 P_LIB_API pboolean
-p_atomic_pointer_compare_and_exchange (volatile ppointer	*atomic, 
-				       ppointer			oldval, 
+p_atomic_pointer_compare_and_exchange (volatile ppointer	*atomic,
+				       ppointer			oldval,
 				       ppointer			newval)
 {
 	ppointer result;
@@ -397,7 +398,7 @@ p_atomic_pointer_compare_and_exchange (volatile ppointer	*atomic,
 			      "2: isync"
 			      : "=&r" (result)
 			      : "b" (atomic), "r" (oldval), "r" (newval)
-			      : "cr0", "memory"); 
+			      : "cr0", "memory");
 #else
 	__asm__ __volatile__ ("sync\n"
 			      ".L1pcae%=: lwarx   %0,0,%1\n"
@@ -408,14 +409,14 @@ p_atomic_pointer_compare_and_exchange (volatile ppointer	*atomic,
 			      ".L2pcae%=: isync"
 			      : "=&r" (result)
 			      : "b" (atomic), "r" (oldval), "r" (newval)
-			      : "cr0", "memory"); 
+			      : "cr0", "memory");
 #endif
 	return result == 0;
 }
 #    elif PLIB_SIZEOF_VOID_P == 8 /* 64-bit system */
 P_LIB_API pboolean
 p_atomic_int_compare_and_exchange (volatile pint	*atomic,
-				   pint			oldval, 
+				   pint			oldval,
 				   pint			newval)
 {
 	ppointer result;
@@ -430,7 +431,7 @@ p_atomic_int_compare_and_exchange (volatile pint	*atomic,
 			      "2: isync"
 			      : "=&r" (result)
 			      : "b" (atomic), "r" (oldval), "r" (newval)
-			      : "cr0", "memory"); 
+			      : "cr0", "memory");
 #else
 	__asm__ __volatile__ ("sync\n"
 			      ".L1icae%=: lwarx   %0,0,%1\n"
@@ -442,14 +443,14 @@ p_atomic_int_compare_and_exchange (volatile pint	*atomic,
 			      ".L2icae%=: isync"
 			      : "=&r" (result)
 			      : "b" (atomic), "r" (oldval), "r" (newval)
-			      : "cr0", "memory"); 
+			      : "cr0", "memory");
 #endif
 	return result == 0;
 }
 
 P_LIB_API pboolean
-p_atomic_pointer_compare_and_exchange (volatile ppointer	*atomic, 
-				       ppointer			oldval, 
+p_atomic_pointer_compare_and_exchange (volatile ppointer	*atomic,
+				       ppointer			oldval,
 				       ppointer			newval)
 {
 	ppointer result;
@@ -463,7 +464,7 @@ p_atomic_pointer_compare_and_exchange (volatile ppointer	*atomic,
 			      "2: isync"
 			      : "=&r" (result)
 			      : "b" (atomic), "r" (oldval), "r" (newval)
-			      : "cr0", "memory"); 
+			      : "cr0", "memory");
 #else
 	__asm__ __volatile__ ("sync\n"
 			      ".L1pcae%=: ldarx   %0,0,%1\n"
@@ -474,7 +475,7 @@ p_atomic_pointer_compare_and_exchange (volatile ppointer	*atomic,
 			      ".L2pcae%=: isync"
 			      : "=&r" (result)
 			      : "b" (atomic), "r" (oldval), "r" (newval)
-			      : "cr0", "memory"); 
+			      : "cr0", "memory");
 #endif
 	return result == 0;
 }
@@ -492,9 +493,9 @@ p_atomic_int_exchange_and_add (volatile pint	*atomic,
 {
 	return __sync_fetch_and_add (atomic, val);
 }
- 
+
 P_LIB_API void
-p_atomic_int_add (volatile pint	*atomic, 
+p_atomic_int_add (volatile pint	*atomic,
 		  pint		val)
 {
 	__sync_fetch_and_add (atomic, val);
@@ -502,7 +503,7 @@ p_atomic_int_add (volatile pint	*atomic,
 
 P_LIB_API pboolean
 p_atomic_int_compare_and_exchange (volatile pint	*atomic,
-				   pint			oldval, 
+				   pint			oldval,
 				   pint			newval)
 {
 	return __sync_bool_compare_and_swap (atomic, oldval, newval);
@@ -510,10 +511,10 @@ p_atomic_int_compare_and_exchange (volatile pint	*atomic,
 
 P_LIB_API pboolean
 p_atomic_pointer_compare_and_exchange (volatile ppointer	*atomic,
-				       ppointer			oldval, 
+				       ppointer			oldval,
 				       ppointer			newval)
 {
-	return __sync_bool_compare_and_swap ((long *) atomic, 
+	return __sync_bool_compare_and_swap ((long *) atomic,
 					     (long) oldval, (long) newval);
 }
 
@@ -588,12 +589,12 @@ static void atomic_spin_unlock (void)
 }
 
 P_LIB_API pint
-p_atomic_int_exchange_and_add (volatile pint	*atomic, 
+p_atomic_int_exchange_and_add (volatile pint	*atomic,
 			       pint		val)
 {
 	pint result;
- 
-	atomic_spin_lock ();  
+
+	atomic_spin_lock ();
 	result = *atomic;
 	*atomic += val;
 	atomic_spin_unlock ();
@@ -611,8 +612,8 @@ p_atomic_int_add (volatile pint	*atomic,
 }
 
 P_LIB_API pboolean
-p_atomic_int_compare_and_exchange (volatile pint	*atomic, 
-				   pint			oldval, 
+p_atomic_int_compare_and_exchange (volatile pint	*atomic,
+				   pint			oldval,
 				   pint			newval)
 {
 	pboolean result;
@@ -630,12 +631,12 @@ p_atomic_int_compare_and_exchange (volatile pint	*atomic,
 }
 
 P_LIB_API pboolean
-p_atomic_pointer_compare_and_exchange (volatile ppointer	*atomic, 
-				       ppointer			oldval, 
+p_atomic_pointer_compare_and_exchange (volatile ppointer	*atomic,
+				       ppointer			oldval,
 				       ppointer			newval)
 {
 	pboolean result;
- 
+
 	atomic_spin_lock ();
 	if (*atomic == oldval) {
 		result = TRUE;
@@ -782,9 +783,9 @@ p_atomic_int_add (volatile pint		*atomic,
 #endif /* __GNUC__ */
 
 #ifdef DEFINE_WITH_WIN32_INTERLOCKED
-#include <winsock2.h> 
+#include <winsock2.h>
 #include <windows.h>
-/* 
+/*
  * Following indicates that InterlockedCompareExchangePointer is
  * declared in winbase.h (included by windows.h) and needs to be
  * commented out if not true. It is defined iff WINVER > 0x0400,
@@ -815,13 +816,13 @@ p_atomic_int_compare_and_exchange (volatile pint32	*atomic,
 				   pint32		newval)
 {
 #  ifndef HAVE_INTERLOCKED_COMPARE_EXCHANGE_POINTER
-  return (puint32) InterlockedCompareExchange ((PVOID*) atomic, 
-                                               (PVOID) newval, 
-                                               (PVOID) oldval) == oldval;
+  return (puint32) InterlockedCompareExchange ((PVOID*) atomic,
+					       (PVOID) newval,
+					       (PVOID) oldval) == oldval;
 #  else
   return InterlockedCompareExchange ((volatile LONG *) atomic,
-                                     newval, 
-                                     oldval) == oldval;
+				     newval,
+				     oldval) == oldval;
 #  endif
 }
 
@@ -844,14 +845,14 @@ p_atomic_pointer_compare_and_exchange (volatile ppointer	*atomic,
 
 #ifdef DEFINE_WITH_MUTEXES
 /* We have to use the slow, but safe locking method. */
-static PMutex *p_atomic_mutex; 
+static PMutex *p_atomic_mutex;
 
 P_LIB_API pint
-p_atomic_int_exchange_and_add (volatile pint	*atomic, 
+p_atomic_int_exchange_and_add (volatile pint	*atomic,
 			       pint		val)
 {
 	pint result;
-    
+
 	p_mutex_lock (p_atomic_mutex);
 	result = *atomic;
 	*atomic += val;
@@ -870,12 +871,12 @@ p_atomic_int_add (volatile pint	*atomic,
 }
 
 P_LIB_API pboolean
-p_atomic_int_compare_and_exchange (volatile pint	*atomic, 
-				   pint			oldval, 
+p_atomic_int_compare_and_exchange (volatile pint	*atomic,
+				   pint			oldval,
 				   pint			newval)
 {
 	pboolean result;
-    
+
 	p_mutex_lock (p_atomic_mutex);
 	if (*atomic == oldval) {
 		result = TRUE;
@@ -888,12 +889,12 @@ p_atomic_int_compare_and_exchange (volatile pint	*atomic,
 }
 
 P_LIB_API pboolean
-p_atomic_pointer_compare_and_exchange (volatile ppointer	*atomic, 
-				       ppointer			oldval, 
+p_atomic_pointer_compare_and_exchange (volatile ppointer	*atomic,
+				       ppointer			oldval,
 				       ppointer			newval)
 {
 	pboolean result;
-    
+
 	p_mutex_lock (p_atomic_mutex);
 
 	if (*atomic == oldval) {
@@ -901,7 +902,7 @@ p_atomic_pointer_compare_and_exchange (volatile ppointer	*atomic,
 		*atomic = newval;
 	} else
 		result = FALSE;
-	
+
 	p_mutex_unlock (p_atomic_mutex);
 
 	return result;
@@ -949,7 +950,7 @@ P_LIB_API void
 	*atomic = newval;
 	p_mutex_unlock (p_atomic_mutex);
 }
-#  endif /* P_ATOMIC_OP_MEMORY_BARRIER_NEEDED */   
+#  endif /* P_ATOMIC_OP_MEMORY_BARRIER_NEEDED */
 #elif defined (P_ATOMIC_OP_MEMORY_BARRIER_NEEDED)
 P_LIB_API pint
 (p_atomic_int_get) (volatile pint *atomic)
@@ -963,7 +964,7 @@ P_LIB_API void
 		    pint		newval)
 {
 	*atomic = newval;
-	P_ATOMIC_MEMORY_BARRIER; 
+	P_ATOMIC_MEMORY_BARRIER;
 }
 
 P_LIB_API ppointer
@@ -971,14 +972,14 @@ P_LIB_API ppointer
 {
 	P_ATOMIC_MEMORY_BARRIER;
 	return *atomic;
-}   
+}
 
 P_LIB_API void
 (p_atomic_pointer_set) (volatile ppointer	*atomic,
 			ppointer		newval)
 {
 	*atomic = newval;
-	P_ATOMIC_MEMORY_BARRIER; 
+	P_ATOMIC_MEMORY_BARRIER;
 }
 #endif /* DEFINE_WITH_MUTEXES || P_ATOMIC_OP_MEMORY_BARRIER_NEEDED */
 
@@ -1003,13 +1004,13 @@ p_atomic_int_exchange_and_add (volatile pint	*atomic,
 
 	return result;
 }
- 
+
 P_LIB_API void
 p_atomic_int_add (volatile pint	*atomic,
 		  pint		val)
 {
 	pint result;
-	
+
 	do
 		result = *atomic;
 	while (!ATOMIC_INT_CMP_XCHG (atomic, result, result + val));
@@ -1046,13 +1047,13 @@ P_LIB_API void
 
 P_LIB_API void
 p_atomic_memory_barrier (void)
-{	
+{
 #ifdef P_ATOMIC_MEMORY_BARRIER
-	P_ATOMIC_MEMORY_BARRIER;	
+	P_ATOMIC_MEMORY_BARRIER;
 #endif
 }
 
-void 
+void
 __p_atomic_thread_init (void)
 {
 #ifdef DEFINE_WITH_MUTEXES
@@ -1060,7 +1061,7 @@ __p_atomic_thread_init (void)
 #endif /* DEFINE_WITH_MUTEXES */
 }
 
-void 
+void
 __p_atomic_thread_shutdown (void)
 {
 #ifdef DEFINE_WITH_MUTEXES

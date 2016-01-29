@@ -1,5 +1,5 @@
-/* 
- * Copyright (C) 2010 Alexander Saprykin <xelfium@gmail.com>
+/*
+ * Copyright (C) 2010-2016 Alexander Saprykin <xelfium@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,7 +25,6 @@
 #include <time.h>
 #include <string.h>
 
-#include <winsock2.h>
 #include <windows.h>
 
 typedef HANDLE puthread_hdl;
@@ -60,7 +59,7 @@ p_uthread_create_full (PUThreadFunc	func,
 		       PUThreadPriority	prio)
 {
 	PUThread	*ret;
-	
+
 	if (!func)
 		return NULL;
 
