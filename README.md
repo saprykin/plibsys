@@ -1,3 +1,6 @@
+
+[![](https://api.travis-ci.org/saprykin/plib.svg?branch=master)](https://travis-ci.org/saprykin/plib)
+
 ======= About PLib =======
 
 PLib is a cross-platform system C library with some helpful routines.
