@@ -4,7 +4,7 @@ script:
         - mkdir ./plib-build
         - cd ./plib-build
         - cmake ..
-        - make test
+        - make && make test
 
 os:
         - linux
