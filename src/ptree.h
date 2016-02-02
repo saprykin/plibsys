@@ -181,7 +181,7 @@ P_LIB_API void		p_tree_foreach		(PTree			*tree,
 						 ppointer		user_data);
 
 /**
- * @brief Clear the tree.
+ * @brief Clears the tree.
  * @param tree #PTree to clear.
  * @since 0.0.1
  * @note Modified Morris (non-recursive, non-stack) traversing algorithm is used.
