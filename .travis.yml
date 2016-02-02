@@ -1,7 +1,9 @@
 language: c
 
 script:
-        - cmake
+        - mkdir ./plib-build
+        - cd ./plib-build
+        - cmake ../plib
         - make
 
 os:
