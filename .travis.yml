@@ -3,7 +3,7 @@ language: c
 script:
         - mkdir ./plib-build
         - cd ./plib-build
-        - cmake ../plib
+        - cmake ..
         - make
 
 os:
