@@ -48,6 +48,7 @@ set (PLIB_PUBLIC_HDRS
         pmacros.h
         pcondvariable.h
         pcryptohash.h
+        perror.h
         pdir.h
         pfile.h
         phashtable.h
@@ -87,6 +88,7 @@ set (PLIB_SRCS
         pcryptohash-md5.c
         pcryptohash-sha1.c
         pdir.c
+        perror.c
         pfile.c
         phashtable.c
         pinifile.c
