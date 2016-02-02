@@ -171,7 +171,6 @@ p_shm_buffer_read (PShmBuffer *buf, ppointer storage, psize len)
 	data_aval = __p_shm_buffer_get_used_space (buf);
 	to_copy = (data_aval <= len) ? data_aval : len;
 
-	/* TODO: Handle exceptions on Windows */
 	for (i = 0; i < to_copy; ++i)
 		memcpy ((pchar *) storage + i, (pchar *) addr + SHM_BUFFER_DATA_OFFSET + ((read_pos + i) % buf->size), 1);
 
@@ -214,7 +213,6 @@ p_shm_buffer_write (PShmBuffer *buf, ppointer data, psize len)
 		return -1;
 	}
 
-	/* TODO: Handle exceptions on Windows */
 	for (i = 0; i < len; ++i)
 		memcpy ((pchar *) addr + SHM_BUFFER_DATA_OFFSET + ((write_pos + i) % buf->size), (pchar *) data + i, 1);
 
