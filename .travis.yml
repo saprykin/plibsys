@@ -1,10 +1,10 @@
-language: c
+language: cpp
 
 script:
         - mkdir ./plib-build
         - cd ./plib-build
         - cmake ..
-        - make
+        - make test
 
 os:
         - linux
