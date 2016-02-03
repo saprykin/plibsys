@@ -102,7 +102,6 @@ __p_semaphore_clean_handle (PSemaphore *sem)
 	sem->error_str[0] = '\0';
 }
 
-
 P_LIB_API PSemaphore *
 p_semaphore_new (const pchar *name,  pint init_val, PSemaphoreAccessMode mode)
 {
