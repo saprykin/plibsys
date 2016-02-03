@@ -110,6 +110,22 @@ P_LIB_API void		p_error_set_error	(PError		*error,
 						 const pchar	*message);
 
 /**
+ * @brief Sets error data through the double pointer.
+ * @param error #PError object to set data for.
+ * @param code Error code.
+ * @param message Error message.
+ * @since 0.0.1
+ *
+ * If @a error is NULL it does nothing. If @a error is not NULL then
+ * @a *error should be NULL, otherwise it does nothing. It creates
+ * #PError object, sets error data and assigns it to @a *error. The caller
+ * is responsible to free memory of the created object after the usage.
+ */
+P_LIB_API void		p_error_set_error_p	(PError		**error,
+						 pint		code,
+						 const pchar	*message);
+
+/**
  * @brief Clears error data.
  * @param error #PError object to clear data for.
  * @since 0.0.1

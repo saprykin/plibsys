@@ -99,6 +99,17 @@ p_error_set_error (PError	*error,
 }
 
 P_LIB_API void
+p_error_set_error_p (PError		**error,
+		     pint		code,
+		     const pchar	*message)
+{
+	if (error == NULL || *error != NULL)
+		return;
+
+	*error = p_error_new_literal (code, message);
+}
+
+P_LIB_API void
 p_error_clear (PError *error)
 {
 	if (error == NULL)
