@@ -38,7 +38,14 @@ BOOST_AUTO_TEST_CASE (perror_invalid_test)
 	BOOST_CHECK (p_error_get_code (NULL) == 0);
 	BOOST_CHECK (p_error_copy (NULL) == NULL);
 
+	PError *error = (PError *) 0x1;
+
 	p_error_set_error (NULL, 0, NULL);
+	p_error_set_error_p (NULL, 0, NULL);
+
+	p_error_set_error_p (&error, 0, NULL);
+	BOOST_CHECK (error == (PError *) 0x1);
+
 	p_error_clear (NULL);
 	p_error_free (NULL);
 
@@ -105,6 +112,15 @@ BOOST_AUTO_TEST_CASE (perror_general_test)
 	BOOST_CHECK (strcmp (p_error_get_message (copy_error), PERROR_TEST_MESSAGE) == 0);
 
 	p_error_free (copy_error);
+	p_error_free (error);
+
+	/* Through the double pointer */
+	error = NULL;
+	p_error_set_error_p (&error, 10, PERROR_TEST_MESSAGE);
+
+	BOOST_CHECK (p_error_get_code (error) == 10);
+	BOOST_CHECK (strcmp (p_error_get_message (error), PERROR_TEST_MESSAGE) == 0);
+
 	p_error_free (error);
 
 	p_lib_shutdown ();
