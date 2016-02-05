@@ -449,7 +449,7 @@ BOOST_AUTO_TEST_CASE (ptree_invalid_test)
 	for (int i = (int) P_TREE_TYPE_BINARY; i <= (int) P_TREE_TYPE_AVL; ++i) {
 		/* Invalid usage */
 		BOOST_CHECK (p_tree_new ((PTreeType) i, NULL) == NULL);
-		BOOST_CHECK (p_tree_new ((PTreeType) -1, compare_keys) == NULL);
+		BOOST_CHECK (p_tree_new ((PTreeType) -1, (PCompareFunc) compare_keys) == NULL);
 		BOOST_CHECK (p_tree_new ((PTreeType) -1, NULL) == NULL);
 
 		BOOST_CHECK (p_tree_new_with_data ((PTreeType) i, NULL, NULL) == NULL);
@@ -494,7 +494,7 @@ BOOST_AUTO_TEST_CASE (ptree_general_test)
 
 	for (int i = (int) P_TREE_TYPE_BINARY; i <= (int) P_TREE_TYPE_AVL; ++i) {
 		/* Test 1 */
-		tree = p_tree_new ((PTreeType) i, compare_keys);
+		tree = p_tree_new ((PTreeType) i, (PCompareFunc) compare_keys);
 
 		BOOST_CHECK (general_tree_test (tree, (PTreeType) i, false, false) == true);
 
