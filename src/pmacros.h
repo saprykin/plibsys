@@ -331,8 +331,9 @@
 #ifdef P_CC_MSVC
 #  define P_NO_RETURN __declspec(noreturn)
 #elif defined(P_CC_GNU) || \
-     (defined(__SUNPRO_C) && __SUNPRO_C >= 0x5110) || \
-     (defined(__SUNPRO_CC) && __SUNPRO_CC >= 0x5110)
+     (defined(__SUNPRO_C) && __SUNPRO_C >= 0x5110)   || \
+     (defined(__SUNPRO_CC) && __SUNPRO_CC >= 0x5110) || \
+     (defined(__has_attribute) && __has_attribute(noreturn))
 #  define P_NO_RETURN __attribute__((noreturn))
 #else
 #  define P_NO_RETURN
