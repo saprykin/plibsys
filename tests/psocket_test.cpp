@@ -35,6 +35,15 @@ typedef struct _SocketTestData {
 	pboolean	shutdown_channel;
 } SocketTestData;
 
+static void clean_error (PError **error)
+{
+	if (error == NULL || *error == NULL)
+		return;
+
+	p_error_free (*error);
+	*error = NULL;
+}
+
 static pboolean test_socket_address_directly (const PSocketAddress *addr, puint16 port)
 {
 	if (addr == NULL)
@@ -528,11 +537,19 @@ BOOST_AUTO_TEST_CASE (psocket_bad_input_test)
 {
 	p_lib_init ();
 
-	BOOST_CHECK (p_socket_new_from_fd (-1, NULL) == NULL);
+	PError *error = NULL;
+
+	BOOST_CHECK (p_socket_new_from_fd (-1, &error) == NULL);
+	BOOST_CHECK (error != NULL);
+	clean_error (&error);
+
 	BOOST_CHECK (p_socket_new (P_SOCKET_FAMILY_UNKNOWN,
 				   P_SOCKET_TYPE_UNKNOWN,
 				   P_SOCKET_PROTOCOL_UNKNOWN,
-				   NULL) == NULL);
+				   &error) == NULL);
+	BOOST_CHECK (error != NULL);
+	clean_error (&error);
+
 	BOOST_CHECK (p_socket_get_fd (NULL) == -1);
 	BOOST_CHECK (p_socket_get_family (NULL) == P_SOCKET_FAMILY_UNKNOWN);
 	BOOST_CHECK (p_socket_get_type (NULL) == P_SOCKET_TYPE_UNKNOWN);
@@ -541,28 +558,73 @@ BOOST_AUTO_TEST_CASE (psocket_bad_input_test)
 	BOOST_CHECK (p_socket_get_blocking (NULL) == FALSE);
 	BOOST_CHECK (p_socket_get_timeout (NULL) == -1);
 	BOOST_CHECK (p_socket_get_listen_backlog (NULL) == -1);
-	BOOST_CHECK (p_socket_get_local_address (NULL, NULL) == NULL);
-	BOOST_CHECK (p_socket_get_remote_address (NULL, NULL) == NULL);
+
+	BOOST_CHECK (p_socket_get_local_address (NULL, &error) == NULL);
+	BOOST_CHECK (error != NULL);
+	clean_error (&error);
+
+	BOOST_CHECK (p_socket_get_remote_address (NULL, &error) == NULL);
+	BOOST_CHECK (error != NULL);
+	clean_error (&error);
+
 	BOOST_CHECK (p_socket_is_connected (NULL) == FALSE);
-	BOOST_CHECK (p_socket_check_connect_result (NULL, NULL) == FALSE);
+
+	BOOST_CHECK (p_socket_check_connect_result (NULL, &error) == FALSE);
+	BOOST_CHECK (error != NULL);
+	clean_error (&error);
 
 	p_socket_set_keepalive (NULL, FALSE);
 	p_socket_set_blocking (NULL, FALSE);
 	p_socket_set_timeout (NULL, 0);
 	p_socket_set_listen_backlog (NULL, 0);
 
-	BOOST_CHECK (p_socket_bind (NULL, NULL, FALSE, NULL) == FALSE);
-	BOOST_CHECK (p_socket_connect (NULL, NULL, NULL) == FALSE);
-	BOOST_CHECK (p_socket_listen (NULL, NULL) == FALSE);
-	BOOST_CHECK (p_socket_accept (NULL, NULL) == NULL);
-	BOOST_CHECK (p_socket_receive (NULL, NULL, 0, NULL) == -1);
-	BOOST_CHECK (p_socket_receive_from (NULL, NULL, NULL, 0, NULL) == -1);
-	BOOST_CHECK (p_socket_send (NULL, NULL, 0, NULL) == -1);
-	BOOST_CHECK (p_socket_send_to (NULL, NULL, NULL, 0, NULL) == -1);
-	BOOST_CHECK (p_socket_close (NULL, NULL) == FALSE);
-	BOOST_CHECK (p_socket_shutdown (NULL, FALSE, FALSE, NULL) == FALSE);
-	BOOST_CHECK (p_socket_set_buffer_size (NULL, P_SOCKET_DIRECTION_RCV, 0, NULL) == FALSE);
-	BOOST_CHECK (p_socket_set_buffer_size (NULL, P_SOCKET_DIRECTION_SND, 0, NULL) == FALSE);
+	BOOST_CHECK (p_socket_bind (NULL, NULL, FALSE, &error) == FALSE);
+	BOOST_CHECK (error != NULL);
+	clean_error (&error);
+
+	BOOST_CHECK (p_socket_connect (NULL, NULL, &error) == FALSE);
+	BOOST_CHECK (error != NULL);
+	clean_error (&error);
+
+	BOOST_CHECK (p_socket_listen (NULL, &error) == FALSE);
+	BOOST_CHECK (error != NULL);
+	clean_error (&error);
+
+	BOOST_CHECK (p_socket_accept (NULL, &error) == NULL);
+	BOOST_CHECK (error != NULL);
+	clean_error (&error);
+
+	BOOST_CHECK (p_socket_receive (NULL, NULL, 0, &error) == -1);
+	BOOST_CHECK (error != NULL);
+	clean_error (&error);
+
+	BOOST_CHECK (p_socket_receive_from (NULL, NULL, NULL, 0, &error) == -1);
+	BOOST_CHECK (error != NULL);
+	clean_error (&error);
+
+	BOOST_CHECK (p_socket_send (NULL, NULL, 0, &error) == -1);
+	BOOST_CHECK (error != NULL);
+	clean_error (&error);
+
+	BOOST_CHECK (p_socket_send_to (NULL, NULL, NULL, 0, &error) == -1);
+	BOOST_CHECK (error != NULL);
+	clean_error (&error);
+
+	BOOST_CHECK (p_socket_close (NULL, &error) == FALSE);
+	BOOST_CHECK (error != NULL);
+	clean_error (&error);
+
+	BOOST_CHECK (p_socket_shutdown (NULL, FALSE, FALSE, &error) == FALSE);
+	BOOST_CHECK (error != NULL);
+	clean_error (&error);
+
+	BOOST_CHECK (p_socket_set_buffer_size (NULL, P_SOCKET_DIRECTION_RCV, 0, &error) == FALSE);
+	BOOST_CHECK (error != NULL);
+	clean_error (&error);
+
+	BOOST_CHECK (p_socket_set_buffer_size (NULL, P_SOCKET_DIRECTION_SND, 0, &error) == FALSE);
+	BOOST_CHECK (error != NULL);
+	clean_error (&error);
 
 	p_socket_free (NULL);
 
