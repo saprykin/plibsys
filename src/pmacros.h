@@ -275,10 +275,10 @@
 
 /* Microsoft Visual C/C++ */
 #if defined(_MSC_VER)
-# define P_CC_MSVC
-# if defined(__INTEL_COMPILER)
-#   define P_CC_INTEL
-# endif
+#  define P_CC_MSVC
+#  if defined(__INTEL_COMPILER)
+#    define P_CC_INTEL
+#  endif
 /* GNU C */
 #elif defined(__GNUC__)
 #  define P_CC_GNU
@@ -291,7 +291,7 @@
 #  if defined(__clang__)
 #    define P_CC_CLANG
 #  endif
-/* Sun WorkShop/Studio */
+/* Sun (Oracle) WorkShop/Studio */
 #elif defined(__SUNPRO_C) || defined(__SUNPRO_CC)
 #  define P_CC_SUN
 /* Watcom C++ */
@@ -322,13 +322,17 @@
 #  define P_LIB_API
 #endif
 
+/* Oracle Solaris Studio at least since 12.2 has ((noreturn)) attribute */
+
 /**
  * @def P_NO_RETURN
  * @brief Notifies compiler that function will never return a value (e.g. abort ())
  */
 #ifdef P_CC_MSVC
 #  define P_NO_RETURN __declspec(noreturn)
-#elif defined(P_CC_GNU)
+#elif defined(P_CC_GNU) || \
+     (defined(__SUNPRO_C) && __SUNPRO_C >= 0x5110) || \
+     (defined(__SUNPRO_CC) && __SUNPRO_CC >= 0x5110)
 #  define P_NO_RETURN __attribute__((noreturn))
 #else
 #  define P_NO_RETURN
