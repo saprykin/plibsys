@@ -1,5 +1,5 @@
-/* 
- * Copyright (C) 2010-2014 Alexander Saprykin <xelfium@gmail.com>
+/*
+ * Copyright (C) 2010-2016 Alexander Saprykin <xelfium@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
 
 /**
  * @file pmacros.h
- * @brief Miscellaneous macros 
+ * @brief Miscellaneous macros
  * @author Alexander Saprykin
  *
  * Contains useful macros for detecting host OS, compiler, etc.
@@ -292,7 +292,7 @@
 #    define P_CC_CLANG
 #  endif
 /* Sun WorkShop/Studio */
-#elif defined(__SUNPRO_C)
+#elif defined(__SUNPRO_C) || defined(__SUNPRO_CC)
 #  define P_CC_SUN
 /* Watcom C++ */
 #elif defined(__WATCOMC__)
