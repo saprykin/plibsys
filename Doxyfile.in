@@ -64,6 +64,8 @@ EXCLUDE_PATTERNS       = Makefile.*             \
                          plib-private.h         \
                          CMakeLists.txt
 
+EXCLUDE_SYMBOLS        = __has_attribute
+
 # The EXAMPLE_PATH tag can be used to specify one or more files or 
 # directories that contain example code fragments that are included (see 
 # the \include command).

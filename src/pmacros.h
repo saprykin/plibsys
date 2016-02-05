@@ -302,6 +302,11 @@
 #  define P_CC_INTEL
 #endif
 
+/* For Clang */
+#ifndef __has_attribute
+#  define __has_attribute(x) 0
+#endif
+
 /**
  * @def P_GNUC_WARN_UNUSED_RESULT
  * @brief Gives warning if returned from function result is not used
@@ -330,10 +335,10 @@
  */
 #ifdef P_CC_MSVC
 #  define P_NO_RETURN __declspec(noreturn)
-#elif defined(P_CC_GNU) || \
-     (defined(__SUNPRO_C) && __SUNPRO_C >= 0x5110)   || \
-     (defined(__SUNPRO_CC) && __SUNPRO_CC >= 0x5110) || \
-     (defined(__has_attribute) && __has_attribute(noreturn))
+#elif __has_attribute(noreturn) || \
+      defined(P_CC_GNU) || \
+     (defined(__SUNPRO_C) && __SUNPRO_C >= 0x5110) || \
+     (defined(__SUNPRO_CC) && __SUNPRO_CC >= 0x5110)
 #  define P_NO_RETURN __attribute__((noreturn))
 #else
 #  define P_NO_RETURN
