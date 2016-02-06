@@ -25,6 +25,15 @@
 
 static pint semaphore_test_val = 10;
 
+static void clean_error (PError **error)
+{
+	if (error == NULL || *error == NULL)
+		return;
+
+	p_error_free (*error);
+	*error = NULL;
+}
+
 static void * semaphore_test_thread (void *)
 {
 	PSemaphore	*sem;
@@ -59,13 +68,25 @@ BOOST_AUTO_TEST_SUITE (BOOST_TEST_MODULE)
 BOOST_AUTO_TEST_CASE (psemaphore_general_test)
 {
 	PSemaphore	*sem = NULL;
+	PError		*error = NULL;
 	pint		i;
 
 	p_lib_init ();
 
-	BOOST_REQUIRE (p_semaphore_acquire (sem, NULL) == FALSE);
-	BOOST_REQUIRE (p_semaphore_acquire (sem, NULL) == FALSE);
+	BOOST_CHECK (p_semaphore_new (NULL, 0, P_SEM_ACCESS_CREATE, &error) == NULL);
+	BOOST_CHECK (error != NULL);
+	clean_error (&error);
+
+	BOOST_REQUIRE (p_semaphore_acquire (sem, &error) == FALSE);
+	BOOST_CHECK (error != NULL);
+	clean_error (&error);
+
+	BOOST_REQUIRE (p_semaphore_release (sem, &error) == FALSE);
+	BOOST_CHECK (error != NULL);
+	clean_error (&error);
+
 	p_semaphore_take_ownership (sem);
+	p_semaphore_free (NULL);
 
 	sem = p_semaphore_new ("p_semaphore_test_object", 10, P_SEM_ACCESS_CREATE, NULL);
 	BOOST_REQUIRE (sem != NULL);
