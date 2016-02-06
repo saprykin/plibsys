@@ -411,8 +411,8 @@ set_target_properties (plibstatic PROPERTIES ARCHIVE_OUTPUT_DIRECTORY ${OUTPUT_D
 set_target_properties (plibstatic PROPERTIES SOVERSION ${PLIB_VERSION})
 
 if (PLIB_PLATFORM_CFLAGS)
-        set_target_properties (plib PROPERTIES COMPILE_FLAGS ${PLIB_PLATFORM_CFLAGS})
-        set_target_properties (plibstatic PROPERTIES COMPILE_FLAGS ${PLIB_PLATFORM_CFLAGS})
+        set_target_properties (plib PROPERTIES COMPILE_FLAGS "${PLIB_PLATFORM_CFLAGS}")
+        set_target_properties (plibstatic PROPERTIES COMPILE_FLAGS "${PLIB_PLATFORM_CFLAGS}")
 endif()
 
 if (PLIB_C_COMPILER STREQUAL msvc)
