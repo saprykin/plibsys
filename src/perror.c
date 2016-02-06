@@ -22,6 +22,7 @@
 
 struct _PError {
 	pint	code;
+	pint	native_code;
 	pchar	*message;
 };
 
@@ -38,6 +39,7 @@ p_error_new ()
 
 P_LIB_API PError *
 p_error_new_literal (pint	code,
+		     pint	native_code,
 		    const pchar	*message)
 {
 	PError *ret;
@@ -46,6 +48,7 @@ p_error_new_literal (pint	code,
 		return NULL;
 
 	ret->code = code;
+	ret->native_code = native_code;
 	ret->message = p_strdup (message);
 
 	return ret;
@@ -69,6 +72,15 @@ p_error_get_code (PError *error)
 	return error->code;
 }
 
+P_LIB_API pint
+p_error_get_native_code	(PError	*error)
+{
+	if (error == NULL)
+		return 0;
+
+	return error->native_code;
+}
+
 P_LIB_API PError *
 p_error_copy (PError *error)
 {
@@ -77,7 +89,9 @@ p_error_copy (PError *error)
 	if (error == NULL)
 		return NULL;
 
-	if ((ret = p_error_new_literal (error->code, error->message)) == NULL)
+	if ((ret = p_error_new_literal (error->code,
+					error->native_code,
+					error->message)) == NULL)
 		return NULL;
 
 	return ret;
@@ -86,6 +100,7 @@ p_error_copy (PError *error)
 P_LIB_API void
 p_error_set_error (PError	*error,
 		   pint		code,
+		   pint		native_code,
 		   const pchar	*message)
 {
 	if (error == NULL)
@@ -95,18 +110,20 @@ p_error_set_error (PError	*error,
 		p_free (error->message);
 
 	error->code = code;
+	error->native_code = native_code;
 	error->message = p_strdup (message);
 }
 
 P_LIB_API void
 p_error_set_error_p (PError		**error,
 		     pint		code,
+		     pint		native_code,
 		     const pchar	*message)
 {
 	if (error == NULL || *error != NULL)
 		return;
 
-	*error = p_error_new_literal (code, message);
+	*error = p_error_new_literal (code, native_code, message);
 }
 
 P_LIB_API void
@@ -120,6 +137,7 @@ p_error_clear (PError *error)
 
 	error->message = NULL;
 	error->code = 0;
+	error->native_code = 0;
 }
 
 P_LIB_API void

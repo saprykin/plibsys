@@ -398,6 +398,7 @@ __p_socket_set_fd_blocking (pint	fd,
 #endif
 		p_error_set_error_p (error,
 				     (pint) __p_socket_get_error (),
+				     (pint) __p_socket_get_errno (),
 				     "Failed to set socket blocking flags");
 		return FALSE;
 	}
@@ -412,6 +413,7 @@ __p_socket_check (const PSocket *socket,
 	if (!socket->inited) {
 		p_error_set_error_p (error,
 				     (pint) P_SOCKET_ERROR_INVALID_ARGUMENT,
+				     0,
 				     "Socket is not initialized");
 		return FALSE;
 	}
@@ -419,6 +421,7 @@ __p_socket_check (const PSocket *socket,
 	if (socket->closed)  {
 		p_error_set_error_p (error,
 				     (pint) P_SOCKET_ERROR_NOT_AVAILABLE,
+				     0,
 				     "Socket is already closed");
 		return FALSE;
 	}
@@ -447,6 +450,7 @@ __p_socket_set_details_from_fd (PSocket	*socket,
 	if (getsockopt (fd, SOL_SOCKET, SO_TYPE, (ppointer) &value, &optlen) != 0) {
 		p_error_set_error_p (error,
 				     (pint) __p_socket_get_error (),
+				     (pint) __p_socket_get_errno (),
 				     "Failed to call getsockopt() to get socket info for fd");
 		return FALSE;
 	}
@@ -454,6 +458,7 @@ __p_socket_set_details_from_fd (PSocket	*socket,
 	if (optlen != sizeof (value)) {
 		p_error_set_error_p (error,
 				     (pint) P_SOCKET_ERROR_INVALID_ARGUMENT,
+				     0,
 				     "Failed to get socket info for fd, bad option length");
 		return FALSE;
 	}
@@ -481,6 +486,7 @@ __p_socket_set_details_from_fd (PSocket	*socket,
 	if (getsockname (fd, (struct sockaddr *) &address, &addrlen) != 0) {
 		p_error_set_error_p (error,
 				     (pint) __p_socket_get_error (),
+				     (pint) __p_socket_get_errno (),
 				     "Failed to call getsockname() to get socket address info");
 		return FALSE;
 	}
@@ -494,6 +500,7 @@ __p_socket_set_details_from_fd (PSocket	*socket,
 		if (getsockopt (socket->fd, SOL_SOCKET, SO_DOMAIN, (ppointer) &family, &optlen) != 0) {
 			p_error_set_error_p (error,
 					     (pint) __p_socket_get_error (),
+					     (pint) __p_socket_get_errno (),
 					     "Failed to call getsockopt() to get socket SO_DOMAIN option");
 			return FALSE;
 		}
@@ -601,6 +608,7 @@ p_socket_new_from_fd (pint	fd,
 	if (fd < 0) {
 		p_error_set_error_p (error,
 				     (pint) P_SOCKET_ERROR_INVALID_ARGUMENT,
+				     0,
 				     "Unable to create socket from bad fd");
 		return NULL;
 	}
@@ -608,6 +616,7 @@ p_socket_new_from_fd (pint	fd,
 	if ((ret = p_malloc0 (sizeof (PSocket))) == NULL) {
 		p_error_set_error_p (error,
 				     (pint) P_SOCKET_ERROR_NO_RESOURCES,
+				     0,
 				     "Failed to allocate memory for socket");
 		return NULL;
 	}
@@ -634,6 +643,7 @@ p_socket_new_from_fd (pint	fd,
 	if ((ret->events = WSACreateEvent ()) == WSA_INVALID_EVENT) {
 		p_error_set_error_p (error,
 				     (pint) P_SOCKET_ERROR_FAILED,
+				     (pint) __p_socket_get_errno (),
 				     "Failed to call WSACreateEvent() on socket");
 		p_free (ret);
 		return NULL;
@@ -660,6 +670,7 @@ p_socket_new (PSocketFamily	family,
 	    protocol == P_SOCKET_PROTOCOL_UNKNOWN) {
 		p_error_set_error_p (error,
 				     (pint) P_SOCKET_ERROR_INVALID_ARGUMENT,
+				     0,
 				     "Invalid input socket family, type or protocol");
 		return NULL;
 	}
@@ -680,6 +691,7 @@ p_socket_new (PSocketFamily	family,
 	default:
 		p_error_set_error_p (error,
 				     (pint) P_SOCKET_ERROR_INVALID_ARGUMENT,
+				     0,
 				     "Unable to create socket with unknown family");
 		return NULL;
 	}
@@ -687,6 +699,7 @@ p_socket_new (PSocketFamily	family,
 	if (protocol == -1)  {
 		p_error_set_error_p (error,
 				     (pint) P_SOCKET_ERROR_INVALID_ARGUMENT,
+				     0,
 				     "Unable to create socket with unknown protocol");
 		return NULL;
 	}
@@ -697,6 +710,7 @@ p_socket_new (PSocketFamily	family,
 	if ((fd = (pint) socket (family, native_type, protocol)) < 0) {
 		p_error_set_error_p (error,
 				     (pint) __p_socket_get_error (),
+				     (pint) __p_socket_get_errno (),
 				     "Failed to call socket() to create socket");
 		return NULL;
 	}
@@ -713,6 +727,7 @@ p_socket_new (PSocketFamily	family,
 	if ((ret = p_malloc0 (sizeof (PSocket))) == NULL) {
 		p_error_set_error_p (error,
 				     (pint) P_SOCKET_ERROR_NO_RESOURCES,
+				     0,
 				     "Failed to allocate memory for socket");
 #ifndef P_OS_WIN
 		close (fd);
@@ -747,6 +762,7 @@ p_socket_new (PSocketFamily	family,
 	if ((ret->events = WSACreateEvent ()) == WSA_INVALID_EVENT) {
 		p_error_set_error_p (error,
 				     (pint) P_SOCKET_ERROR_FAILED,
+				     (pint) __p_socket_get_errno (),
 				     "Failed to call WSACreateEvent() on socket");
 		p_socket_free (ret);
 		return NULL;
@@ -839,6 +855,7 @@ p_socket_get_local_address (const PSocket	*socket,
 	if (!socket) {
 		p_error_set_error_p (error,
 				     (pint) P_SOCKET_ERROR_INVALID_ARGUMENT,
+				     0,
 				     "Invalid input argument");
 		return NULL;
 	}
@@ -848,6 +865,7 @@ p_socket_get_local_address (const PSocket	*socket,
 	if (getsockname (socket->fd, (struct sockaddr *) &buffer, &len) < 0) {
 		p_error_set_error_p (error,
 				     (pint) __p_socket_get_error (),
+				     (pint) __p_socket_get_errno (),
 				     "Failed to call getsockname() to get local socket address");
 		return NULL;
 	}
@@ -857,6 +875,7 @@ p_socket_get_local_address (const PSocket	*socket,
 	if (ret == NULL)
 		p_error_set_error_p (error,
 				     (pint) P_SOCKET_ERROR_FAILED,
+				     0,
 				     "Failed to create socket address from native structure");
 
 	return ret;
@@ -873,6 +892,7 @@ p_socket_get_remote_address (const PSocket	*socket,
 	if (!socket) {
 		p_error_set_error_p (error,
 				     (pint) P_SOCKET_ERROR_INVALID_ARGUMENT,
+				     0,
 				     "Invalid input argument");
 		return NULL;
 	}
@@ -882,6 +902,7 @@ p_socket_get_remote_address (const PSocket	*socket,
 	if (getpeername (socket->fd, (struct sockaddr *) &buffer, &len) < 0) {
 		p_error_set_error_p (error,
 				     (pint) __p_socket_get_error (),
+				     (pint) __p_socket_get_errno (),
 				     "Failed to call getpeername() to get remote socket address");
 		return NULL;
 	}
@@ -891,6 +912,7 @@ p_socket_get_remote_address (const PSocket	*socket,
 	if (ret == NULL)
 		p_error_set_error_p (error,
 				     (pint) P_SOCKET_ERROR_FAILED,
+				     0,
 				     "Failed to create socket address from native structure");
 
 	return ret;
@@ -915,6 +937,7 @@ p_socket_check_connect_result (PSocket  *socket,
 	if (!socket) {
 		p_error_set_error_p (error,
 				     (pint) P_SOCKET_ERROR_INVALID_ARGUMENT,
+				     0,
 				     "Invalid input argument");
 		return FALSE;
 	}
@@ -924,6 +947,7 @@ p_socket_check_connect_result (PSocket  *socket,
 	if (getsockopt (socket->fd, SOL_SOCKET, SO_ERROR, (ppointer) &val, &optlen) < 0) {
 		p_error_set_error_p (error,
 				     (pint) __p_socket_get_error (),
+				     (pint) __p_socket_get_errno (),
 				     "Failed to call getsockopt() to get connection status");
 		return FALSE;
 	}
@@ -931,6 +955,7 @@ p_socket_check_connect_result (PSocket  *socket,
 	if (val != 0)
 		p_error_set_error_p (error,
 				     (pint) __p_socket_get_error_from_errno (val),
+				     val,
 				     "Error in socket layer");
 
 	socket->connected = (val == 0);
@@ -1018,6 +1043,7 @@ p_socket_bind (const PSocket	*socket,
 	if (!socket || !address) {
 		p_error_set_error_p (error,
 				     (pint) P_SOCKET_ERROR_INVALID_ARGUMENT,
+				     0,
 				     "Invalid input argument");
 		return FALSE;
 	}
@@ -1037,6 +1063,7 @@ p_socket_bind (const PSocket	*socket,
 	if (!p_socket_address_to_native (address, &addr, sizeof (addr))) {
 		p_error_set_error_p (error,
 				     (pint) P_SOCKET_ERROR_FAILED,
+				     0,
 				     "Failed to convert socket address to native structure");
 		return FALSE;
 	}
@@ -1044,6 +1071,7 @@ p_socket_bind (const PSocket	*socket,
 	if (bind (socket->fd, (struct sockaddr *) &addr, (pint) p_socket_address_get_native_size (address)) < 0) {
 		p_error_set_error_p (error,
 				     (pint) __p_socket_get_error (),
+				     (pint) __p_socket_get_errno (),
 				     "Failed to call bind() on socket");
 		return FALSE;
 	}
@@ -1063,6 +1091,7 @@ p_socket_connect (PSocket		*socket,
 	if (!socket || !address) {
 		p_error_set_error_p (error,
 				     (pint) P_SOCKET_ERROR_INVALID_ARGUMENT,
+				     0,
 				     "Invalid input argument");
 		return FALSE;
 	}
@@ -1073,6 +1102,7 @@ p_socket_connect (PSocket		*socket,
 	if (!p_socket_address_to_native (address, &buffer, sizeof buffer)) {
 		p_error_set_error_p (error,
 				     (pint) P_SOCKET_ERROR_FAILED,
+				     0,
 				     "Failed to convert socket address to native structure");
 		return FALSE;
 	}
@@ -1097,11 +1127,13 @@ p_socket_connect (PSocket		*socket,
 				} else
 					p_error_set_error_p (error,
 							     (pint) sock_err,
+							     err_code,
 							     "Couldn't block non-blocking socket");
 
 			} else
 				p_error_set_error_p (error,
 						     (pint) sock_err,
+						     err_code,
 						     "Failed to call connect() on socket");
 
 			return FALSE;
@@ -1121,6 +1153,7 @@ p_socket_listen (PSocket	*socket,
 	if (!socket) {
 		p_error_set_error_p (error,
 				     (pint) P_SOCKET_ERROR_INVALID_ARGUMENT,
+				     0,
 				     "Invalid input argument");
 		return FALSE;
 	}
@@ -1131,6 +1164,7 @@ p_socket_listen (PSocket	*socket,
 	if (listen (socket->fd, socket->listen_backlog) < 0) {
 		p_error_set_error_p (error,
 				     (pint) __p_socket_get_error (),
+				     (pint) __p_socket_get_errno (),
 				     "Failed to call listen() on socket");
 		return FALSE;
 	}
@@ -1154,6 +1188,7 @@ p_socket_accept (const PSocket	*socket,
 	if (!socket) {
 		p_error_set_error_p (error,
 				     (pint) P_SOCKET_ERROR_INVALID_ARGUMENT,
+				     0,
 				     "Invalid input argument");
 		return NULL;
 	}
@@ -1180,6 +1215,7 @@ p_socket_accept (const PSocket	*socket,
 
 			p_error_set_error_p (error,
 					     (pint) sock_err,
+					     err_code,
 					     "Failed to call accept() on socket");
 
 			return NULL;
@@ -1226,6 +1262,7 @@ p_socket_receive (const PSocket	*socket,
 	if (!socket || !buffer) {
 		p_error_set_error_p (error,
 				     (pint) P_SOCKET_ERROR_INVALID_ARGUMENT,
+				     0,
 				     "Invalid input argument");
 		return -1;
 	}
@@ -1253,6 +1290,7 @@ p_socket_receive (const PSocket	*socket,
 
 			p_error_set_error_p (error,
 					     (pint) sock_err,
+					     err_code,
 					     "Failed to call recv() on socket");
 
 			return -1;
@@ -1280,6 +1318,7 @@ p_socket_receive_from (const PSocket	*socket,
 	if (!socket || !buffer || buflen <= 0) {
 		p_error_set_error_p (error,
 				     (pint) P_SOCKET_ERROR_INVALID_ARGUMENT,
+				     0,
 				     "Invalid input argument");
 		return -1;
 	}
@@ -1308,6 +1347,7 @@ p_socket_receive_from (const PSocket	*socket,
 
 			p_error_set_error_p (error,
 					     (pint) sock_err,
+					     err_code,
 					     "Failed to call recvfrom() on socket");
 
 			return -1;
@@ -1335,6 +1375,7 @@ p_socket_send (const PSocket	*socket,
 	if (!socket || !buffer || buflen <= 0) {
 		p_error_set_error_p (error,
 				     (pint) P_SOCKET_ERROR_INVALID_ARGUMENT,
+				     0,
 				     "Invalid input argument");
 		return -1;
 	}
@@ -1361,6 +1402,7 @@ p_socket_send (const PSocket	*socket,
 
 			p_error_set_error_p (error,
 					     (pint) sock_err,
+					     err_code,
 					     "Failed to call send() on socket");
 
 			return -1;
@@ -1388,6 +1430,7 @@ p_socket_send_to (const PSocket		*socket,
 	if (!socket || !address || !buffer) {
 		p_error_set_error_p (error,
 				     (pint) P_SOCKET_ERROR_INVALID_ARGUMENT,
+				     0,
 				     "Invalid input argument");
 		return -1;
 	}
@@ -1398,6 +1441,7 @@ p_socket_send_to (const PSocket		*socket,
 	if (!p_socket_address_to_native (address, &sa, sizeof (sa))) {
 		p_error_set_error_p (error,
 				     (pint) P_SOCKET_ERROR_FAILED,
+				     0,
 				     "Failed to convert socket address to native structure");
 		return -1;
 	}
@@ -1423,6 +1467,7 @@ p_socket_send_to (const PSocket		*socket,
 
 			p_error_set_error_p (error,
 					     (pint) sock_err,
+					     err_code,
 					     "Failed to call sendto() on socket");
 
 			return -1;
@@ -1444,6 +1489,7 @@ p_socket_close (PSocket	*socket,
 	if (!socket) {
 		p_error_set_error_p (error,
 				     (pint) P_SOCKET_ERROR_INVALID_ARGUMENT,
+				     0,
 				     "Invalid input argument");
 		return FALSE;
 	}
@@ -1468,6 +1514,7 @@ p_socket_close (PSocket	*socket,
 #endif
 			p_error_set_error_p (error,
 					     (pint) __p_socket_get_error_from_errno (err_code),
+					     err_code,
 					     "Failed to close socket");
 
 			return FALSE;
@@ -1494,6 +1541,7 @@ p_socket_shutdown (PSocket	*socket,
 	if (!socket) {
 		p_error_set_error_p (error,
 				     (pint) P_SOCKET_ERROR_INVALID_ARGUMENT,
+				     0,
 				     "Invalid input argument");
 		return FALSE;
 	}
@@ -1523,6 +1571,7 @@ p_socket_shutdown (PSocket	*socket,
 	if (shutdown (socket->fd, how) != 0) {
 		p_error_set_error_p (error,
 				     (pint) __p_socket_get_error (),
+				     (pint) __p_socket_get_errno (),
 				     "Failed to call shutdown() on socket");
 		return FALSE;
 	}
@@ -1560,6 +1609,7 @@ p_socket_set_buffer_size (const PSocket		*socket,
 	if (socket == NULL) {
 		p_error_set_error_p (error,
 				     (pint) P_SOCKET_ERROR_INVALID_ARGUMENT,
+				     0,
 				     "Invalid input argument");
 		return FALSE;
 	}
@@ -1570,6 +1620,7 @@ p_socket_set_buffer_size (const PSocket		*socket,
 	if (setsockopt (socket->fd, SOL_SOCKET, optname, (pconstpointer) &optval, sizeof (optval)) != 0) {
 		p_error_set_error_p (error,
 				     (pint) __p_socket_get_error (),
+				     (pint) __p_socket_get_errno (),
 				     "Failed to call setsockopt() on socket to set buffer size");
 		return FALSE;
 	}
@@ -1593,6 +1644,7 @@ p_socket_io_condition_wait (const PSocket		*socket,
 	if (socket == NULL) {
 		p_error_set_error_p (error,
 				     (pint) P_SOCKET_ERROR_INVALID_ARGUMENT,
+				     0,
 				     "Invalid input argument");
 		return FALSE;
 	}
@@ -1618,11 +1670,13 @@ p_socket_io_condition_wait (const PSocket		*socket,
 	else if (evret == WSA_WAIT_TIMEOUT) {
 		p_error_set_error_p (error,
 				     (pint) P_SOCKET_ERROR_TIMED_OUT,
+				     (pint) __p_socket_get_errno (),
 				     "Timed out while waiting socket condition");
 		return FALSE;
 	} else {
 		p_error_set_error_p (error,
 				     (pint) __p_socket_get_error (),
+				     (pint) __p_socket_get_errno (),
 				     "Failed to call WSAWaitForMultipleEvents() on socket");
 		return FALSE;
 	}
@@ -1650,11 +1704,13 @@ p_socket_io_condition_wait (const PSocket		*socket,
 		else if (evret == 0) {
 			p_error_set_error_p (error,
 					     (pint) P_SOCKET_ERROR_TIMED_OUT,
+					     (pint) __p_socket_get_errno (),
 					     "Timed out while waiting socket condition");
 			return FALSE;
 		} else {
 			p_error_set_error_p (error,
 					     (pint) __p_socket_get_error (),
+					     (pint) __p_socket_get_errno (),
 					     "Failed to call poll() on socket");
 			return FALSE;
 		}

@@ -63,12 +63,14 @@ P_LIB_API PError *	p_error_new		();
 /**
  * @brief Initializes new #PError with data.
  * @param code Error code.
+ * @param native_code Native error code, leave 0 to ignore.
  * @param message Error message.
  * @return Newly initialized #PError object in case of success,
  * NULL otherwise.
  * @since 0.0.1
  */
 P_LIB_API PError *	p_error_new_literal	(pint		code,
+						 pint		native_code,
 						 const pchar	*message);
 
 /**
@@ -88,6 +90,16 @@ P_LIB_API const pchar *	p_error_get_message	(PError		*error);
 P_LIB_API pint		p_error_get_code	(PError		*error);
 
 /**
+ * @brief Gets platform native error code, if any.
+ * @param error #PError object to get native code from.
+ * @return Error code in case of success, 0 otherwise.
+ * @since 0.0.1
+ * @note In some situations there can be no native code error,
+ * i.e. when internal library call failed. Do not rely on this code.
+ */
+P_LIB_API pint		p_error_get_native_code	(PError		*error);
+
+/**
  * @brief Creates a copy of a #PError object.
  * @param error #PError object to copy.
  * @return Newly created #PError object in case of success,
@@ -102,17 +114,20 @@ P_LIB_API PError *	p_error_copy		(PError		*error);
  * @brief Sets error data.
  * @param error #PError object to set data for.
  * @param code Error code.
+ * @param native_code Native error code, leave 0 to ignore.
  * @param message Error message.
  * @since 0.0.1
  */
 P_LIB_API void		p_error_set_error	(PError		*error,
 						 pint		code,
+						 pint		native_code,
 						 const pchar	*message);
 
 /**
  * @brief Sets error data through the double pointer.
  * @param error #PError object to set data for.
  * @param code Error code.
+ * @param native_code Native error code, leave 0 to ignore.
  * @param message Error message.
  * @since 0.0.1
  *
@@ -123,6 +138,7 @@ P_LIB_API void		p_error_set_error	(PError		*error,
  */
 P_LIB_API void		p_error_set_error_p	(PError		**error,
 						 pint		code,
+						 pint		native_code,
 						 const pchar	*message);
 
 /**

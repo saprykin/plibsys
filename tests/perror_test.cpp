@@ -40,10 +40,10 @@ BOOST_AUTO_TEST_CASE (perror_invalid_test)
 
 	PError *error = (PError *) 0x1;
 
-	p_error_set_error (NULL, 0, NULL);
-	p_error_set_error_p (NULL, 0, NULL);
+	p_error_set_error (NULL, 0, 0, NULL);
+	p_error_set_error_p (NULL, 0, 0, NULL);
 
-	p_error_set_error_p (&error, 0, NULL);
+	p_error_set_error_p (&error, 0, 0, NULL);
 	BOOST_CHECK (error == (PError *) 0x1);
 
 	p_error_clear (NULL);
@@ -72,7 +72,7 @@ BOOST_AUTO_TEST_CASE (perror_general_test)
 	p_error_free (copy_error);
 	copy_error = NULL;
 
-	p_error_set_error (error, 10, PERROR_TEST_MESSAGE);
+	p_error_set_error (error, 10, -10, PERROR_TEST_MESSAGE);
 
 	BOOST_CHECK (p_error_get_code (error) == 10);
 	BOOST_CHECK (strcmp (p_error_get_message (error), PERROR_TEST_MESSAGE) == 0);
@@ -86,7 +86,7 @@ BOOST_AUTO_TEST_CASE (perror_general_test)
 	p_error_free (copy_error);
 	copy_error = NULL;
 
-	p_error_set_error (error, 20, PERROR_TEST_MESSAGE_2);
+	p_error_set_error (error, 20, -20, PERROR_TEST_MESSAGE_2);
 
 	BOOST_CHECK (p_error_get_code (error) == 20);
 	BOOST_CHECK (strcmp (p_error_get_message (error), PERROR_TEST_MESSAGE_2) == 0);
@@ -100,7 +100,7 @@ BOOST_AUTO_TEST_CASE (perror_general_test)
 	error = NULL;
 
 	/* Literal initialization test */
-	error = p_error_new_literal (30, PERROR_TEST_MESSAGE);
+	error = p_error_new_literal (30, -30, PERROR_TEST_MESSAGE);
 
 	BOOST_CHECK (p_error_get_code (error) == 30);
 	BOOST_CHECK (strcmp (p_error_get_message (error), PERROR_TEST_MESSAGE) == 0);
@@ -116,7 +116,7 @@ BOOST_AUTO_TEST_CASE (perror_general_test)
 
 	/* Through the double pointer */
 	error = NULL;
-	p_error_set_error_p (&error, 10, PERROR_TEST_MESSAGE);
+	p_error_set_error_p (&error, 10, -10, PERROR_TEST_MESSAGE);
 
 	BOOST_CHECK (p_error_get_code (error) == 10);
 	BOOST_CHECK (strcmp (p_error_get_message (error), PERROR_TEST_MESSAGE) == 0);

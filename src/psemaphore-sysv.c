@@ -67,6 +67,7 @@ __p_semaphore_create_handle (PSemaphore *sem, PError **error)
 	if (sem == NULL || sem->platform_key == NULL) {
 		p_error_set_error_p (error,
 				     (pint) P_SEM_ERROR_INVALID_ARGUMENT,
+				     0,
 				     "Invalid input argument");
 		return FALSE;
 	}
@@ -74,6 +75,7 @@ __p_semaphore_create_handle (PSemaphore *sem, PError **error)
 	if ((built = __p_ipc_unix_create_key_file (sem->platform_key)) == -1) {
 		p_error_set_error_p (error,
 				     (pint) __p_ipc_unix_get_semaphore_error (),
+				     errno,
 				     "Failed to create key file");
 		__p_semaphore_clean_handle (sem);
 		return FALSE;
@@ -83,6 +85,7 @@ __p_semaphore_create_handle (PSemaphore *sem, PError **error)
 	if ((sem->unix_key = __p_ipc_unix_get_ftok_key (sem->platform_key)) == -1) {
 		p_error_set_error_p (error,
 				     (pint) __p_ipc_unix_get_semaphore_error (),
+				     errno,
 				     "Failed to get unique IPC key");
 		__p_semaphore_clean_handle (sem);
 		return FALSE;
@@ -101,6 +104,7 @@ __p_semaphore_create_handle (PSemaphore *sem, PError **error)
 	if (sem->sem_hdl == P_SEM_INVALID_HDL) {
 		p_error_set_error_p (error,
 				     (pint) __p_ipc_unix_get_semaphore_error (),
+				     errno,
 				     "Failed to call semget() to create semaphore");
 		__p_semaphore_clean_handle (sem);
 		return FALSE;
@@ -112,6 +116,7 @@ __p_semaphore_create_handle (PSemaphore *sem, PError **error)
 		if (semctl (sem->sem_hdl, 0, SETVAL, semun_op) == -1) {
 			p_error_set_error_p (error,
 					     (pint) __p_ipc_unix_get_semaphore_error (),
+					     errno,
 					     "Failed to set semaphore initial value with semctl()");
 			__p_semaphore_clean_handle (sem);
 			return FALSE;
@@ -151,6 +156,7 @@ p_semaphore_new (const pchar		*name,
 	if (name == NULL || init_val < 0) {
 		p_error_set_error_p (error,
 				     (pint) P_SEM_ERROR_INVALID_ARGUMENT,
+				     0,
 				     "Invalid input argument");
 		return NULL;
 	}
@@ -158,6 +164,7 @@ p_semaphore_new (const pchar		*name,
 	if ((ret = p_malloc0 (sizeof (PSemaphore))) == NULL) {
 		p_error_set_error_p (error,
 				     (pint) P_SEM_ERROR_NO_RESOURCES,
+				     0,
 				     "Failed to allocate memory for semaphore");
 		return NULL;
 	}
@@ -165,6 +172,7 @@ p_semaphore_new (const pchar		*name,
 	if ((new_name = p_malloc0 (strlen (name) + strlen (P_SEM_SUFFIX) + 1)) == NULL) {
 		p_error_set_error_p (error,
 				     (pint) P_SEM_ERROR_NO_RESOURCES,
+				     0,
 				     "Failed to allocate memory for semaphore");
 		p_free (ret);
 		return NULL;
@@ -206,6 +214,7 @@ p_semaphore_acquire (PSemaphore *sem,
 	if (sem == NULL) {
 		p_error_set_error_p (error,
 				     (pint) P_SEM_ERROR_INVALID_ARGUMENT,
+				     0,
 				     "Invalid input argument");
 		return FALSE;
 	}
@@ -231,6 +240,7 @@ p_semaphore_acquire (PSemaphore *sem,
 	if (!ret)
 		p_error_set_error_p (error,
 				     (pint) __p_ipc_unix_get_semaphore_error (),
+				     errno,
 				     "Failed to call semop() on semaphore");
 
 	return ret;
@@ -246,6 +256,7 @@ p_semaphore_release (PSemaphore *sem,
 	if (sem == NULL) {
 		p_error_set_error_p (error,
 				     (pint) P_SEM_ERROR_INVALID_ARGUMENT,
+				     0,
 				     "Invalid input argument");
 		return FALSE;
 	}
@@ -268,6 +279,7 @@ p_semaphore_release (PSemaphore *sem,
 	if (!ret)
 		p_error_set_error_p (error,
 				     (pint) __p_ipc_unix_get_semaphore_error (),
+				     errno,
 				     "Failed to call semop() on semaphore");
 
 	return ret;

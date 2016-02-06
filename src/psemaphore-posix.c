@@ -56,6 +56,7 @@ __p_semaphore_create_handle (PSemaphore *sem,
 	if (sem == NULL || sem->platform_key == NULL) {
 		p_error_set_error_p (error,
 				     (pint) P_SEM_ERROR_INVALID_ARGUMENT,
+				     0,
 				     "Invalid input argument");
 		return FALSE;
 	}
@@ -80,6 +81,7 @@ __p_semaphore_create_handle (PSemaphore *sem,
 	if (sem->sem_hdl == P_SEM_INVALID_HDL) {
 		p_error_set_error_p (error,
 				     (pint) __p_ipc_unix_get_semaphore_error (),
+				     errno,
 				     "Failed to call sem_open() to create semaphore");
 		__p_semaphore_clean_handle (sem);
 		return FALSE;
@@ -116,6 +118,7 @@ p_semaphore_new (const pchar		*name,
 	if (name == NULL || init_val < 0) {
 		p_error_set_error_p (error,
 				     (pint) P_SEM_ERROR_INVALID_ARGUMENT,
+				     0,
 				     "Invalid input argument");
 		return NULL;
 	}
@@ -123,6 +126,7 @@ p_semaphore_new (const pchar		*name,
 	if ((ret = p_malloc0 (sizeof (PSemaphore))) == NULL) {
 		p_error_set_error_p (error,
 				     (pint) P_SEM_ERROR_NO_RESOURCES,
+				     0,
 				     "Failed to allocate memory for semaphore");
 		return NULL;
 	}
@@ -130,6 +134,7 @@ p_semaphore_new (const pchar		*name,
 	if ((new_name = p_malloc0 (strlen (name) + strlen (P_SEM_SUFFIX) + 1)) == NULL) {
 		p_error_set_error_p (error,
 				     (pint) P_SEM_ERROR_NO_RESOURCES,
+				     0,
 				     "Failed to allocate memory for semaphore");
 		p_free (ret);
 		return NULL;
@@ -171,6 +176,7 @@ p_semaphore_acquire (PSemaphore *sem,
 	if (sem == NULL) {
 		p_error_set_error_p (error,
 				     (pint) P_SEM_ERROR_INVALID_ARGUMENT,
+				     0,
 				     "Invalid input argument");
 		return FALSE;
 	}
@@ -183,6 +189,7 @@ p_semaphore_acquire (PSemaphore *sem,
 	if (!ret)
 		p_error_set_error_p (error,
 				     (pint) __p_ipc_unix_get_semaphore_error (),
+				     errno,
 				     "Failed to call sem_wait() on semaphore");
 
 	return ret;
@@ -197,6 +204,7 @@ p_semaphore_release (PSemaphore *sem,
 	if (sem == NULL) {
 		p_error_set_error_p (error,
 				     (pint) P_SEM_ERROR_INVALID_ARGUMENT,
+				     0,
 				     "Invalid input argument");
 		return FALSE;
 	}
@@ -206,6 +214,7 @@ p_semaphore_release (PSemaphore *sem,
 	if (!ret)
 		p_error_set_error_p (error,
 				     (pint) __p_ipc_unix_get_semaphore_error (),
+				     errno,
 				     "Failed to call sem_post() on semaphore");
 
 	return ret;
