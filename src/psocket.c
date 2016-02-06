@@ -697,7 +697,7 @@ p_socket_new (PSocketFamily	family,
 	if ((fd = (pint) socket (family, native_type, protocol)) < 0) {
 		p_error_set_error_p (error,
 				     (pint) __p_socket_get_error (),
-				     "Failed to call socket() to create a socket");
+				     "Failed to call socket() to create socket");
 		return NULL;
 	}
 
