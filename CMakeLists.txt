@@ -9,9 +9,11 @@ set (VERSION ${PLIB_VERSION})
 set (top_srcdir ${PROJECT_SOURCE_DIR})
 
 configure_file (
-	"${PROJECT_SOURCE_DIR}/Doxyfile.in"
-	"${PROJECT_BINARY_DIR}/Doxyfile"
+        "${PROJECT_SOURCE_DIR}/Doxyfile.in"
+        "${PROJECT_BINARY_DIR}/Doxyfile"
 )
+
+option (PLIB_TESTS_STATIC "Use Boost Unit Test Framework without compilation" OFF)
 
 enable_testing ()
 
@@ -22,11 +24,21 @@ message (STATUS "Checking whether to enable unit tests")
 
 find_package (Boost COMPONENTS unit_test_framework)
 
+if (BOOST_ROOT)
+        get_filename_component (BOOST_ROOT_ABSOLUTE ${BOOST_ROOT} ABSOLUTE)
+        set (BOOST_ROOT ${BOOST_ROOT_ABSOLUTE})
+endif()
+
 if (Boost_FOUND)
-	message (STATUS "Checking whether to enable unit tests - yes")
-	subdirs (tests)
+        message (STATUS "Checking whether to enable unit tests - yes")
+        subdirs (tests)
 else()
-	message (STATUS "Checking whether to enable unit tests - no")
+        if (PLIB_TESTS_STATIC)
+                message (STATUS "Checking whether to enable unit tests (static) - yes")                
+                subdirs (tests)
+        else()
+                message (STATUS "Checking whether to enable unit tests - no")
+        endif()
 endif()
 
 set (CPACK_PACKAGE_NAME ${PROJECT_NAME}-installer)
@@ -43,9 +55,9 @@ set (CPACK_COMPONENT_CORE_DESCRIPTION "Core library with headers")
 set (CPACK_COMPONENT_CORE_REQUIRED TRUE)
 
 if (WIN32 AND NOT UNIX)
-	set (CPACK_NSIS_DISPLAY_NAME ${PROJECT_NAME})
+        set (CPACK_NSIS_DISPLAY_NAME ${PROJECT_NAME})
 elseif (UNIX)
-	set (CPACK_GENERATOR STGZ)
+        set (CPACK_GENERATOR STGZ)
 endif()
 
 include (CPack)

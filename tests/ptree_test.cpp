@@ -25,7 +25,11 @@
 #include <time.h>
 #include <math.h>
 
-#include <boost/test/unit_test.hpp>
+#ifdef PLIB_TESTS_STATIC
+#  include <boost/test/included/unit_test.hpp>
+#else
+#  include <boost/test/unit_test.hpp>
+#endif
 
 BOOST_AUTO_TEST_SUITE (BOOST_TEST_MODULE)
 

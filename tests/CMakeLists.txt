@@ -3,8 +3,23 @@ set (OUTPUT_DIR ${CMAKE_BINARY_DIR})
 include (${PROJECT_SOURCE_DIR}/../cmake/PlatformDetect.cmake)
 
 plib_detect_c_compiler (PLIB_C_COMPILER)
-find_package (Boost COMPONENTS unit_test_framework REQUIRED)
-include_directories (${Boost_INCLUDE_DIR} ${PROJECT_SOURCE_DIR}/../src ${CMAKE_BINARY_DIR})
+
+if (NOT PLIB_TESTS_STATIC)
+        find_package (Boost COMPONENTS unit_test_framework REQUIRED)
+        include_directories (${Boost_INCLUDE_DIR})
+else()
+        find_package (Boost COMPONENTS unit_test_framework)
+
+        if (NOT Boost_FOUND AND NOT BOOST_ROOT)
+                message (FATAL_ERROR "You must specify BOOST_ROOT variable when building static tests")
+        else()
+                add_definitions (-DPLIB_TESTS_STATIC)
+                set (Boost_LIBRARIES "")
+                include_directories (${BOOST_ROOT})
+        endif()
+endif()
+
+include_directories (${PROJECT_SOURCE_DIR}/../src ${CMAKE_BINARY_DIR})
 
 if (PLIB_C_COMPILER STREQUAL msvc)
         add_definitions (-D_CRT_SECURE_NO_WARNINGS)

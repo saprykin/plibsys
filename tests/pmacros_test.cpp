@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Alexander Saprykin <xelfium@gmail.com>
+ * Copyright (C) 2014-2016 Alexander Saprykin <xelfium@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,11 @@
 
 #include "plib.h"
 
-#include <boost/test/unit_test.hpp>
+#ifdef PLIB_TESTS_STATIC
+#  include <boost/test/included/unit_test.hpp>
+#else
+#  include <boost/test/unit_test.hpp>
+#endif
 
 static P_GNUC_WARN_UNUSED_RESULT pint unused_result_test_func ()
 {

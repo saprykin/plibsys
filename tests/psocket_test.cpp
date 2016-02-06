@@ -23,7 +23,11 @@
 
 #include <string.h>
 
-#include <boost/test/unit_test.hpp>
+#ifdef PLIB_TESTS_STATIC
+#  include <boost/test/included/unit_test.hpp>
+#else
+#  include <boost/test/unit_test.hpp>
+#endif
 
 static pchar socket_data[] = "This is a socket test data!";
 volatile static pboolean is_sender_working = TRUE;

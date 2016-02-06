@@ -21,7 +21,11 @@
 
 #include "plib.h"
 
-#include <boost/test/unit_test.hpp>
+#ifdef PLIB_TESTS_STATIC
+#  include <boost/test/included/unit_test.hpp>
+#else
+#  include <boost/test/unit_test.hpp>
+#endif
 
 static pint semaphore_test_val = 10;
 

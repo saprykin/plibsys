@@ -24,7 +24,11 @@
 #include <stdlib.h>
 #include <time.h>
 
-#include <boost/test/unit_test.hpp>
+#ifdef PLIB_TESTS_STATIC
+#  include <boost/test/included/unit_test.hpp>
+#else
+#  include <boost/test/unit_test.hpp>
+#endif
 
 static void * shm_test_thread (void *arg)
 {

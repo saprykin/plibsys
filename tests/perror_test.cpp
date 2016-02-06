@@ -23,7 +23,11 @@
 
 #include <string.h>
 
-#include <boost/test/unit_test.hpp>
+#ifdef PLIB_TESTS_STATIC
+#  include <boost/test/included/unit_test.hpp>
+#else
+#  include <boost/test/unit_test.hpp>
+#endif
 
 #define PERROR_TEST_MESSAGE	"PError test error message"
 #define PERROR_TEST_MESSAGE_2	"Another PError test error message"
