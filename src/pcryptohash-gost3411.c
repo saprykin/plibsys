@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2015 Alexander Saprykin <xelfium@gmail.com>
+ * Copyright (C) 2010-2016 Alexander Saprykin <xelfium@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -270,7 +270,6 @@ static void __p_gost3411_process (PHashGOST3411	*ctx,
 	P_GOST_28147_E (ctx->hash + 4,  K[2], S + 4);
 	P_GOST_28147_E (ctx->hash + 6,  K[3], S + 6);
 
-
 	/* Step hash function: H (M, Hprev) = PSI^61 (Hprev xor PSI (M xor PSI^12 (S))) */
 
 	/* (12 rounds of LFSR) xor M */
@@ -450,6 +449,7 @@ __p_gost3411_finish (PHashGOST3411 *ctx)
 
 	if (last % 32 != 0) {
 		memset ((pchar *) ctx->buf + (left >> 3), 0, last);
+		__p_gost3411_swap_bytes (ctx->buf, 8);
 		__p_gost3411_process (ctx, ctx->buf);
 		__p_gost3411_sum_256 (ctx->sum, ctx->buf);
 	}
