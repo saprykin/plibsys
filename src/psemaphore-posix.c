@@ -29,7 +29,6 @@
 #include <semaphore.h>
 
 #define P_SEM_SUFFIX		"_p_sem_object"
-#define P_SEM_ERROR_BUF_SIZE	255
 
 typedef sem_t psem_hdl;
 
@@ -44,19 +43,22 @@ struct _PSemaphore {
 	pchar			*platform_key;
 	psem_hdl		*sem_hdl;
 	PSemaphoreAccessMode	mode;
-	PSemaphoreError		error;
-	pchar			error_str[P_SEM_ERROR_BUF_SIZE];
 	pint			init_val;
 };
 
-static pboolean __p_semaphore_create_handle (PSemaphore *sem);
+static pboolean __p_semaphore_create_handle (PSemaphore *sem, PError **error);
 static void __p_semaphore_clean_handle (PSemaphore *sem);
 
 static pboolean
-__p_semaphore_create_handle (PSemaphore *sem)
+__p_semaphore_create_handle (PSemaphore *sem,
+			     PError	**error)
 {
-	if (sem == NULL || sem->platform_key == NULL)
+	if (sem == NULL || sem->platform_key == NULL) {
+		p_error_set_error_p (error,
+				     (pint) P_SEM_ERROR_INVALID_ARGUMENT,
+				     "Invalid input argument");
 		return FALSE;
+	}
 
 	/* Solaris may interrupt sem_open call */
 	while ((sem->sem_hdl = sem_open (sem->platform_key, O_CREAT | O_EXCL, 0660, sem->init_val)) == P_SEM_INVALID_HDL
@@ -76,7 +78,9 @@ __p_semaphore_create_handle (PSemaphore *sem)
 		sem->sem_created = TRUE;
 
 	if (sem->sem_hdl == P_SEM_INVALID_HDL) {
-		P_ERROR ("PSemaphore: sem_open failed");
+		p_error_set_error_p (error,
+				     (pint) __p_ipc_unix_get_semaphore_error (),
+				     "Failed to call sem_open() to create semaphore");
 		__p_semaphore_clean_handle (sem);
 		return FALSE;
 	}
@@ -91,33 +95,42 @@ __p_semaphore_clean_handle (PSemaphore *sem)
 		return;
 
 	if (sem->sem_hdl != P_SEM_INVALID_HDL && sem_close (sem->sem_hdl) == -1)
-		P_ERROR ("PSemaphore: failed to perform sem_close");
+		P_ERROR ("PSemaphore: failed to perform sem_close()");
 
 	if (sem->sem_hdl != P_SEM_INVALID_HDL && sem->sem_created && sem_unlink (sem->platform_key) == -1)
-		P_ERROR ("PSemaphore: failed to perform sem_unlink");
+		P_ERROR ("PSemaphore: failed to perform sem_unlink()");
 
 	sem->sem_created = FALSE;
 	sem->sem_hdl = P_SEM_INVALID_HDL;
-	sem->error = P_SEM_ERROR_NONE;
-	sem->error_str[0] = '\0';
 }
 
 P_LIB_API PSemaphore *
-p_semaphore_new (const pchar *name,  pint init_val, PSemaphoreAccessMode mode)
+p_semaphore_new (const pchar		*name,
+		 pint			init_val,
+		 PSemaphoreAccessMode	mode,
+		 PError			**error)
 {
 	PSemaphore	*ret;
 	pchar		*new_name;
 
-	if (name == NULL || init_val < 0)
+	if (name == NULL || init_val < 0) {
+		p_error_set_error_p (error,
+				     (pint) P_SEM_ERROR_INVALID_ARGUMENT,
+				     "Invalid input argument");
 		return NULL;
+	}
 
 	if ((ret = p_malloc0 (sizeof (PSemaphore))) == NULL) {
-		P_ERROR ("PSemaphore: failed to allocate memory");
+		p_error_set_error_p (error,
+				     (pint) P_SEM_ERROR_NO_RESOURCES,
+				     "Failed to allocate memory for semaphore");
 		return NULL;
 	}
 
 	if ((new_name = p_malloc0 (strlen (name) + strlen (P_SEM_SUFFIX) + 1)) == NULL) {
-		P_ERROR ("PSemaphore: failed to allocate memory");
+		p_error_set_error_p (error,
+				     (pint) P_SEM_ERROR_NO_RESOURCES,
+				     "Failed to allocate memory for semaphore");
 		p_free (ret);
 		return NULL;
 	}
@@ -131,8 +144,7 @@ p_semaphore_new (const pchar *name,  pint init_val, PSemaphoreAccessMode mode)
 
 	p_free (new_name);
 
-	if (!__p_semaphore_create_handle (ret)) {
-		P_ERROR ("PSemaphore: failed to create system handle");
+	if (!__p_semaphore_create_handle (ret, error)) {
 		p_semaphore_free (ret);
 		return NULL;
 	}
@@ -150,13 +162,18 @@ p_semaphore_take_ownership (PSemaphore *sem)
 }
 
 P_LIB_API pboolean
-p_semaphore_acquire (PSemaphore *sem)
+p_semaphore_acquire (PSemaphore *sem,
+		     PError	**error)
 {
 	pboolean	ret;
 	pint		res;
 
-	if (sem == NULL)
+	if (sem == NULL) {
+		p_error_set_error_p (error,
+				     (pint) P_SEM_ERROR_INVALID_ARGUMENT,
+				     "Invalid input argument");
 		return FALSE;
+	}
 
 	while ((res = sem_wait (sem->sem_hdl)) == -1 && errno == EINTR)
 		;
@@ -164,23 +181,32 @@ p_semaphore_acquire (PSemaphore *sem)
 	ret = (res == 0);
 
 	if (!ret)
-		P_ERROR ("PSemaphore: failed to acquire lock");
+		p_error_set_error_p (error,
+				     (pint) __p_ipc_unix_get_semaphore_error (),
+				     "Failed to call sem_wait() on semaphore");
 
 	return ret;
 }
 
 P_LIB_API pboolean
-p_semaphore_release (PSemaphore *sem)
+p_semaphore_release (PSemaphore *sem,
+		     PError	**error)
 {
 	pboolean ret;
 
-	if (sem == NULL)
+	if (sem == NULL) {
+		p_error_set_error_p (error,
+				     (pint) P_SEM_ERROR_INVALID_ARGUMENT,
+				     "Invalid input argument");
 		return FALSE;
+	}
 
 	ret = (sem_post (sem->sem_hdl) == 0);
 
 	if (!ret)
-		P_ERROR ("PSemaphore: failed to release lock");
+		p_error_set_error_p (error,
+				     (pint) __p_ipc_unix_get_semaphore_error (),
+				     "Failed to call sem_post() on semaphore");
 
 	return ret;
 }

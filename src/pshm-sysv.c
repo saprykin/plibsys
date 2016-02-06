@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2013 Alexander Saprykin <xelfium@gmail.com>
+ * Copyright (C) 2010-2016 Alexander Saprykin <xelfium@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -109,7 +109,8 @@ __p_shm_create_handle (PShm *shm)
 	}
 
 	if ((shm->sem = p_semaphore_new (shm->platform_key, 1,
-					 is_exists ? P_SEM_ACCESS_OPEN : P_SEM_ACCESS_CREATE)) == NULL) {
+					 is_exists ? P_SEM_ACCESS_OPEN : P_SEM_ACCESS_CREATE,
+					 NULL)) == NULL) {
 		P_ERROR ("PShm: failed create PSemaphore object");
 		__p_shm_clean_handle (shm);
 		return FALSE;
@@ -227,7 +228,7 @@ p_shm_lock (PShm *shm)
 	if (shm == NULL)
 		return FALSE;
 
-	if (!p_semaphore_acquire (shm->sem)) {
+	if (!p_semaphore_acquire (shm->sem, NULL)) {
 		P_ERROR ("PShm: failed to lock memory");
 		return FALSE;
 	} else
@@ -240,7 +241,7 @@ p_shm_unlock (PShm *shm)
 	if (shm == NULL)
 		return FALSE;
 
-	if (!p_semaphore_release (shm->sem)) {
+	if (!p_semaphore_release (shm->sem, NULL)) {
 		P_ERROR ("PShm: failed to unlock memory");
 		return FALSE;
 	} else

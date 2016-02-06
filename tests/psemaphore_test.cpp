@@ -30,13 +30,13 @@ static void * semaphore_test_thread (void *)
 	PSemaphore	*sem;
 	pint		i;
 
-	sem = p_semaphore_new ("p_semaphore_test_object", 1, P_SEM_ACCESS_OPEN);
+	sem = p_semaphore_new ("p_semaphore_test_object", 1, P_SEM_ACCESS_OPEN, NULL);
 
 	if (sem == NULL)
 		p_uthread_exit (1);
 
 	for (i = 0; i < 1000; ++i) {
-		if (!p_semaphore_acquire (sem))
+		if (!p_semaphore_acquire (sem, NULL))
 			p_uthread_exit (1);
 
 		if (semaphore_test_val == 10)
@@ -46,7 +46,7 @@ static void * semaphore_test_thread (void *)
 			++semaphore_test_val;
 		}
 
-		if (!p_semaphore_release (sem))
+		if (!p_semaphore_release (sem, NULL))
 			p_uthread_exit (1);
 	}
 
@@ -63,27 +63,27 @@ BOOST_AUTO_TEST_CASE (psemaphore_general_test)
 
 	p_lib_init ();
 
-	BOOST_REQUIRE (p_semaphore_acquire (sem) == FALSE);
-	BOOST_REQUIRE (p_semaphore_acquire (sem) == FALSE);
+	BOOST_REQUIRE (p_semaphore_acquire (sem, NULL) == FALSE);
+	BOOST_REQUIRE (p_semaphore_acquire (sem, NULL) == FALSE);
 	p_semaphore_take_ownership (sem);
 
-	sem = p_semaphore_new ("p_semaphore_test_object", 10, P_SEM_ACCESS_CREATE);
+	sem = p_semaphore_new ("p_semaphore_test_object", 10, P_SEM_ACCESS_CREATE, NULL);
 	BOOST_REQUIRE (sem != NULL);
 	p_semaphore_take_ownership (sem);
 	p_semaphore_free (sem);
 
-	sem = p_semaphore_new ("p_semaphore_test_object", 10, P_SEM_ACCESS_CREATE);
+	sem = p_semaphore_new ("p_semaphore_test_object", 10, P_SEM_ACCESS_CREATE, NULL);
 	BOOST_REQUIRE (sem != NULL);
 
 	for (i = 0; i < 10; ++i)
-		BOOST_CHECK (p_semaphore_acquire (sem));
+		BOOST_CHECK (p_semaphore_acquire (sem, NULL));
 
 	for (i = 0; i < 10; ++i)
-		BOOST_CHECK (p_semaphore_release (sem));
+		BOOST_CHECK (p_semaphore_release (sem, NULL));
 
 	for (i = 0; i < 1000; ++i) {
-		BOOST_CHECK (p_semaphore_acquire (sem));
-		BOOST_CHECK (p_semaphore_release (sem));
+		BOOST_CHECK (p_semaphore_acquire (sem, NULL));
+		BOOST_CHECK (p_semaphore_release (sem, NULL));
 	}
 
 	p_semaphore_free (sem);
@@ -98,7 +98,7 @@ BOOST_AUTO_TEST_CASE (psemaphore_thread_test)
 
 	p_lib_init ();
 
-	sem = p_semaphore_new ("p_semaphore_test_object", 10, P_SEM_ACCESS_CREATE);
+	sem = p_semaphore_new ("p_semaphore_test_object", 10, P_SEM_ACCESS_CREATE, NULL);
 	BOOST_REQUIRE (sem != NULL);
 	p_semaphore_take_ownership (sem);
 	p_semaphore_free (sem);
@@ -116,12 +116,12 @@ BOOST_AUTO_TEST_CASE (psemaphore_thread_test)
 
 	BOOST_REQUIRE (semaphore_test_val == 10);
 
-	BOOST_REQUIRE (p_semaphore_acquire (sem) == FALSE);
-	BOOST_REQUIRE (p_semaphore_release (sem) == FALSE);
+	BOOST_REQUIRE (p_semaphore_acquire (sem, NULL) == FALSE);
+	BOOST_REQUIRE (p_semaphore_release (sem, NULL) == FALSE);
 	p_semaphore_free (sem);
 	p_semaphore_take_ownership (sem);
 
-	sem = p_semaphore_new ("p_semaphore_test_object", 1, P_SEM_ACCESS_OPEN);
+	sem = p_semaphore_new ("p_semaphore_test_object", 1, P_SEM_ACCESS_OPEN, NULL);
 	BOOST_REQUIRE (sem != NULL);
 	p_semaphore_take_ownership (sem);
 	p_semaphore_free (sem);

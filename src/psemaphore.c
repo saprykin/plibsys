@@ -16,8 +16,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA.
  */
 
-/* TODO: Error report system */
-
 #include "pmem.h"
 #include "psemaphore.h"
 #include "pcryptohash.h"
@@ -108,6 +106,104 @@ __p_ipc_unix_get_ftok_key (const pchar *file_name)
 
 	return ftok (file_name, 'P');
 }
+
+PSemaphoreError
+__p_ipc_unix_get_semaphore_error ()
+{
+	pint err_code = errno;
+
+	switch (err_code) {
+	case 0:
+		return P_SEM_ERROR_NONE;
+#ifdef EACCES
+	case EACCES:
+		return P_SEM_ERROR_ACCESS;
+#endif
+
+#ifdef EPERM
+	case EPERM:
+		return P_SEM_ERROR_ACCESS;
+#endif
+
+#ifdef EEXIST
+	case EEXIST:
+		return P_SEM_ERROR_EXISTS;
+#endif
+
+#ifdef E2BIG
+	case E2BIG:
+		return P_SEM_ERROR_INVALID_ARGUMENT;
+#endif
+
+#ifdef EFBIG
+	case EFBIG:
+		return P_SEM_ERROR_INVALID_ARGUMENT;
+#endif
+
+#ifdef EINVAL
+	case EINVAL:
+		return P_SEM_ERROR_INVALID_ARGUMENT;
+#endif
+
+#ifdef ERANGE
+	case ERANGE:
+		return P_SEM_ERROR_INVALID_ARGUMENT;
+#endif
+
+#ifdef ENOMEM
+	case ENOMEM:
+		return P_SEM_ERROR_NO_RESOURCES;
+#endif
+
+#ifdef EMFILE
+	case EMFILE:
+		return P_SEM_ERROR_NO_RESOURCES;
+#endif
+
+#ifdef ENFILE
+	case ENFILE:
+		return P_SEM_ERROR_NO_RESOURCES;
+#endif
+
+#ifdef ENOSPC
+	case ENOSPC:
+		return P_SEM_ERROR_NO_RESOURCES;
+#endif
+
+#ifdef EIDRM
+	case EIDRM:
+		return P_SEM_ERROR_NOT_EXISTS;
+#endif
+
+#ifdef ENOENT
+	case ENOENT:
+		return P_SEM_ERROR_NOT_EXISTS;
+#endif
+
+#ifdef EOVERFLOW
+	case EOVERFLOW:
+		return P_SEM_ERROR_OVERFLOW;
+#endif
+
+#ifdef ENOSYS
+	case ENOSYS:
+		return P_SEM_ERROR_NOT_IMPLEMENTED;
+#endif
+
+#ifdef EDEADLK
+	case EDEADLK:
+		return P_SEM_ERROR_DEADLOCK;
+#endif
+
+#ifdef ENAMETOOLONG
+	case ENAMETOOLONG:
+		return P_SEM_ERROR_NAMETOOLONG;
+#endif
+	default:
+		return P_SEM_ERROR_FAILED;
+	}
+}
+
 #endif /* !P_OS_WIN */
 
 /* Returns platform-independent key for IPC usage, object name for Windows and

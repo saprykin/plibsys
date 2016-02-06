@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2015 Alexander Saprykin <xelfium@gmail.com>
+ * Copyright (C) 2013-2016 Alexander Saprykin <xelfium@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,6 +26,10 @@
 #include "pmacros.h"
 #include "ptypes.h"
 
+#ifndef P_OS_WIN
+#include "psemaphore.h"
+#endif
+
 P_BEGIN_DECLS
 
 /** Base tree leaf structure */
@@ -42,7 +46,7 @@ typedef struct _PTreeBaseNode {
  * @return Temporary directory.
  * @since 0.0.1
  */
-pchar *	__p_ipc_unix_get_temp_dir	(void);
+pchar *		__p_ipc_unix_get_temp_dir		(void);
 
 /* Create file for System V IPC, if needed
  * Returns: -1 = error, 0 = file successfully created, 1 = file already exists */
@@ -52,7 +56,7 @@ pchar *	__p_ipc_unix_get_temp_dir	(void);
  * @return -1 in case of error, 0 if all was OK, and 1 if file already exists.
  * @since 0.0.1
  */
-pint	__p_ipc_unix_create_key_file	(const pchar *file_name);
+pint		__p_ipc_unix_create_key_file		(const pchar *file_name);
 
 /**
  * @brief Wrapps ftok() UNIX call for uniquer IPC key.
@@ -60,19 +64,25 @@ pint	__p_ipc_unix_create_key_file	(const pchar *file_name);
  * @return Key in case of success, -1 otherwise.
  * @since 0.0.1
  */
-pint	__p_ipc_unix_get_ftok_key	(const pchar *file_name);
+pint		__p_ipc_unix_get_ftok_key		(const pchar *file_name);
+
+/**
+ * @brief Gets semaphore error from UNIX @a errno constant
+ * @return Semaphore error for UNIX implementations (System V, POSIX).
+ */
+PSemaphoreError	__p_ipc_unix_get_semaphore_error	();
 #endif /* !P_OS_WIN */
 
 /**
  * @brief Generates platform-independent key for IPC usage, object name for Windows and
  * file name to use with ftok () for UNIX-like systems.
  * @param name Object name.
- * @param posix TRUE if key will be used for POSIX IPC callc, otherwise FALSE. This
+ * @param posix TRUE if key will be used for POSIX IPC calls, otherwise FALSE. This
  * parameter is not used on Windows platform.
  * @return Platform-independent key for IPC usage.
  * @since 0.0.1
  */
-pchar *	__p_ipc_get_platform_key	(const pchar *name, pboolean posix);
+pchar *		__p_ipc_get_platform_key		(const pchar *name, pboolean posix);
 
 P_END_DECLS
 

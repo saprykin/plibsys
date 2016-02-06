@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Alexander Saprykin <xelfium@gmail.com>
+ * Copyright (C) 2010-2016 Alexander Saprykin <xelfium@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,12 +26,18 @@ struct _PSemaphore {
 };
 
 P_LIB_API PSemaphore *
-p_semaphore_new (const pchar *name,  pint init_val, PSemaphoreAccessMode mode)
+p_semaphore_new (const pchar		*name,
+		 pint			init_val,
+		 PSemaphoreAccessMode	mode,
+		 PError			**error)
 {
-	if (name == NULL || init_val < 0)
-		return NULL;
-		
-	P_INT_TO_POINTER (mode);
+	P_UNUSED (name);
+	P_UNUSED (init_val);
+	P_UNUSED (mode);
+
+	p_error_set_error_p (error,
+			     (pint) P_SEM_ERROR_NOT_IMPLEMENTED,
+			     "No semaphore implementation");
 
 	return NULL;
 }
@@ -43,19 +49,27 @@ p_semaphore_take_ownership (PSemaphore *sem)
 }
 
 P_LIB_API pboolean
-p_semaphore_acquire (PSemaphore *sem)
+p_semaphore_acquire (PSemaphore *sem,
+		     PError	**error)
 {
-	if (sem == NULL)
-		return FALSE;
+	P_UNUSED (sem);
+
+	p_error_set_error_p (error,
+			     (pint) P_SEM_ERROR_NOT_IMPLEMENTED,
+			     "No semaphore implementation");
 
 	return FALSE;
 }
 
 P_LIB_API pboolean
-p_semaphore_release (PSemaphore *sem)
+p_semaphore_release (PSemaphore *sem,
+		     PError	**error)
 {
-	if (sem == NULL)
-		return FALSE;
+	P_UNUSED (sem);
+
+	p_error_set_error_p (error,
+			     (pint) P_SEM_ERROR_NOT_IMPLEMENTED,
+			     "No semaphore implementation");
 
 	return FALSE;
 }
@@ -63,7 +77,6 @@ p_semaphore_release (PSemaphore *sem)
 P_LIB_API void
 p_semaphore_free (PSemaphore *sem)
 {
-	if (sem == NULL)
-		return;
+	P_UNUSED (sem);
 }
 

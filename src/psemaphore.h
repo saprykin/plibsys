@@ -1,5 +1,5 @@
-/* 
- * Copyright (C) 2010 Alexander Saprykin <xelfium@gmail.com>
+/*
+ * Copyright (C) 2010-2016 Alexander Saprykin <xelfium@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,11 +27,11 @@
  * are available on target system). Windows IPC system different from UNIX one: Windows doesn't
  * own IPC objects (processes own them), while UNIX systems do. Because of that UNIX IPC
  * objects can survive application crash: semaphore can be opened in locked state if it was
- * locked during application crash. Use third argument as P_SEM_ACCESS_CREATE in p_semaphore_new()
+ * locked during application crash. Use third argument as #P_SEM_ACCESS_CREATE in p_semaphore_new()
  * to reset semaphore value while openning it. This argument is ignored on Windows. System V
  * semaphores are more resistant to crashes (leaving in locked state) than POSIX ones.
  * #PSemaphore is quite heavy structure, so consider using #PMutex for thread synchronization
- * instead (if possible). 
+ * instead (if possible).
  */
 
 #if !defined (__PLIB_H_INSIDE__) && !defined (PLIB_COMPILATION)
@@ -43,22 +43,34 @@
 
 #include <pmacros.h>
 #include <ptypes.h>
+#include <perror.h>
 
 P_BEGIN_DECLS
 
 /** Enum with #PSemaphore errors */
 typedef enum _PSemaphoreError {
-	P_SEM_ERROR_NONE	= 0,	/**< No error */
-	P_SEM_ERROR_ACCESS	= 1,	/**< Not enough rights to access semphore or its key */
-	P_SEM_ERROR_RESOURSE	= 2,	/**< Not enough system resources */
-	P_SEM_ERROR_EXISTS	= 3,	/**< Semaphore doesn't exist or was removed before */
-	P_SEM_ERROR_UNKNOWN	= 4	/**< Unknown error */
+	P_SEM_ERROR_NONE		= 0,	/**< No error.						*/
+	P_SEM_ERROR_ACCESS		= 1,	/**< Not enough rights to access semaphore or its key.
+						     Possible permission problem.			*/
+	P_SEM_ERROR_EXISTS		= 2,	/**< Semaphore already exists and no proper open
+						     flags were specified.				*/
+	P_SEM_ERROR_NOT_EXISTS		= 4,	/**< Semaphore doesn't exist or was removed before, and
+						     no proper create flags were specified.		*/
+	P_SEM_ERROR_NO_RESOURCES	= 3,	/**< Not enough system resources or memory to perform
+						     operation.						*/
+	P_SEM_ERROR_OVERFLOW		= 5,	/**< Semaphore value overflow.				*/
+	P_SEM_ERROR_NAMETOOLONG		= 6,	/**< Semaphore name is too long.			*/
+	P_SEM_ERROR_INVALID_ARGUMENT	= 7,	/**< Invalid argument (parameter) specified.		*/
+	P_SEM_ERROR_NOT_IMPLEMENTED	= 8,	/**< Operation not implemented (for example when using
+						     some file systems).				*/
+	P_SEM_ERROR_DEADLOCK		= 9,	/**< Deadlock detected.					*/
+	P_SEM_ERROR_FAILED		= 10	/**< General error.					*/
 } PSemaphoreError;
 
 /** Enum with #PSemaphore creation modes */
 typedef enum _PSemaphoreAccessMode {
-	P_SEM_ACCESS_OPEN	= 0,	/**< Open existing semaphore or create one with given value */
-	P_SEM_ACCESS_CREATE	= 1	/**< Create semaphore, reset to given value if exists */
+	P_SEM_ACCESS_OPEN	= 0,	/**< Open existing semaphore or create one with given value.	*/
+	P_SEM_ACCESS_CREATE	= 1	/**< Create semaphore, reset to given value if exists.		*/
 } PSemaphoreAccessMode;
 
 /** #PSemaphore opaque data structure */
@@ -69,17 +81,19 @@ typedef struct _PSemaphore PSemaphore;
  * @param name Semaphore name.
  * @param init_val Initial semaphore value.
  * @param mode Creation mode.
+ * @param[out] error Error report object, NULL to ignore.
  * @return Pointer to newly created #PSemaphore object in case of success, NULL otherwise.
  * @since 0.0.1
  *
  * @a init_val used only in one of following cases: semaphore with such name doesn't
- * exist, semaphore with such name exists but @a mode specified as P_SEM_ACCESS_CREATE
+ * exist, semaphore with such name exists but @a mode specified as #P_SEM_ACCESS_CREATE
  * (non-Windows platforms only). In other cases @a init_val ignored. @a name is
  * system-wide, so any process can open semaphore with the same name.
  */
 P_LIB_API PSemaphore *	p_semaphore_new			(const pchar		*name,
 							 pint			init_val,
-							 PSemaphoreAccessMode	mode);
+							 PSemaphoreAccessMode	mode,
+							 PError			**error);
 
 /**
  * @brief Takes ownership of the semaphore.
@@ -103,18 +117,22 @@ P_LIB_API void		p_semaphore_take_ownership	(PSemaphore		*sem);
 /**
  * @brief Acquires semaphore.
  * @param sem #PSemaphore to acquire.
+ * @param[out] error Error report object, NULL to ignore.
  * @return TRUE in case of success, FALSE otherwise.
  * @since 0.0.1
  */
-P_LIB_API pboolean	p_semaphore_acquire		(PSemaphore		*sem);
+P_LIB_API pboolean	p_semaphore_acquire		(PSemaphore		*sem,
+							 PError			**error);
 
 /**
  * @brief Releases semaphore.
  * @param sem #PSemaphore to release.
+ * @param[out] error Error report object, NULL to ignore.
  * @return TRUE in case of success, FALSE otherwise.
  * @since 0.0.1
  */
-P_LIB_API pboolean	p_semaphore_release		(PSemaphore		*sem);
+P_LIB_API pboolean	p_semaphore_release		(PSemaphore		*sem,
+							 PError			**error);
 
 /**
  * @brief Frees semaphore object.

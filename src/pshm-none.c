@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2013 Alexander Saprykin <xelfium@gmail.com>
+ * Copyright (C) 2010-2016 Alexander Saprykin <xelfium@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,8 +16,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA.
  */
 
-/* TODO: error report system */
-
 #include "pmem.h"
 #include "pshm.h"
 
@@ -32,10 +30,7 @@ p_shm_new (const pchar		*name,
 	   psize		size,
 	   PShmAccessPerms	perms)
 {
-	if (name == NULL)
-		return NULL;
-
-	/* To shut up compiler */
+	P_UNUSED (name);
 	P_UNUSED (size);
 	P_UNUSED (perms);
 
