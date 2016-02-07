@@ -79,6 +79,12 @@
  */
 
 /**
+ * @def P_OS_AIX
+ * @brief IBM AIX operating system
+ * @since 0.0.1
+ */
+
+/**
  * @def P_OS_SOLARIS
  * @brief Sun (Oracle) Solaris operating system
  * @since 0.0.1
@@ -148,6 +154,7 @@
 #  define P_OS_FREEBSD
 #  define P_OS_NETBSD
 #  define P_OS_OPENBSD
+#  define P_OS_AIX
 #  define P_OS_SOLARIS
 #  define P_OS_QNX
 #  define P_OS_QNX6
@@ -189,6 +196,9 @@
 #elif defined(__OpenBSD__)
 #  define P_OS_OPENBSD
 #  define P_OS_BSD4
+/* IBM AIX */
+#elif defined(_AIX)
+#  define P_OS_AIX
 /* Sun Solaris */
 #elif defined(__sun) || defined(sun)
 #  define P_OS_SOLARIS
