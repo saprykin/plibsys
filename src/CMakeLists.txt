@@ -415,6 +415,11 @@ if (PLIB_PLATFORM_CFLAGS)
         set_target_properties (plibstatic PROPERTIES COMPILE_FLAGS "${PLIB_PLATFORM_CFLAGS}")
 endif()
 
+if (PLIB_PLATFORM_LDFLAGS)
+        set_target_properties (plib PROPERTIES LINK_FLAGS "${PLIB_PLATFORM_LDFLAGS}")
+        set_target_properties (plibstatic PROPERTIES LINK_FLAGS "${PLIB_PLATFORM_LDFLAGS}")
+endif()
+
 if (PLIB_C_COMPILER STREQUAL msvc)
         add_definitions (-D_CRT_SECURE_NO_WARNINGS)
         add_definitions (-D_WINSOCK_DEPRECATED_NO_WARNINGS)
