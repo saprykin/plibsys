@@ -14,6 +14,7 @@ configure_file (
 )
 
 option (PLIB_TESTS_STATIC "Use Boost Unit Test Framework without compilation" OFF)
+option (PLIB_BUILD_STATIC "Also build static version of the library" ON)
 
 enable_testing ()
 

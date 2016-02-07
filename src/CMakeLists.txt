@@ -396,7 +396,11 @@ if (NOT PLIB_TARGET_OS STREQUAL windows)
 endif()
 
 add_library (plib SHARED ${PLIB_SRCS} ${PLIB_PLATFORM_SRCS} ${PLIB_PUBLIC_HDRS} ${PLIB_PRIVATE_HDRS})
-add_library (plibstatic STATIC ${PLIB_SRCS} ${PLIB_PLATFORM_SRCS} ${PLIB_PUBLIC_HDRS} ${PLIB_PRIVATE_HDRS})
+
+if (PLIB_BUILD_STATIC)
+        add_library (plibstatic STATIC ${PLIB_SRCS} ${PLIB_PLATFORM_SRCS} ${PLIB_PUBLIC_HDRS} ${PLIB_PRIVATE_HDRS})
+endif()
+
 add_definitions (-DPLIB_COMPILATION)
 
 if (PLIB_PLATFORM_DEFINES)
@@ -407,17 +411,26 @@ set_target_properties (plib PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${OUTPUT_DIR})
 set_target_properties (plib PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${OUTPUT_DIR})
 set_target_properties (plib PROPERTIES ARCHIVE_OUTPUT_DIRECTORY ${OUTPUT_DIR})
 set_target_properties (plib PROPERTIES SOVERSION ${PLIB_VERSION})
-set_target_properties (plibstatic PROPERTIES ARCHIVE_OUTPUT_DIRECTORY ${OUTPUT_DIR})
-set_target_properties (plibstatic PROPERTIES SOVERSION ${PLIB_VERSION})
+
+if (PLIB_BUILD_STATIC)
+        set_target_properties (plibstatic PROPERTIES ARCHIVE_OUTPUT_DIRECTORY ${OUTPUT_DIR})
+        set_target_properties (plibstatic PROPERTIES SOVERSION ${PLIB_VERSION})
+endif()
 
 if (PLIB_PLATFORM_CFLAGS)
         set_target_properties (plib PROPERTIES COMPILE_FLAGS "${PLIB_PLATFORM_CFLAGS}")
-        set_target_properties (plibstatic PROPERTIES COMPILE_FLAGS "${PLIB_PLATFORM_CFLAGS}")
+
+        if (PLIB_BUILD_STATIC)
+                set_target_properties (plibstatic PROPERTIES COMPILE_FLAGS "${PLIB_PLATFORM_CFLAGS}")
+        endif()
 endif()
 
 if (PLIB_PLATFORM_LDFLAGS)
         set_target_properties (plib PROPERTIES LINK_FLAGS "${PLIB_PLATFORM_LDFLAGS}")
-        set_target_properties (plibstatic PROPERTIES LINK_FLAGS "${PLIB_PLATFORM_LDFLAGS}")
+
+        if (PLIB_BUILD_STATIC)
+                set_target_properties (plibstatic PROPERTIES LINK_FLAGS "${PLIB_PLATFORM_LDFLAGS}")
+        endif()
 endif()
 
 if (PLIB_C_COMPILER STREQUAL msvc)
@@ -434,10 +447,19 @@ elseif (PLIB_C_COMPILER STREQUAL gcc OR PLIB_C_COMPILER STREQUAL qcc)
 endif()
 
 target_link_libraries (plib ${PLIB_PLATFORM_LINK_LIBRARIES})
-target_link_libraries (plibstatic ${PLIB_PLATFORM_LINK_LIBRARIES})
+
+if (PLIB_BUILD_STATIC)
+        target_link_libraries (plibstatic ${PLIB_PLATFORM_LINK_LIBRARIES})
+endif()
+
+if (PLIB_BUILD_STATIC)
+        set (PLIB_INSTALL_TARGETS plib plibstatic)
+else()
+        set (PLIB_INSTALL_TARGETS plib)
+endif()
 
 if (PLIB_TARGET_OS STREQUAL windows)
-        install (TARGETS plib plibstatic
+        install (TARGETS ${PLIB_INSTALL_TARGETS}
                 DESTINATION lib
                 RUNTIME DESTINATION lib
                 COMPONENT Core
@@ -456,12 +478,12 @@ if (PLIB_TARGET_OS STREQUAL windows)
         )
 endif()
 
-install (TARGETS plib plibstatic EXPORT plib-targets
+install (TARGETS ${PLIB_INSTALL_TARGETS} EXPORT plib-targets
         DESTINATION lib
         LIBRARY DESTINATION lib
         COMPONENT Core
 )
-install (TARGETS plib plibstatic
+install (TARGETS ${PLIB_INSTALL_TARGETS}
         DESTINATION lib
         ARCHIVE DESTINATION lib
         COMPONENT Core

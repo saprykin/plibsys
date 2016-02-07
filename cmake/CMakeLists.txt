@@ -10,12 +10,18 @@ include (PlatformDetect.cmake)
 
 plib_detect_target_platform (PLIB_TARGET_PLATFORM)
 
+if (PLIB_BUILD_STATIC)
+        set (PLIB_INSTALL_TARGETS plib plibstatic)
+else()
+        set (PLIB_INSTALL_TARGETS plib)
+endif()
+
 # plib-config.cmake for the build tree.
 set(PLIB_ROOT_DIR ${PROJECT_BINARY_DIR})
 set(PLib_INCLUDE_DIRS ${PROJECT_SOURCE_DIR}/src ${PROJECT_SOURCE_DIR}/platforms/${PLIB_TARGET_PLATFORM})
 configure_file(plib-config.cmake.in ${PROJECT_BINARY_DIR}/plib-config.cmake @ONLY)
 configure_file(plib-config-version.cmake.in ${PROJECT_BINARY_DIR}/plib-config-version.cmake @ONLY)
-export (TARGETS plib plibstatic FILE ${PROJECT_BINARY_DIR}/plib-targets.cmake)
+export (TARGETS ${PLIB_INSTALL_TARGETS} FILE ${PROJECT_BINARY_DIR}/plib-targets.cmake)
 
 # plib-config.cmake for the install tree. It's installed in
 # ${INSTALL_CMAKE_DIR} and @PLIB_ROOT_DIR@ is the relative
