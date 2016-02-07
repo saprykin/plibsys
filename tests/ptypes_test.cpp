@@ -16,7 +16,10 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA.
  */
 
-#define BOOST_TEST_DYN_LINK
+#ifndef PLIB_TESTS_STATIC
+#  define BOOST_TEST_DYN_LINK
+#endif
+
 #define BOOST_TEST_MODULE ptypes_test
 
 #include "plib.h"
