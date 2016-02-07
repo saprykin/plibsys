@@ -42,7 +42,7 @@ else()
                 if (BOOST_ROOT)
                         message (STATUS "Checking whether to enable unit tests (static) - yes")
                 else()
-                        message (FATAL_ERROR "You must specify BOOST_ROOT variable when building static tests")
+                        message (FATAL_ERROR "You must specify BOOST_ROOT variable when building static tests without proper Boost installtion")
                 endif()
 
                 subdirs (tests)
