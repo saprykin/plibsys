@@ -81,7 +81,6 @@ __p_uthread_init (void)
 void
 __p_uthread_shutdown (void)
 {
-
 }
 
 P_LIB_API PUThread *
@@ -125,7 +124,7 @@ p_uthread_create_full (PUThreadFunc	func,
 		/* Some systems may fail here due to lack of implementation */
 		P_WARNING ("PUTread: failed to set contention attribute");
 	}
-	
+
 #ifdef P_HAVE_PRIORITIES
 	if (prio > P_UTHREAD_PRIORITY_HIGHEST || prio < P_UTHREAD_PRIORITY_LOWEST)
 		prio = P_UTHREAD_PRIORITY_NORMAL;
@@ -145,7 +144,7 @@ p_uthread_create_full (PUThreadFunc	func,
 		p_free (ret);
 		return NULL;
 	}
-	
+
 	ret->prio = prio;
 	pthread_attr_destroy (&attr);
 
@@ -203,7 +202,7 @@ p_uthread_yield (void)
 
 P_LIB_API pint
 p_uthread_set_priority (PUThread		*thread,
-		        PUThreadPriority	prio)
+			PUThreadPriority	prio)
 {
 #ifdef P_HAVE_PRIORITIES
 	struct sched_param	sched;

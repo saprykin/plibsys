@@ -18,8 +18,6 @@
 
 /* Threads for Sun Solaris */
 
-/* TODO: barriers */
-
 #include "pmem.h"
 #include "puthread.h"
 
@@ -55,7 +53,7 @@ p_uthread_create_full (PUThreadFunc	func,
 {
 	PUThread	*ret;
 	pint32		flags;
-		
+
 	if (!func)
 		return NULL;
 
@@ -65,7 +63,7 @@ p_uthread_create_full (PUThreadFunc	func,
 	}
 
 	/* On some old Solaris systems (e.g. 2.5.1) non-bound threads are not
-	 * timesliced by kernel, so we need to ensure that thread will be 
+	 * timesliced by kernel, so we need to ensure that thread will be
 	 * scheduled by using THR_BOUND flag */
 	flags = THR_BOUND;
 	flags |= joinable ? 0 : THR_DETACHED;
@@ -134,7 +132,7 @@ p_uthread_yield (void)
 
 P_LIB_API pint
 p_uthread_set_priority (PUThread		*thread,
-		        PUThreadPriority	prio)
+			PUThreadPriority	prio)
 {
 	P_WARNING ("PUThread: priorities for bound threads are not implemented in Solaris");
 

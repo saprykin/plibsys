@@ -16,8 +16,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA.
  */
 
-/* TODO: barriers */
-
 #include "pmem.h"
 #include "puthread.h"
 
@@ -58,7 +56,7 @@ p_uthread_create_full (PUThreadFunc	func,
 	ret->hdl = -1;
 	ret->joinable = joinable;
 	ret->prio = prio;
-	
+
 	func (data);
 
 	return ret;
@@ -106,12 +104,12 @@ p_uthread_yield (void)
 
 P_LIB_API pint
 p_uthread_set_priority (PUThread		*thread,
-		        PUThreadPriority	prio)
+			PUThreadPriority	prio)
 {
 	if (thread == NULL)
 		return -1;
 
 	thread->prio = prio;
-	
+
 	return -1;
 }
