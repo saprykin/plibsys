@@ -142,6 +142,33 @@ P_LIB_API void		p_error_set_error_p	(PError		**error,
 						 const pchar	*message);
 
 /**
+ * @brief Sets error code.
+ * @param error #PError object to set data for.
+ * @param code Error code.
+ * @since 0.0.1
+ */
+P_LIB_API void		p_error_set_code	(PError		*error,
+						 pint		code);
+
+/**
+ * @brief Sets platform native error code.
+ * @param error #PError object to set data for.
+ * @param native_code Platform native error code.
+ * @since 0.0.1
+ */
+P_LIB_API void		p_error_set_native_code	(PError		*error,
+						 pint		native_code);
+
+/**
+ * @brief Sets error message.
+ * @param error #PError object to set data for.
+ * @param message Error message.
+ * @since 0.0.1
+ */
+P_LIB_API void		p_error_set_message	(PError		*error,
+						 const pchar	*message);
+
+/**
  * @brief Clears error data.
  * @param error #PError object to clear data for.
  * @since 0.0.1

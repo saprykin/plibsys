@@ -127,6 +127,39 @@ p_error_set_error_p (PError		**error,
 }
 
 P_LIB_API void
+p_error_set_code (PError	*error,
+		  pint		code)
+{
+	if (error == NULL)
+		return;
+
+	error->code = code;
+}
+
+P_LIB_API void
+p_error_set_native_code	(PError	*error,
+			 pint	native_code)
+{
+	if (error == NULL)
+		return;
+
+	error->native_code = native_code;
+}
+
+P_LIB_API void
+p_error_set_message (PError		*error,
+		     const pchar	*message)
+{
+	if (error == NULL)
+		return;
+
+	if (error->message != NULL)
+		p_free (error->message);
+
+	error->message = p_strdup (message);
+}
+
+P_LIB_API void
 p_error_clear (PError *error)
 {
 	if (error == NULL)
