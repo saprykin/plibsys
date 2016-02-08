@@ -48,6 +48,10 @@ BOOST_AUTO_TEST_CASE (perror_invalid_test)
 
 	PError *error = (PError *) 0x1;
 
+	p_error_set_code (NULL, 0);
+	p_error_set_native_code (NULL, 0);
+	p_error_set_message (NULL, NULL);
+
 	p_error_set_error (NULL, 0, 0, NULL);
 	p_error_set_error_p (NULL, 0, 0, NULL);
 
@@ -85,6 +89,20 @@ BOOST_AUTO_TEST_CASE (perror_general_test)
 	BOOST_CHECK (p_error_get_code (error) == 10);
 	BOOST_CHECK (p_error_get_native_code (error) == -10);
 	BOOST_CHECK (strcmp (p_error_get_message (error), PERROR_TEST_MESSAGE) == 0);
+
+	/* Change internal data */
+	p_error_set_code (error, 20);
+	p_error_set_native_code (error, -20);
+	p_error_set_message (error, PERROR_TEST_MESSAGE_2);
+
+	BOOST_CHECK (p_error_get_code (error) == 20);
+	BOOST_CHECK (p_error_get_native_code (error) == -20);
+	BOOST_CHECK (strcmp (p_error_get_message (error), PERROR_TEST_MESSAGE_2) == 0);
+
+	/* Revert data back */
+	p_error_set_code (error, 10);
+	p_error_set_native_code (error, -10);
+	p_error_set_message (error, PERROR_TEST_MESSAGE);
 
 	copy_error = p_error_copy (error);
 
