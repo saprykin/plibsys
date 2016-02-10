@@ -83,7 +83,7 @@ __p_shm_create_handle (PShm *shm)
 		if (errno == EEXIST) {
 			is_exists = TRUE;
 
-			if ((shm->shm_hdl = shmget (shm->unix_key, 0, flags)) == -1) {
+			if ((shm->shm_hdl = shmget (shm->unix_key, 0, flags)) == P_SHM_INVALID_HDL) {
 				P_ERROR ("PShm: shmget failed");
 				__p_shm_clean_handle (shm);
 				return FALSE;
