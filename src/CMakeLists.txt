@@ -494,3 +494,24 @@ install (FILES
         DESTINATION include/PLib
         COMPONENT Core
 )
+
+# Print summary 
+SET (PLIB_SUMMARY
+"
+        Build configuration:
+
+        Platfrom:               ${PLIB_TARGET_OS}
+        Compiler:               ${PLIB_C_COMPILER}
+
+        Thread model:           ${PLIB_THREAD_MODEL}
+        IPC model:              ${PLIB_IPC_MODEL}
+        DIR model:              ${PLIB_DIR_MODEL}
+        Time profiler model:    ${PLIB_TIME_PROFILER_MODEL}
+
+        Platform defines:       ${PLIB_PLATFORM_DEFINES}
+        Platform CFLAGS:        ${PLIB_PLATFORM_CFLAGS}
+        Platform LDFLAGS:       ${PLIB_PLATFORM_LDFLAGS}
+        Platform libraries:     ${PLIB_PLATFORM_LINK_LIBRARIES}
+")
+
+message ("${PLIB_SUMMARY}")

@@ -184,3 +184,16 @@ add_test (NAME ptimeprofiler_test COMMAND ptimeprofiler_test)
 add_test (NAME ptree_test COMMAND ptree_test)
 add_test (NAME ptypes_test COMMAND ptypes_test)
 add_test (NAME puthread_test COMMAND puthread_test)
+
+# Print summary 
+SET (PLIB_TESTS_SUMMARY
+"
+        Tests configuration:
+
+        Build static tests:     ${PLIB_TESTS_STATIC}
+        Build static library:   ${PLIB_BUILD_STATIC}
+
+        Boost directory:        ${BOOST_ROOT}
+")
+
+message ("${PLIB_TESTS_SUMMARY}")
