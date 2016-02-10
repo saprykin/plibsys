@@ -5,7 +5,4 @@ set (PLIB_DIR_MODEL posix)
 
 set (PLIB_PLATFORM_DEFINES
         -D_REENTRANT
-        -D_POSIX4_DRAFT_SOURCE
-        -D_POSIX4_DRAFT10_SOURCE
-        -DU_OSF_SOURCE
 )
