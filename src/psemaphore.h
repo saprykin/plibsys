@@ -24,12 +24,23 @@
  * Semaphore is a system-wide synchronization primitive. It can be used to synchronize different
  * processes within the system. PLib supports different semaphore implementations: System V,
  * POSIX and Windows. PLib is compiled using one of them (depend which of implementations
- * are available on target system). Windows IPC system different from UNIX one: Windows doesn't
- * own IPC objects (processes own them), while UNIX systems do. Because of that UNIX IPC
- * objects can survive application crash: semaphore can be opened in locked state if it was
- * locked during application crash. Use third argument as #P_SEM_ACCESS_CREATE in p_semaphore_new()
- * to reset semaphore value while openning it. This argument is ignored on Windows. System V
- * semaphores are more resistant to crashes (leaving in locked state) than POSIX ones.
+ * are available on target system).
+ *
+ * Please note the following platform specific differences:
+ *
+ * - Windows doesn't own IPC objects (processes own them), which means that semaphore will
+ * be removed after the last process or thread removes it (or after terminating
+ * all the processes and threads holding opened semaphore).
+ *
+ * - UNIX systems own IPC objects. Because of that UNIX IPC objects can survive application
+ * crash: already used semaphore can be opened in locked state and application can fail into
+ * the deadlock or inconsistent state. This could happen if you have not removed all the
+ * opened semaphores explicitly before terminating the application.
+ *
+ * Use third argument as #P_SEM_ACCESS_CREATE in p_semaphore_new() to reset semaphore value
+ * while openning it. This argument is ignored on Windows. System V semaphores are more
+ * resistant to crashes (leaving in locked state) than POSIX ones.
+ *
  * #PSemaphore is quite heavy structure, so consider using #PMutex for thread synchronization
  * instead (if possible).
  */
