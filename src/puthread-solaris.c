@@ -95,7 +95,9 @@ p_uthread_exit (pint code)
 	thr_exit (P_INT_TO_POINTER (code));
 
 	/* To smile a compiler */
+#ifndef P_CC_SUN
 	while (1);
+#endif
 }
 
 P_LIB_API pint
