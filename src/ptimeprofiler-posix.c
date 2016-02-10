@@ -23,6 +23,10 @@
 #include <time.h>
 #include <sys/time.h>
 
+#ifndef _POSIX_MONOTONIC_CLOCK
+#  define _POSIX_MONOTONIC_CLOCK (-1)
+#endif
+
 struct _PTimeProfiler {
 	puint64		counter;
 	pboolean	hasMonotonicClock;
@@ -72,7 +76,6 @@ P_LIB_API PTimeProfiler *
 p_time_profiler_new ()
 {
 	PTimeProfiler	*ret;
-
 
 	if ((ret = p_malloc0 (sizeof (PTimeProfiler))) == NULL)
 		return NULL;
