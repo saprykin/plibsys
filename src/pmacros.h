@@ -85,6 +85,12 @@
  */
 
 /**
+ * @def P_OS_HPUX
+ * @brief HP-UX operating system
+ * @since 0.0.1
+ */
+
+/**
  * @def P_OS_SOLARIS
  * @brief Sun (Oracle) Solaris operating system
  * @since 0.0.1
@@ -161,6 +167,7 @@
 #  define P_OS_NETBSD
 #  define P_OS_OPENBSD
 #  define P_OS_AIX
+#  define P_OS_HPUX
 #  define P_OS_SOLARIS
 #  define P_OS_QNX
 #  define P_OS_QNX6
@@ -209,6 +216,8 @@
 /* IBM AIX */
 #elif defined(_AIX)
 #  define P_OS_AIX
+#elif defined(hpux) || defined(__hpux)
+#  define P_OS_HPUX
 /* Sun Solaris */
 #elif defined(__sun) || defined(sun)
 #  define P_OS_SOLARIS

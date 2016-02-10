@@ -65,6 +65,10 @@ function (plib_detect_target_os result)
                 set (PLIB_TARGET_OS windows)
         endif()
 
+        if (PLIB_TARGET_OS STREQUAL hp-ux)
+                set (PLIB_TARGET_OS hpux)
+        endif()
+
         set (${result} ${PLIB_TARGET_OS} PARENT_SCOPE)
 endfunction (plib_detect_target_os)
 

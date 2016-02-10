@@ -32,6 +32,11 @@
 
 typedef sem_t psem_hdl;
 
+/* On some HP-UX versions it may not be defined */
+#ifndef SEM_FAILED
+#define SEM_FAILED ((sem_t *) -1)
+#endif
+
 #ifdef P_OS_SOLARIS
 #define P_SEM_INVALID_HDL	(sem_t *) -1
 #else
