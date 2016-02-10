@@ -1,5 +1,5 @@
-/* 
- * Copyright (C) 2010 Alexander Saprykin <xelfium@gmail.com>
+/*
+ * Copyright (C) 2010-2016 Alexander Saprykin <xelfium@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,11 +24,24 @@
  * Shared memory is an interprocess communication primitive. It can be used to transfer data
  * between several processes. PLib supports different shared memory implementations: System V,
  * POSIX and Windows. PLib is compiled using one of them (depend which of implementations
- * are available on target system). Windows IPC system different from UNIX one: Windows doesn't
- * own IPC objects (processes own them), while UNIX systems do. Because of that UNIX IPC
- * objects can survive application crash: opened shared memory can contain data from previous
- * working session. Keep this fact in mind while developing cross-platform applications.
- * Also note that you must synchronize multi-thread access to shared memory by youself or
+ * are available on target system).
+ *
+ * Please note the following platform specific differences:
+ *
+ * - Windows doesn't own IPC objects (processes own them), which means that shared memory
+ * segment will be removed after the last process or thread detaches (or after terminating
+ * all the processes and threads attached to the segment).
+ *
+ * - UNIX systems own IPC objects. Because of that UNIX IPC objects can survive application
+ * crash: attached shared memory segment can contain data from the previous working session.
+ * This could happen if you have not detached from all the shared memory segments explicitly
+ * before terminating the application.
+ *
+ * - HP-UX has limitations due to its MPAS/MGAS features, so you couldn't attach to the same
+ * memory segment twice from the same process.
+ *
+ * Keep these facts in mind while developing cross-platform applications. Also note that
+ * you must synchronize multi-thread access to shared memory by youself or
  * using p_shm_lock() and p_shm_unlock() routines.
  */
 
