@@ -433,19 +433,6 @@ if (PLIB_PLATFORM_LDFLAGS)
         endif()
 endif()
 
-if (PLIB_C_COMPILER STREQUAL msvc)
-        add_definitions (-D_CRT_SECURE_NO_WARNINGS)
-        add_definitions (-D_WINSOCK_DEPRECATED_NO_WARNINGS)
-
-        if (CMAKE_C_FLAGS MATCHES "/W[0-4]")
-                string (REGEX REPLACE "/W[0-4]" "/W4" CMAKE_C_FLAGS "${CMAKE_C_FLAGS}")
-        else()
-                set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /W4")
-        endif()
-elseif (PLIB_C_COMPILER MATCHES "(gcc)|(qcc)")
-        set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wno-long-long -Wpedantic")
-endif()
-
 target_link_libraries (plib ${PLIB_PLATFORM_LINK_LIBRARIES})
 
 if (PLIB_BUILD_STATIC)
