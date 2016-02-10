@@ -67,7 +67,10 @@ BOOST_AUTO_TEST_SUITE (BOOST_TEST_MODULE)
 
 BOOST_AUTO_TEST_CASE (pshm_general_test)
 {
-	PShm		*shm = NULL, *shm2 = NULL;
+	PShm		*shm = NULL;
+#ifndef P_OS_HPUX
+	PShm		*shm2 = NULL;
+#endif
 	ppointer	addr, addr2;
 	pint		i;
 
@@ -89,6 +92,7 @@ BOOST_AUTO_TEST_CASE (pshm_general_test)
 	addr = p_shm_get_address (shm);
 	BOOST_REQUIRE (addr != NULL);
 
+#ifndef P_OS_HPUX
 	shm2 = p_shm_new ("p_shm_test_memory_block", 1024, P_SHM_ACCESS_READONLY);
 
 	if (shm2 == NULL) {
@@ -101,6 +105,7 @@ BOOST_AUTO_TEST_CASE (pshm_general_test)
 
 	addr2 = p_shm_get_address (shm2);
 	BOOST_REQUIRE (shm2 != NULL);
+#endif
 
 	for (i = 0; i < 512; ++i) {
 		BOOST_CHECK (p_shm_lock (shm));
@@ -108,11 +113,19 @@ BOOST_AUTO_TEST_CASE (pshm_general_test)
 		BOOST_CHECK (p_shm_unlock (shm));
 	}
 
+#ifndef P_OS_HPUX
 	for (i = 0; i < 512; ++i) {
 		BOOST_CHECK (p_shm_lock (shm2));
 		BOOST_CHECK (*(((pchar *) addr) + i) == 'a');
 		BOOST_CHECK (p_shm_unlock (shm2));
 	}
+#else
+	for (i = 0; i < 512; ++i) {
+		BOOST_CHECK (p_shm_lock (shm));
+		BOOST_CHECK (*(((pchar *) addr) + i) == 'a');
+		BOOST_CHECK (p_shm_unlock (shm));
+	}
+#endif
 
 	for (i = 0; i < 1024; ++i) {
 		BOOST_CHECK (p_shm_lock (shm));
@@ -120,6 +133,7 @@ BOOST_AUTO_TEST_CASE (pshm_general_test)
 		BOOST_CHECK (p_shm_unlock (shm));
 	}
 
+#ifndef P_OS_HPUX
 	for (i = 0; i < 1024; ++i) {
 		BOOST_CHECK (p_shm_lock (shm2));
 		BOOST_CHECK (*(((pchar *) addr) + i) != 'c');
@@ -131,6 +145,19 @@ BOOST_AUTO_TEST_CASE (pshm_general_test)
 		BOOST_CHECK (*(((pchar *) addr) + i) == 'b');
 		BOOST_CHECK (p_shm_unlock (shm2));
 	}
+#else
+	for (i = 0; i < 1024; ++i) {
+		BOOST_CHECK (p_shm_lock (shm));
+		BOOST_CHECK (*(((pchar *) addr) + i) != 'c');
+		BOOST_CHECK (p_shm_unlock (shm));
+	}
+
+	for (i = 0; i < 1024; ++i) {
+		BOOST_CHECK (p_shm_lock (shm));
+		BOOST_CHECK (*(((pchar *) addr) + i) == 'b');
+		BOOST_CHECK (p_shm_unlock (shm));
+	}
+#endif
 
 	p_shm_free (shm);
 
@@ -148,7 +175,10 @@ BOOST_AUTO_TEST_CASE (pshm_general_test)
 	}
 
 	p_shm_free (shm);
+
+#ifndef P_OS_HPUX
 	p_shm_free (shm2);
+#endif
 
 	p_lib_shutdown ();
 }
