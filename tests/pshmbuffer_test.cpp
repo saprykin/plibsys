@@ -32,8 +32,10 @@
 #  include <boost/test/unit_test.hpp>
 #endif
 
-volatile static pboolean is_working = TRUE;
 static pchar test_str[] = "This is a test string!";
+
+#ifndef P_OS_HPUX
+volatile static pboolean is_working = TRUE;
 
 static void * shm_buffer_test_write_thread (void *)
 {
@@ -86,6 +88,7 @@ static void * shm_buffer_test_read_thread (void *)
 	p_shm_buffer_free (buffer);
 	p_uthread_exit (0);
 }
+#endif
 
 BOOST_AUTO_TEST_SUITE (BOOST_TEST_MODULE)
 
@@ -143,6 +146,7 @@ BOOST_AUTO_TEST_CASE (pshmbuffer_general_test)
 	p_lib_shutdown ();
 }
 
+#ifndef P_OS_HPUX
 BOOST_AUTO_TEST_CASE (pshmbuffer_thread_test)
 {
 	p_lib_init ();
@@ -178,5 +182,6 @@ BOOST_AUTO_TEST_CASE (pshmbuffer_thread_test)
 
 	p_lib_shutdown ();
 }
+#endif
 
 BOOST_AUTO_TEST_SUITE_END()
