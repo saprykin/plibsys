@@ -144,7 +144,7 @@ if (PLIB_TARGET_OS STREQUAL windows)
                                         return 0;
                                  }"
                                  PLIB_HAS_GETTICKCOUNT_64
-                                )
+        )
 
         check_c_source_compiles (
                                  "#include <windows.h>
@@ -154,21 +154,21 @@ if (PLIB_TARGET_OS STREQUAL windows)
                                         return 0;
                                  }"
                                  PLIB_HAS_VISTA_CV
-                                )
-endif()
+        )
 
-if (PLIB_HAS_GETTICKCOUNT_64)
-        add_definitions (-DPLIB_HAS_GETTICKCOUNT_64)
-endif()
+        if (PLIB_HAS_GETTICKCOUNT_64)
+                add_definitions (-DPLIB_HAS_GETTICKCOUNT_64)
+        endif()
 
-if (PLIB_HAS_VISTA_CV)
-        add_definitions (-DPLIB_HAS_VISTA_CV)
-endif()
+        if (PLIB_HAS_VISTA_CV)
+                add_definitions (-DPLIB_HAS_VISTA_CV)
+        endif()
 
-if (PLIB_HAS_VISTA_CV OR PLIB_HAS_GETTICKCOUNT_64)
-        add_definitions (-D_WIN32_WINNT=0x0600)
-else()
-        add_definitions (-D_WIN32_WINNT=0x0501)
+        if (PLIB_HAS_VISTA_CV OR PLIB_HAS_GETTICKCOUNT_64)
+                add_definitions (-D_WIN32_WINNT=0x0600)
+        else()
+                add_definitions (-D_WIN32_WINNT=0x0501)
+        endif()
 endif()
 
 # Detect atomic operations
