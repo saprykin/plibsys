@@ -1,5 +1,5 @@
-/* 
- * Copyright (C) 2010 Alexander Saprykin <xelfium@gmail.com>
+/*
+ * Copyright (C) 2010-2016 Alexander Saprykin <xelfium@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,9 +21,9 @@
  * @brief Shared memory buffer
  * @author Alexander Saprykin
  *
- * #PShmBuffer implements cyclic non-override buffer based on shared memory segment.
+ * #PShmBuffer implements cyclic non-override buffer based on a shared memory segment.
  * This allows different processes to exchange data without using sockets as often
- * is done. Thus you'll get a bit smaller overheads then using sockets. Please read
+ * is done. Thus you'll get a bit smaller overheads than using sockets. Please read
  * documentation for #PShm for known issues with UNIX and Windows IPC systems.
  */
 
@@ -85,7 +85,7 @@ P_LIB_API void		p_shm_buffer_take_ownership	(PShmBuffer *buf);
  * @param buf #PShmBuffer to read data from.
  * @param[out] storage Output buffer to put data in.
  * @param len @a storage size in bytes.
- * @return Number of read bytes (can be 0 if buffer is empty), or -1 if error occured. 
+ * @return Number of read bytes (can be 0 if buffer is empty), or -1 if error occured.
  * @since 0.0.1
  */
 P_LIB_API pint		p_shm_buffer_read		(PShmBuffer *buf, ppointer storage, psize len);
@@ -95,7 +95,7 @@ P_LIB_API pint		p_shm_buffer_read		(PShmBuffer *buf, ppointer storage, psize len
  * @param buf #PShmBuffer to write data into.
  * @param data Data to write.
  * @param len @a data size in bytes.
- * @return Number of written bytes, or -1 if error occured or buffer is full. 
+ * @return Number of written bytes, or -1 if error occured or buffer is full.
  * @since 0.0.1
  */
 P_LIB_API pssize	p_shm_buffer_write		(PShmBuffer *buf, ppointer data, psize len);
@@ -111,7 +111,7 @@ P_LIB_API pssize	p_shm_buffer_get_free_space	(PShmBuffer *buf);
 /**
  * @brief Gets used space in shared memory buffer.
  * @param buf #PShmBuffer to check space in.
- * @return Used space in bytes in case of success, -1 otherwise. 
+ * @return Used space in bytes in case of success, -1 otherwise.
  * @since 0.0.1
  */
 P_LIB_API pssize	p_shm_buffer_get_used_space	(PShmBuffer *buf);
