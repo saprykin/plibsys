@@ -36,9 +36,12 @@ the following platforms:
 * GNU/Linux
 * OS X
 * Windows
+* Cygwin
 * FreeBSD, NetBSD, OpenBSD
 * DragonFlyBSD
-* Solaris 10, 11
+* Solaris
+* AIX
+* HP-UX
 * QNX 6
 
 It should also work on other *nix systems with or without minimal
@@ -52,6 +55,7 @@ PLib was tested with the following compilers:
 * MinGW (x32, x64)
 * GCC (x32, x64)
 * CLang (x32, x64)
+* Intel (x64)
 * QCC
 * Oracle Solaris Studio (x32, x64)
 
