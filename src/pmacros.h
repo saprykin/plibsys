@@ -287,6 +287,18 @@
  */
 
 /**
+ * @def P_CC_XLC
+ * @brief IBM XL C compiler
+ * @since 0.0.1
+ */
+
+/**
+ * @def P_CC_HP
+ * @brief HP C/aC++ compiler
+ * @since 0.0.1
+ */
+
+/**
  * @def P_CC_WATCOM
  * @brief Watcom C compiler
  * @since 0.0.1
@@ -299,6 +311,8 @@
 #  define P_CC_INTEL
 #  define P_CC_CLANG
 #  define P_CC_SUN
+#  define P_CC_XLC
+#  define P_CC_HP
 #  define P_CC_WATCOM
 #endif
 
@@ -323,6 +337,12 @@
 /* Sun (Oracle) WorkShop/Studio */
 #elif defined(__SUNPRO_C) || defined(__SUNPRO_CC)
 #  define P_CC_SUN
+/* IBM XL C */
+#elif defined(__xlc__) || defined(__xlC__)
+#  define P_CC_XLC
+/* HP C/aC++ */
+#elif defined(__HP_cc) || defined(__HP_aCC)
+#  define P_CC_HP
 /* Watcom C++ */
 #elif defined(__WATCOMC__)
 #  define P_CC_WATCOM
