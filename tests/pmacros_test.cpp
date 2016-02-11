@@ -97,7 +97,7 @@ BOOST_AUTO_TEST_CASE (pmacros_general_test)
 	/* Test for compiler detection macros */
 #if !defined (P_CC_MSVC) && !defined (P_CC_GNU) && !defined (P_CC_MINGW) && \
     !defined (P_CC_INTEL) && !defined (P_CC_CLANG) && !defined (P_CC_SUN) && \
-    !defined (P_CC_WATCOM)
+    !defined (P_CC_XLC) && !defined (P_CC_HP) && !defined (P_CC_WATCOM)
 	BOOST_CHECK (false);
 #endif
 
