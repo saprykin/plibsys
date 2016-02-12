@@ -14,6 +14,8 @@ else()
                 message (FATAL_ERROR "You must specify BOOST_ROOT variable when building static tests without proper Boost installtion")
         elseif (Boost_FOUND)
                 add_definitions (-DPLIB_TESTS_STATIC)
+                set (Boost_LIBRARIES "")
+                
                 include_directories (${Boost_INCLUDE_DIR})
         else()
                 add_definitions (-DPLIB_TESTS_STATIC)
