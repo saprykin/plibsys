@@ -117,7 +117,7 @@ P_LIB_API PDirEntry *
 p_dir_get_next_entry (PDir *dir)
 {
 	PDirEntry	*ret;
-#ifdef P_OS_SOLARIS
+#if defined(P_OS_SOLARIS) || defined (P_OS_QNX6)
 	struct dirent	*dirent_st;
 #else
 	struct dirent	dirent_st;
@@ -129,14 +129,19 @@ p_dir_get_next_entry (PDir *dir)
 	if (dir == NULL || dir->dir == NULL)
 		return NULL;
 
-#ifdef P_OS_SOLARIS
+#if defined(P_OS_SOLARIS)
 	if ((dirent_st = p_malloc0 (sizeof (struct dirent) + FILENAME_MAX + 1)) == NULL) {
+		P_ERROR ("PDir: failed to allocate memory");
+		return NULL;
+	}
+#elif defined(P_OS_QNX6)
+	if ((dirent_st = p_malloc0 (sizeof (struct dirent) + NAME_MAX + 1)) == NULL) {
 		P_ERROR ("PDir: failed to allocate memory");
 		return NULL;
 	}
 #endif
 
-#ifdef P_OS_SOLARIS
+#if defined(P_OS_SOLARIS) || defined(P_OS_QNX6)
 	if (readdir_r (dir->dir, dirent_st, &dir->dir_result) != 0) {
 		P_ERROR ("PDir: failed to call readdir_r()");
 		p_free (dirent_st);
@@ -150,7 +155,7 @@ p_dir_get_next_entry (PDir *dir)
 #endif
 
 	if (dir->dir_result == NULL) {
-#ifdef P_OS_SOLARIS
+#if defined(P_OS_SOLARIS) || defined(P_OS_QNX6)
 		p_free (dirent_st);
 #endif
 		return NULL;
@@ -158,13 +163,13 @@ p_dir_get_next_entry (PDir *dir)
 
 	if ((ret = p_malloc0 (sizeof (PDirEntry))) == NULL) {
 		P_ERROR ("PDir: failed to allocate memory");
-#ifdef P_OS_SOLARIS
+#if defined(P_OS_SOLARIS) || defined(P_OS_QNX6)
 		p_free (dirent_st);
 #endif
 		return NULL;
 	}
 
-#ifdef P_OS_SOLARIS
+#if defined(P_OS_SOLARIS) || defined(P_OS_QNX6)
 	ret->name = p_strdup (dirent_st->d_name);
 	p_free (dirent_st);
 #else
