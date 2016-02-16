@@ -71,7 +71,8 @@ P_LIB_API void		p_shm_buffer_free		(PShmBuffer *buf);
  * If you take ownership of the shared memory buffer, p_shm_buffer_free()
  * will try to completely unlink it and remove from the system.
  * This is useful on UNIX systems with POSIX and System V IPC implementations, where shared
- * memory can survive the application crash. On Windows platform this call has no effect.
+ * memory can survive an application crash. On Windows platform this call has no effect.
+ *
  * The common usage of this call is upon application startup to ensure that
  * memory segment from the previous crash can be unlinked from the system. To
  * do that, call p_shm_buffer_new(), and check if its condition is OK (used space,

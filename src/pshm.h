@@ -85,8 +85,10 @@ P_LIB_API PShm *	p_shm_new		(const pchar		*name,
  *
  * If you take ownership of the shared memory object, p_shm_free()
  * will try to completely unlink it and remove from the system.
- * This is useful on UNIX systems with POSIX and System V IPC implementations, where shared
- * memory can survive the application crash. On Windows platform this call has no effect.
+ * This is useful on UNIX systems with POSIX and System V IPC implementations,
+ * where shared memory can survive an application crash. On Windows platform this
+ * call has no effect.
+ *
  * The common usage of this call is upon application startup to ensure that
  * memory segment from the previous crash can be unlinked from the system. To
  * do that, call p_shm_new(), and check if its condition is OK (segment size,

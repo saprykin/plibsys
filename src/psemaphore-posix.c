@@ -66,7 +66,7 @@ __p_semaphore_create_handle (PSemaphore *sem,
 		return FALSE;
 	}
 
-	/* Solaris may interrupt sem_open call */
+	/* Solaris may interrupt sem_open() call */
 	while ((sem->sem_hdl = sem_open (sem->platform_key, O_CREAT | O_EXCL, 0660, sem->init_val)) == P_SEM_INVALID_HDL
 		&& errno == EINTR)
 	;
