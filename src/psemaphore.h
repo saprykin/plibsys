@@ -65,9 +65,9 @@ typedef enum _PSemaphoreError {
 						     Possible permission problem.			*/
 	P_SEM_ERROR_EXISTS		= 2,	/**< Semaphore already exists and no proper open
 						     flags were specified.				*/
-	P_SEM_ERROR_NOT_EXISTS		= 4,	/**< Semaphore doesn't exist or was removed before, and
+	P_SEM_ERROR_NOT_EXISTS		= 3,	/**< Semaphore doesn't exist or was removed before, and
 						     no proper create flags were specified.		*/
-	P_SEM_ERROR_NO_RESOURCES	= 3,	/**< Not enough system resources or memory to perform
+	P_SEM_ERROR_NO_RESOURCES	= 4,	/**< Not enough system resources or memory to perform
 						     operation.						*/
 	P_SEM_ERROR_OVERFLOW		= 5,	/**< Semaphore value overflow.				*/
 	P_SEM_ERROR_NAMETOOLONG		= 6,	/**< Semaphore name is too long.			*/
