@@ -42,7 +42,7 @@ the following platforms:
 * Solaris
 * AIX
 * HP-UX
-* QNX 6
+* QNX Neutrino
 
 It should also work on other *nix systems with or without minimal
 efforts.
@@ -54,7 +54,7 @@ PLib was tested with the following compilers:
 * MSVC (x32, x64) 2003 and above
 * MinGW (x32, x64)
 * GCC (x32, x64)
-* CLang (x32, x64)
+* Clang (x32, x64)
 * Intel (x64)
 * QCC
 * Oracle Solaris Studio (x32, x64)
