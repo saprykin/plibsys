@@ -433,6 +433,11 @@ if (PLIB_PLATFORM_LDFLAGS)
         endif()
 endif()
 
+if (PLIB_C_COMPILER STREQUAL msvc)
+        add_definitions (-D_CRT_SECURE_NO_WARNINGS)
+        add_definitions (-D_WINSOCK_DEPRECATED_NO_WARNINGS)
+endif()
+
 target_link_libraries (plib ${PLIB_PLATFORM_LINK_LIBRARIES})
 
 if (PLIB_BUILD_STATIC)
