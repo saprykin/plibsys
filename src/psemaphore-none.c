@@ -36,7 +36,7 @@ p_semaphore_new (const pchar		*name,
 	P_UNUSED (mode);
 
 	p_error_set_error_p (error,
-			     (pint) P_SEM_ERROR_NOT_IMPLEMENTED,
+			     (pint) P_ERROR_IPC_NOT_IMPLEMENTED,
 			     0,
 			     "No semaphore implementation");
 
@@ -56,7 +56,7 @@ p_semaphore_acquire (PSemaphore *sem,
 	P_UNUSED (sem);
 
 	p_error_set_error_p (error,
-			     (pint) P_SEM_ERROR_NOT_IMPLEMENTED,
+			     (pint) P_ERROR_IPC_NOT_IMPLEMENTED,
 			     0,
 			     "No semaphore implementation");
 
@@ -70,7 +70,7 @@ p_semaphore_release (PSemaphore *sem,
 	P_UNUSED (sem);
 
 	p_error_set_error_p (error,
-			     (pint) P_SEM_ERROR_NOT_IMPLEMENTED,
+			     (pint) P_ERROR_IPC_NOT_IMPLEMENTED,
 			     0,
 			     "No semaphore implementation");
 

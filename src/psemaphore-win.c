@@ -36,47 +36,15 @@ struct _PSemaphore {
 	pint			init_val;
 };
 
-static PSemaphoreError __p_semaphore_get_error ();
 static pboolean __p_semaphore_create_handle (PSemaphore *sem, PError **error);
 static void __p_semaphore_clean_handle (PSemaphore *sem);
-
-static PSemaphoreError
-__p_semaphore_get_error ()
-{
-	DWORD err_code = GetLastError ();
-
-	switch (err_code) {
-	case ERROR_SUCCESS:
-		return P_SEM_ERROR_NONE;
-	case ERROR_SEM_OWNER_DIED:
-		return P_SEM_ERROR_NOT_EXISTS;
-	case ERROR_SEM_NOT_FOUND:
-		return P_SEM_ERROR_NOT_EXISTS;
-	case ERROR_SEM_USER_LIMIT:
-		return P_SEM_ERROR_NO_RESOURCES;
-	case ERROR_TOO_MANY_SEMAPHORES:
-		return P_SEM_ERROR_NO_RESOURCES;
-	case ERROR_ACCESS_DENIED:
-		return P_SEM_ERROR_ACCESS;
-	case ERROR_EXCL_SEM_ALREADY_OWNED:
-		return P_SEM_ERROR_ACCESS;
-	case ERROR_TOO_MANY_SEM_REQUESTS:
-		return P_SEM_ERROR_NO_RESOURCES;
-	case ERROR_TOO_MANY_POSTS:
-		return P_SEM_ERROR_NO_RESOURCES;
-	case ERROR_INVALID_HANDLE:
-		return P_SEM_ERROR_INVALID_ARGUMENT;
-	default:
-		return P_SEM_ERROR_FAILED;
-	}
-}
 
 static pboolean
 __p_semaphore_create_handle (PSemaphore *sem, PError **error)
 {
 	if (sem == NULL || sem->platform_key == NULL) {
 		p_error_set_error_p (error,
-				     (pint) P_SEM_ERROR_INVALID_ARGUMENT,
+				     (pint) P_ERROR_IPC_INVALID_ARGUMENT,
 				     0,
 				     "Invalid input argument");
 		return FALSE;
@@ -85,7 +53,7 @@ __p_semaphore_create_handle (PSemaphore *sem, PError **error)
 	/* Multibyte character set must be enabled in MS VS */
 	if ((sem->sem_hdl = CreateSemaphore (NULL, sem->init_val, MAXLONG, sem->platform_key)) == NULL) {
 		p_error_set_error_p (error,
-				     (pint) __p_semaphore_get_error (),
+				     (pint) __p_error_get_last_ipc (),
 				     (pint) GetLastError (),
 				     "Failed to call CreateSemaphore() to create semaphore");
 		return FALSE;
@@ -120,7 +88,7 @@ p_semaphore_new (const pchar		*name,
 
 	if (name == NULL || init_val < 0) {
 		p_error_set_error_p (error,
-				     (pint) P_SEM_ERROR_INVALID_ARGUMENT,
+				     (pint) P_ERROR_IPC_INVALID_ARGUMENT,
 				     0,
 				     "Invalid input argument");
 		return NULL;
@@ -128,7 +96,7 @@ p_semaphore_new (const pchar		*name,
 
 	if ((ret = p_malloc0 (sizeof (PSemaphore))) == NULL) {
 		p_error_set_error_p (error,
-				     (pint) P_SEM_ERROR_NO_RESOURCES,
+				     (pint) P_ERROR_IPC_NO_RESOURCES,
 				     0,
 				     "Failed to allocate memory for semaphore");
 		return NULL;
@@ -136,7 +104,7 @@ p_semaphore_new (const pchar		*name,
 
 	if ((new_name = p_malloc0 (strlen (name) + strlen (P_SEM_SUFFIX) + 1)) == NULL) {
 		p_error_set_error_p (error,
-				     (pint) P_SEM_ERROR_NO_RESOURCES,
+				     (pint) P_ERROR_IPC_NO_RESOURCES,
 				     0,
 				     "Failed to allocate memory for semaphore");
 		p_free (ret);
@@ -173,7 +141,7 @@ p_semaphore_acquire (PSemaphore *sem,
 
 	if (sem == NULL) {
 		p_error_set_error_p (error,
-				     (pint) P_SEM_ERROR_INVALID_ARGUMENT,
+				     (pint) P_ERROR_IPC_INVALID_ARGUMENT,
 				     0,
 				     "Invalid input argument");
 		return FALSE;
@@ -183,7 +151,7 @@ p_semaphore_acquire (PSemaphore *sem,
 
 	if (!ret)
 		p_error_set_error_p (error,
-				     (pint) __p_semaphore_get_error (),
+				     (pint) __p_error_get_last_ipc (),
 				     (pint) GetLastError (),
 				     "Failed to call WaitForSingleObject() on semaphore");
 
@@ -198,7 +166,7 @@ p_semaphore_release (PSemaphore *sem,
 
 	if (sem == NULL) {
 		p_error_set_error_p (error,
-				     (pint) P_SEM_ERROR_INVALID_ARGUMENT,
+				     (pint) P_ERROR_IPC_INVALID_ARGUMENT,
 				     0,
 				     "Invalid input argument");
 		return FALSE;
@@ -208,7 +176,7 @@ p_semaphore_release (PSemaphore *sem,
 
 	if (!ret)
 		p_error_set_error_p (error,
-				     (pint) __p_semaphore_get_error (),
+				     (pint) __p_error_get_last_ipc (),
 				     (pint) GetLastError (),
 				     "Failed to call ReleaseSemaphore() on semaphore");
 

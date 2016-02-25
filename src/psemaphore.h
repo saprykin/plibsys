@@ -58,26 +58,6 @@
 
 P_BEGIN_DECLS
 
-/** Enum with #PSemaphore errors */
-typedef enum _PSemaphoreError {
-	P_SEM_ERROR_NONE		= 0,	/**< No error.						*/
-	P_SEM_ERROR_ACCESS		= 1,	/**< Not enough rights to access semaphore or its key.
-						     Possible permission problem.			*/
-	P_SEM_ERROR_EXISTS		= 2,	/**< Semaphore already exists and no proper open
-						     flags were specified.				*/
-	P_SEM_ERROR_NOT_EXISTS		= 3,	/**< Semaphore doesn't exist or was removed before, and
-						     no proper create flags were specified.		*/
-	P_SEM_ERROR_NO_RESOURCES	= 4,	/**< Not enough system resources or memory to perform
-						     operation.						*/
-	P_SEM_ERROR_OVERFLOW		= 5,	/**< Semaphore value overflow.				*/
-	P_SEM_ERROR_NAMETOOLONG		= 6,	/**< Semaphore name is too long.			*/
-	P_SEM_ERROR_INVALID_ARGUMENT	= 7,	/**< Invalid argument (parameter) specified.		*/
-	P_SEM_ERROR_NOT_IMPLEMENTED	= 8,	/**< Operation not implemented (for example when using
-						     some file systems).				*/
-	P_SEM_ERROR_DEADLOCK		= 9,	/**< Deadlock detected.					*/
-	P_SEM_ERROR_FAILED		= 10	/**< General error.					*/
-} PSemaphoreError;
-
 /** Enum with #PSemaphore creation modes */
 typedef enum _PSemaphoreAccessMode {
 	P_SEM_ACCESS_OPEN	= 0,	/**< Open existing semaphore or create one with given value.	*/
