@@ -305,7 +305,7 @@ P_LIB_API pint			p_socket_get_listen_backlog	(const PSocket 		*socket);
  *
  * For blocking socket timeout value means maximum amount of time for which blocking
  * call will be waiting until newtwork I/O operation completed. If operation is not finished
- * after timeout, blocking call returns with error set to #P_SOCKET_ERROR_TIMED_OUT.
+ * after timeout, blocking call returns with error set to #P_ERROR_IO_TIMED_OUT.
  *
  * For non-blocking socket timeout affects only on p_socket_io_condition_wait() maximum
  * waiting time.
@@ -369,7 +369,7 @@ P_LIB_API pboolean		p_socket_is_connected		(const PSocket		*socket);
  * connection checking call has failed or there was an error during connection and
  * you should check last error using @a error object.
  *
- * If socket is still pending for connection you will get #P_SOCKET_ERROR_CONNECTING.
+ * If socket is still pending for connection you will get #P_ERROR_IO_CONNECTING.
  *
  * After calling p_socket_connect() on non-blocking socket, you can wait for connection
  * operation to be finished using p_socket_io_condition_wait() with #P_SOCKET_IO_CONDITION_POLLOUT
@@ -687,7 +687,7 @@ P_LIB_API pboolean		p_socket_set_buffer_size	(const PSocket		*socket,
  *
  * Waits until a @a condition will be met on @a socket or an error occured. If timeout
  * was set using p_socket_set_timeout() and network I/O operation doesn't finish until
- * timeout expired, call will fail with #P_SOCKET_ERROR_TIMED_OUT.
+ * timeout expired, call will fail with #P_ERROR_IO_TIMED_OUT.
  */
 P_LIB_API pboolean		p_socket_io_condition_wait	(const PSocket		*socket,
 								 PSocketIOCondition	condition,
