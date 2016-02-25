@@ -25,10 +25,7 @@
 
 #include "pmacros.h"
 #include "ptypes.h"
-
-#ifndef P_OS_WIN
-#include "psemaphore.h"
-#endif
+#include "perror.h"
 
 P_BEGIN_DECLS
 
@@ -65,13 +62,33 @@ pint		__p_ipc_unix_create_key_file		(const pchar *file_name);
  * @since 0.0.1
  */
 pint		__p_ipc_unix_get_ftok_key		(const pchar *file_name);
+#endif /* !P_OS_WIN */
 
 /**
- * @brief Gets semaphore error from UNIX @a errno constant
- * @return Semaphore error for UNIX implementations (System V, POSIX).
+ * @brief Gets IO error code from the system error code
+ * @param err_code System error code.
+ * @return IO error code.
  */
-PSemaphoreError	__p_ipc_unix_get_semaphore_error	();
-#endif /* !P_OS_WIN */
+PErrorIO	__p_error_get_io_from_system		(pint err_code);
+
+/**
+ * @brief Gets IO error code from the last call result
+ * @return IO error code.
+ */
+PErrorIO	__p_error_get_last_io			();
+
+/**
+ * @brief Gets IPC error code from the system error code
+ * @param err_code System error code.
+ * @return IPC error code.
+ */
+PErrorIPC	__p_error_get_ipc_from_system		(pint err_code);
+
+/**
+ * @brief Gets IPC error code from the last call result
+ * @return IPC error code.
+ */
+PErrorIPC	__p_error_get_last_ipc			();
 
 /**
  * @brief Generates platform-independent key for IPC usage, object name for Windows and

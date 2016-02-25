@@ -141,25 +141,6 @@ typedef enum _PSocketProtocol {
 	P_SOCKET_PROTOCOL_SCTP			= 132	/**< SCTP protocol.	*/
 } PSocketProtocol;
 
-/** Socket errors */
-typedef enum _PSocketError {
-	P_SOCKET_ERROR_NONE			= 0,	/**< No error.					*/
-	P_SOCKET_ERROR_NO_RESOURCES		= 1,	/**< OS hasn't enough resources.		*/
-	P_SOCKET_ERROR_NOT_AVAILABLE		= 2,	/**< Resource isn't available.			*/
-	P_SOCKET_ERROR_ACCESS_DENIED		= 3,	/**< Access denied.				*/
-	P_SOCKET_ERROR_CONNECTED		= 4,	/**< Already connected.				*/
-	P_SOCKET_ERROR_CONNECTING		= 5,	/**< Connection in progress.			*/
-	P_SOCKET_ERROR_ABORTED			= 6,	/**< Operation aborted.				*/
-	P_SOCKET_ERROR_INVALID_ARGUMENT		= 7,	/**< Invalid argument specified.		*/
-	P_SOCKET_ERROR_NOT_SUPPORTED		= 8,	/**< Operation not supported.			*/
-	P_SOCKET_ERROR_TIMED_OUT		= 9,	/**< Operation timed out.			*/
-	P_SOCKET_ERROR_WOULD_BLOCK		= 10,	/**< Operation cannot be completed immediatly.	*/
-	P_SOCKET_ERROR_ADDRESS_IN_USE		= 11,	/**< Address is already under usage.		*/
-	P_SOCKET_ERROR_CONNECTION_REFUSED	= 12,	/**< Connection refused.			*/
-	P_SOCKET_ERROR_NOT_CONNECTED		= 13,	/**< Connection required first.			*/
-	P_SOCKET_ERROR_FAILED			= 14	/**< General error.				*/
-} PSocketError;
-
 /** Socket types */
 typedef enum _PSocketType {
 	P_SOCKET_TYPE_UNKNOWN			= 0,	/**< Unknown type.							*/

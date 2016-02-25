@@ -32,17 +32,21 @@ struct _PError {
 	pchar	*message;
 };
 
-PErrorIO
-__p_error_get_last_io ()
+static pint __p_error_get_last_error ();
+
+static pint
+__p_error_get_last_error ()
 {
-	pint err_code;
-
 #ifdef P_OS_WIN
-	err_code = (pint) WSAGetLastError ();
+	return (pint) GetLastError ();
 #else
-	err_code = errno;
+	return errno;
 #endif
+}
 
+PErrorIO
+__p_error_get_io_from_system (pint err_code)
+{
 	switch (err_code) {
 	case 0:
 		return P_ERROR_IO_NONE;
@@ -286,17 +290,15 @@ __p_error_get_last_io ()
 	}
 }
 
-PErrorIPC
-__p_error_get_last_ipc ()
+PErrorIO
+__p_error_get_last_io ()
 {
-	pint err_code;
+	return __p_error_get_io_from_system (__p_error_get_last_error ());
+}
 
-#ifdef P_OS_WIN
-	err_code = (pint) GetLastError ();
-#else
-	err_code = errno;
-#endif
-
+PErrorIPC
+__p_error_get_ipc_from_system (pint err_code)
+{
 	switch (err_code) {
 	case 0:
 		return P_ERROR_IPC_NONE;
@@ -408,6 +410,12 @@ __p_error_get_last_ipc ()
 	default:
 		return P_ERROR_IPC_FAILED;
 	}
+}
+
+PErrorIPC
+__p_error_get_last_ipc ()
+{
+	return __p_error_get_io_from_system (__p_error_get_last_error ());
 }
 
 P_LIB_API PError *
