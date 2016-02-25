@@ -92,13 +92,13 @@ set (PLIB_SRCS
         pfile.c
         phashtable.c
         pinifile.c
+        pipc.c
         plibraryloader.c
         plist.c
         pmain.c
         pmem.c  
         pprocess.c
         pshmbuffer.c
-        psemaphore.c
         pshm.c
         psocket.c
         psocketaddress.c
