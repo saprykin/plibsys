@@ -99,7 +99,6 @@ set (PLIB_SRCS
         pmem.c  
         pprocess.c
         pshmbuffer.c
-        pshm.c
         psocket.c
         psocketaddress.c
         pstring.c
