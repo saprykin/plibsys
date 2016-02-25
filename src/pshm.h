@@ -54,6 +54,7 @@
 
 #include <pmacros.h>
 #include <ptypes.h>
+#include <perror.h>
 
 /** Enum with #PShm access permitions */
 typedef enum _PShmAccessPerms {
@@ -71,12 +72,14 @@ P_BEGIN_DECLS
  * @param name Shared memory name.
  * @param size Size of the memory segment in bytes, can't be changed later.
  * @param perms Memory segment permissions, see #PShmAccessPerms.
+ * @param[out] error Error report object, NULL to ignore.
  * @return Pointer to newly created #PShm object in case of success, NULL otherwise.
  * @since 0.0.1
  */
 P_LIB_API PShm *	p_shm_new		(const pchar		*name,
 						 psize			size,
-						 PShmAccessPerms	perms);
+						 PShmAccessPerms	perms,
+						 PError			**error);
 
 /**
  * @brief Takes ownership of the shared memory segment.
@@ -95,7 +98,7 @@ P_LIB_API PShm *	p_shm_new		(const pchar		*name,
  * data). If not, take ownership of the shared memory object and remove it with
  * p_shm_free() call. After that, create it again.
  */
-P_LIB_API void		p_shm_take_ownership	(PShm *shm);
+P_LIB_API void		p_shm_take_ownership	(PShm			*shm);
 
 /**
  * @brief Frees shared memory object.
@@ -105,24 +108,28 @@ P_LIB_API void		p_shm_take_ownership	(PShm *shm);
  * It doesn't unlock given shared memory, be careful to not to make deadlock
  * or segfault while freeing memory segment which are under using.
  */
-P_LIB_API void		p_shm_free		(PShm *shm);
+P_LIB_API void		p_shm_free		(PShm			*shm);
 
 /**
  * @brief Locks #PShm object for usage. If object is already locked then
  * thread will be slept until object becomes unocked.
  * @param shm #PShm to lock.
+ * @param[out] error Error report object, NULL to ignore.
  * @return TRUE in case of success, FALSE otherwise.
  * @since 0.0.1
  */
-P_LIB_API pboolean	p_shm_lock		(PShm *shm);
+P_LIB_API pboolean	p_shm_lock		(PShm			*shm,
+						 PError			**error);
 
 /**
  * @brief Unlocks #PShm object.
  * @param shm #PShm to unlock.
+ * @param[out] error Error report object, NULL to ignore.
  * @return TRUE in case of success, FALSE otherwise.
  * @since 0.0.1
  */
-P_LIB_API pboolean	p_shm_unlock		(PShm *shm);
+P_LIB_API pboolean	p_shm_unlock		(PShm			*shm,
+						 PError			**error);
 
 /**
  * @brief Gets starting address of the #PShm memory segment.
@@ -130,7 +137,7 @@ P_LIB_API pboolean	p_shm_unlock		(PShm *shm);
  * @return Pointer to starting address in case of success, NULL otherwise.
  * @since 0.0.1
  */
-P_LIB_API ppointer	p_shm_get_address	(const PShm *shm);
+P_LIB_API ppointer	p_shm_get_address	(const PShm		*shm);
 
 /**
  * @brief Gets size of the #PShm memory segment.
@@ -141,7 +148,7 @@ P_LIB_API ppointer	p_shm_get_address	(const PShm *shm);
  * Note that returned size would be a slight bigger then specified during
  * p_shm_new() call due to service information stored there.
  */
-P_LIB_API psize		p_shm_get_size		(const PShm *shm);
+P_LIB_API psize		p_shm_get_size		(const PShm		*shm);
 
 P_END_DECLS
 

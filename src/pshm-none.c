@@ -28,11 +28,13 @@ struct _PShm {
 P_LIB_API PShm *
 p_shm_new (const pchar		*name,
 	   psize		size,
-	   PShmAccessPerms	perms)
+	   PShmAccessPerms	perms,
+	   PError		**error)
 {
 	P_UNUSED (name);
 	P_UNUSED (size);
 	P_UNUSED (perms);
+	P_UNUSED (error);
 
 	return NULL;
 }
@@ -50,17 +52,21 @@ p_shm_free (PShm *shm)
 }
 
 P_LIB_API pboolean
-p_shm_lock (PShm *shm)
+p_shm_lock (PShm	*shm,
+	    PError	**error)
 {
 	P_UNUSED (shm);
+	P_UNUSED (error);
 
 	return FALSE;
 }
 
 P_LIB_API pboolean
-p_shm_unlock (PShm *shm)
+p_shm_unlock (PShm	*shm,
+	      PError	**error)
 {
 	P_UNUSED (shm);
+	P_UNUSED (error);
 
 	return FALSE;
 }

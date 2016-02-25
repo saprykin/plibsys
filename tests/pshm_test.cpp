@@ -51,13 +51,13 @@ static void * shm_test_thread (void *arg)
 	if (shm_size == 0 || addr == NULL)
 		p_uthread_exit (1);
 
-	if (!p_shm_lock (shm))
+	if (!p_shm_lock (shm, NULL))
 		p_uthread_exit (1);
 
 	for (puint i = 0; i < shm_size; ++i)
 		*(((pchar *) addr) + i) = (pchar) rand_num;
 
-	if (!p_shm_unlock (shm))
+	if (!p_shm_unlock (shm, NULL))
 		p_uthread_exit (1);
 
 	p_uthread_exit (0);
@@ -80,12 +80,12 @@ BOOST_AUTO_TEST_CASE (pshm_general_test)
 	BOOST_REQUIRE (p_shm_get_size (shm) == 0);
 	p_shm_take_ownership (shm);
 
-	shm = p_shm_new ("p_shm_test_memory_block", 1024, P_SHM_ACCESS_READWRITE);
+	shm = p_shm_new ("p_shm_test_memory_block", 1024, P_SHM_ACCESS_READWRITE, NULL);
 	BOOST_REQUIRE (shm != NULL);
 	p_shm_take_ownership (shm);
 	p_shm_free (shm);
 
-	shm = p_shm_new ("p_shm_test_memory_block", 1024, P_SHM_ACCESS_READWRITE);
+	shm = p_shm_new ("p_shm_test_memory_block", 1024, P_SHM_ACCESS_READWRITE, NULL);
 	BOOST_REQUIRE (shm != NULL);
 	BOOST_REQUIRE (p_shm_get_size (shm) == 1024);
 
@@ -93,11 +93,11 @@ BOOST_AUTO_TEST_CASE (pshm_general_test)
 	BOOST_REQUIRE (addr != NULL);
 
 #ifndef P_OS_HPUX
-	shm2 = p_shm_new ("p_shm_test_memory_block", 1024, P_SHM_ACCESS_READONLY);
+	shm2 = p_shm_new ("p_shm_test_memory_block", 1024, P_SHM_ACCESS_READONLY, NULL);
 
 	if (shm2 == NULL) {
 		/* OK, some systems may want exactly the same permissions */
-		shm2 = p_shm_new ("p_shm_test_memory_block", 1024, P_SHM_ACCESS_READWRITE);
+		shm2 = p_shm_new ("p_shm_test_memory_block", 1024, P_SHM_ACCESS_READWRITE, NULL);
 	}
 
 	BOOST_REQUIRE (shm2 != NULL);
@@ -108,60 +108,60 @@ BOOST_AUTO_TEST_CASE (pshm_general_test)
 #endif
 
 	for (i = 0; i < 512; ++i) {
-		BOOST_CHECK (p_shm_lock (shm));
+		BOOST_CHECK (p_shm_lock (shm, NULL));
 		*(((pchar *) addr) + i) = 'a';
-		BOOST_CHECK (p_shm_unlock (shm));
+		BOOST_CHECK (p_shm_unlock (shm, NULL));
 	}
 
 #ifndef P_OS_HPUX
 	for (i = 0; i < 512; ++i) {
-		BOOST_CHECK (p_shm_lock (shm2));
+		BOOST_CHECK (p_shm_lock (shm2, NULL));
 		BOOST_CHECK (*(((pchar *) addr) + i) == 'a');
-		BOOST_CHECK (p_shm_unlock (shm2));
+		BOOST_CHECK (p_shm_unlock (shm2, NULL));
 	}
 #else
 	for (i = 0; i < 512; ++i) {
-		BOOST_CHECK (p_shm_lock (shm));
+		BOOST_CHECK (p_shm_lock (shm, NULL));
 		BOOST_CHECK (*(((pchar *) addr) + i) == 'a');
-		BOOST_CHECK (p_shm_unlock (shm));
+		BOOST_CHECK (p_shm_unlock (shm, NULL));
 	}
 #endif
 
 	for (i = 0; i < 1024; ++i) {
-		BOOST_CHECK (p_shm_lock (shm));
+		BOOST_CHECK (p_shm_lock (shm, NULL));
 		*(((pchar *) addr) + i) = 'b';
-		BOOST_CHECK (p_shm_unlock (shm));
+		BOOST_CHECK (p_shm_unlock (shm, NULL));
 	}
 
 #ifndef P_OS_HPUX
 	for (i = 0; i < 1024; ++i) {
-		BOOST_CHECK (p_shm_lock (shm2));
+		BOOST_CHECK (p_shm_lock (shm2, NULL));
 		BOOST_CHECK (*(((pchar *) addr) + i) != 'c');
-		BOOST_CHECK (p_shm_unlock (shm2));
+		BOOST_CHECK (p_shm_unlock (shm2, NULL));
 	}
 
 	for (i = 0; i < 1024; ++i) {
-		BOOST_CHECK (p_shm_lock (shm2));
+		BOOST_CHECK (p_shm_lock (shm2, NULL));
 		BOOST_CHECK (*(((pchar *) addr) + i) == 'b');
-		BOOST_CHECK (p_shm_unlock (shm2));
+		BOOST_CHECK (p_shm_unlock (shm2, NULL));
 	}
 #else
 	for (i = 0; i < 1024; ++i) {
-		BOOST_CHECK (p_shm_lock (shm));
+		BOOST_CHECK (p_shm_lock (shm, NULL));
 		BOOST_CHECK (*(((pchar *) addr) + i) != 'c');
-		BOOST_CHECK (p_shm_unlock (shm));
+		BOOST_CHECK (p_shm_unlock (shm, NULL));
 	}
 
 	for (i = 0; i < 1024; ++i) {
-		BOOST_CHECK (p_shm_lock (shm));
+		BOOST_CHECK (p_shm_lock (shm, NULL));
 		BOOST_CHECK (*(((pchar *) addr) + i) == 'b');
-		BOOST_CHECK (p_shm_unlock (shm));
+		BOOST_CHECK (p_shm_unlock (shm, NULL));
 	}
 #endif
 
 	p_shm_free (shm);
 
-	shm = p_shm_new ("p_shm_test_memory_block_2", 1024, P_SHM_ACCESS_READWRITE);
+	shm = p_shm_new ("p_shm_test_memory_block_2", 1024, P_SHM_ACCESS_READWRITE, NULL);
 	BOOST_REQUIRE (shm != NULL);
 	BOOST_REQUIRE (p_shm_get_size (shm) == 1024);
 
@@ -169,9 +169,9 @@ BOOST_AUTO_TEST_CASE (pshm_general_test)
 	BOOST_REQUIRE (addr != NULL);
 
 	for (i = 0; i < 1024; ++i) {
-		BOOST_CHECK (p_shm_lock (shm));
+		BOOST_CHECK (p_shm_lock (shm, NULL));
 		BOOST_CHECK (*(((pchar *) addr) + i) != 'b');
-		BOOST_CHECK (p_shm_unlock (shm));
+		BOOST_CHECK (p_shm_unlock (shm, NULL));
 	}
 
 	p_shm_free (shm);
@@ -195,17 +195,17 @@ BOOST_AUTO_TEST_CASE (pshm_thread_test)
 
 	srand ((puint) time (NULL));
 
-	shm = p_shm_new ("p_shm_test_memory_block", 1024 * 1024, P_SHM_ACCESS_READWRITE);
+	shm = p_shm_new ("p_shm_test_memory_block", 1024 * 1024, P_SHM_ACCESS_READWRITE, NULL);
 	BOOST_REQUIRE (shm != NULL);
 	p_shm_take_ownership (shm);
 	p_shm_free (shm);
 
-	shm = p_shm_new ("p_shm_test_memory_block", 1024 * 1024, P_SHM_ACCESS_READWRITE);
+	shm = p_shm_new ("p_shm_test_memory_block", 1024 * 1024, P_SHM_ACCESS_READWRITE, NULL);
 	BOOST_REQUIRE (shm != NULL);
 
 	if (p_shm_get_size (shm) != 1024 * 1024) {
 		p_shm_free (shm);
-		shm = p_shm_new ("p_shm_test_memory_block", 1024 * 1024, P_SHM_ACCESS_READWRITE);
+		shm = p_shm_new ("p_shm_test_memory_block", 1024 * 1024, P_SHM_ACCESS_READWRITE, NULL);
 		BOOST_REQUIRE (shm != NULL);
 	}
 

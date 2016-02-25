@@ -95,7 +95,7 @@ p_shm_buffer_new (const pchar *name, psize size)
 	if (name == NULL)
 		return NULL;
 
-	if ((shm = p_shm_new (name, (size != 0) ? size + SHM_BUFFER_DATA_OFFSET + 1 : 0, P_SHM_ACCESS_READWRITE)) == NULL) {
+	if ((shm = p_shm_new (name, (size != 0) ? size + SHM_BUFFER_DATA_OFFSET + 1 : 0, P_SHM_ACCESS_READWRITE, NULL)) == NULL) {
 		P_ERROR ("PShmBuffer: failed to allocate memory");
 		return NULL;
 	}
@@ -153,7 +153,7 @@ p_shm_buffer_read (PShmBuffer *buf, ppointer storage, psize len)
 		return -1;
 	}
 
-	if (!p_shm_lock (buf->shm)) {
+	if (!p_shm_lock (buf->shm, NULL)) {
 		P_ERROR ("PShmBuffer: failed to lock memory for reading");
 		return -1;
 	}
@@ -162,7 +162,7 @@ p_shm_buffer_read (PShmBuffer *buf, ppointer storage, psize len)
 	memcpy (&write_pos, (pchar *) addr + SHM_BUFFER_WRITE_OFFSET, sizeof (write_pos));
 
 	if (read_pos == write_pos) {
-		if (!p_shm_unlock (buf->shm))
+		if (!p_shm_unlock (buf->shm, NULL))
 			P_ERROR ("PShmBuffer: failed to unlock memory after reading");
 
 		return 0;
@@ -177,7 +177,7 @@ p_shm_buffer_read (PShmBuffer *buf, ppointer storage, psize len)
 	read_pos = (read_pos + to_copy) % buf->size;
 	memcpy ((pchar *) addr + SHM_BUFFER_READ_OFFSET, &read_pos, sizeof (read_pos));
 
-	if (!p_shm_unlock (buf->shm))
+	if (!p_shm_unlock (buf->shm, NULL))
 		P_ERROR ("PShmBuffer: failed to unlock memory after reading");
 
 	return (pint) to_copy;
@@ -198,7 +198,7 @@ p_shm_buffer_write (PShmBuffer *buf, ppointer data, psize len)
 		return -1;
 	}
 
-	if (!p_shm_lock (buf->shm)) {
+	if (!p_shm_lock (buf->shm, NULL)) {
 		P_ERROR ("PShmBuffer: failed to lock memory for writing");
 		return -1;
 	}
@@ -207,7 +207,7 @@ p_shm_buffer_write (PShmBuffer *buf, ppointer data, psize len)
 	memcpy (&write_pos, (pchar *) addr + SHM_BUFFER_WRITE_OFFSET, sizeof (write_pos));
 
 	if ((psize) __p_shm_buffer_get_free_space (buf) < len) {
-		if (!p_shm_unlock (buf->shm))
+		if (!p_shm_unlock (buf->shm, NULL))
 			P_ERROR ("PShmBuffer: failed to unlock memory after writing");
 
 		return -1;
@@ -219,7 +219,7 @@ p_shm_buffer_write (PShmBuffer *buf, ppointer data, psize len)
 	write_pos = (write_pos + len) % buf->size;
 	memcpy ((pchar *) addr + SHM_BUFFER_WRITE_OFFSET, &write_pos, sizeof (write_pos));
 
-	if (!p_shm_unlock (buf->shm))
+	if (!p_shm_unlock (buf->shm, NULL))
 		P_ERROR ("PShmBuffer: failed to unlock memory after writing");
 
 	return len;
@@ -233,14 +233,14 @@ p_shm_buffer_get_free_space (PShmBuffer *buf)
 	if (buf == NULL)
 		return -1;
 
-	if (!p_shm_lock (buf->shm)) {
+	if (!p_shm_lock (buf->shm, NULL)) {
 		P_ERROR ("PShmBuffer: failed to lock memory to get free space");
 		return -1;
 	}
 
 	space = __p_shm_buffer_get_free_space (buf);
 
-	if (!p_shm_unlock (buf->shm))
+	if (!p_shm_unlock (buf->shm, NULL))
 		P_ERROR ("PShmBuffer: failed to unlock memory after getting free space");
 
 	return space;
@@ -254,14 +254,14 @@ p_shm_buffer_get_used_space (PShmBuffer *buf)
 	if (buf == NULL)
 		return -1;
 
-	if (!p_shm_lock (buf->shm)) {
+	if (!p_shm_lock (buf->shm, NULL)) {
 		P_ERROR ("PShmBuffer: failed to lock memory to get used space");
 		return -1;
 	}
 
 	space = __p_shm_buffer_get_used_space (buf);
 
-	if (!p_shm_unlock (buf->shm))
+	if (!p_shm_unlock (buf->shm, NULL))
 		P_ERROR ("PShmBuffer: failed to unlock memory after getting used space");
 
 	return space;
@@ -283,13 +283,13 @@ p_shm_buffer_clear (PShmBuffer *buf)
 
 	size = p_shm_get_size (buf->shm);
 
-	if (!p_shm_lock (buf->shm)) {
+	if (!p_shm_lock (buf->shm, NULL)) {
 		P_ERROR ("PShmBuffer: failed to lock memory for clearance");
 		return;
 	}
 
 	memset (addr, 0, size);
 
-	if (!p_shm_unlock (buf->shm))
+	if (!p_shm_unlock (buf->shm, NULL))
 		P_ERROR ("PShmBuffer: failed to unlock memory after clearance");
 }

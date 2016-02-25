@@ -303,6 +303,8 @@ __p_error_get_ipc_from_system (pint err_code)
 	case 0:
 		return P_ERROR_IPC_NONE;
 #ifdef P_OS_WIN
+	case ERROR_ALREADY_EXISTS:
+		return P_ERROR_IPC_EXISTS;
 	case ERROR_SEM_OWNER_DIED:
 		return P_ERROR_IPC_NOT_EXISTS;
 	case ERROR_SEM_NOT_FOUND:
@@ -320,6 +322,8 @@ __p_error_get_ipc_from_system (pint err_code)
 	case ERROR_TOO_MANY_POSTS:
 		return P_ERROR_IPC_NO_RESOURCES;
 	case ERROR_INVALID_HANDLE:
+		return P_ERROR_IPC_INVALID_ARGUMENT;
+	case ERROR_INVALID_PARAMETER:
 		return P_ERROR_IPC_INVALID_ARGUMENT;
 #else /* !P_OS_WIN */
 #  ifdef EACCES
@@ -342,6 +346,11 @@ __p_error_get_ipc_from_system (pint err_code)
 		return P_ERROR_IPC_INVALID_ARGUMENT;
 #  endif
 
+#  ifdef EFAULT
+	case EFAULT:
+		return P_ERROR_IPC_INVALID_ARGUMENT;
+#  endif
+
 #  ifdef EFBIG
 	case EFBIG:
 		return P_ERROR_IPC_INVALID_ARGUMENT;
@@ -349,6 +358,11 @@ __p_error_get_ipc_from_system (pint err_code)
 
 #  ifdef EINVAL
 	case EINVAL:
+		return P_ERROR_IPC_INVALID_ARGUMENT;
+#  endif
+
+#  ifdef ELOOP
+	case ELOOP:
 		return P_ERROR_IPC_INVALID_ARGUMENT;
 #  endif
 

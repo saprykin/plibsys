@@ -16,8 +16,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA.
  */
 
-/* TODO: error report system */
-
 #include "plib-private.h"
 #include "pmem.h"
 #include "pshm.h"
@@ -42,26 +40,40 @@ struct _PShm {
 	PShmAccessPerms	perms;
 };
 
-static pboolean __p_shm_create_handle (PShm *shm);
+static pboolean __p_shm_create_handle (PShm *shm, PError **error);
 static void __p_shm_clean_handle (PShm *shm);
 
 static pboolean
-__p_shm_create_handle (PShm *shm)
+__p_shm_create_handle (PShm	*shm,
+		       PError	**error)
 {
 	pboolean			is_exists;
 	MEMORY_BASIC_INFORMATION	mem_stat;
 	DWORD				protect;
 
-	if (shm == NULL || shm->platform_key == NULL)
+	if (shm == NULL || shm->platform_key == NULL) {
+		p_error_set_error_p (error,
+				     (pint) P_ERROR_IPC_INVALID_ARGUMENT,
+				     0,
+				     "Invalid input argument");
 		return FALSE;
+	}
 
 	is_exists = FALSE;
 
 	protect = (shm->perms == P_SHM_ACCESS_READONLY) ? PAGE_READONLY : PAGE_READWRITE;
 
 	/* Multibyte character set must be enabled in MS VS */
-	if ((shm->shm_hdl = CreateFileMapping (INVALID_HANDLE_VALUE, NULL, protect, 0, (DWORD) shm->size, shm->platform_key)) == NULL) {
-		P_ERROR ("PShm: CreateFleMapping failed");
+	if ((shm->shm_hdl = CreateFileMapping (INVALID_HANDLE_VALUE,
+					       NULL,
+					       protect,
+					       0,
+					       (DWORD) shm->size,
+					       shm->platform_key)) == NULL) {
+		p_error_set_error_p (error,
+				     (pint) __p_error_get_last_ipc (),
+				     (pint) GetLastError (),
+				     "Failed to call CreateFileMapping() to create file mapping");
 		__p_shm_clean_handle (shm);
 		return FALSE;
 	}
@@ -69,7 +81,10 @@ __p_shm_create_handle (PShm *shm)
 	protect = (protect == PAGE_READONLY) ? FILE_MAP_READ : FILE_MAP_ALL_ACCESS;
 
 	if ((shm->addr = MapViewOfFile (shm->shm_hdl, protect, 0, 0, 0)) == NULL) {
-		P_ERROR ("PShm: MapViewOfFile failed");
+		p_error_set_error_p (error,
+				     (pint) __p_error_get_last_ipc (),
+				     (pint) GetLastError (),
+				     "Failed to call MapViewOfFile() to map file to memory");
 		__p_shm_clean_handle (shm);
 		return FALSE;
 	}
@@ -78,7 +93,10 @@ __p_shm_create_handle (PShm *shm)
 		is_exists = TRUE;
 
 	if (!VirtualQuery (shm->addr, &mem_stat, sizeof (mem_stat))) {
-		P_ERROR ("PShm: VirtualQuery failed");
+		p_error_set_error_p (error,
+				     (pint) __p_error_get_last_ipc (),
+				     (pint) GetLastError (),
+				     "Failed to call VirtualQuery() to get memory map info");
 		__p_shm_clean_handle (shm);
 		return FALSE;
 	}
@@ -87,8 +105,7 @@ __p_shm_create_handle (PShm *shm)
 
 	if ((shm->sem = p_semaphore_new (shm->platform_key, 1,
 					 is_exists ? P_SEM_ACCESS_OPEN : P_SEM_ACCESS_CREATE,
-					 NULL)) == NULL) {
-		P_ERROR ("PShm: failed create PSemaphore object");
+					 error)) == NULL) {
 		__p_shm_clean_handle (shm);
 		return FALSE;
 	}
@@ -103,10 +120,10 @@ __p_shm_clean_handle (PShm *shm)
 		return;
 
 	if (shm->addr && !UnmapViewOfFile ((char *) shm->addr))
-		P_ERROR ("PShm: UnmapViewOfFile failed");
+		P_ERROR ("PShm: UnmapViewOfFile() failed");
 
 	if (shm->shm_hdl && !CloseHandle (shm->shm_hdl))
-		P_ERROR ("PShm: CloseHandle failed");
+		P_ERROR ("PShm: CloseHandle() failed");
 
 	if (shm->sem) {
 		p_semaphore_free (shm->sem);
@@ -121,22 +138,33 @@ __p_shm_clean_handle (PShm *shm)
 P_LIB_API PShm *
 p_shm_new (const pchar		*name,
 	   psize		size,
-	   PShmAccessPerms	perms)
+	   PShmAccessPerms	perms,
+	   PError		**error)
 {
 	PShm *ret;
 	pchar *new_name;
 
-
-	if (name == NULL)
+	if (name == NULL) {
+		p_error_set_error_p (error,
+				     (pint) P_ERROR_IPC_INVALID_ARGUMENT,
+				     0,
+				     "Invalid input argument");
 		return NULL;
+	}
 
 	if ((ret = p_malloc0 (sizeof (PShm))) == NULL) {
-		P_ERROR ("PShm: failed to allocate memory");
+		p_error_set_error_p (error,
+				     (pint) P_ERROR_IPC_NO_RESOURCES,
+				     0,
+				     "Failed to allocate memory for shared segment");
 		return NULL;
 	}
 
 	if ((new_name = p_malloc0 (strlen (name) + strlen (P_SHM_SUFFIX) + 1)) == NULL) {
-		P_ERROR ("PShm: failed to allocate memory");
+		p_error_set_error_p (error,
+				     (pint) P_ERROR_IPC_NO_RESOURCES,
+				     0,
+				     "Failed to allocate memory for segment name");
 		p_shm_free (ret);
 		return NULL;
 	}
@@ -151,8 +179,7 @@ p_shm_new (const pchar		*name,
 
 	p_free (new_name);
 
-	if (!__p_shm_create_handle (ret)) {
-		P_ERROR ("PShm: failed to create system handle");
+	if (!__p_shm_create_handle (ret, error)) {
 		p_shm_free (ret);
 		return NULL;
 	}
@@ -184,29 +211,33 @@ p_shm_free (PShm *shm)
 }
 
 P_LIB_API pboolean
-p_shm_lock (PShm *shm)
+p_shm_lock (PShm	*shm,
+	    PError	**error)
 {
-	if (shm == NULL)
+	if (shm == NULL) {
+		p_error_set_error_p (error,
+				     (pint) P_ERROR_IPC_INVALID_ARGUMENT,
+				     0,
+				     "Invalid input argument");
 		return FALSE;
+	}
 
-	if (!p_semaphore_acquire (shm->sem, NULL)) {
-		P_ERROR ("PShm: failed to lock memory");
-		return FALSE;
-	} else
-		return TRUE;
+	return p_semaphore_acquire (shm->sem, error);
 }
 
 P_LIB_API pboolean
-p_shm_unlock (PShm *shm)
+p_shm_unlock (PShm	*shm,
+	      PError	**error)
 {
-	if (shm == NULL)
+	if (shm == NULL) {
+		p_error_set_error_p (error,
+				     (pint) P_ERROR_IPC_INVALID_ARGUMENT,
+				     0,
+				     "Invalid input argument");
 		return FALSE;
+	}
 
-	if (!p_semaphore_release (shm->sem, NULL)) {
-		P_ERROR ("PShm: failed to unlock memory");
-		return FALSE;
-	} else
-		return TRUE;
+	return p_semaphore_release (shm->sem, error);
 }
 
 P_LIB_API ppointer

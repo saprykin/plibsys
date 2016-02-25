@@ -16,8 +16,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA.
  */
 
-/* TODO: error report system */
-
 #include "plib-private.h"
 #include "pmem.h"
 #include "pshm.h"
@@ -49,30 +47,42 @@ struct _PShm {
 	PShmAccessPerms	perms;
 };
 
-static pboolean __p_shm_create_handle (PShm *shm);
+static pboolean __p_shm_create_handle (PShm *shm, PError **error);
 static void __p_shm_clean_handle (PShm *shm);
 
 static pboolean
-__p_shm_create_handle (PShm *shm)
+__p_shm_create_handle (PShm	*shm,
+		       PError	**error)
 {
 	pboolean	is_exists;
 	pint		flags, built;
 	struct shmid_ds	shm_stat;
 
-	if (shm == NULL || shm->platform_key == NULL)
+	if (shm == NULL || shm->platform_key == NULL) {
+		p_error_set_error_p (error,
+				     (pint) P_ERROR_IPC_INVALID_ARGUMENT,
+				     0,
+				     "Invalid input argument");
 		return FALSE;
+	}
 
 	is_exists = FALSE;
 
 	if ((built = __p_ipc_unix_create_key_file (shm->platform_key)) == -1) {
-		P_ERROR ("PShm: failed to create key file");
+		p_error_set_error_p (error,
+				     (pint) __p_error_get_last_ipc (),
+				     errno,
+				     "Failed to create key file");
 		__p_shm_clean_handle (shm);
 		return FALSE;
 	} else if (built == 0)
 		shm->file_created = TRUE;
 
 	if ((shm->unix_key = __p_ipc_unix_get_ftok_key (shm->platform_key)) == -1) {
-		P_ERROR ("PShm: failed to get unique IPC key");
+		p_error_set_error_p (error,
+				     (pint) __p_error_get_last_ipc (),
+				     errno,
+				     "Failed to get unique IPC key");
 		__p_shm_clean_handle (shm);
 		return FALSE;
 	}
@@ -83,17 +93,25 @@ __p_shm_create_handle (PShm *shm)
 		if (errno == EEXIST) {
 			is_exists = TRUE;
 
-			if ((shm->shm_hdl = shmget (shm->unix_key, 0, flags)) == P_SHM_INVALID_HDL) {
-				P_ERROR ("PShm: shmget failed");
-				__p_shm_clean_handle (shm);
-				return FALSE;
-			}
+			shm->shm_hdl = shmget (shm->unix_key, 0, flags);
 		}
 	} else
 		shm->file_created = (built == 1);
 
+	if (shm->shm_hdl == P_SHM_INVALID_HDL) {
+		p_error_set_error_p (error,
+				     (pint) __p_error_get_last_ipc (),
+				     errno,
+				     "Failed to call shmget() to create memory segment");
+		__p_shm_clean_handle (shm);
+		return FALSE;
+	}
+
 	if (shmctl (shm->shm_hdl, IPC_STAT, &shm_stat) == -1) {
-		P_ERROR ("PShm: failed to get memory size");
+		p_error_set_error_p (error,
+				     (pint) __p_error_get_last_ipc (),
+				     errno,
+				     "Failed to call shmctl() to get memory segment size");
 		__p_shm_clean_handle (shm);
 		return FALSE;
 	}
@@ -102,16 +120,18 @@ __p_shm_create_handle (PShm *shm)
 
 	flags = (shm->perms == P_SHM_ACCESS_READONLY) ? SHM_RDONLY : 0;
 
-	if (shm->shm_hdl == P_SHM_INVALID_HDL || (shm->addr = shmat (shm->shm_hdl, 0, flags)) == (void *) -1) {
-		P_ERROR ("PShm: shmget or shmat failed");
+	if ((shm->addr = shmat (shm->shm_hdl, 0, flags)) == (void *) -1) {
+		p_error_set_error_p (error,
+				     (pint) __p_error_get_last_ipc (),
+				     errno,
+				     "Failed to call shmat() to attach to the memory segment");
 		__p_shm_clean_handle (shm);
 		return FALSE;
 	}
 
 	if ((shm->sem = p_semaphore_new (shm->platform_key, 1,
 					 is_exists ? P_SEM_ACCESS_OPEN : P_SEM_ACCESS_CREATE,
-					 NULL)) == NULL) {
-		P_ERROR ("PShm: failed create PSemaphore object");
+					 error)) == NULL) {
 		__p_shm_clean_handle (shm);
 		return FALSE;
 	}
@@ -129,17 +149,17 @@ __p_shm_clean_handle (PShm *shm)
 
 	if (shm->addr != NULL) {
 		if (shmdt (shm->addr) == -1)
-			P_ERROR ("PShm: shmdt failed");
+			P_ERROR ("PShm: shmdt() failed");
 
 		if (shmctl (shm->shm_hdl, IPC_STAT, &shm_stat) == -1)
-			P_ERROR ("PShm: failed to get shm stats");
+			P_ERROR ("PShm: failed to call shmctl() with IPC_STAT");
 
 		if (shm_stat.shm_nattch == 0 && shmctl (shm->shm_hdl, IPC_RMID, 0) == -1)
-			P_ERROR ("PShm: failed to perform IPC_RMID");
+			P_ERROR ("PShm: failed to call shmctl() with IPC_RMID");
 	}
 
 	if (shm->file_created && unlink (shm->platform_key) == -1)
-		P_ERROR ("PShm: failed to remove key file");
+		P_ERROR ("PShm: failed to remove key file with unlink()");
 
 	shm->file_created = FALSE;
 	shm->unix_key = -1;
@@ -157,22 +177,33 @@ __p_shm_clean_handle (PShm *shm)
 P_LIB_API PShm *
 p_shm_new (const pchar		*name,
 	   psize		size,
-	   PShmAccessPerms	perms)
+	   PShmAccessPerms	perms,
+	   PError		**error)
 {
 	PShm	*ret;
 	pchar	*new_name;
 
-
-	if (name == NULL)
+	if (name == NULL) {
+		p_error_set_error_p (error,
+				     (pint) P_ERROR_IPC_INVALID_ARGUMENT,
+				     0,
+				     "Invalid input argument");
 		return NULL;
+	}
 
 	if ((ret = p_malloc0 (sizeof (PShm))) == NULL) {
-		P_ERROR ("PShm: failed to allocate memory");
+		p_error_set_error_p (error,
+				     (pint) P_ERROR_IPC_NO_RESOURCES,
+				     0,
+				     "Failed to allocate memory for shared segment");
 		return NULL;
 	}
 
 	if ((new_name = p_malloc0 (strlen (name) + strlen (P_SHM_SUFFIX) + 1)) == NULL) {
-		P_ERROR ("PShm: failed to allocate memory");
+		p_error_set_error_p (error,
+				     (pint) P_ERROR_IPC_NO_RESOURCES,
+				     0,
+				     "Failed to allocate memory for segment name");
 		p_shm_free (ret);
 		return NULL;
 	}
@@ -186,8 +217,7 @@ p_shm_new (const pchar		*name,
 
 	p_free (new_name);
 
-	if (!__p_shm_create_handle (ret)) {
-		P_ERROR ("PShm: failed to create system handle");
+	if (!__p_shm_create_handle (ret, error)) {
 		p_shm_free (ret);
 		return NULL;
 	}
@@ -223,29 +253,33 @@ p_shm_free (PShm *shm)
 }
 
 P_LIB_API pboolean
-p_shm_lock (PShm *shm)
+p_shm_lock (PShm	*shm,
+	    PError	**error)
 {
-	if (shm == NULL)
+	if (shm == NULL) {
+		p_error_set_error_p (error,
+				     (pint) P_ERROR_IPC_INVALID_ARGUMENT,
+				     0,
+				     "Invalid input argument");
 		return FALSE;
+	}
 
-	if (!p_semaphore_acquire (shm->sem, NULL)) {
-		P_ERROR ("PShm: failed to lock memory");
-		return FALSE;
-	} else
-		return TRUE;
+	return p_semaphore_acquire (shm->sem, error);
 }
 
 P_LIB_API pboolean
-p_shm_unlock (PShm *shm)
+p_shm_unlock (PShm	*shm,
+	      PError	**error)
 {
-	if (shm == NULL)
+	if (shm == NULL) {
+		p_error_set_error_p (error,
+				     (pint) P_ERROR_IPC_INVALID_ARGUMENT,
+				     0,
+				     "Invalid input argument");
 		return FALSE;
+	}
 
-	if (!p_semaphore_release (shm->sem, NULL)) {
-		P_ERROR ("PShm: failed to unlock memory");
-		return FALSE;
-	} else
-		return TRUE;
+	return p_semaphore_release (shm->sem, error);
 }
 
 P_LIB_API ppointer

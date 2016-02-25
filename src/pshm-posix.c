@@ -16,8 +16,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA.
  */
 
-/* TODO: error report system */
-
 #include "plib-private.h"
 #include "pmem.h"
 #include "pshm.h"
@@ -43,18 +41,24 @@ struct _PShm {
 	PShmAccessPerms perms;
 };
 
-static pboolean __p_shm_create_handle (PShm *shm);
+static pboolean __p_shm_create_handle (PShm *shm, PError **error);
 static void __p_shm_clean_handle (PShm *shm);
 
 static pboolean
-__p_shm_create_handle (PShm *shm)
+__p_shm_create_handle (PShm	*shm,
+		       PError	**error)
 {
 	pboolean	is_exists;
 	pint		fd, flags;
 	struct stat	stat_buf;
 
-	if (shm == NULL || shm->platform_key == NULL)
+	if (shm == NULL || shm->platform_key == NULL) {
+		p_error_set_error_p (error,
+				     (pint) P_ERROR_IPC_INVALID_ARGUMENT,
+				     0,
+				     "Invalid input argument");
 		return FALSE;
+	}
 
 	is_exists = FALSE;
 
@@ -69,20 +73,26 @@ __p_shm_create_handle (PShm *shm)
 			while ((fd = shm_open (shm->platform_key, O_RDWR, 0660)) == P_SHM_INVALID_HDL
 			       && errno == EINTR)
 			;
-
-			if (fd == P_SHM_INVALID_HDL) {
-				P_ERROR ("PShm: shm_open failed");
-				__p_shm_clean_handle (shm);
-				return FALSE;
-			}
 		}
 	} else
 		shm->shm_created = TRUE;
 
+	if (fd == P_SHM_INVALID_HDL) {
+		p_error_set_error_p (error,
+				     (pint) __p_error_get_last_ipc (),
+				     errno,
+				     "Failed to call shm_open() to create memory segment");
+		__p_shm_clean_handle (shm);
+		return FALSE;
+	}
+
 	/* Try to get size of the existing file descriptor */
 	if (is_exists) {
 		if (fstat (fd, &stat_buf) == -1) {
-			P_ERROR ("PShm: failed to get region size");
+			p_error_set_error_p (error,
+					     (pint) __p_error_get_last_ipc (),
+					     errno,
+					     "Failed to call fstat() to get memory segment size");
 			close (fd);
 			__p_shm_clean_handle (shm);
 			return FALSE;
@@ -91,7 +101,10 @@ __p_shm_create_handle (PShm *shm)
 		shm->size = stat_buf.st_size;
 	} else {
 		if ((ftruncate (fd, shm->size)) == -1) {
-			P_ERROR ("PShm: failed to truncate file");
+			p_error_set_error_p (error,
+					     (pint) __p_error_get_last_ipc (),
+					     errno,
+					     "Failed to call ftruncate() to set memory segment size");
 			close (fd);
 			__p_shm_clean_handle (shm);
 			return FALSE;
@@ -101,7 +114,10 @@ __p_shm_create_handle (PShm *shm)
 	flags = (shm->perms == P_SHM_ACCESS_READONLY) ? PROT_READ : PROT_READ | PROT_WRITE;
 
 	if ((shm->addr = mmap (NULL, shm->size, flags, MAP_SHARED, fd, 0)) == (void *) -1) {
-		P_ERROR ("PShm: mmap failed");
+		p_error_set_error_p (error,
+				     (pint) __p_error_get_last_ipc (),
+				     errno,
+				     "Failed to call mmap() to map memory segment");
 		shm->addr = NULL;
 		close (fd);
 		__p_shm_clean_handle (shm);
@@ -113,8 +129,7 @@ __p_shm_create_handle (PShm *shm)
 
 	if ((shm->sem = p_semaphore_new (shm->platform_key, 1,
 					 is_exists ? P_SEM_ACCESS_OPEN : P_SEM_ACCESS_CREATE,
-					 NULL)) == NULL) {
-		P_ERROR ("PShm: failed create PSemaphore object");
+					 error)) == NULL) {
 		__p_shm_clean_handle (shm);
 		return FALSE;
 	}
@@ -129,10 +144,10 @@ __p_shm_clean_handle (PShm *shm)
 		return;
 
 	if (shm->addr != NULL && munmap (shm->addr, shm->size) == -1)
-		P_ERROR ("PShm: failed to unmap shared memory");
+		P_ERROR ("PShm: failed to unmap shared memory with munmap()");
 
 	if (shm->shm_created && shm_unlink (shm->platform_key) == -1)
-		P_ERROR ("PShm: failed to unlink shared memory");
+		P_ERROR ("PShm: failed to unlink shared memory with shm_unlink()");
 
 	shm->shm_created = FALSE;
 
@@ -148,22 +163,33 @@ __p_shm_clean_handle (PShm *shm)
 P_LIB_API PShm *
 p_shm_new (const pchar		*name,
 	   psize		size,
-	   PShmAccessPerms	perms)
+	   PShmAccessPerms	perms,
+	   PError		**error)
 {
 	PShm *ret;
 	pchar *new_name;
 
-
-	if (name == NULL)
+	if (name == NULL) {
+		p_error_set_error_p (error,
+				     (pint) P_ERROR_IPC_INVALID_ARGUMENT,
+				     0,
+				     "Invalid input argument");
 		return NULL;
+	}
 
 	if ((ret = p_malloc0 (sizeof (PShm))) == NULL) {
-		P_ERROR ("PShm: failed to allocate memory");
+		p_error_set_error_p (error,
+				     (pint) P_ERROR_IPC_NO_RESOURCES,
+				     0,
+				     "Failed to allocate memory for shared segment");
 		return NULL;
 	}
 
 	if ((new_name = p_malloc0 (strlen (name) + strlen (P_SHM_SUFFIX) + 1)) == NULL) {
-		P_ERROR ("PShm: failed to allocate memory");
+		p_error_set_error_p (error,
+				     (pint) P_ERROR_IPC_NO_RESOURCES,
+				     0,
+				     "Failed to allocate memory for segment name");
 		p_shm_free (ret);
 		return NULL;
 	}
@@ -177,8 +203,7 @@ p_shm_new (const pchar		*name,
 
 	p_free (new_name);
 
-	if (!__p_shm_create_handle (ret)) {
-		P_ERROR ("PShm: failed to create system handle");
+	if (!__p_shm_create_handle (ret, error)) {
 		p_shm_free (ret);
 		return NULL;
 	}
@@ -214,29 +239,33 @@ p_shm_free (PShm *shm)
 }
 
 P_LIB_API pboolean
-p_shm_lock (PShm *shm)
+p_shm_lock (PShm	*shm,
+	    PError	**error)
 {
-	if (shm == NULL)
+	if (shm == NULL) {
+		p_error_set_error_p (error,
+				     (pint) P_ERROR_IPC_INVALID_ARGUMENT,
+				     0,
+				     "Invalid input argument");
 		return FALSE;
+	}
 
-	if (!p_semaphore_acquire (shm->sem, NULL)) {
-		P_ERROR ("PShm: failed to lock memory");
-		return FALSE;
-	} else
-		return TRUE;
+	return p_semaphore_acquire (shm->sem, error);
 }
 
 P_LIB_API pboolean
-p_shm_unlock (PShm *shm)
+p_shm_unlock (PShm	*shm,
+	      PError	**error)
 {
-	if (shm == NULL)
+	if (shm == NULL) {
+		p_error_set_error_p (error,
+				     (pint) P_ERROR_IPC_INVALID_ARGUMENT,
+				     0,
+				     "Invalid input argument");
 		return FALSE;
+	}
 
-	if (!p_semaphore_release (shm->sem, NULL)) {
-		P_ERROR ("PShm: failed to unlock memory");
-		return FALSE;
-	} else
-		return TRUE;
+	return p_semaphore_release (shm->sem, error);
 }
 
 P_LIB_API ppointer
