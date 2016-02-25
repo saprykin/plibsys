@@ -65,6 +65,17 @@ pint		__p_ipc_unix_get_ftok_key		(const pchar *file_name);
 #endif /* !P_OS_WIN */
 
 /**
+ * @brief Generates platform-independent key for IPC usage, object name for Windows and
+ * file name to use with ftok () for UNIX-like systems.
+ * @param name Object name.
+ * @param posix TRUE if key will be used for POSIX IPC calls, otherwise FALSE. This
+ * parameter is not used on Windows platform.
+ * @return Platform-independent key for IPC usage.
+ * @since 0.0.1
+ */
+pchar *		__p_ipc_get_platform_key		(const pchar *name, pboolean posix);
+
+/**
  * @brief Gets IO error code from the system error code
  * @param err_code System error code.
  * @return IO error code.
@@ -89,17 +100,6 @@ PErrorIPC	__p_error_get_ipc_from_system		(pint err_code);
  * @return IPC error code.
  */
 PErrorIPC	__p_error_get_last_ipc			();
-
-/**
- * @brief Generates platform-independent key for IPC usage, object name for Windows and
- * file name to use with ftok () for UNIX-like systems.
- * @param name Object name.
- * @param posix TRUE if key will be used for POSIX IPC calls, otherwise FALSE. This
- * parameter is not used on Windows platform.
- * @return Platform-independent key for IPC usage.
- * @since 0.0.1
- */
-pchar *		__p_ipc_get_platform_key		(const pchar *name, pboolean posix);
 
 P_END_DECLS
 
