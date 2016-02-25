@@ -49,6 +49,51 @@
 
 P_BEGIN_DECLS
 
+/** Enum with error domains */
+typedef enum _PErrorDomain {
+	P_ERROR_DOMAIN_NONE		= 0,	/**< No domain was specified.				*/
+	P_ERROR_DOMAIN_IO		= 500,	/**< Input/output domain.				*/
+	P_ERROR_DOMAIN_IPC		= 600	/**< Interprocess communication domain.			*/
+} PErrorDomain;
+
+/** Enum with IO errors */
+typedef enum _PErrorIO {
+	P_ERROR_IO_NONE			= 500,	/**< No error.						*/
+	P_ERROR_IO_NO_RESOURCES		= 501,	/**< OS hasn't enough resources.			*/
+	P_ERROR_IO_NOT_AVAILABLE	= 502,	/**< Resource isn't available.				*/
+	P_ERROR_IO_ACCESS_DENIED	= 503,	/**< Access denied.					*/
+	P_ERROR_IO_CONNECTED		= 504,	/**< Already connected.					*/
+	P_ERROR_IO_CONNECTING		= 505,	/**< Connection in progress.				*/
+	P_ERROR_IO_ABORTED		= 506,	/**< Operation aborted.					*/
+	P_ERROR_IO_INVALID_ARGUMENT	= 507,	/**< Invalid argument specified.			*/
+	P_ERROR_IO_NOT_SUPPORTED	= 508,	/**< Operation not supported.				*/
+	P_ERROR_IO_TIMED_OUT		= 509,	/**< Operation timed out.				*/
+	P_ERROR_IO_WOULD_BLOCK		= 510,	/**< Operation cannot be completed immediatly.		*/
+	P_ERROR_IO_ADDRESS_IN_USE	= 511,	/**< Address is already under usage.			*/
+	P_ERROR_IO_CONNECTION_REFUSED	= 512,	/**< Connection refused.				*/
+	P_ERROR_IO_NOT_CONNECTED	= 513,	/**< Connection required first.				*/
+	P_ERROR_IO_FAILED		= 514	/**< General error.					*/
+} PErrorIO;
+
+/** Enum with IPC errors */
+typedef enum _PErrorIPC {
+	P_ERROR_IPC_NONE		= 600,	/**< No error.						*/
+	P_ERROR_IPC_ACCESS		= 601,	/**< Not enough rights to access object or its key.	*/
+	P_ERROR_IPC_EXISTS		= 602,	/**< Object already exists and no proper open flags
+						     were specified.					*/
+	P_ERROR_IPC_NOT_EXISTS		= 603,	/**< Object doesn't exist or was removed before, and
+						     no proper create flags were specified.		*/
+	P_ERROR_IPC_NO_RESOURCES	= 604,	/**< Not enough system resources or memory to perform
+						     operation.						*/
+	P_ERROR_IPC_OVERFLOW		= 605,	/**< Semaphore value overflow.				*/
+	P_ERROR_IPC_NAMETOOLONG		= 606,	/**< Object name is too long.				*/
+	P_ERROR_IPC_INVALID_ARGUMENT	= 607,	/**< Invalid argument (parameter) specified.		*/
+	P_ERROR_IPC_NOT_IMPLEMENTED	= 608,	/**< Operation not implemented (for example when using
+						     some file systems).				*/
+	P_ERROR_IPC_DEADLOCK		= 609,	/**< Deadlock detected.					*/
+	P_ERROR_IPC_FAILED		= 610	/**< General error.					*/
+} PErrorIPC;
+
 /** Opaque data structure for an error object. */
 typedef struct _PError PError;
 
@@ -98,6 +143,14 @@ P_LIB_API pint		p_error_get_code	(PError		*error);
  * i.e. when internal library call failed. Do not rely on this code.
  */
 P_LIB_API pint		p_error_get_native_code	(PError		*error);
+
+/**
+ * @brief Gets error domain.
+ * @param error #PError object to get domain from.
+ * @return Error domain in case of success, #P_ERROR_DOMAIN_NONE otherwise.
+ * @since 0.0.1
+ */
+P_LIB_API PErrorDomain	p_error_get_domain	(PError		*error);
 
 /**
  * @brief Creates a copy of a #PError object.
