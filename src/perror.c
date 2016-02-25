@@ -415,7 +415,7 @@ __p_error_get_ipc_from_system (pint err_code)
 PErrorIPC
 __p_error_get_last_ipc ()
 {
-	return __p_error_get_io_from_system (__p_error_get_last_error ());
+	return __p_error_get_ipc_from_system (__p_error_get_last_error ());
 }
 
 P_LIB_API PError *
