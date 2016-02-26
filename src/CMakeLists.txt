@@ -9,6 +9,7 @@ set (OUTPUT_DIR ${CMAKE_BINARY_DIR})
 plib_detect_target_platform (PLIB_TARGET_PLATFORM)
 plib_detect_c_compiler (PLIB_C_COMPILER)
 plib_detect_target_os (PLIB_TARGET_OS)
+plib_detect_os_bits (PLIB_OS_BITS)
 
 # CMP0042, see http://www.cmake.org/Wiki/CMake_RPATH_handling
 if (PLIB_TARGET_OS STREQUAL darwin)
@@ -493,6 +494,7 @@ SET (PLIB_SUMMARY
 
         Platfrom:               ${PLIB_TARGET_OS}
         Compiler:               ${PLIB_C_COMPILER}
+        Address model:          ${PLIB_OS_BITS} bit
 
         Thread model:           ${PLIB_THREAD_MODEL}
         IPC model:              ${PLIB_IPC_MODEL}
