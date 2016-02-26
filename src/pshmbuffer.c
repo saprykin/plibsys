@@ -42,9 +42,7 @@ __p_shm_buffer_get_free_space (PShmBuffer *buf)
 	psize		read_pos, write_pos;
 	ppointer	addr;
 
-	if (buf == NULL)
-		return -1;
-
+	/* This should not happen */
 	if ((addr = p_shm_get_address (buf->shm)) == NULL) {
 		P_ERROR ("PShmBuffer: failed to get memory address");
 		return -1;
@@ -67,9 +65,7 @@ __p_shm_buffer_get_used_space (PShmBuffer *buf)
 	psize		read_pos, write_pos;
 	ppointer	addr;
 
-	if (buf == NULL)
-		return -1;
-
+	/* This should not happen */
 	if ((addr = p_shm_get_address (buf->shm)) == NULL) {
 		P_ERROR ("PShmBuffer: failed to get memory address");
 		return -1;
@@ -87,27 +83,41 @@ __p_shm_buffer_get_used_space (PShmBuffer *buf)
 }
 
 P_LIB_API PShmBuffer *
-p_shm_buffer_new (const pchar *name, psize size)
+p_shm_buffer_new (const pchar	*name,
+		  psize		size,
+		  PError	**error)
 {
 	PShmBuffer	*ret;
 	PShm		*shm;
 
-	if (name == NULL)
-		return NULL;
-
-	if ((shm = p_shm_new (name, (size != 0) ? size + SHM_BUFFER_DATA_OFFSET + 1 : 0, P_SHM_ACCESS_READWRITE, NULL)) == NULL) {
-		P_ERROR ("PShmBuffer: failed to allocate memory");
+	if (name == NULL) {
+		p_error_set_error_p (error,
+				     (pint) P_ERROR_IPC_INVALID_ARGUMENT,
+				     0,
+				     "Invalid input argument");
 		return NULL;
 	}
 
+	if ((shm = p_shm_new (name,
+			      (size != 0) ? size + SHM_BUFFER_DATA_OFFSET + 1 : 0,
+			      P_SHM_ACCESS_READWRITE,
+			      error)) == NULL)
+		return NULL;
+
 	if (p_shm_get_size (shm) - SHM_BUFFER_DATA_OFFSET - 1 <= 0) {
-		P_ERROR ("PShmBuffer: too small memory segment opened");
+		p_error_set_error_p (error,
+				     (pint) P_ERROR_IPC_INVALID_ARGUMENT,
+				     0,
+				     "Too small memory segment to hold required data");
 		p_shm_free (shm);
 		return NULL;
 	}
 
 	if ((ret = p_malloc0 (sizeof (PShmBuffer))) == NULL) {
-		P_ERROR ("PShmBuffer: failed to allocate memory");
+		p_error_set_error_p (error,
+				     (pint) P_ERROR_IPC_NO_RESOURCES,
+				     0,
+				     "Failed to allocate memory for shared buffer");
 		p_shm_free (shm);
 		return NULL;
 	}
@@ -138,32 +148,41 @@ p_shm_buffer_take_ownership (PShmBuffer *buf)
 }
 
 P_LIB_API pint
-p_shm_buffer_read (PShmBuffer *buf, ppointer storage, psize len)
+p_shm_buffer_read (PShmBuffer	*buf,
+		   ppointer	storage,
+		   psize	len,
+		   PError	**error)
 {
 	psize		read_pos, write_pos;
 	psize		data_aval, to_copy;
 	puint		i;
 	ppointer	addr;
 
-	if (buf == NULL || storage == NULL || len == 0)
+	if (buf == NULL || storage == NULL || len == 0) {
+		p_error_set_error_p (error,
+				     (pint) P_ERROR_IPC_INVALID_ARGUMENT,
+				     0,
+				     "Invalid input argument");
 		return -1;
+	}
 
 	if ((addr = p_shm_get_address (buf->shm)) == NULL) {
-		P_ERROR ("PShmBuffer: failed to get memory address");
+		p_error_set_error_p (error,
+				     (pint) P_ERROR_IPC_INVALID_ARGUMENT,
+				     0,
+				     "Unable to get shared memory address");
 		return -1;
 	}
 
-	if (!p_shm_lock (buf->shm, NULL)) {
-		P_ERROR ("PShmBuffer: failed to lock memory for reading");
+	if (!p_shm_lock (buf->shm, error))
 		return -1;
-	}
 
 	memcpy (&read_pos, (pchar *) addr + SHM_BUFFER_READ_OFFSET, sizeof (read_pos));
 	memcpy (&write_pos, (pchar *) addr + SHM_BUFFER_WRITE_OFFSET, sizeof (write_pos));
 
 	if (read_pos == write_pos) {
-		if (!p_shm_unlock (buf->shm, NULL))
-			P_ERROR ("PShmBuffer: failed to unlock memory after reading");
+		if (!p_shm_unlock (buf->shm, error))
+			return -1;
 
 		return 0;
 	}
@@ -177,40 +196,49 @@ p_shm_buffer_read (PShmBuffer *buf, ppointer storage, psize len)
 	read_pos = (read_pos + to_copy) % buf->size;
 	memcpy ((pchar *) addr + SHM_BUFFER_READ_OFFSET, &read_pos, sizeof (read_pos));
 
-	if (!p_shm_unlock (buf->shm, NULL))
-		P_ERROR ("PShmBuffer: failed to unlock memory after reading");
+	if (!p_shm_unlock (buf->shm, error))
+		return -1;
 
 	return (pint) to_copy;
 }
 
 P_LIB_API pssize
-p_shm_buffer_write (PShmBuffer *buf, ppointer data, psize len)
+p_shm_buffer_write (PShmBuffer	*buf,
+		    ppointer	data,
+		    psize	len,
+		    PError	**error)
 {
 	psize		read_pos, write_pos;
 	puint		i;
 	ppointer	addr;
 
-	if (buf == NULL || data == NULL || len == 0)
+	if (buf == NULL || data == NULL || len == 0) {
+		p_error_set_error_p (error,
+				     (pint) P_ERROR_IPC_INVALID_ARGUMENT,
+				     0,
+				     "Invalid input argument");
 		return -1;
+	}
 
 	if ((addr = p_shm_get_address (buf->shm)) == NULL) {
-		P_ERROR ("PShmBuffer: failed to get memory address");
+		p_error_set_error_p (error,
+				     (pint) P_ERROR_IPC_INVALID_ARGUMENT,
+				     0,
+				     "Unable to get shared memory address");
 		return -1;
 	}
 
-	if (!p_shm_lock (buf->shm, NULL)) {
-		P_ERROR ("PShmBuffer: failed to lock memory for writing");
+	if (!p_shm_lock (buf->shm, error))
 		return -1;
-	}
 
 	memcpy (&read_pos, (pchar *) addr + SHM_BUFFER_READ_OFFSET, sizeof (read_pos));
 	memcpy (&write_pos, (pchar *) addr + SHM_BUFFER_WRITE_OFFSET, sizeof (write_pos));
 
 	if ((psize) __p_shm_buffer_get_free_space (buf) < len) {
-		if (!p_shm_unlock (buf->shm, NULL))
-			P_ERROR ("PShmBuffer: failed to unlock memory after writing");
+		if (!p_shm_unlock (buf->shm, error))
+			return -1;
 
-		return -1;
+		return 0;
 	}
 
 	for (i = 0; i < len; ++i)
@@ -219,50 +247,58 @@ p_shm_buffer_write (PShmBuffer *buf, ppointer data, psize len)
 	write_pos = (write_pos + len) % buf->size;
 	memcpy ((pchar *) addr + SHM_BUFFER_WRITE_OFFSET, &write_pos, sizeof (write_pos));
 
-	if (!p_shm_unlock (buf->shm, NULL))
-		P_ERROR ("PShmBuffer: failed to unlock memory after writing");
+	if (!p_shm_unlock (buf->shm, error))
+		return -1;
 
 	return len;
 }
 
 P_LIB_API pssize
-p_shm_buffer_get_free_space (PShmBuffer *buf)
+p_shm_buffer_get_free_space (PShmBuffer	*buf,
+			     PError	**error)
 {
 	psize space;
 
-	if (buf == NULL)
-		return -1;
-
-	if (!p_shm_lock (buf->shm, NULL)) {
-		P_ERROR ("PShmBuffer: failed to lock memory to get free space");
+	if (buf == NULL) {
+		p_error_set_error_p (error,
+				     (pint) P_ERROR_IPC_INVALID_ARGUMENT,
+				     0,
+				     "Invalid input argument");
 		return -1;
 	}
 
+	if (!p_shm_lock (buf->shm, error))
+		return -1;
+
 	space = __p_shm_buffer_get_free_space (buf);
 
-	if (!p_shm_unlock (buf->shm, NULL))
-		P_ERROR ("PShmBuffer: failed to unlock memory after getting free space");
+	if (!p_shm_unlock (buf->shm, error))
+		return -1;
 
 	return space;
 }
 
 P_LIB_API pssize
-p_shm_buffer_get_used_space (PShmBuffer *buf)
+p_shm_buffer_get_used_space (PShmBuffer	*buf,
+			     PError	**error)
 {
 	pssize space;
 
-	if (buf == NULL)
-		return -1;
-
-	if (!p_shm_lock (buf->shm, NULL)) {
-		P_ERROR ("PShmBuffer: failed to lock memory to get used space");
+	if (buf == NULL) {
+		p_error_set_error_p (error,
+				     (pint) P_ERROR_IPC_INVALID_ARGUMENT,
+				     0,
+				     "Invalid input argument");
 		return -1;
 	}
 
+	if (!p_shm_lock (buf->shm, error))
+		return -1;
+
 	space = __p_shm_buffer_get_used_space (buf);
 
-	if (!p_shm_unlock (buf->shm, NULL))
-		P_ERROR ("PShmBuffer: failed to unlock memory after getting used space");
+	if (!p_shm_unlock (buf->shm, error))
+		return -1;
 
 	return space;
 }

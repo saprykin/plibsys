@@ -36,6 +36,7 @@
 
 #include <ptypes.h>
 #include <pmacros.h>
+#include <perror.h>
 
 #include <stdlib.h>
 
@@ -52,7 +53,9 @@ P_BEGIN_DECLS
  * @return Pointer to #PShmBuffer structure in case of success, NULL otherwise.
  * @since 0.0.1
  */
-P_LIB_API PShmBuffer *	p_shm_buffer_new		(const pchar *name, psize size);
+P_LIB_API PShmBuffer *	p_shm_buffer_new		(const pchar	*name,
+							 psize		size,
+							 PError		**error);
 
 /**
  * @brief Frees #PShmBuffer structure. Note that buffer will be fully removed
@@ -61,7 +64,7 @@ P_LIB_API PShmBuffer *	p_shm_buffer_new		(const pchar *name, psize size);
  * @param buf #PShmBuffer to free.
  * @since 0.0.1
  */
-P_LIB_API void		p_shm_buffer_free		(PShmBuffer *buf);
+P_LIB_API void		p_shm_buffer_free		(PShmBuffer	*buf);
 
 /**
  * @brief Takes ownership of the shared memory buffer.
@@ -79,50 +82,62 @@ P_LIB_API void		p_shm_buffer_free		(PShmBuffer *buf);
  * free space). If not, take ownership of the shared memory buffer object and remove it with
  * p_shm_buffer_free() call. After that, create it again.
  */
-P_LIB_API void		p_shm_buffer_take_ownership	(PShmBuffer *buf);
+P_LIB_API void		p_shm_buffer_take_ownership	(PShmBuffer	*buf);
 
 /**
  * @brief Tries to read data from shared memory buffer.
  * @param buf #PShmBuffer to read data from.
  * @param[out] storage Output buffer to put data in.
  * @param len @a storage size in bytes.
+ * @param[out] error Error report object, NULL to ignore.
  * @return Number of read bytes (can be 0 if buffer is empty), or -1 if error occured.
  * @since 0.0.1
  */
-P_LIB_API pint		p_shm_buffer_read		(PShmBuffer *buf, ppointer storage, psize len);
+P_LIB_API pint		p_shm_buffer_read		(PShmBuffer	*buf,
+							 ppointer	storage,
+							 psize		len,
+							 PError		**error);
 
 /**
  * @brief Tries to write data into shared memory buffer.
  * @param buf #PShmBuffer to write data into.
  * @param data Data to write.
  * @param len @a data size in bytes.
- * @return Number of written bytes, or -1 if error occured or buffer is full.
+ * @param[out] error Error report object, NULL to ignore.
+ * @return Number of written bytes (can be 0 if buffer is full), or -1 if error occured.
  * @since 0.0.1
  */
-P_LIB_API pssize	p_shm_buffer_write		(PShmBuffer *buf, ppointer data, psize len);
+P_LIB_API pssize	p_shm_buffer_write		(PShmBuffer	*buf,
+							 ppointer	data,
+							 psize		len,
+							 PError		**error);
 
 /**
  * @brief Gets free space in shared memory buffer.
  * @param buf #PShmBuffer to check space in.
+ * @param[out] error Error report object, NULL to ignore.
  * @return Free space in bytes in case of success, -1 otherwise.
  * @since 0.0.1
  */
-P_LIB_API pssize	p_shm_buffer_get_free_space	(PShmBuffer *buf);
+P_LIB_API pssize	p_shm_buffer_get_free_space	(PShmBuffer	*buf,
+							 PError		**error);
 
 /**
  * @brief Gets used space in shared memory buffer.
  * @param buf #PShmBuffer to check space in.
+ * @param[out] error Error report object, NULL to ignore.
  * @return Used space in bytes in case of success, -1 otherwise.
  * @since 0.0.1
  */
-P_LIB_API pssize	p_shm_buffer_get_used_space	(PShmBuffer *buf);
+P_LIB_API pssize	p_shm_buffer_get_used_space	(PShmBuffer	*buf,
+							 PError		**error);
 
 /**
  * @brief Clears all data in buffer and fills it with zeros.
  * @param buf #PShmBuffer to clear.
  * @since 0.0.1
  */
-P_LIB_API void		p_shm_buffer_clear		(PShmBuffer *buf);
+P_LIB_API void		p_shm_buffer_clear		(PShmBuffer	*buf);
 
 P_END_DECLS
 
