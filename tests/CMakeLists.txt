@@ -190,7 +190,7 @@ add_test (NAME puthread_test COMMAND puthread_test)
 # Print summary 
 SET (PLIB_TESTS_SUMMARY
 "
-        Tests configuration:
+        == Tests configuration ==
 
         Build static tests:     ${PLIB_TESTS_STATIC}
         Build static library:   ${PLIB_BUILD_STATIC}

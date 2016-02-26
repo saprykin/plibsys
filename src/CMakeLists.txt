@@ -490,7 +490,7 @@ install (FILES
 # Print summary 
 SET (PLIB_SUMMARY
 "
-        Build configuration:
+        == Build configuration ==
 
         Platfrom:               ${PLIB_TARGET_OS}
         Compiler:               ${PLIB_C_COMPILER}
