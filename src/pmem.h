@@ -20,13 +20,13 @@
  * @file pmem.h
  * @brief Memory management
  * @author Alexander Saprykin
- * 
+ *
  * While using PLib you should use corresponding memory allocation/free functions.
  * For now, all these functions are wrappers around system memory related functions
- * (like malloc, free, etc). But this approach gives you much more power to
- * control memory allocation inside application. If you want to use your own allocator
+ * (like malloc(), free(), etc). But this approach gives you much more power to
+ * control memory allocation inside an application. If you want to use your own allocator
  * consider using #PMemVTable structure and p_mem_set_vtable() method. This way
- * you can easly change memory management in the whole PLib. Do not forget to set
+ * you can easily change memory management in the whole PLib. Do not forget to set
  * default memory management functions before calling p_lib_shutdown().
  */
 
