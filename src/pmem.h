@@ -1,5 +1,5 @@
-/* 
- * Copyright (C) 2010-2014 Alexander Saprykin <xelfium@gmail.com>
+/*
+ * Copyright (C) 2010-2016 Alexander Saprykin <xelfium@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,6 +39,7 @@
 
 #include <ptypes.h>
 #include <pmacros.h>
+#include <perror.h>
 
 P_BEGIN_DECLS
 
@@ -56,7 +57,7 @@ typedef struct _PMemVTable {
  * NULL otherwise.
  * @since 0.0.1
  */
-P_LIB_API ppointer	p_malloc		(psize n_bytes);
+P_LIB_API ppointer	p_malloc		(psize		n_bytes);
 
 /**
  * @brief Allocates memory for specified number of bytes and fills it
@@ -66,7 +67,7 @@ P_LIB_API ppointer	p_malloc		(psize n_bytes);
  * NULL otherwise.
  * @since 0.0.1
  */
-P_LIB_API ppointer	p_malloc0		(psize n_bytes);
+P_LIB_API ppointer	p_malloc0		(psize		n_bytes);
 
 /**
  * @brief Changes memory block's size.
@@ -76,7 +77,8 @@ P_LIB_API ppointer	p_malloc0		(psize n_bytes);
  * then it acts like p_malloc()), NULL otherwise.
  * @since 0.0.1
  */
-P_LIB_API ppointer	p_realloc		(ppointer mem, psize n_bytes);
+P_LIB_API ppointer	p_realloc		(ppointer	mem,
+						 psize		n_bytes);
 
 /**
  * @brief Frees memory by it's pointer.
@@ -87,7 +89,7 @@ P_LIB_API ppointer	p_realloc		(ppointer mem, psize n_bytes);
  * p_malloc(), p_malloc0() and p_realloc() function, otherwise behaviour
  * is unpredictable. It checks pointer for NULL value.
  */
-P_LIB_API void		p_free			(ppointer mem);
+P_LIB_API void		p_free			(ppointer	mem);
 
 /**
  * @brief Sets custom memory management functions.
@@ -102,11 +104,12 @@ P_LIB_API void		p_free			(ppointer mem);
  * In most cases you do not need to use this function. Use it only
  * when you know what are you doing!
  */
-P_LIB_API pboolean	p_mem_set_vtable	(PMemVTable *table);
+P_LIB_API pboolean	p_mem_set_vtable	(PMemVTable	*table);
 
 /**
  * @brief Gets memory from the system using mmap() call.
  * @param n_bytes Bytes of memory to allocate.
+ * @param[out] error Error report object, NULL to ignore.
  * @return Pointer to allocated memory in case of success, NULL
  * otherwise.
  * @since 0.0.1
@@ -115,17 +118,21 @@ P_LIB_API pboolean	p_mem_set_vtable	(PMemVTable *table);
  * page size, so if @a n_bytes is less than page size it will
  * try to allocate a chunk of memory equal to page size instead.
  */
-P_LIB_API ppointer	p_mem_mmap		(psize n_bytes);
+P_LIB_API ppointer	p_mem_mmap		(psize		n_bytes,
+						 PError		**error);
 
 /**
  * @brief Unmaps memory to system back using munmap() call.
  * @param mem Pointer to memory previously allocated using
  * p_mem_mmap() call.
  * @param n_bytes Bytes of memory to unmap.
+ * @param[out] error Error report object, NULL to ignore.
  * @return TRUE in case of success, FALSE otherwise.
  * @since 0.0.1
  */
-P_LIB_API pboolean	p_mem_munmap		(ppointer mem, psize n_bytes);
+P_LIB_API pboolean	p_mem_munmap		(ppointer	mem,
+						 psize		n_bytes,
+						 PError		**error);
 
 P_END_DECLS
 

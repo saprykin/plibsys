@@ -19,8 +19,8 @@
 #include <string.h>
 #include <stdlib.h>
 
-#include "pmacros.h"
 #include "pmem.h"
+#include "plib-private.h"
 
 #ifdef P_OS_WIN
 #include <windows.h>
@@ -30,6 +30,7 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <unistd.h>
+#include <errno.h>
 #endif
 
 pboolean		p_mem_table_inited = FALSE;
@@ -126,7 +127,8 @@ p_mem_set_vtable (PMemVTable *table)
 }
 
 P_LIB_API ppointer
-p_mem_mmap (psize n_bytes)
+p_mem_mmap (psize	n_bytes,
+	    PError	**error)
 {
 	ppointer	addr;
 #ifdef P_OS_WIN
@@ -136,26 +138,49 @@ p_mem_mmap (psize n_bytes)
 	int		map_flags = MAP_PRIVATE;
 #endif
 
-	if (n_bytes == 0)
+	if (n_bytes == 0) {
+		p_error_set_error_p (error,
+				     (pint) P_ERROR_IO_INVALID_ARGUMENT,
+				     0,
+				     "Invalid input argument");
 		return NULL;
+	}
 
 #ifdef P_OS_WIN
-	if ((hdl = CreateFileMapping (INVALID_HANDLE_VALUE, NULL, PAGE_READWRITE, 0, (DWORD) n_bytes, NULL)) == NULL)
+	if ((hdl = CreateFileMapping (INVALID_HANDLE_VALUE, NULL, PAGE_READWRITE, 0, (DWORD) n_bytes, NULL)) == NULL) {
+		p_error_set_error_p (error,
+				     (pint) __p_error_get_last_io (),
+				     (pint) GetLastError (),
+				     "Failed to call CreateFileMapping() to create file mapping");
 		return NULL;
+	}
 
 	if ((addr = MapViewOfFile (hdl, FILE_MAP_READ | FILE_MAP_WRITE, 0, 0, n_bytes)) == NULL) {
+		p_error_set_error_p (error,
+				     (pint) __p_error_get_last_io (),
+				     (pint) GetLastError (),
+				     "Failed to call MapViewOfFile() to map file view");
 		CloseHandle (hdl);
 		return NULL;
 	}
 
 	if (!CloseHandle (hdl)) {
+		p_error_set_error_p (error,
+				     (pint) __p_error_get_last_io (),
+				     (pint) GetLastError (),
+				     "Failed to call CloseHandle() to close file mapping");
 		UnmapViewOfFile (addr);
 		return NULL;
 	}
 #else
 #  if !defined (PLIB_MMAP_HAS_MAP_ANONYMOUS) && !defined (PLIB_MMAP_HAS_MAP_ANON)
-	if ((fd = open ("/dev/zero", O_RDWR | O_EXCL, 0754)) == -1)
+	if ((fd = open ("/dev/zero", O_RDWR | O_EXCL, 0754)) == -1) {
+		p_error_set_error_p (error,
+				     (pint) __p_error_get_last_io (),
+				     (pint) errno,
+				     "Failed to open /dev/zero for file mapping");
 		return NULL;
+	}
 #  else
 	fd = -1;
 #  endif
@@ -167,6 +192,10 @@ p_mem_mmap (psize n_bytes)
 #  endif
 
 	if ((addr = mmap (NULL, n_bytes, PROT_READ | PROT_WRITE, map_flags, fd, 0)) == (void *) -1) {
+		p_error_set_error_p (error,
+				     (pint) __p_error_get_last_io (),
+				     (pint) errno,
+				     "Failed to call mmap() to create file mapping");
 #  if !defined (PLIB_MMAP_HAS_MAP_ANONYMOUS) && !defined (PLIB_MMAP_HAS_MAP_ANON)
 		close (fd);
 #  endif
@@ -175,6 +204,10 @@ p_mem_mmap (psize n_bytes)
 
 #  if !defined (PLIB_MMAP_HAS_MAP_ANONYMOUS) && !defined (PLIB_MMAP_HAS_MAP_ANON)
 	if (close (fd) == -1) {
+		p_error_set_error_p (error,
+				     (pint) __p_error_get_last_io (),
+				     (pint) errno,
+				     "Failed to close /dev/zero handle");
 		munmap (addr, n_bytes);
 		return NULL;
 	}
@@ -185,14 +218,32 @@ p_mem_mmap (psize n_bytes)
 }
 
 P_LIB_API pboolean
-p_mem_munmap (ppointer mem, psize n_bytes)
+p_mem_munmap (ppointer	mem,
+	      psize	n_bytes,
+	      PError	**error)
 {
-	if (mem == NULL || n_bytes == 0)
+	if (mem == NULL || n_bytes == 0) {
+		p_error_set_error_p (error,
+				     (pint) P_ERROR_IO_INVALID_ARGUMENT,
+				     0,
+				     "Invalid input argument");
 		return FALSE;
+	}
 
 #ifdef P_OS_WIN
-	return UnmapViewOfFile (mem) ? TRUE : FALSE;
+	if (UnmapViewOfFile (mem) == 0) {
+		p_error_set_error_p (error,
+				     (pint) __p_error_get_last_io (),
+				     (pint) GetLastError (),
+				     "Failed to call UnmapViewOfFile() to remove file mapping");
 #else
-	return (munmap (mem, n_bytes) == 0) ? TRUE : FALSE;
+	if (munmap (mem, n_bytes) != 0) {
+		p_error_set_error_p (error,
+				     (pint) __p_error_get_last_io (),
+				     (pint) errno,
+				     "Failed to call munmap() to remove file mapping");
 #endif
+		return FALSE;
+	} else
+		return TRUE;
 }

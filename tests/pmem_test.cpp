@@ -99,10 +99,10 @@ BOOST_AUTO_TEST_CASE (pmem_general_test)
 	p_free (ptr);
 
 	/* Test memory mapping */
-	ptr = p_mem_mmap (0);
+	ptr = p_mem_mmap (0, NULL);
 	BOOST_CHECK (ptr == NULL);
 
-	ptr = p_mem_mmap (1024);
+	ptr = p_mem_mmap (1024, NULL);
 	BOOST_REQUIRE (ptr != NULL);
 
 	for (i = 0; i < 1024; ++i)
@@ -111,8 +111,8 @@ BOOST_AUTO_TEST_CASE (pmem_general_test)
 	for (i = 0; i < 1024; ++i)
 		BOOST_CHECK (*(((pchar *) ptr) + i) == i % 127);
 
-	BOOST_CHECK (p_mem_munmap (NULL, 1024) == FALSE);
-	BOOST_CHECK (p_mem_munmap (ptr, 1024) == TRUE);
+	BOOST_CHECK (p_mem_munmap (NULL, 1024, NULL) == FALSE);
+	BOOST_CHECK (p_mem_munmap (ptr, 1024, NULL) == TRUE);
 
 	p_lib_shutdown ();
 }
