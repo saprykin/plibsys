@@ -192,6 +192,7 @@ p_ini_file_parse (PIniFile	*file,
 				     (pint) P_ERROR_IO_INVALID_ARGUMENT,
 				     0,
 				     "Invalid input argument");
+		return FALSE;
 	}
 
 	if (file->is_parsed)
