@@ -72,7 +72,13 @@ typedef enum _PErrorIO {
 	P_ERROR_IO_ADDRESS_IN_USE	= 511,	/**< Address is already under usage.			*/
 	P_ERROR_IO_CONNECTION_REFUSED	= 512,	/**< Connection refused.				*/
 	P_ERROR_IO_NOT_CONNECTED	= 513,	/**< Connection required first.				*/
-	P_ERROR_IO_FAILED		= 514	/**< General error.					*/
+	P_ERROR_IO_QUOTA		= 514,  /**< User quota exceeded.				*/
+	P_ERROR_IO_IS_DIRECTORY		= 515,  /**< Trying to open directory for writting.		*/
+	P_ERROR_IO_NOT_DIRECTORY	= 516,  /**< Component of the path prefix is not a directory.	*/
+	P_ERROR_IO_NAMETOOLONG		= 517,  /**< Specified name is too long.			*/
+	P_ERROR_IO_EXISTS		= 518,  /**< Specified already exists.				*/
+	P_ERROR_IO_NOT_EXISTS		= 519,  /**< Specified entry doesn't exist.			*/
+	P_ERROR_IO_FAILED		= 520	/**< General error.					*/
 } PErrorIO;
 
 /** Enum with IPC errors */

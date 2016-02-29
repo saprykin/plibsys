@@ -107,6 +107,34 @@ __p_error_get_io_from_system (pint err_code)
 	case WSAECANCELLED:
 		return P_ERROR_IO_ABORTED;
 #  endif
+#  ifdef ERROR_ALREADY_EXISTS
+	case ERROR_ALREADY_EXISTS:
+		return P_ERROR_IO_EXISTS;
+#  endif
+#  ifdef ERROR_ACCESS_DENIED
+	case ERROR_ACCESS_DENIED:
+		return P_ERROR_IO_ACCESS_DENIED;
+#  endif
+#  ifdef ERROR_OUTOFMEMORY
+	case ERROR_OUTOFMEMORY:
+		return P_ERROR_IO_NO_RESOURCES;
+#  endif
+#  ifdef ERROR_NOT_ENOUGH_MEMORY
+	case ERROR_NOT_ENOUGH_MEMORY:
+		return P_ERROR_IO_NO_RESOURCES;
+#  endif
+#  ifdef ERROR_INVALID_HANDLE
+	case ERROR_INVALID_HANDLE:
+		return P_ERROR_IO_INVALID_ARGUMENT;
+#  endif
+#  ifdef ERROR_INVALID_PARAMETER
+	case ERROR_INVALID_PARAMETER:
+		return P_ERROR_IO_INVALID_ARGUMENT;
+#  endif
+#  ifdef ERROR_NOT_SUPPORTED
+	case ERROR_NOT_SUPPORTED:
+		return P_ERROR_IO_NOT_SUPPORTED;
+#  endif
 #else /* !P_OS_WIN */
 #  ifdef EACCES
 	case EACCES:
@@ -135,6 +163,11 @@ __p_error_get_io_from_system (pint err_code)
 
 #  ifdef ENFILE
 	case ENFILE:
+		return P_ERROR_IO_NO_RESOURCES;
+#  endif
+
+#  ifdef ENOSPC
+	case ENOSPC:
 		return P_ERROR_IO_NO_RESOURCES;
 #  endif
 
@@ -262,6 +295,36 @@ __p_error_get_io_from_system (pint err_code)
 #  ifdef ETIMEDOUT
 	case ETIMEDOUT:
 		return P_ERROR_IO_TIMED_OUT;
+#  endif
+
+#  ifdef EDQUOT
+	case EDQUOT:
+		return P_ERROR_IO_QUOTA;
+#  endif
+
+#  ifdef EISDIR
+	case EISDIR:
+		return P_ERROR_IO_IS_DIRECTORY;
+#  endif
+
+#  ifdef ENOTDIR
+	case ENOTDIR:
+		return P_ERROR_IO_NOT_DIRECTORY;
+#  endif
+
+#  ifdef EEXIST
+	case EEXIST:
+		return P_ERROR_IO_EXISTS;
+#  endif
+
+#  ifdef ENOENT
+	case ENOENT:
+		return P_ERROR_IO_NOT_EXISTS;
+#  endif
+
+#  ifdef ENAMETOOLONG
+	case ENAMETOOLONG:
+		return P_ERROR_IO_NAMETOOLONG;
 #  endif
 
 	/* Some magic to deal with EWOULDBLOCK and EAGAIN.
