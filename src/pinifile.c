@@ -1,5 +1,5 @@
-/* 
- * Copyright (C) 2012-2015 Alexander Saprykin <xelfium@gmail.com>
+/*
+ * Copyright (C) 2012-2016 Alexander Saprykin <xelfium@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
 #include "plist.h"
 #include "pmem.h"
 #include "pstring.h"
+#include "plib-private.h"
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -174,7 +175,8 @@ p_ini_file_free (PIniFile *file)
 }
 
 P_LIB_API pboolean
-p_ini_file_parse (PIniFile *file)
+p_ini_file_parse (PIniFile	*file,
+		  PError	**error)
 {
 	PIniSection	*section;
 	PIniParameter	*param;
@@ -185,11 +187,23 @@ p_ini_file_parse (PIniFile *file)
 			value[P_INI_MAX_LINE_LENGTH + 1];
 	pint		bom_shift;
 
-	if (file == NULL || file->is_parsed)
-		return FALSE;
+	if (file == NULL) {
+		p_error_set_error_p (error,
+				     (pint) P_ERROR_IO_INVALID_ARGUMENT,
+				     0,
+				     "Invalid input argument");
+	}
 
-	if ((in_file = fopen (file->path, "r")) == NULL)
+	if (file->is_parsed)
+		return TRUE;
+
+	if ((in_file = fopen (file->path, "r")) == NULL) {
+		p_error_set_error_p (error,
+				     (pint) __p_error_get_last_io (),
+				     __p_error_get_last_error (),
+				     "Failed to open file for reading");
 		return FALSE;
+	}
 
 	dst_line	= NULL;
 	section		= NULL;
@@ -224,7 +238,7 @@ p_ini_file_parse (PIniFile *file)
 			tmp_str = p_strchomp (key);
 			strcpy (key, tmp_str);
 			p_free (tmp_str);
-			
+
 			if (section != NULL) {
 				if (section->keys == NULL)
 					__p_ini_section_free (section);

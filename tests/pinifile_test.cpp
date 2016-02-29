@@ -86,7 +86,7 @@ BOOST_AUTO_TEST_CASE (pinifile_bad_input_test)
 	p_lib_init ();
 
 	p_ini_file_free (ini);
-	BOOST_CHECK (p_ini_file_parse (ini) == FALSE);
+	BOOST_CHECK (p_ini_file_parse (ini, NULL) == FALSE);
 	BOOST_CHECK (p_ini_file_is_parsed (ini) == FALSE);
 	BOOST_CHECK (p_ini_file_is_key_exists (ini, "string_section", "string_paramter_1") == FALSE);
 	BOOST_CHECK (p_ini_file_sections (ini) == NULL);
@@ -110,7 +110,7 @@ BOOST_AUTO_TEST_CASE (pinifile_read_test)
 	BOOST_REQUIRE (ini != NULL);
 	BOOST_CHECK (p_ini_file_is_parsed (ini) == FALSE);
 
-	BOOST_REQUIRE (p_ini_file_parse (ini) == TRUE);
+	BOOST_REQUIRE (p_ini_file_parse (ini, NULL) == TRUE);
 	BOOST_CHECK (p_ini_file_is_parsed (ini) == TRUE);
 
 	/* Test list of sections */

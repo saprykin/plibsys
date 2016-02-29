@@ -1,5 +1,5 @@
-/* 
- * Copyright (C) 2012-2013 Alexander Saprykin <xelfium@gmail.com>
+/*
+ * Copyright (C) 2012-2016 Alexander Saprykin <xelfium@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,13 +26,13 @@
  * and section name within them. After each section name there are
  * parameters in form 'key = value'. All symbols after '#' and ';'
  * are comments and wouldn't be read. If you want to use them in values
- * take value inside "" or '' symbols. Parameters related to section
+ * take value inside "" or '' symbols. Parameters relate to section
  * until another section name is occured.
  * List of values can be stored between {} symbol separated with spaces.
  * List only supports string values, so you should convert them to numbers
  * manually.
  * Empty sections (with no parameters) and parameters are skipped while
- * parsing. If the section has two parameters with the same name than the
+ * parsing. If the section has two parameters with the same name then the
  * last occurred value will be used.
  * To parse file, create #PIniFile with p_ini_file_new() and then
  * parse it with p_ini_file_parse() functions. Boolean values can
@@ -50,6 +50,7 @@
 #include <pmacros.h>
 #include <ptypes.h>
 #include <plist.h>
+#include <perror.h>
 
 P_BEGIN_DECLS
 
@@ -74,10 +75,12 @@ P_LIB_API void		p_ini_file_free			(PIniFile	*file);
 /**
  * @brief Parses given #PIniFile.
  * @param file #PIniFile file to parse.
+ * @param[out] error Error report object, NULL to ignore.
  * @return TRUE in case of success, FALSE otherwise.
  * @since 0.0.1
  */
-P_LIB_API pboolean	p_ini_file_parse		(PIniFile	*file);
+P_LIB_API pboolean	p_ini_file_parse		(PIniFile	*file,
+							 PError		**error);
 
 /**
  * @brief Check whether #PIniFile was already parsed or not.
