@@ -25,7 +25,7 @@
  * third party objects. After loading you can use its symbols (functions and
  * variables) as locally defined.
  * Use p_library_loader_new() to load library and p_library_loader_get_symbol()
- * to retrieve the pointer to symbol within it. Close library after usage with
+ * to retrieve the pointer to a symbol within it. Close library after usage with
  * p_library_loader_free().
  */
 
@@ -90,8 +90,8 @@ P_LIB_API void			p_library_loader_free		(PLibraryLoader *loader);
  *
  * Different operating systems have different behaviour on error indicating.
  * Some systems reset error status before the call, some are not. Some
- * systems write successfull call result (usually zero) to error status,
- * thus resetting the error from previous call.
+ * systems write successful call result (usually zero) to error status,
+ * thus resetting the error from the previous call.
  */
 P_LIB_API pchar *		p_library_loader_get_last_error	(void);
 
