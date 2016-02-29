@@ -259,12 +259,12 @@ __p_error_get_io_from_system (pint err_code)
 
 #  ifdef EINPROGRESS
 	case EINPROGRESS:
-		return P_ERROR_IO_CONNECTING;
+		return P_ERROR_IO_IN_PROGRESS;
 #  endif
 
 #  ifdef EALREADY
 	case EALREADY:
-		return P_ERROR_IO_CONNECTING;
+		return P_ERROR_IO_IN_PROGRESS;
 #  endif
 
 #  ifdef EISCONN

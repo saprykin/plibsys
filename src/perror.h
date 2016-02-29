@@ -63,7 +63,7 @@ typedef enum _PErrorIO {
 	P_ERROR_IO_NOT_AVAILABLE	= 502,	/**< Resource isn't available.				*/
 	P_ERROR_IO_ACCESS_DENIED	= 503,	/**< Access denied.					*/
 	P_ERROR_IO_CONNECTED		= 504,	/**< Already connected.					*/
-	P_ERROR_IO_CONNECTING		= 505,	/**< Connection in progress.				*/
+	P_ERROR_IO_IN_PROGRESS		= 505,	/**< Operation in progress.				*/
 	P_ERROR_IO_ABORTED		= 506,	/**< Operation aborted.					*/
 	P_ERROR_IO_INVALID_ARGUMENT	= 507,	/**< Invalid argument specified.			*/
 	P_ERROR_IO_NOT_SUPPORTED	= 508,	/**< Operation not supported.				*/
