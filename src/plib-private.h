@@ -101,6 +101,12 @@ PErrorIPC	__p_error_get_ipc_from_system		(pint err_code);
  */
 PErrorIPC	__p_error_get_last_ipc			();
 
+/**
+ * @brief Gets last native error code
+ * @return Last native error code.
+ */
+pint		__p_error_get_last_error		();
+
 P_END_DECLS
 
 #endif /* __PLIBPRIVATE_H__ */

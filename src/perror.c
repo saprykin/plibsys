@@ -32,9 +32,7 @@ struct _PError {
 	pchar	*message;
 };
 
-static pint __p_error_get_last_error ();
-
-static pint
+pint
 __p_error_get_last_error ()
 {
 #ifdef P_OS_WIN
