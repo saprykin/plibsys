@@ -24,9 +24,9 @@
 #include <string.h>
 
 #include <unistd.h>
-#include <errno.h>
 #include <fcntl.h>
 #include <semaphore.h>
+#include <errno.h>
 
 #define P_SEM_SUFFIX		"_p_sem_object"
 
@@ -68,16 +68,16 @@ __p_semaphore_create_handle (PSemaphore *sem,
 
 	/* Solaris may interrupt sem_open() call */
 	while ((sem->sem_hdl = sem_open (sem->platform_key, O_CREAT | O_EXCL, 0660, sem->init_val)) == P_SEM_INVALID_HDL
-		&& errno == EINTR)
+		&& __p_error_get_last_error () == EINTR)
 	;
 
 	if (sem->sem_hdl == P_SEM_INVALID_HDL) {
-		if (errno == EEXIST) {
+		if (__p_error_get_last_error () == EEXIST) {
 			if (sem->mode == P_SEM_ACCESS_CREATE)
 				sem_unlink (sem->platform_key);
 
 			while ((sem->sem_hdl = sem_open (sem->platform_key, 0, 0, 0)) == P_SEM_INVALID_HDL
-				&& errno == EINTR)
+				&& __p_error_get_last_error () == EINTR)
 			;
 		}
 	} else
@@ -86,7 +86,7 @@ __p_semaphore_create_handle (PSemaphore *sem,
 	if (sem->sem_hdl == P_SEM_INVALID_HDL) {
 		p_error_set_error_p (error,
 				     (pint) __p_error_get_last_ipc (),
-				     errno,
+				     __p_error_get_last_error (),
 				     "Failed to call sem_open() to create semaphore");
 		__p_semaphore_clean_handle (sem);
 		return FALSE;
@@ -186,7 +186,7 @@ p_semaphore_acquire (PSemaphore *sem,
 		return FALSE;
 	}
 
-	while ((res = sem_wait (sem->sem_hdl)) == -1 && errno == EINTR)
+	while ((res = sem_wait (sem->sem_hdl)) == -1 && __p_error_get_last_error () == EINTR)
 		;
 
 	ret = (res == 0);
@@ -194,7 +194,7 @@ p_semaphore_acquire (PSemaphore *sem,
 	if (!ret)
 		p_error_set_error_p (error,
 				     (pint) __p_error_get_last_ipc (),
-				     errno,
+				     __p_error_get_last_error (),
 				     "Failed to call sem_wait() on semaphore");
 
 	return ret;
@@ -219,7 +219,7 @@ p_semaphore_release (PSemaphore *sem,
 	if (!ret)
 		p_error_set_error_p (error,
 				     (pint) __p_error_get_last_ipc (),
-				     errno,
+				     __p_error_get_last_error (),
 				     "Failed to call sem_post() on semaphore");
 
 	return ret;

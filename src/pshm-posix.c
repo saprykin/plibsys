@@ -24,10 +24,10 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-#include <errno.h>
 #include <fcntl.h>
 #include <sys/stat.h>
 #include <sys/mman.h>
+#include <errno.h>
 
 #define P_SHM_SUFFIX		"_p_shm_object"
 #define P_SHM_INVALID_HDL	-1
@@ -63,15 +63,15 @@ __p_shm_create_handle (PShm	*shm,
 	is_exists = FALSE;
 
 	while ((fd = shm_open (shm->platform_key, O_CREAT | O_EXCL | O_RDWR, 0660)) == P_SHM_INVALID_HDL
-	       && errno == EINTR)
+	       && __p_error_get_last_error () == EINTR)
 	;
 
 	if (fd == P_SHM_INVALID_HDL) {
-		if (errno == EEXIST) {
+		if (__p_error_get_last_error () == EEXIST) {
 			is_exists = TRUE;
 
 			while ((fd = shm_open (shm->platform_key, O_RDWR, 0660)) == P_SHM_INVALID_HDL
-			       && errno == EINTR)
+			       && __p_error_get_last_error () == EINTR)
 			;
 		}
 	} else
@@ -80,7 +80,7 @@ __p_shm_create_handle (PShm	*shm,
 	if (fd == P_SHM_INVALID_HDL) {
 		p_error_set_error_p (error,
 				     (pint) __p_error_get_last_ipc (),
-				     errno,
+				     __p_error_get_last_error (),
 				     "Failed to call shm_open() to create memory segment");
 		__p_shm_clean_handle (shm);
 		return FALSE;
@@ -91,7 +91,7 @@ __p_shm_create_handle (PShm	*shm,
 		if (fstat (fd, &stat_buf) == -1) {
 			p_error_set_error_p (error,
 					     (pint) __p_error_get_last_ipc (),
-					     errno,
+					     __p_error_get_last_error (),
 					     "Failed to call fstat() to get memory segment size");
 			close (fd);
 			__p_shm_clean_handle (shm);
@@ -103,7 +103,7 @@ __p_shm_create_handle (PShm	*shm,
 		if ((ftruncate (fd, shm->size)) == -1) {
 			p_error_set_error_p (error,
 					     (pint) __p_error_get_last_ipc (),
-					     errno,
+					     __p_error_get_last_error (),
 					     "Failed to call ftruncate() to set memory segment size");
 			close (fd);
 			__p_shm_clean_handle (shm);
@@ -116,7 +116,7 @@ __p_shm_create_handle (PShm	*shm,
 	if ((shm->addr = mmap (NULL, shm->size, flags, MAP_SHARED, fd, 0)) == (void *) -1) {
 		p_error_set_error_p (error,
 				     (pint) __p_error_get_last_ipc (),
-				     errno,
+				     __p_error_get_last_error (),
 				     "Failed to call mmap() to map memory segment");
 		shm->addr = NULL;
 		close (fd);

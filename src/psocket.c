@@ -1414,7 +1414,7 @@ p_socket_io_condition_wait (const PSocket	*socket,
 		evret = poll (&pfd, 1, timeout);
 
 #ifdef EINTR
-		if (evret == -1 && errno == EINTR)
+		if (evret == -1 && __p_socket_get_errno () == EINTR)
 			continue;
 #endif
 

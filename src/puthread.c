@@ -17,6 +17,7 @@
  */
 
 #include "puthread.h"
+#include "plib-private.h"
 
 #include <stdlib.h>
 #include <time.h>
@@ -46,7 +47,7 @@ p_uthread_sleep (puint32 msec)
 	result = -1;
 	while (result != 0) {
 		if ((result = nanosleep (&time_req, &time_rem)) != 0) {
-			if (errno == EINTR)
+			if (__p_error_get_last_error () == EINTR)
 				time_req = time_rem;
 			else
 				return -1;

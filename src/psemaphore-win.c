@@ -54,7 +54,7 @@ __p_semaphore_create_handle (PSemaphore *sem, PError **error)
 	if ((sem->sem_hdl = CreateSemaphore (NULL, sem->init_val, MAXLONG, sem->platform_key)) == NULL) {
 		p_error_set_error_p (error,
 				     (pint) __p_error_get_last_ipc (),
-				     (pint) GetLastError (),
+				     __p_error_get_last_error (),
 				     "Failed to call CreateSemaphore() to create semaphore");
 		return FALSE;
 	}
@@ -152,7 +152,7 @@ p_semaphore_acquire (PSemaphore *sem,
 	if (!ret)
 		p_error_set_error_p (error,
 				     (pint) __p_error_get_last_ipc (),
-				     (pint) GetLastError (),
+				     __p_error_get_last_error (),
 				     "Failed to call WaitForSingleObject() on semaphore");
 
 	return ret;
@@ -177,7 +177,7 @@ p_semaphore_release (PSemaphore *sem,
 	if (!ret)
 		p_error_set_error_p (error,
 				     (pint) __p_error_get_last_ipc (),
-				     (pint) GetLastError (),
+				     __p_error_get_last_error (),
 				     "Failed to call ReleaseSemaphore() on semaphore");
 
 	return ret;
