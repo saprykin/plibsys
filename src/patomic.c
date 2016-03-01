@@ -288,10 +288,10 @@ p_atomic_int_exchange_and_add (volatile pint	*atomic,
 			      : "b" (atomic), "r" (val), "m" (*atomic)
 			      : "cr0", "memory");
 #else
-	__asm__ __volatile__ (".Lieaa%=:       lwarx   %0,0,%3\n"
-			      "         add     %1,%0,%4\n"
-			      "         stwcx.  %1,0,%3\n"
-			      "         bne-    .Lieaa%="
+	__asm__ __volatile__ (".Lieaa%=: lwarx   %0,0,%3\n"
+			      "          add     %1,%0,%4\n"
+			      "          stwcx.  %1,0,%3\n"
+			      "          bne-    .Lieaa%="
 			      : "=&b" (result), "=&r" (temp), "=m" (*atomic)
 			      : "b" (atomic), "r" (val), "m" (*atomic)
 			      : "cr0", "memory");
@@ -314,7 +314,7 @@ p_atomic_int_add (volatile pint		*atomic,
 			      : "b" (atomic), "r" (val), "m" (*atomic)
 			      : "cr0", "memory");
 #else
-	__asm__ __volatile__ (".Lia%=:       lwarx   %0,0,%3\n"
+	__asm__ __volatile__ (".Lia%=:  lwarx   %0,0,%3\n"
 			      "         add     %1,%0,%4\n"
 			      "         stwcx.  %1,0,%3\n"
 			      "         bne-    .Lia%="
