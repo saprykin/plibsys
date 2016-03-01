@@ -42,14 +42,22 @@ BOOST_AUTO_TEST_CASE (pmacros_general_test)
 	p_lib_init ();
 
 	/* Test OS detection macros */
-#if !defined (P_OS_DARWIN) && !defined (P_OS_BSD4) && !defined (P_OS_AIX) && \
-    !defined (P_OS_HPUX) && !defined (P_OS_SOLARIS) && !defined (P_OS_QNX) && \
-    !defined (P_OS_QNX6) && !defined (P_OS_UNIX) && !defined (P_OS_LINUX) && \
-    !defined (P_OS_WIN) && !defined (P_OS_CYGWIN)
+#if !defined (P_OS_DARWIN) && !defined (P_OS_MAC9) && !defined (P_OS_BSD4) && \
+    !defined (P_OS_AIX) && !defined (P_OS_HPUX) && !defined (P_OS_SOLARIS) && \
+    !defined (P_OS_QNX) && !defined (P_OS_QNX6) && !defined (P_OS_UNIX) && \
+    !defined (P_OS_LINUX) && !defined (P_OS_WIN) && !defined (P_OS_CYGWIN)
 	BOOST_CHECK (false);
 #endif
 
 	/* Test for Mac OS */
+#if defined (P_OS_MAC9) && defined (P_OS_UNIX)
+	BOOST_CHECK (false);
+#endif
+
+#if defined (P_OS_MAC9) && defined (P_OS_MAC)
+	BOOST_CHECK (false);
+#endif
+
 #if defined (P_OS_MAC) && !defined (P_OS_MAC32) && !defined (P_OS_MAC64)
 	BOOST_CHECK (false);
 #endif

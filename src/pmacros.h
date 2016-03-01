@@ -121,6 +121,12 @@
  */
 
 /**
+ * @def P_OS_MAC9
+ * @brief Apple's Mac OS 9 operating system
+ * @since 0.0.1
+ */
+
+/**
  * @def P_OS_MAC
  * @brief Apple's Mac OS X operating system
  * @since 0.0.1
@@ -173,6 +179,7 @@
 #  define P_OS_QNX6
 #  define P_OS_UNIX
 #  define P_OS_LINUX
+#  define P_OS_MAC9
 #  define P_OS_MAC
 #  define P_OS_MAC32
 #  define P_OS_MAC64
@@ -190,6 +197,9 @@
 #  else
 #    define P_OS_DARWIN32
 #  endif
+/* Mac OS 9 */
+# elif defined(Macintosh) || defined(macintosh)
+#  define P_OS_MAC9
 #elif defined(__CYGWIN__)
 /* Cygwin */
 #  define P_OS_CYGWIN
@@ -242,7 +252,7 @@
 #  endif
 #endif
 
-#if defined(P_OS_WIN)
+#if defined(P_OS_WIN) || defined(P_OS_MAC9)
 #  undef P_OS_UNIX
 #elif !defined(P_OS_UNIX)
 #  define P_OS_UNIX
