@@ -109,6 +109,10 @@ __p_error_get_io_from_system (pint err_code)
 	case ERROR_ALREADY_EXISTS:
 		return P_ERROR_IO_EXISTS;
 #  endif
+#  ifdef ERROR_FILE_NOT_FOUND
+	case ERROR_FILE_NOT_FOUND:
+		return P_ERROR_IO_NOT_EXISTS;
+#  endif
 #  ifdef ERROR_ACCESS_DENIED
 	case ERROR_ACCESS_DENIED:
 		return P_ERROR_IO_ACCESS_DENIED;
