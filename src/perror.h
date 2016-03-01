@@ -78,7 +78,9 @@ typedef enum _PErrorIO {
 	P_ERROR_IO_NAMETOOLONG		= 517,  /**< Specified name is too long.			*/
 	P_ERROR_IO_EXISTS		= 518,  /**< Specified already exists.				*/
 	P_ERROR_IO_NOT_EXISTS		= 519,  /**< Specified entry doesn't exist.			*/
-	P_ERROR_IO_FAILED		= 520	/**< General error.					*/
+	P_ERROR_IO_NO_MORE		= 520,  /**< No more data left.					*/
+	P_ERROR_IO_NOT_IMPLEMENTED	= 521,	/**< Operation is not implemented.			*/
+	P_ERROR_IO_FAILED		= 522	/**< General error.					*/
 } PErrorIO;
 
 /** Enum with IPC errors */

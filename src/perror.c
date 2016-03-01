@@ -113,6 +113,10 @@ __p_error_get_io_from_system (pint err_code)
 	case ERROR_FILE_NOT_FOUND:
 		return P_ERROR_IO_NOT_EXISTS;
 #  endif
+#  ifdef ERROR_NO_MORE_FILES
+	case ERROR_NO_MORE_FILES:
+		return P_ERROR_IO_NO_MORE;
+#  endif
 #  ifdef ERROR_ACCESS_DENIED
 	case ERROR_ACCESS_DENIED:
 		return P_ERROR_IO_ACCESS_DENIED;
@@ -331,6 +335,11 @@ __p_error_get_io_from_system (pint err_code)
 #  ifdef ENAMETOOLONG
 	case ENAMETOOLONG:
 		return P_ERROR_IO_NAMETOOLONG;
+#  endif
+
+#  ifdef ENOSYS
+	case ENOSYS:
+		return P_ERROR_IO_NOT_IMPLEMENTED;
 #  endif
 
 	/* Some magic to deal with EWOULDBLOCK and EAGAIN.
