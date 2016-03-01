@@ -15,7 +15,14 @@ plib_detect_os_bits (PLIB_OS_BITS)
 if (PLIB_TARGET_OS STREQUAL darwin)
         set (CMAKE_MACOSX_RPATH TRUE)
         set (CMAKE_SKIP_BUILD_RPATH FALSE)
-        set (CMAKE_BUILD_WITH_INSTALL_RPATH FALSE)
+
+        # Fix runtime paths on OS X 10.5 and less
+        if (CMAKE_SYSTEM_VERSION VERSION_LESS "10.6.0")
+                set (CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
+        else()
+                set (CMAKE_BUILD_WITH_INSTALL_RPATH FALSE)
+        endif()
+
         set (CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
         set (CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 
