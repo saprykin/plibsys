@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Alexander Saprykin <xelfium@gmail.com>
+ * Copyright (C) 2015-2016 Alexander Saprykin <xelfium@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,25 +25,46 @@ struct _PDir {
 };
 
 P_LIB_API PDir *
-p_dir_new (const pchar	*path)
+p_dir_new (const pchar	*path,
+	   PError	**error)
 {
 	P_UNUSED (path);
+
+	p_error_set_error_p (error,
+			     (pint) P_ERROR_IO_NOT_IMPLEMENTED,
+			     0,
+			     "No directory implementation");
+
 	return NULL;
 }
 
 P_LIB_API pboolean
 p_dir_create (const pchar	*path,
-	      pint		mode)
+	      pint		mode,
+	      PError		**error)
 {
 	P_UNUSED (path);
 	P_UNUSED (mode);
+
+	p_error_set_error_p (error,
+			     (pint) P_ERROR_IO_NOT_IMPLEMENTED,
+			     0,
+			     "No directory implementation");
+
 	return FALSE;
 }
 
 P_LIB_API pboolean
-p_dir_remove (const pchar *path)
+p_dir_remove (const pchar	*path,
+	      PError		**error)
 {
 	P_UNUSED (path);
+
+	p_error_set_error_p (error,
+			     (pint) P_ERROR_IO_NOT_IMPLEMENTED,
+			     0,
+			     "No directory implementation");
+
 	return FALSE;
 }
 
@@ -62,16 +83,31 @@ p_dir_get_path (const PDir *dir)
 }
 
 P_LIB_API PDirEntry *
-p_dir_get_next_entry (PDir *dir)
+p_dir_get_next_entry (PDir	*dir,
+		      PError	**error)
 {
 	P_UNUSED (dir);
+
+	p_error_set_error_p (error,
+			     (pint) P_ERROR_IO_NOT_IMPLEMENTED,
+			     0,
+			     "No directory implementation");
+
 	return NULL;
 }
 
-P_LIB_API void
-p_dir_rewind (PDir *dir)
+P_LIB_API pboolean
+p_dir_rewind (PDir	*dir,
+	      PError	**error)
 {
 	P_UNUSED (dir);
+
+	p_error_set_error_p (error,
+			     (pint) P_ERROR_IO_NOT_IMPLEMENTED,
+			     0,
+			     "No directory implementation");
+
+	return FALSE;
 }
 
 P_LIB_API void

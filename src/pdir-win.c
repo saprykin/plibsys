@@ -19,6 +19,7 @@
 #include "pmem.h"
 #include "pstring.h"
 #include "pdir.h"
+#include "plib-private.h"
 
 #include <stdlib.h>
 #include <string.h>
@@ -34,21 +35,33 @@ struct _PDir {
 };
 
 P_LIB_API PDir *
-p_dir_new (const pchar	*path)
+p_dir_new (const pchar	*path,
+	   PError	**error)
 {
 	PDir	*ret;
 	pchar	*pathp;
 
-	if (path == NULL)
+	if (path == NULL) {
+		p_error_set_error_p (error,
+				     (pint) P_ERROR_IO_INVALID_ARGUMENT,
+				     0,
+				     "Invalid input argument");
 		return NULL;
+	}
 
 	if ((ret = p_malloc0 (sizeof (PDir))) == NULL) {
-		P_ERROR ("PDir: failed to allocate memory");
+		p_error_set_error_p (error,
+				     (pint) P_ERROR_IO_NO_RESOURCES,
+				     0,
+				     "Failed to allocate memory for directory structure");
 		return NULL;
 	}
 
 	if (!GetFullPathNameA (path, MAX_PATH, ret->path, NULL)) {
-		P_ERROR ("PDir: failed to call GetFullPathNameA()");
+		p_error_set_error_p (error,
+				     (pint) __p_error_get_last_io (),
+				     __p_error_get_last_error (),
+				     "Failed to call GetFullPathNameA() to get directory path");
 		p_free (ret);
 		return NULL;
 	}
@@ -66,7 +79,10 @@ p_dir_new (const pchar	*path)
 	ret->search_handle = FindFirstFileA (ret->path, &ret->find_data);
 
 	if (ret->search_handle == INVALID_HANDLE_VALUE) {
-		P_ERROR ("PDir: failed to call FindFirstFileA()");
+		p_error_set_error_p (error,
+				     (pint) __p_error_get_last_io (),
+				     __p_error_get_last_error (),
+				     "Failed to call FindFirstFileA() to open directory stream");
 		p_free (ret);
 		return NULL;
 	}
@@ -79,29 +95,60 @@ p_dir_new (const pchar	*path)
 
 P_LIB_API pboolean
 p_dir_create (const pchar	*path,
-	      pint		mode)
+	      pint		mode,
+	      PError		**error)
 {
 	P_UNUSED (mode);
 
-	if (path == NULL)
+	if (path == NULL) {
+		p_error_set_error_p (error,
+				     (pint) P_ERROR_IO_INVALID_ARGUMENT,
+				     0,
+				     "Invalid input argument");
 		return FALSE;
+	}
 
 	if (p_dir_is_exists (path))
 		return TRUE;
 
-	return CreateDirectoryA (path, NULL) ? TRUE : FALSE;
+	if (CreateDirectoryA (path, NULL) == 0) {
+		p_error_set_error_p (error,
+				     (pint) __p_error_get_last_io (),
+				     __p_error_get_last_error (),
+				     "Failed to call CreateDirectoryA() to create directory");
+		return FALSE;
+	} else
+		return TRUE;
 }
 
 P_LIB_API pboolean
-p_dir_remove (const pchar *path)
+p_dir_remove (const pchar	*path,
+	      PError		**error)
 {
-	if (path == NULL)
+	if (path == NULL) {
+		p_error_set_error_p (error,
+				     (pint) P_ERROR_IO_INVALID_ARGUMENT,
+				     0,
+				     "Invalid input argument");
 		return FALSE;
+	}
 
-	if (!p_dir_is_exists (path))
+	if (!p_dir_is_exists (path)) {
+		p_error_set_error_p (error,
+				     (pint) P_ERROR_IO_NOT_EXISTS,
+				     0,
+				     "Specified directory doesn't exist");
 		return FALSE;
+	}
 
-	return RemoveDirectoryA (path) ? TRUE : FALSE;
+	if (RemoveDirectoryA (path) == 0) {
+		p_error_set_error_p (error,
+				     (pint) __p_error_get_last_io (),
+				     __p_error_get_last_error (),
+				     "Failed to call RemoveDirectoryA() to remove directory");
+		return FALSE;
+	} else
+		return TRUE;
 }
 
 P_LIB_API pboolean
@@ -127,21 +174,36 @@ p_dir_get_path (const PDir *dir)
 }
 
 P_LIB_API PDirEntry *
-p_dir_get_next_entry (PDir *dir)
+p_dir_get_next_entry (PDir	*dir,
+		      PError	**error)
 {
 	PDirEntry	*ret;
 	DWORD		dwAttrs;
 
-	if (dir == NULL)
+	if (dir == NULL) {
+		p_error_set_error_p (error,
+				     (pint) P_ERROR_IO_INVALID_ARGUMENT,
+				     0,
+				     "Invalid input argument");
 		return NULL;
+	}
 
 	if (dir->cached == TRUE)
 		dir->cached = FALSE;
 	else {
-		if (dir->search_handle == INVALID_HANDLE_VALUE)
+		if (dir->search_handle == INVALID_HANDLE_VALUE) {
+			p_error_set_error_p (error,
+					     (pint) P_ERROR_IO_INVALID_ARGUMENT,
+					     0,
+					     "Not a valid (or closed) directory stream");
 			return NULL;
+		}
 
 		if (!FindNextFileA (dir->search_handle, &dir->find_data)) {
+			p_error_set_error_p (error,
+					     (pint) __p_error_get_last_io (),
+					     __p_error_get_last_error (),
+					     "Failed to call FindNextFileA() to read directory stream");
 			FindClose (dir->search_handle);
 			dir->search_handle = INVALID_HANDLE_VALUE;
 			return NULL;
@@ -149,7 +211,10 @@ p_dir_get_next_entry (PDir *dir)
 	}
 
 	if ((ret = p_malloc0 (sizeof (PDirEntry))) == NULL) {
-		P_ERROR ("PDir: failed to allocate memory");
+		p_error_set_error_p (error,
+				     (pint) P_ERROR_IO_NO_RESOURCES,
+				     0,
+				     "Failed to allocate memory for directory entry");
 		return NULL;
 	}
 
@@ -167,22 +232,41 @@ p_dir_get_next_entry (PDir *dir)
 	return ret;
 }
 
-P_LIB_API void
-p_dir_rewind (PDir *dir)
+P_LIB_API pboolean
+p_dir_rewind (PDir	*dir,
+	      PError	**error)
 {
-	if (dir == NULL)
-		return;
+	if (dir == NULL) {
+		p_error_set_error_p (error,
+				     (pint) P_ERROR_IO_INVALID_ARGUMENT,
+				     0,
+				     "Invalid input argument");
+		return FALSE;
+	}
 
-	if (dir->search_handle != INVALID_HANDLE_VALUE)
-		FindClose (dir->search_handle);
+	if (dir->search_handle != INVALID_HANDLE_VALUE) {
+		if (FindClose (dir->search_handle) == 0) {
+			p_error_set_error_p (error,
+					     (pint) __p_error_get_last_io (),
+					     __p_error_get_last_error (),
+					     "Failed to call FindClose() to close directory stream");
+			return FALSE;
+		}
+	}
 
 	dir->search_handle = FindFirstFileA (dir->path, &dir->find_data);
 
 	if (dir->search_handle == INVALID_HANDLE_VALUE) {
-		P_ERROR ("PDir: failed to rewind directory");
+		p_error_set_error_p (error,
+				     (pint) __p_error_get_last_io (),
+				     __p_error_get_last_error (),
+				     "Failed to call FindFirstFileA() to open directory stream");
 		dir->cached = FALSE;
-	} else
+		return FALSE;
+	} else {
 		dir->cached = TRUE;
+		return TRUE;
+	}
 }
 
 P_LIB_API void

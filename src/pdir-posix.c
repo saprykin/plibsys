@@ -20,6 +20,7 @@
 #include "pstring.h"
 #include "pfile.h"
 #include "pdir.h"
+#include "plib-private.h"
 
 #include <stdlib.h>
 #include <string.h>
@@ -36,22 +37,34 @@ struct _PDir {
 };
 
 P_LIB_API PDir *
-p_dir_new (const pchar	*path)
+p_dir_new (const pchar	*path,
+	   PError	**error)
 {
 	PDir	*ret;
 	DIR	*dir;
 	pchar	*pathp;
 
-	if (path == NULL)
+	if (path == NULL) {
+		p_error_set_error_p (error,
+				     (pint) P_ERROR_IO_INVALID_ARGUMENT,
+				     0,
+				     "Invalid input argument");
 		return NULL;
+	}
 
 	if ((dir = opendir (path)) == NULL) {
-		P_ERROR ("PDir: failed to open directory");
+		p_error_set_error_p (error,
+				     (pint) __p_error_get_last_io (),
+				     __p_error_get_last_error (),
+				     "Failed to call opendir() to open directory stream");
 		return NULL;
 	}
 
 	if ((ret = p_malloc0 (sizeof (PDir))) == NULL) {
-		P_ERROR ("PDir: failed to allocate memory");
+		p_error_set_error_p (error,
+				     (pint) P_ERROR_IO_NO_RESOURCES,
+				     0,
+				     "Failed to allocate memory for directory structure");
 		closedir (dir);
 		return NULL;
 	}
@@ -70,27 +83,58 @@ p_dir_new (const pchar	*path)
 
 P_LIB_API pboolean
 p_dir_create (const pchar	*path,
-	      pint		mode)
+	      pint		mode,
+	      PError		**error)
 {
-	if (path == NULL)
+	if (path == NULL) {
+		p_error_set_error_p (error,
+				     (pint) P_ERROR_IO_INVALID_ARGUMENT,
+				     0,
+				     "Invalid input argument");
 		return FALSE;
+	}
 
 	if (p_dir_is_exists (path))
 		return TRUE;
 
-	return (mkdir (path, mode) == 0) ? TRUE : FALSE;
+	if (mkdir (path, mode) != 0) {
+		p_error_set_error_p (error,
+				     (pint) __p_error_get_last_io (),
+				     __p_error_get_last_error (),
+				     "Failed to call mkdir() to create directory");
+		return FALSE;
+	} else
+		return TRUE;
 }
 
 P_LIB_API pboolean
-p_dir_remove (const pchar *path)
+p_dir_remove (const pchar	*path,
+	      PError		**error)
 {
-	if (path == NULL)
+	if (path == NULL) {
+		p_error_set_error_p (error,
+				     (pint) P_ERROR_IO_INVALID_ARGUMENT,
+				     0,
+				     "Invalid input argument");
 		return FALSE;
+	}
 
-	if (!p_dir_is_exists (path))
+	if (!p_dir_is_exists (path)) {
+		p_error_set_error_p (error,
+				     (pint) P_ERROR_IO_NOT_EXISTS,
+				     0,
+				     "Specified directory doesn't exist");
 		return FALSE;
+	}
 
-	return rmdir (path) == 0 ? TRUE : FALSE;
+	if (rmdir (path) != 0) {
+		p_error_set_error_p (error,
+				     (pint) __p_error_get_last_io (),
+				     __p_error_get_last_error (),
+				     "Failed to call rmdir() to remove directory");
+		return FALSE;
+	} else
+		return TRUE;
 }
 
 P_LIB_API pboolean
@@ -114,7 +158,8 @@ p_dir_get_path (const PDir *dir)
 }
 
 P_LIB_API PDirEntry *
-p_dir_get_next_entry (PDir *dir)
+p_dir_get_next_entry (PDir	*dir,
+		      PError	**error)
 {
 	PDirEntry	*ret;
 #if defined(P_OS_SOLARIS) || defined (P_OS_QNX6)
@@ -126,30 +171,47 @@ p_dir_get_next_entry (PDir *dir)
 	pchar		*entry_path;
 	pint		path_len;
 
-	if (dir == NULL || dir->dir == NULL)
+	if (dir == NULL || dir->dir == NULL) {
+		p_error_set_error_p (error,
+				     (pint) P_ERROR_IO_INVALID_ARGUMENT,
+				     0,
+				     "Invalid input argument");
 		return NULL;
+	}
 
 #if defined(P_OS_SOLARIS)
 	if ((dirent_st = p_malloc0 (sizeof (struct dirent) + FILENAME_MAX + 1)) == NULL) {
-		P_ERROR ("PDir: failed to allocate memory");
+		p_error_set_error_p (error,
+				     (pint) P_ERROR_IO_NO_RESOURCES,
+				     0,
+				     "Failed to allocate memory for internal directory entry");
 		return NULL;
 	}
 #elif defined(P_OS_QNX6)
 	if ((dirent_st = p_malloc0 (sizeof (struct dirent) + NAME_MAX + 1)) == NULL) {
-		P_ERROR ("PDir: failed to allocate memory");
+		p_error_set_error_p (error,
+				     (pint) P_ERROR_IO_NO_RESOURCES,
+				     0,
+				     "Failed to allocate memory for internal directory entry");
 		return NULL;
 	}
 #endif
 
 #if defined(P_OS_SOLARIS) || defined(P_OS_QNX6)
 	if (readdir_r (dir->dir, dirent_st, &dir->dir_result) != 0) {
-		P_ERROR ("PDir: failed to call readdir_r()");
+		p_error_set_error_p (error,
+				     (pint) __p_error_get_last_io (),
+				     __p_error_get_last_error (),
+				     "Failed to call readdir_r() to read directory stream");
 		p_free (dirent_st);
 		return NULL;
 	}
 #else
-	if (readdir_r (dir->dir, &dirent_st, &dir->dir_result) != 0) {	
-		P_ERROR ("PDir: failed to call readdir_r()");
+	if (readdir_r (dir->dir, &dirent_st, &dir->dir_result) != 0) {
+		p_error_set_error_p (error,
+				     (pint) __p_error_get_last_io (),
+				     __p_error_get_last_error (),
+				     "Failed to call readdir_r() to read directory stream");
 		return NULL;
 	}
 #endif
@@ -162,7 +224,10 @@ p_dir_get_next_entry (PDir *dir)
 	}
 
 	if ((ret = p_malloc0 (sizeof (PDirEntry))) == NULL) {
-		P_ERROR ("PDir: failed to allocate memory");
+		p_error_set_error_p (error,
+				     (pint) P_ERROR_IO_NO_RESOURCES,
+				     0,
+				     "Failed to allocate memory for directory entry");
 #if defined(P_OS_SOLARIS) || defined(P_OS_QNX6)
 		p_free (dirent_st);
 #endif
@@ -178,7 +243,7 @@ p_dir_get_next_entry (PDir *dir)
 
 	path_len = strlen (dir->path);
 	entry_path = p_malloc0 (path_len + strlen (ret->name) + 2);
-	
+
 	strcat (entry_path, dir->path);
 	*(entry_path + path_len) = '/';
 	strcat (entry_path + path_len + 1, ret->name);
@@ -199,13 +264,21 @@ p_dir_get_next_entry (PDir *dir)
 	return ret;
 }
 
-P_LIB_API void
-p_dir_rewind (PDir *dir)
+P_LIB_API pboolean
+p_dir_rewind (PDir	*dir,
+	      PError	**error)
 {
-	if (dir == NULL || dir->dir == NULL)
-		return;
+	if (dir == NULL || dir->dir == NULL) {
+		p_error_set_error_p (error,
+				     (pint) P_ERROR_IO_INVALID_ARGUMENT,
+				     0,
+				     "Invalid input argument");
+		return FALSE;
+	}
 
 	rewinddir (dir->dir);
+
+	return TRUE;
 }
 
 P_LIB_API void

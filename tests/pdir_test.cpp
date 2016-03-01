@@ -42,26 +42,26 @@ BOOST_AUTO_TEST_CASE (pdir_general_test)
 {
 	p_lib_init ();
 
-	BOOST_CHECK (p_dir_new (NULL) == NULL);
-	BOOST_CHECK (p_dir_new ("."P_DIR_SEPARATOR"pdir_test_dir_new") == NULL);
-	BOOST_CHECK (p_dir_create (NULL, -1) == FALSE);
-	BOOST_CHECK (p_dir_create ("."P_DIR_SEPARATOR"pdir_test_dir_new"P_DIR_SEPARATOR"test_dir", -1) == FALSE);
-	BOOST_CHECK (p_dir_remove (NULL) == FALSE);
-	BOOST_CHECK (p_dir_remove ("."P_DIR_SEPARATOR"pdir_test_dir_new") == FALSE);
+	BOOST_CHECK (p_dir_new (NULL, NULL) == NULL);
+	BOOST_CHECK (p_dir_new ("."P_DIR_SEPARATOR"pdir_test_dir_new", NULL) == NULL);
+	BOOST_CHECK (p_dir_create (NULL, -1, NULL) == FALSE);
+	BOOST_CHECK (p_dir_create ("."P_DIR_SEPARATOR"pdir_test_dir_new"P_DIR_SEPARATOR"test_dir", -1, NULL) == FALSE);
+	BOOST_CHECK (p_dir_remove (NULL, NULL) == FALSE);
+	BOOST_CHECK (p_dir_remove ("."P_DIR_SEPARATOR"pdir_test_dir_new", NULL) == FALSE);
 	BOOST_CHECK (p_dir_is_exists (NULL) == FALSE);
 	BOOST_CHECK (p_dir_is_exists ("."P_DIR_SEPARATOR"pdir_test_dir_new") == FALSE);
 	BOOST_CHECK (p_dir_get_path (NULL) == NULL);
-	BOOST_CHECK (p_dir_get_next_entry (NULL) == NULL);
+	BOOST_CHECK (p_dir_get_next_entry (NULL, NULL) == NULL);
+	BOOST_CHECK (p_dir_rewind (NULL, NULL) == FALSE);
 
-	p_dir_rewind (NULL);
 	p_dir_entry_free (NULL);
 	p_dir_free (NULL);
 
 	/* Cleanup previous run */
-	p_dir_remove (PDIR_TEST_DIR);
+	p_dir_remove (PDIR_TEST_DIR, NULL);
 
-	BOOST_REQUIRE (p_dir_create (PDIR_TEST_DIR, 0777) == TRUE);
-	BOOST_REQUIRE (p_dir_create (PDIR_TEST_DIR_IN, 0777) == TRUE);
+	BOOST_REQUIRE (p_dir_create (PDIR_TEST_DIR, 0777, NULL) == TRUE);
+	BOOST_REQUIRE (p_dir_create (PDIR_TEST_DIR_IN, 0777, NULL) == TRUE);
 
 	FILE *file = fopen (PDIR_TEST_FILE, "w");
 	BOOST_REQUIRE (file != NULL);
@@ -74,7 +74,7 @@ BOOST_AUTO_TEST_CASE (pdir_general_test)
 	BOOST_CHECK (p_dir_is_exists (PDIR_TEST_DIR) == TRUE);
 	BOOST_CHECK (p_dir_is_exists (PDIR_TEST_DIR_IN) == TRUE);
 
-	PDir *dir = p_dir_new (PDIR_TEST_DIR"/");
+	PDir *dir = p_dir_new (PDIR_TEST_DIR"/", NULL);
 
 	BOOST_CHECK (dir != NULL);
 
@@ -85,7 +85,7 @@ BOOST_AUTO_TEST_CASE (pdir_general_test)
 
 	PDirEntry *entry;
 
-	while ((entry = p_dir_get_next_entry (dir)) != NULL) {
+	while ((entry = p_dir_get_next_entry (dir, NULL)) != NULL) {
 		BOOST_CHECK (entry->name != NULL);
 
 		switch (entry->type) {
@@ -113,14 +113,14 @@ BOOST_AUTO_TEST_CASE (pdir_general_test)
 	BOOST_CHECK (has_entry_dir == TRUE);
 	BOOST_CHECK (has_entry_file == TRUE);
 
-	p_dir_rewind (dir);
+	BOOST_CHECK (p_dir_rewind (dir, NULL) == TRUE);
 
 	pint dir_count_2  = 0;
 	pint file_count_2 = 0;
 	has_entry_dir	= FALSE;
 	has_entry_file	= FALSE;
 
-	while ((entry = p_dir_get_next_entry (dir)) != NULL) {
+	while ((entry = p_dir_get_next_entry (dir, NULL)) != NULL) {
 		BOOST_CHECK (entry->name != NULL);
 
 		switch (entry->type) {
@@ -154,9 +154,9 @@ BOOST_AUTO_TEST_CASE (pdir_general_test)
 
 	/* Remove all stuff */
 	BOOST_CHECK (p_file_remove (PDIR_TEST_FILE, NULL) == TRUE);
-	BOOST_CHECK (p_dir_remove (PDIR_TEST_DIR) == FALSE);
-	BOOST_CHECK (p_dir_remove (PDIR_TEST_DIR_IN) == TRUE);
-	BOOST_CHECK (p_dir_remove (PDIR_TEST_DIR) == TRUE);
+	BOOST_CHECK (p_dir_remove (PDIR_TEST_DIR, NULL) == FALSE);
+	BOOST_CHECK (p_dir_remove (PDIR_TEST_DIR_IN, NULL) == TRUE);
+	BOOST_CHECK (p_dir_remove (PDIR_TEST_DIR, NULL) == TRUE);
 
 	BOOST_CHECK (p_dir_is_exists (PDIR_TEST_DIR_IN) == FALSE);
 	BOOST_CHECK (p_dir_is_exists (PDIR_TEST_DIR) == FALSE);
