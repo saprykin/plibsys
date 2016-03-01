@@ -136,7 +136,7 @@ set (PLIB_PLATFORM_SRCS
         pdir-${PLIB_DIR_MODEL}.c
 )
 
-if (PLIB_TARGET_OS STREQUAL windows)
+if ((PLIB_TARGET_OS STREQUAL windows) AND NOT (PLIB_TARGET_OS STREQUAL cygwin))
         check_c_source_compiles (
                                  "#include <windows.h>
                                  int main () {
@@ -355,7 +355,7 @@ endif()
 check_type_size ("size_t" PLIB_SIZEOF_SIZE_T)
 check_type_size ("long" PLIB_SIZEOF_LONG)
 
-if (PLIB_TARGET_OS STREQUAL windows)
+if ((PLIB_TARGET_OS STREQUAL windows) AND NOT (PLIB_TARGET_OS STREQUAL cygwin))
         set (PLIB_NEED_WINDOWS_H true)
 endif()
 
@@ -450,7 +450,7 @@ else()
         set (PLIB_INSTALL_TARGETS plib)
 endif()
 
-if (PLIB_TARGET_OS STREQUAL windows)
+if ((PLIB_TARGET_OS STREQUAL windows) AND NOT (PLIB_TARGET_OS STREQUAL cygwin))
         install (TARGETS ${PLIB_INSTALL_TARGETS}
                 DESTINATION lib
                 RUNTIME DESTINATION lib
