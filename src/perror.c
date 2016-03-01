@@ -122,12 +122,16 @@ __p_error_get_io_from_system (pint err_code)
 		return P_ERROR_IO_NO_RESOURCES;
 #  endif
 #  ifdef ERROR_INVALID_HANDLE
+#    if !defined(WSA_INVALID_HANDLE) || (ERROR_INVALID_HANDLE != WSA_INVALID_HANDLE)
 	case ERROR_INVALID_HANDLE:
 		return P_ERROR_IO_INVALID_ARGUMENT;
+#    endif
 #  endif
 #  ifdef ERROR_INVALID_PARAMETER
+#    if !defined(WSA_INVALID_PARAMETER) || (ERROR_INVALID_PARAMETER != WSA_INVALID_PARAMETER)
 	case ERROR_INVALID_PARAMETER:
 		return P_ERROR_IO_INVALID_ARGUMENT;
+#    endif
 #  endif
 #  ifdef ERROR_NOT_SUPPORTED
 	case ERROR_NOT_SUPPORTED:
