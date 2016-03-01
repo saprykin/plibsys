@@ -1,4 +1,4 @@
-/* 
+/*
  * Copyright (C) 2010 Alexander Saprykin <xelfium@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -138,8 +138,30 @@ p_list_prepend	(PList *list, ppointer data)
 	/* List is empty */
 	if (list == NULL)
 		return item;
-	
-	item->next = list;	
+
+	item->next = list;
 
 	return item;
+}
+
+P_LIB_API PList *
+p_list_reverse	(PList *list)
+{
+	PList *prev, *cur, *tmp;
+
+	if (list == NULL)
+		return NULL;
+
+	prev	   = list;
+	cur	   = list->next;
+	prev->next = NULL;
+
+	while (cur != NULL) {
+		tmp	  = cur->next;
+		cur->next = prev;
+		prev	  = cur;
+		cur	  = tmp;
+	}
+
+	return prev;
 }

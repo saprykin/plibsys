@@ -93,6 +93,30 @@ BOOST_AUTO_TEST_CASE (plist_general_test)
 	BOOST_CHECK (test_data.test_array[1] == 32);
 	BOOST_CHECK (test_data.test_array[2] == 64);
 
+	/* Testing reverse */
+
+	list = p_list_reverse (list);
+
+	BOOST_CHECK (list != NULL);
+	BOOST_CHECK (p_list_length (list) == 3);
+	BOOST_CHECK (P_POINTER_TO_INT (list->data) == 64);
+	BOOST_CHECK (P_POINTER_TO_INT (p_list_last(list)->data) == 128);
+
+	/* Testing for each loop */
+	memset (&test_data, 0, sizeof (test_data));
+
+	BOOST_REQUIRE (test_data.test_array[0] == 0);
+	BOOST_REQUIRE (test_data.test_array[1] == 0);
+	BOOST_REQUIRE (test_data.test_array[2] == 0);
+	BOOST_REQUIRE (test_data.index == 0);
+
+	p_list_foreach (list, (PFunc) foreach_test_func, (ppointer) &test_data);
+
+	BOOST_CHECK (test_data.index == 3);
+	BOOST_CHECK (test_data.test_array[0] == 64);
+	BOOST_CHECK (test_data.test_array[1] == 32);
+	BOOST_CHECK (test_data.test_array[2] == 128);
+
 	/* Testing remove */
 	list = p_list_remove (list, P_INT_TO_POINTER (32));
 	BOOST_REQUIRE (list != NULL);

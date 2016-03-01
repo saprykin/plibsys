@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2015 Alexander Saprykin <xelfium@gmail.com>
+ * Copyright (C) 2010-2016 Alexander Saprykin <xelfium@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -162,6 +162,14 @@ P_LIB_API psize		p_list_length	(const PList *list);
  * initialized with NULL. Otherwise behaviour is unpredictable.
  */
 P_LIB_API PList *	p_list_prepend	(PList *list, ppointer data) P_GNUC_WARN_UNUSED_RESULT;
+
+/**
+ * @brief Reverses the list order.
+ * @param list #PList to reverse order.
+ * @return Pointer to the top of the reversed list.
+ * @since 0.0.1
+ */
+P_LIB_API PList *	p_list_reverse	(PList *list) P_GNUC_WARN_UNUSED_RESULT;
 
 P_END_DECLS
 
