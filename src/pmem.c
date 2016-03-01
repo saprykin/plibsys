@@ -146,7 +146,7 @@ p_mem_mmap (psize	n_bytes,
 	}
 
 #ifdef P_OS_WIN
-	if ((hdl = CreateFileMapping (INVALID_HANDLE_VALUE, NULL, PAGE_READWRITE, 0, (DWORD) n_bytes, NULL)) == NULL) {
+	if ((hdl = CreateFileMappingA (INVALID_HANDLE_VALUE, NULL, PAGE_READWRITE, 0, (DWORD) n_bytes, NULL)) == NULL) {
 		p_error_set_error_p (error,
 				     (pint) __p_error_get_last_io (),
 				     __p_error_get_last_error (),

@@ -36,7 +36,7 @@ p_file_is_exists (const pchar *file)
 		return FALSE;
 
 #ifdef P_OS_WIN
-	attrs = GetFileAttributes ((LPCTSTR) file);
+	attrs = GetFileAttributesA ((LPCSTR) file);
 
 	return (attrs != INVALID_FILE_ATTRIBUTES && (attrs & FILE_ATTRIBUTE_DIRECTORY) == 0);
 #else
@@ -59,7 +59,7 @@ p_file_remove (const pchar	*file,
 	}
 
 #ifdef P_OS_WIN
-	result = (DeleteFile ((LPCTSTR) file) != 0);
+	result = (DeleteFileA ((LPCSTR) file) != 0);
 #else
 	result = (unlink (file) == 0);
 #endif

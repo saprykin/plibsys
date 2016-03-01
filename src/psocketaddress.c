@@ -106,13 +106,13 @@ p_socket_address_new (const pchar	*address,
 	memset (&sa, 0, sizeof (sa));
 	len = sizeof (sa);
 
-	if (WSAStringToAddress ((LPTSTR) address, AF_INET, NULL, (LPSOCKADDR) &sa, &len) == 0) {
+	if (WSAStringToAddressA ((LPSTR) address, AF_INET, NULL, (LPSOCKADDR) &sa, &len) == 0) {
 		memcpy (&ret->addr.sin_addr, &sin->sin_addr, sizeof (struct in_addr));
 		ret->family = P_SOCKET_FAMILY_INET;
 		return ret;
 	}
 #  ifdef AF_INET6
-	else if (WSAStringToAddress ((LPTSTR) address, AF_INET6, NULL, (LPSOCKADDR) &sa, &len) == 0) {
+	else if (WSAStringToAddressA ((LPSTR) address, AF_INET6, NULL, (LPSOCKADDR) &sa, &len) == 0) {
 		memcpy (&ret->addr.sin6_addr, &sin6->sin6_addr, sizeof (struct in6_addr));
 		ret->family = P_SOCKET_FAMILY_INET6;
 		return ret;
@@ -318,7 +318,7 @@ p_socket_address_get_address (const PSocketAddress *addr)
 	}
 #  endif /* AF_INET6 */
 
-	if (WSAAddressToString ((LPSOCKADDR) &sa, addrlen, NULL, (LPTSTR) buffer, &buflen) != 0)
+	if (WSAAddressToStringA ((LPSOCKADDR) &sa, addrlen, NULL, (LPSTR) buffer, &buflen) != 0)
 		return NULL;
 #else /* !P_OS_WIN */
 	if (addr->family == P_SOCKET_FAMILY_INET)

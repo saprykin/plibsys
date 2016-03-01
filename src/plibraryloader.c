@@ -20,6 +20,7 @@
 #include "pfile.h"
 #include "pmem.h"
 #include "pstring.h"
+#include "plib-private.h"
 
 #ifdef P_OS_WIN
 #include <windows.h>
@@ -117,7 +118,7 @@ p_library_loader_get_last_error (void)
 	DWORD	err_code;
 	LPVOID	msg_buf;
 
-	err_code = GetLastError ();
+	err_code = __p_error_get_last_error ();
 
 	if (err_code == 0)
 		return NULL;
@@ -128,7 +129,7 @@ p_library_loader_get_last_error (void)
 			    NULL,
 			    err_code,
 			    MAKELANGID (LANG_NEUTRAL, SUBLANG_DEFAULT),
-			    (LPTSTR) &msg_buf,
+			    (LPSTR) &msg_buf,
 			    0,
 			    NULL) != 0) {
 		res = p_strdup ((pchar *) msg_buf);

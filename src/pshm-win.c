@@ -16,10 +16,10 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA.
  */
 
-#include "plib-private.h"
 #include "pmem.h"
 #include "pshm.h"
 #include "psemaphore.h"
+#include "plib-private.h"
 
 #include <stdlib.h>
 #include <string.h>
@@ -64,12 +64,12 @@ __p_shm_create_handle (PShm	*shm,
 	protect = (shm->perms == P_SHM_ACCESS_READONLY) ? PAGE_READONLY : PAGE_READWRITE;
 
 	/* Multibyte character set must be enabled in MS VS */
-	if ((shm->shm_hdl = CreateFileMapping (INVALID_HANDLE_VALUE,
-					       NULL,
-					       protect,
-					       0,
-					       (DWORD) shm->size,
-					       shm->platform_key)) == NULL) {
+	if ((shm->shm_hdl = CreateFileMappingA (INVALID_HANDLE_VALUE,
+						NULL,
+						protect,
+						0,
+						(DWORD) shm->size,
+						shm->platform_key)) == NULL) {
 		p_error_set_error_p (error,
 				     (pint) __p_error_get_last_ipc (),
 				     __p_error_get_last_error (),

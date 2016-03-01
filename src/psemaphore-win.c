@@ -51,7 +51,7 @@ __p_semaphore_create_handle (PSemaphore *sem, PError **error)
 	}
 
 	/* Multibyte character set must be enabled in MS VS */
-	if ((sem->sem_hdl = CreateSemaphore (NULL, sem->init_val, MAXLONG, sem->platform_key)) == NULL) {
+	if ((sem->sem_hdl = CreateSemaphoreA (NULL, sem->init_val, MAXLONG, sem->platform_key)) == NULL) {
 		p_error_set_error_p (error,
 				     (pint) __p_error_get_last_ipc (),
 				     __p_error_get_last_error (),
