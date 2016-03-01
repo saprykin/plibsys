@@ -46,7 +46,7 @@ BOOST_AUTO_TEST_CASE (pmacros_general_test)
     !defined (P_OS_AIX) && !defined (P_OS_HPUX) && !defined (P_OS_SOLARIS) && \
     !defined (P_OS_QNX) && !defined (P_OS_QNX6) && !defined (P_OS_UNIX) &&    \
     !defined (P_OS_LINUX) && !defined (P_OS_WIN) && !defined (P_OS_CYGWIN) && \
-    !defined (P_OS_SCO) && !defined (P_OS_UNIXWARE)
+    !defined (P_OS_SCO) && !defined (P_OS_UNIXWARE) && !defined (P_OS_VMS)
 	BOOST_CHECK (false);
 #endif
 

@@ -127,6 +127,12 @@
  */
 
 /**
+ * @def P_OS_VMS
+ * @brief VMS operating system
+ * @since 0.0.1
+ */
+
+/**
  * @def P_OS_UNIX
  * @brief UNIX based operating system
  * @since 0.0.1
@@ -198,6 +204,7 @@
 #  define P_OS_SCO
 #  define P_OS_UNIXWARE
 #  define P_OS_UNIXWARE7
+#  define P_OS_VMS
 #  define P_OS_UNIX
 #  define P_OS_LINUX
 #  define P_OS_MAC9
@@ -265,6 +272,9 @@
 #elif defined(__USLC__) || defined(__UNIXWARE__)
 #  define P_OS_UNIXWARE
 #  define P_OS_UNIXWARE7
+/* VMS */
+#elif defined(VMS) || defined(__VMS)
+#  define P_OS_VMS
 #endif
 
 #ifdef P_OS_WIN64
