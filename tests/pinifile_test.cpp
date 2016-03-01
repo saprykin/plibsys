@@ -226,7 +226,7 @@ BOOST_AUTO_TEST_CASE (pinifile_read_test)
 
 	p_ini_file_free (ini);
 
-	BOOST_CHECK (p_file_remove ("." P_DIR_SEPARATOR "p_ini_test_file.ini"));
+	BOOST_CHECK (p_file_remove ("." P_DIR_SEPARATOR "p_ini_test_file.ini", NULL));
 
 	p_lib_shutdown ();
 }

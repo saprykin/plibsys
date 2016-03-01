@@ -153,7 +153,7 @@ BOOST_AUTO_TEST_CASE (pdir_general_test)
 	BOOST_CHECK (file_count == file_count_2);
 
 	/* Remove all stuff */
-	BOOST_CHECK (p_file_remove (PDIR_TEST_FILE) == TRUE);
+	BOOST_CHECK (p_file_remove (PDIR_TEST_FILE, NULL) == TRUE);
 	BOOST_CHECK (p_dir_remove (PDIR_TEST_DIR) == FALSE);
 	BOOST_CHECK (p_dir_remove (PDIR_TEST_DIR_IN) == TRUE);
 	BOOST_CHECK (p_dir_remove (PDIR_TEST_DIR) == TRUE);

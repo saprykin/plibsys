@@ -17,6 +17,7 @@
  */
 
 #include "pfile.h"
+#include "plib-private.h"
 
 #ifdef P_OS_WIN
 #include <windows.h>
@@ -44,14 +45,30 @@ p_file_is_exists (const pchar *file)
 }
 
 P_LIB_API pboolean
-p_file_remove (const pchar *file)
+p_file_remove (const pchar	*file,
+	       PError		**error)
 {
-	if (file == NULL)
+	pboolean result;
+
+	if (file == NULL) {
+		p_error_set_error_p (error,
+				     (pint) P_ERROR_IO_INVALID_ARGUMENT,
+				     0,
+				     "Invalid input argument");
 		return FALSE;
+	}
 
 #ifdef P_OS_WIN
-	return DeleteFile ((LPCTSTR) file);
+	result = (DeleteFile ((LPCTSTR) file) != 0);
 #else
-	return (unlink (file) == 0);
+	result = (unlink (file) == 0);
 #endif
+
+	if (!result)
+		p_error_set_error_p (error,
+				     (pint) __p_error_get_last_io (),
+				     __p_error_get_last_error (),
+				     "Failed to remove file");
+
+	return result;
 }
