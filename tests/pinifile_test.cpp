@@ -33,6 +33,8 @@
 #  include <boost/test/unit_test.hpp>
 #endif
 
+#include <boost/test/floating_point_comparison.hpp>
+
 static bool create_test_ini_file ()
 {
 	FILE *file = fopen ("." P_DIR_SEPARATOR "p_ini_test_file.ini", "w");

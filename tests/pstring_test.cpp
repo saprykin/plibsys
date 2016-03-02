@@ -34,6 +34,8 @@
 #  include <boost/test/unit_test.hpp>
 #endif
 
+#include <boost/test/floating_point_comparison.hpp>
+
 BOOST_AUTO_TEST_SUITE (BOOST_TEST_MODULE)
 
 BOOST_AUTO_TEST_CASE (strdup_test)
