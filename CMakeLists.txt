@@ -26,8 +26,10 @@ message (STATUS "Checking whether to enable unit tests")
 find_package (Boost COMPONENTS unit_test_framework)
 
 if (BOOST_ROOT)
-        get_filename_component (BOOST_ROOT_ABSOLUTE ${BOOST_ROOT} ABSOLUTE)
-        set (BOOST_ROOT ${BOOST_ROOT_ABSOLUTE})
+        if (NOT IS_ABSOLUTE "${BOOST_ROOT}")
+                get_filename_component (BOOST_ROOT_ABSOLUTE "${CMAKE_BINARY_DIR}/${BOOST_ROOT}" ABSOLUTE)
+                set (BOOST_ROOT ${BOOST_ROOT_ABSOLUTE})
+        endif()
 endif()
 
 if (Boost_FOUND)

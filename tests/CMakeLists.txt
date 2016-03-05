@@ -22,7 +22,7 @@ else()
                 set (Boost_LIBRARIES "")
 
                 if (NOT IS_ABSOLUTE "${BOOST_ROOT}")
-                        get_filename_component (BOOST_ROOT_ABSOLUTE ${BOOST_ROOT} ABSOLUTE)
+                        get_filename_component (BOOST_ROOT_ABSOLUTE "${CMAKE_CURRENT_BINARY_DIR}/${BOOST_ROOT}" ABSOLUTE)
                         set (BOOST_ROOT ${BOOST_ROOT_ABSOLUTE})
                 endif()
 
