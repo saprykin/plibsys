@@ -24,9 +24,45 @@
 #include <string.h>
 
 #ifdef P_OS_WIN
-#include <windows.h>
+#  include <windows.h>
 #else
-#include <errno.h>
+#  include <errno.h>
+#  if !defined (PLIB_HAS_NANOSLEEP)
+#    include <sys/select.h>
+#    include <sys/time.h>
+static int __p_uthread_nanosleep (puint32 msec)
+{
+	int		rc;
+	struct timeval	tstart, tstop, tremain, time2wait;
+
+	time2wait.tv_sec  = msec / 1000;
+	time2wait.tv_usec = (msec % 1000) * 1000;
+
+	if (gettimeofday (&tstart, NULL) != 0)
+		return -1;
+
+	rc = -1;
+
+	while (rc != 0) {
+		if ((rc = select (0, NULL, NULL, NULL, &time2wait)) != 0) {
+			if (__p_error_get_last_error () == EINTR) {
+				if (gettimeofday (&tstop, NULL) != 0)
+					return -1;
+
+				tremain.tv_sec = time2wait.tv_sec -
+						 (tstop.tv_sec - tstart.tv_sec);
+				tremain.tv_usec = time2wait.tv_usec -
+						  (tstop.tv_usec - tstart.tv_usec);
+				tremain.tv_sec += tremain.tv_usec / 1000000L;
+				tremain.tv_usec %= 1000000L;
+			} else
+				return -1;
+		}
+	}
+
+	return 0;
+}
+#  endif
 #endif
 
 P_LIB_API pint
@@ -34,7 +70,8 @@ p_uthread_sleep (puint32 msec)
 {
 #ifdef P_OS_WIN
 	Sleep (msec);
-#else
+	return 0;
+#elif defined (PLIB_HAS_NANOSLEEP)
 	pint result;
 	struct timespec time_req;
 	struct timespec time_rem;
@@ -53,6 +90,9 @@ p_uthread_sleep (puint32 msec)
 				return -1;
 		}
 	}
-#endif
+
 	return 0;
+#else
+	return __p_uthread_nanosleep (msec);
+#endif
 }

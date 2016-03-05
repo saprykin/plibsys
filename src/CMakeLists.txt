@@ -400,6 +400,24 @@ if (NOT PLIB_TARGET_OS STREQUAL windows)
         elseif (PLIB_MMAP_HAS_MAP_ANON)
                 add_definitions (-DPLIB_MMAP_HAS_MAP_ANON)
         endif()
+
+        message (STATUS "Checking whether nanosleep() presents")
+
+        check_c_source_compiles (
+                                 "#include <time.h>
+                                 int main () {
+                                        nanosleep ((const struct timespec[]){{0, 500000000L}}, NULL);
+                                        return 0;
+                                 }"
+                                 PLIB_HAS_NANOSLEEP
+                                )
+
+        if (PLIB_HAS_NANOSLEEP)
+                message (STATUS "Checking whether nanosleep() presents - yes")
+                add_definitions (-DPLIB_HAS_NANOSLEEP)
+        else()
+                message (STATUS "Checking whether nanosleep() presents - no")
+        endif()
 endif()
 
 add_library (plib SHARED ${PLIB_SRCS} ${PLIB_PLATFORM_SRCS} ${PLIB_PUBLIC_HDRS} ${PLIB_PRIVATE_HDRS})
