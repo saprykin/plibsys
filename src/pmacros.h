@@ -272,6 +272,10 @@
 #elif defined(__USLC__) || defined(__UNIXWARE__)
 #  define P_OS_UNIXWARE
 #  define P_OS_UNIXWARE7
+/* SCO UnixWare + GCC */
+#elif defined(__svr4__) && defined(i386)
+#  define P_OS_UNIXWARE
+#  define P_OS_UNIXWARE7
 /* VMS */
 #elif defined(VMS) || defined(__VMS)
 #  define P_OS_VMS
