@@ -162,7 +162,7 @@ p_dir_get_next_entry (PDir	*dir,
 		      PError	**error)
 {
 	PDirEntry	*ret;
-#if defined(P_OS_SOLARIS) || defined (P_OS_QNX6)
+#if defined(P_OS_SOLARIS) || defined(P_OS_QNX6) || defined(P_OS_UNIXWARE)
 	struct dirent	*dirent_st;
 #else
 	struct dirent	dirent_st;
@@ -187,7 +187,7 @@ p_dir_get_next_entry (PDir	*dir,
 				     "Failed to allocate memory for internal directory entry");
 		return NULL;
 	}
-#elif defined(P_OS_QNX6)
+#elif defined(P_OS_QNX6) ||defined(P_OS_UNIXWARE)
 	if ((dirent_st = p_malloc0 (sizeof (struct dirent) + NAME_MAX + 1)) == NULL) {
 		p_error_set_error_p (error,
 				     (pint) P_ERROR_IO_NO_RESOURCES,
@@ -197,7 +197,7 @@ p_dir_get_next_entry (PDir	*dir,
 	}
 #endif
 
-#if defined(P_OS_SOLARIS) || defined(P_OS_QNX6)
+#if defined(P_OS_SOLARIS) || defined(P_OS_QNX6) || defined(P_OS_UNIXWARE)
 	if (readdir_r (dir->dir, dirent_st, &dir->dir_result) != 0) {
 		p_error_set_error_p (error,
 				     (pint) __p_error_get_last_io (),
@@ -217,7 +217,7 @@ p_dir_get_next_entry (PDir	*dir,
 #endif
 
 	if (dir->dir_result == NULL) {
-#if defined(P_OS_SOLARIS) || defined(P_OS_QNX6)
+#if defined(P_OS_SOLARIS) || defined(P_OS_QNX6) || defined(P_OS_UNIXWARE)
 		p_free (dirent_st);
 #endif
 		return NULL;
@@ -228,13 +228,13 @@ p_dir_get_next_entry (PDir	*dir,
 				     (pint) P_ERROR_IO_NO_RESOURCES,
 				     0,
 				     "Failed to allocate memory for directory entry");
-#if defined(P_OS_SOLARIS) || defined(P_OS_QNX6)
+#if defined(P_OS_SOLARIS) || defined(P_OS_QNX6) || defined(P_OS_UNIXWARE)
 		p_free (dirent_st);
 #endif
 		return NULL;
 	}
 
-#if defined(P_OS_SOLARIS) || defined(P_OS_QNX6)
+#if defined(P_OS_SOLARIS) || defined(P_OS_QNX6) || defined(P_OS_UNIXWARE)
 	ret->name = p_strdup (dirent_st->d_name);
 	p_free (dirent_st);
 #else
