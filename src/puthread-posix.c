@@ -25,18 +25,19 @@
 #include <pthread.h>
 #include <unistd.h>
 
-/* Some systems without native pthreads may lack some of the constants */
+/* Some systems without native pthreads may lack some of the constants,
+ * leave them zero as we are not going to use them anyway */
 
 #ifndef PTHREAD_CREATE_JOINABLE
-#  define PTHREAD_CREATE_JOINABLE 1
+#  define PTHREAD_CREATE_JOINABLE 0
 #endif
 
 #ifndef PTHREAD_CREATE_DETACHED
-#  define PTHREAD_CREATE_DETACHED 2
+#  define PTHREAD_CREATE_DETACHED 0
 #endif
 
 #ifndef PTHREAD_SCOPE_SYSTEM
-#  define PTHREAD_SCOPE_SYSTEM 1
+#  define PTHREAD_SCOPE_SYSTEM 0
 #endif
 
 typedef pthread_t puthread_hdl;
