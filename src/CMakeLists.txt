@@ -372,7 +372,8 @@ if (NOT PLIB_TARGET_OS STREQUAL windows)
         message (STATUS "Checking whether mmap has anonymous mapping")
 
         check_c_source_compiles (
-                                 "#include <sys/mman.h>
+                                 "#include <sys/types.h>
+                                  #include <sys/mman.h>
                                  int main () {
                                         mmap (0, 1024, PROT_READ | PROT_WRITE, MAP_ANON | MAP_PRIVATE, -1, 0);
                                         return 0;
@@ -381,7 +382,8 @@ if (NOT PLIB_TARGET_OS STREQUAL windows)
                                 )
 
         check_c_source_compiles (
-                                 "#include <sys/mman.h>
+                                 "#include <sys/types.h>
+                                  #include <sys/mman.h>
                                  int main () {
                                         mmap (0, 1024, PROT_READ | PROT_WRITE, MAP_ANONYMOUS | MAP_PRIVATE, -1, 0);
                                         return 0;
