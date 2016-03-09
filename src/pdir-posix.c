@@ -26,8 +26,21 @@
 #include <string.h>
 #include <dirent.h>
 #include <unistd.h>
+#ifdef P_OS_SCO
+#  include <limits.h>
+#endif
 #include <sys/stat.h>
 #include <sys/types.h>
+
+#if defined(P_OS_SOLARIS) || defined(P_OS_QNX6) || defined(P_OS_UNIXWARE) || defined(P_OS_SCO)
+#  define P_DIR_NEED_BUF_ALLOC 1
+#endif
+
+#ifdef P_DIR_NEED_BUF_ALLOC
+#  if defined(P_OS_SCO)
+#    define P_DIR_NEED_SIMPLE_R 1
+#  endif
+#endif
 
 struct _PDir {
 	DIR *		dir;
@@ -162,7 +175,7 @@ p_dir_get_next_entry (PDir	*dir,
 		      PError	**error)
 {
 	PDirEntry	*ret;
-#if defined(P_OS_SOLARIS) || defined(P_OS_QNX6) || defined(P_OS_UNIXWARE)
+#ifdef P_DIR_NEED_BUF_ALLOC
 	struct dirent	*dirent_st;
 #else
 	struct dirent	dirent_st;
@@ -170,6 +183,9 @@ p_dir_get_next_entry (PDir	*dir,
 	struct stat	sb;
 	pchar		*entry_path;
 	pint		path_len;
+#ifdef P_DIR_NEED_BUF_ALLOC
+	pint		name_max;
+#endif
 
 	if (dir == NULL || dir->dir == NULL) {
 		p_error_set_error_p (error,
@@ -180,24 +196,46 @@ p_dir_get_next_entry (PDir	*dir,
 	}
 
 #if defined(P_OS_SOLARIS)
-	if ((dirent_st = p_malloc0 (sizeof (struct dirent) + FILENAME_MAX + 1)) == NULL) {
-		p_error_set_error_p (error,
-				     (pint) P_ERROR_IO_NO_RESOURCES,
-				     0,
-				     "Failed to allocate memory for internal directory entry");
-		return NULL;
+	name_max = (pint) (FILENAME_MAX);
+#elif defined(P_OS_SCO)
+	name_max = (pint) pathconf (dir->orig_path, _PC_NAME_MAX);
+
+	if (name_max == -1) {
+		if (__p_error_get_last_error () == 0)
+			name_max = _POSIX_PATH_MAX;
+		else {
+			p_error_set_error_p (error,
+					     (pint) P_ERROR_IO_FAILED,
+					     0,
+					     "Failed to get NAME_MAX using pathconf()");
+			return NULL;
+		}
 	}
 #elif defined(P_OS_QNX6) ||defined(P_OS_UNIXWARE)
-	if ((dirent_st = p_malloc0 (sizeof (struct dirent) + NAME_MAX + 1)) == NULL) {
+	name_max = (pint) (NAME_MAX);
+#endif
+
+#ifdef P_DIR_NEED_BUF_ALLOC
+	if ((dirent_st = p_malloc0 (sizeof (struct dirent) + name_max + 1)) == NULL) {
 		p_error_set_error_p (error,
 				     (pint) P_ERROR_IO_NO_RESOURCES,
 				     0,
 				     "Failed to allocate memory for internal directory entry");
 		return NULL;
 	}
-#endif
 
-#if defined(P_OS_SOLARIS) || defined(P_OS_QNX6) || defined(P_OS_UNIXWARE)
+#  ifdef P_DIR_NEED_SIMPLE_R
+	if ((dir->dir_result = readdir_r (dir->dir, dirent_st)) == NULL) {
+		if (__p_error_get_last_error () != 0) {
+			p_error_set_error_p (error,
+					     (pint) __p_error_get_last_io (),
+					     __p_error_get_last_error (),
+					     "Failed to call readdir_r() to read directory stream");
+			p_free (dirent_st);
+			return NULL;
+		}
+	}
+#  else
 	if (readdir_r (dir->dir, dirent_st, &dir->dir_result) != 0) {
 		p_error_set_error_p (error,
 				     (pint) __p_error_get_last_io (),
@@ -206,6 +244,7 @@ p_dir_get_next_entry (PDir	*dir,
 		p_free (dirent_st);
 		return NULL;
 	}
+#  endif
 #else
 	if (readdir_r (dir->dir, &dirent_st, &dir->dir_result) != 0) {
 		p_error_set_error_p (error,
@@ -217,7 +256,7 @@ p_dir_get_next_entry (PDir	*dir,
 #endif
 
 	if (dir->dir_result == NULL) {
-#if defined(P_OS_SOLARIS) || defined(P_OS_QNX6) || defined(P_OS_UNIXWARE)
+#ifdef P_DIR_NEED_BUF_ALLOC
 		p_free (dirent_st);
 #endif
 		return NULL;
@@ -228,13 +267,13 @@ p_dir_get_next_entry (PDir	*dir,
 				     (pint) P_ERROR_IO_NO_RESOURCES,
 				     0,
 				     "Failed to allocate memory for directory entry");
-#if defined(P_OS_SOLARIS) || defined(P_OS_QNX6) || defined(P_OS_UNIXWARE)
+#ifdef P_DIR_NEED_BUF_ALLOC
 		p_free (dirent_st);
 #endif
 		return NULL;
 	}
 
-#if defined(P_OS_SOLARIS) || defined(P_OS_QNX6) || defined(P_OS_UNIXWARE)
+#ifdef P_DIR_NEED_BUF_ALLOC
 	ret->name = p_strdup (dirent_st->d_name);
 	p_free (dirent_st);
 #else
