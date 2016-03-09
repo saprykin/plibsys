@@ -16,8 +16,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA.
  */
 
-/* TODO: barriers */
-
 #include "pmem.h"
 #include "puthread.h"
 
@@ -26,6 +24,20 @@
 #include <string.h>
 #include <pthread.h>
 #include <unistd.h>
+
+/* Some systems without native pthreads may lack some of the constants */
+
+#ifndef PTHREAD_CREATE_JOINABLE
+#  define PTHREAD_CREATE_JOINABLE 1
+#endif
+
+#ifndef PTHREAD_CREATE_DETACHED
+#  define PTHREAD_CREATE_DETACHED 2
+#endif
+
+#ifndef PTHREAD_SCOPE_SYSTEM
+#  define PTHREAD_SCOPE_SYSTEM 1
+#endif
 
 typedef pthread_t puthread_hdl;
 
