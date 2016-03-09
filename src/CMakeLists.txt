@@ -369,6 +369,7 @@ endif()
 configure_file (${CMAKE_CURRENT_SOURCE_DIR}/plibconfig.h.in ${CMAKE_BINARY_DIR}/plibconfig.h)
 
 if (NOT PLIB_TARGET_OS STREQUAL windows)
+        # Check for anonymous mmap()
         message (STATUS "Checking whether mmap has anonymous mapping")
 
         check_c_source_compiles (
@@ -403,6 +404,7 @@ if (NOT PLIB_TARGET_OS STREQUAL windows)
                 add_definitions (-DPLIB_MMAP_HAS_MAP_ANON)
         endif()
 
+        # Check for nanosleep() call
         message (STATUS "Checking whether nanosleep() presents")
 
         check_c_source_compiles (
@@ -419,6 +421,70 @@ if (NOT PLIB_TARGET_OS STREQUAL windows)
                 add_definitions (-DPLIB_HAS_NANOSLEEP)
         else()
                 message (STATUS "Checking whether nanosleep() presents - no")
+        endif()
+
+        # Check for socklen_t definition
+        message (STATUS "Checking whether socklen_t is defined")
+
+        check_c_source_compiles (
+                                 "#include <sys/types.h>
+                                  #include <sys/socket.h>
+                                 int main () {
+                                        socklen_t len = sizeof (socklen_t);
+                                        return len;
+                                 }"
+                                 PLIB_HAS_SOCKLEN_T
+                                )
+
+        if (PLIB_HAS_SOCKLEN_T)
+                message (STATUS "Checking whether socklen_t is defined - yes")
+                add_definitions (-DPLIB_HAS_SOCKLEN_T)
+        else()
+                message (STATUS "Checking whether socklen_t is defined - no")
+        endif()
+
+        # Check for sockaddr_storage structure
+        message (STATUS "Checking whether struct sockaddr_storage is defined")
+
+        check_c_source_compiles (
+                                 "#include <sys/types.h>
+                                  #include <sys/socket.h>
+                                 int main () {
+                                        struct sockaddr_storage sock_addr;
+                                        sock_addr.ss_family = AF_INET;
+
+                                        return 0;
+                                 }"
+                                 PLIB_HAS_SOCKADDR_STORAGE
+                                )
+
+        if (PLIB_HAS_SOCKADDR_STORAGE)
+                message (STATUS "Checking whether struct sockaddr_storage is defined - yes")
+                add_definitions (-DPLIB_HAS_SOCKADDR_STORAGE)
+        else()
+                message (STATUS "Checking whether struct sockaddr_storage is defined - no")
+        endif()
+
+        # Check sa_len field in struct sockaddr
+        message (STATUS "Checking whether struct sockaddr has sa_len")
+
+        check_c_source_compiles (
+                                 "#include <sys/types.h>
+                                  #include <sys/socket.h>
+                                 int main () {
+                                        struct sockaddr sock_addr;
+                                        sock_addr.sa_len = 0;
+
+                                        return 0;
+                                 }"
+                                 PLIB_SOCKADDR_HAS_SA_LEN
+                                )
+
+        if (PLIB_SOCKADDR_HAS_SA_LEN)
+                message (STATUS "Checking whether struct sockaddr has sa_len - yes")
+                add_definitions (-DPLIB_SOCKADDR_HAS_SA_LEN)
+        else()
+                message (STATUS "Checking whether struct sockaddr has sa_len - no")
         endif()
 endif()
 

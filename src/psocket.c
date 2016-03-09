@@ -37,6 +37,34 @@
 #include <windows.h>
 #endif
 
+#ifndef PLIB_HAS_SOCKLEN_T
+typedef int socklen_t;
+#endif
+
+#ifndef PLIB_HAS_SOCKADDR_STORAGE
+/* According to RFC 2553 */
+#  define _PLIB_SS_MAXSIZE	128
+#  define _PLIB_SS_ALIGNSIZE	(sizeof (pint64))
+
+#  ifdef PLIB_SOCKADDR_HAS_SA_LEN
+#    define _PLIB_SS_PAD1SIZE	(_PLIB_SS_ALIGNSIZE - (sizeof (puchar) + sizeof (puchar)))
+#  else
+#    define _PLIB_SS_PAD1SIZE	(_PLIB_SS_ALIGNSIZE - sizeof (puchar))
+#  endif
+
+#  define _PLIB_SS_PAD2SIZE	(_PLIB_SS_MAXSIZE - (sizeof (puchar) + _PLIB_SS_PAD1SIZE + _PLIB_SS_ALIGNSIZE))
+
+struct sockaddr_storage {
+#  ifdef PLIB_SOCKADDR_HAS_SA_LEN
+	puchar		ss_len;
+#  endif
+	puchar		ss_family;
+	pchar		__ss_pad1[_PLIB_SS_PAD1SIZE];
+	pint64		__ss_align;
+	pchar		__ss_pad2[_PLIB_SS_PAD2SIZE];
+};
+#endif
+
 /* On old Solaris systems SOMAXCONN is set to 5 */
 #define P_SOCKET_DEFAULT_BACKLOG	5
 
