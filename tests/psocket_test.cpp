@@ -225,6 +225,8 @@ static void * udp_socket_receiver_thread (void *arg)
 	if (skt_receiver == NULL)
 		p_uthread_exit (-1);
 
+	p_socket_set_blocking (skt_receiver, FALSE);
+
 	PSocketAddress *addr_receiver = p_socket_address_new ("127.0.0.1", data->receiver_port);
 
 	if (addr_receiver == NULL) {
