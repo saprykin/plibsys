@@ -67,6 +67,8 @@ function (plib_detect_target_os result)
 
         if (PLIB_TARGET_OS STREQUAL hp-ux)
                 set (PLIB_TARGET_OS hpux)
+        elseif (PLIB_TARGET_OS STREQUAL sco_sv)
+                set (PLIB_TARGET_OS scosv)
         endif()
 
         set (${result} ${PLIB_TARGET_OS} PARENT_SCOPE)
