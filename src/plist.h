@@ -20,7 +20,6 @@
  * @file plist.h
  * @brief Single-linked list
  * @author Alexander Saprykin
- * @todo Prepend and reverse operations
  *
  * #PList is used to store pointers in single-linked list. Before usage you
  * must initialize it to NULL. p_list_append() and p_list_remove() routines
