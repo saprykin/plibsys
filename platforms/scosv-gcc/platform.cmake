@@ -9,7 +9,7 @@ set (PLIB_PLATFORM_DEFINES
 )
 
 if (CMAKE_SYSTEM_VERSION VERSION_LESS "5.0")
-        set (PLIB_PLATFORM_LINK_LIBRARIES socket nsl gthreads)
+        set (PLIB_PLATFORM_LINK_LIBRARIES socket nsl gthreads malloc)
 
         message ("
                  You need a working port of FSU Pthreads in order to
