@@ -364,11 +364,12 @@ check_type_size ("long" PLIB_SIZEOF_LONG)
 
 if ((PLIB_TARGET_OS STREQUAL windows) AND NOT (PLIB_TARGET_OS STREQUAL cygwin))
         set (PLIB_NEED_WINDOWS_H true)
+        add_definitions (-DPLIB_HAS_SOCKADDR_STORAGE)
 endif()
 
 configure_file (${CMAKE_CURRENT_SOURCE_DIR}/plibconfig.h.in ${CMAKE_BINARY_DIR}/plibconfig.h)
 
-if (NOT PLIB_TARGET_OS STREQUAL windows)
+if (NOT PLIB_TARGET_OS STREQUAL windows OR PLIB_TARGET_OS STREQUAL cygwin)
         # Check for anonymous mmap()
         message (STATUS "Checking whether mmap has anonymous mapping")
 
