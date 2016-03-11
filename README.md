@@ -43,6 +43,8 @@ the following platforms:
 * AIX
 * HP-UX
 * QNX Neutrino
+* UnixWare 7
+* SCO OpenServer 5
 
 It should also work on other *nix systems with or without minimal
 efforts.
