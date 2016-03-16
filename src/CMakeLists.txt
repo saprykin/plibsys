@@ -434,7 +434,7 @@ if (NOT PLIB_TARGET_OS STREQUAL windows OR PLIB_TARGET_OS STREQUAL cygwin)
                                   #include <sys/socket.h>
                                  int main () {
                                         socklen_t len = sizeof (socklen_t);
-                                        return len;
+                                        return len > 0 ? 0 : -1;
                                  }"
                                  PLIB_HAS_SOCKLEN_T
                                 )
