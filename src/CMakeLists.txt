@@ -143,6 +143,8 @@ set (PLIB_PLATFORM_SRCS
         pdir-${PLIB_DIR_MODEL}.c
 )
 
+set (CMAKE_REQUIRED_DEFINITIONS "${CMAKE_REQUIRED_DEFINITIONS} ${PLIB_PLATFORM_DEFINES}")
+
 if ((PLIB_TARGET_OS STREQUAL windows) AND NOT (PLIB_TARGET_OS STREQUAL cygwin))
         check_c_source_compiles (
                                  "#include <windows.h>
