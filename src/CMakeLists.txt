@@ -452,6 +452,7 @@ if (NOT PLIB_TARGET_OS STREQUAL windows OR PLIB_TARGET_OS STREQUAL cygwin)
         check_c_source_compiles (
                                  "#include <sys/types.h>
                                   #include <sys/socket.h>
+                                  #include <netinet/in.h>
                                  int main () {
                                         struct sockaddr_storage sock_addr;
                                         sock_addr.ss_family = AF_INET;
@@ -474,6 +475,7 @@ if (NOT PLIB_TARGET_OS STREQUAL windows OR PLIB_TARGET_OS STREQUAL cygwin)
         check_c_source_compiles (
                                  "#include <sys/types.h>
                                   #include <sys/socket.h>
+                                  #include <netinet/in.h>
                                  int main () {
                                         struct sockaddr sock_addr;
                                         sock_addr.sa_len = 0;
