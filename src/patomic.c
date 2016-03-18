@@ -785,29 +785,19 @@ p_atomic_int_add (volatile pint		*atomic,
 #ifdef DEFINE_WITH_WIN32_INTERLOCKED
 #include <winsock2.h>
 #include <windows.h>
-/*
- * Following indicates that InterlockedCompareExchangePointer is
- * declared in winbase.h (included by windows.h) and needs to be
- * commented out if not true. It is defined iff WINVER > 0x0400,
- * which is usually correct but can be wrong if WINVER is set before
- * windows.h is included.
- */
-#  if WINVER > 0x0400
-#    define HAVE_INTERLOCKED_COMPARE_EXCHANGE_POINTER
-#  endif
 
 P_LIB_API pint
 p_atomic_int_exchange_and_add (volatile pint32	*atomic,
-			       pint32           val)
+			       pint32		val)
 {
-	return InterlockedExchangeAdd ((volatile LONG *) atomic, val);
+	return (pint) InterlockedExchangeAdd ((LONG volatile *) atomic, (LONG) val);
 }
 
 P_LIB_API void
 p_atomic_int_add (volatile pint32	*atomic,
 		  pint32		val)
 {
-	InterlockedExchangeAdd ((volatile LONG *) atomic, val);
+	InterlockedExchangeAdd ((LONG volatile *) atomic, (LONG) val);
 }
 
 P_LIB_API pboolean
@@ -815,15 +805,9 @@ p_atomic_int_compare_and_exchange (volatile pint32	*atomic,
 				   pint32		oldval,
 				   pint32		newval)
 {
-#  ifndef HAVE_INTERLOCKED_COMPARE_EXCHANGE_POINTER
-  return (puint32) InterlockedCompareExchange ((PVOID*) atomic,
-					       (PVOID) newval,
-					       (PVOID) oldval) == oldval;
-#  else
-  return InterlockedCompareExchange ((volatile LONG *) atomic,
-				     newval,
-				     oldval) == oldval;
-#  endif
+	return InterlockedCompareExchange ((LONG volatile *) atomic,
+					   (LONG) newval,
+					   (LONG) oldval) == (LONG) oldval;
 }
 
 P_LIB_API pboolean
@@ -831,13 +815,23 @@ p_atomic_pointer_compare_and_exchange (volatile ppointer	*atomic,
 				       ppointer			oldval,
 				       ppointer			newval)
 {
-#  ifdef HAVE_INTERLOCKED_COMPARE_EXCHANGE_POINTER
-	return InterlockedCompareExchangePointer (atomic, newval, oldval) == oldval;
+#  ifdef PLIB_HAS_INTERLOCKED_POINTER
+	return InterlockedCompareExchangePointer ((PVOID volatile *) atomic,
+						  (PVOID) newval,
+						  (PVOID) oldval) == (PVOID) oldval;
 #  else
 #    if PLIB_SIZEOF_VOID_P != 4 /* no 32-bit system */
-#      error "InterlockedCompareExchangePointer needed"
+#      if defined(PLIB_HAS_INTERLOCKED_64)
+	return InterlockedCompareExchange64 ((LONGLONG volatile *) atomic,
+					      (LONGLONG) newval,
+					      (LONGLONG) oldval) == (LONGLONG) oldval;
+#      else
+#        error "InterlockedCompareExchangePointer needed"
+#      endif
 #    else
-	return InterlockedCompareExchange (atomic, newval, oldval) == oldval;
+	return InterlockedCompareExchange ((LONG volatile *) atomic,
+					   (LONG) newval,
+					   (LONG) oldval) == (LONG) oldval;
 #    endif
 #  endif
 }
@@ -1039,7 +1033,7 @@ P_LIB_API ppointer
 
 P_LIB_API void
 (p_atomic_pointer_set) (volatile ppointer	*atomic,
-				ppointer			newval)
+			ppointer		newval)
 {
 	p_atomic_pointer_set (atomic, newval);
 }

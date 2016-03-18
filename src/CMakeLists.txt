@@ -165,6 +165,32 @@ if ((PLIB_TARGET_OS STREQUAL windows) AND NOT (PLIB_TARGET_OS STREQUAL cygwin))
                                  PLIB_HAS_VISTA_CV
         )
 
+        check_c_source_compiles (
+                                 "#include <windows.h>
+                                 int main () {
+                                        LONGLONG dest = 0;
+                                        LONGLONG exch = 0;
+                                        LONGLONG comp = 1;
+
+                                        InterlockedCompareExchange64 (&dest, exch, comp);
+                                        return 0;
+                                 }"
+                                 PLIB_HAS_INTERLOCKED_64
+        )
+
+        check_c_source_compiles (
+                                 "#include <windows.h>
+                                 int main () {
+                                        PVOID dest = 0;
+                                        PVOID exch = 0;
+                                        PVOID comp = 1;
+
+                                        InterlockedCompareExchangePointer (&dest, exch, comp);
+                                        return 0;
+                                 }"
+                                 PLIB_HAS_INTERLOCKED_POINTER
+        )
+
         if (PLIB_HAS_GETTICKCOUNT_64)
                 add_definitions (-DPLIB_HAS_GETTICKCOUNT_64)
         endif()
@@ -173,7 +199,15 @@ if ((PLIB_TARGET_OS STREQUAL windows) AND NOT (PLIB_TARGET_OS STREQUAL cygwin))
                 add_definitions (-DPLIB_HAS_VISTA_CV)
         endif()
 
-        if (PLIB_HAS_VISTA_CV OR PLIB_HAS_GETTICKCOUNT_64)
+        if (PLIB_HAS_INTERLOCKED_64)
+                add_definitions (-DPLIB_HAS_INTERLOCKED_64)
+        endif()
+
+        if (PLIB_HAS_INTERLOCKED_POINTER)
+                add_definitions (-DPLIB_HAS_INTERLOCKED_POINTER)
+        endif()
+
+        if (PLIB_HAS_VISTA_CV OR PLIB_HAS_GETTICKCOUNT_64 OR PLIB_HAS_INTERLOCKED_64)
                 add_definitions (-D_WIN32_WINNT=0x0600)
         else()
                 add_definitions (-D_WIN32_WINNT=0x0501)
