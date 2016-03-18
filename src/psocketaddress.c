@@ -357,6 +357,9 @@ p_socket_address_is_any (const PSocketAddress *addr)
 #ifdef AF_INET6
 	else
 		return IN6_IS_ADDR_UNSPECIFIED (&addr->addr.sin6_addr);
+#else
+	else
+		return FALSE;
 #endif
 }
 
@@ -377,6 +380,9 @@ p_socket_address_is_loopback (const PSocketAddress *addr)
 #ifdef AF_INET6
 	else
 		return IN6_IS_ADDR_LOOPBACK (&addr->addr.sin6_addr);
+#else
+	else
+		return FALSE;
 #endif
 }
 
