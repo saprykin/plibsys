@@ -1,7 +1,8 @@
+set (CMAKE_LEGACY_CYGWIN_WIN32 0)
+
 cmake_minimum_required (VERSION 2.8.0)
 project (PLib C)
 
-set (CMAKE_LEGACY_CYGWIN_WIN32 0)
 set (PLIB_VERSION_MAJOR 0)
 set (PLIB_VERSION_MINOR 0)
 set (PLIB_VERSION_PATCH 1)
