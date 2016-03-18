@@ -209,8 +209,10 @@ if ((PLIB_TARGET_OS STREQUAL windows) AND NOT (PLIB_TARGET_OS STREQUAL cygwin))
 
         if (PLIB_HAS_VISTA_CV OR PLIB_HAS_GETTICKCOUNT_64 OR PLIB_HAS_INTERLOCKED_64)
                 add_definitions (-D_WIN32_WINNT=0x0600)
+                add_definitions (-DNTDDI_VERSION=0x06000000)
         else()
                 add_definitions (-D_WIN32_WINNT=0x0501)
+                add_definitions (-DNTDDI_VERSION=0x05010000)
         endif()
 endif()
 
