@@ -21,6 +21,11 @@ function (plib_detect_c_compiler result)
                 set (PLIB_C_COMPILER icc)
         endif()
 
+        # Rename openwatcom -> watcom
+        if (PLIB_C_COMPILER STREQUAL openwatcom)
+                set (PLIB_C_COMPILER watcom)
+        endif()
+
         # Assign result
         set (${result} ${PLIB_C_COMPILER} PARENT_SCOPE)
 endfunction (plib_detect_c_compiler)
