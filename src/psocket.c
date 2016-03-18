@@ -1062,7 +1062,7 @@ p_socket_receive_from (const PSocket	*socket,
 	pssize			ret;
 	pint			err_code;
 
-	if (!socket || !buffer || buflen <= 0) {
+	if (!socket || !buffer || buflen == 0) {
 		p_error_set_error_p (error,
 				     (pint) P_ERROR_IO_INVALID_ARGUMENT,
 				     0,
@@ -1119,7 +1119,7 @@ p_socket_send (const PSocket	*socket,
 	pssize		ret;
 	pint		err_code;
 
-	if (!socket || !buffer || buflen <= 0) {
+	if (!socket || !buffer || buflen == 0) {
 		p_error_set_error_p (error,
 				     (pint) P_ERROR_IO_INVALID_ARGUMENT,
 				     0,

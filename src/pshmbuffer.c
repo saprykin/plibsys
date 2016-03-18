@@ -104,7 +104,7 @@ p_shm_buffer_new (const pchar	*name,
 			      error)) == NULL)
 		return NULL;
 
-	if (p_shm_get_size (shm) - SHM_BUFFER_DATA_OFFSET - 1 <= 0) {
+	if (p_shm_get_size (shm) <= SHM_BUFFER_DATA_OFFSET + 1) {
 		p_error_set_error_p (error,
 				     (pint) P_ERROR_IPC_INVALID_ARGUMENT,
 				     0,

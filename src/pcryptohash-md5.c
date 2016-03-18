@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2015 Alexander Saprykin <xelfium@gmail.com>
+ * Copyright (C) 2010-2016 Alexander Saprykin <xelfium@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -80,8 +80,8 @@ __p_md5_swap_bytes (puint32 *data, puint words)
 }
 
 static void
-__p_md5_process (PHashMD5		*ctx,
-	     const puint32	data[16])
+__p_md5_process (PHashMD5	*ctx,
+		 const puint32	data[16])
 {
 	puint32		A, B, C, D;
 
@@ -199,12 +199,12 @@ __p_md5_new (void)
 
 void
 __p_md5_update (PHashMD5	*ctx,
-	      const puchar	*data,
-	      psize		len)
+		const puchar	*data,
+		psize		len)
 {
 	puint32	left, to_fill;
 
-	if (ctx == NULL || len <= 0)
+	if (ctx == NULL || len == 0)
 		return;
 
 	left = ctx->len_low & 0x3F;

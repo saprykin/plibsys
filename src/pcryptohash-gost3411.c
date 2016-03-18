@@ -399,7 +399,7 @@ __p_gost3411_update (PHashGOST3411	*ctx,
 {
 	puint32	left, to_fill, len256[8];
 
-	if (ctx == NULL || len <= 0)
+	if (ctx == NULL || len == 0)
 		return;
 
 	left = (ctx->len[0] & 0xFF) >> 3;
