@@ -58,6 +58,10 @@ BOOST_AUTO_TEST_CASE (plibraryloader_general_test)
 	BOOST_REQUIRE (loader != NULL);
 
 	shutdown_func = (void (*) (void)) p_library_loader_get_symbol (loader, "p_lib_shutdown");
+
+	if (shutdown_func == NULL)
+		shutdown_func = (void (*) (void)) p_library_loader_get_symbol (loader, "_p_lib_shutdown");
+
 	BOOST_REQUIRE (shutdown_func != NULL);
 
 	err_msg = p_library_loader_get_last_error ();
