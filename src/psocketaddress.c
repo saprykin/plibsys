@@ -28,8 +28,25 @@
 #include <arpa/inet.h>
 #endif
 
+/* According to Open Group specifications */
 #ifndef INET_ADDRSTRLEN
-#  define INET_ADDRSTRLEN 16
+#  ifdef P_OS_WIN
+     /* On Windows it includes port number  */
+#    define INET_ADDRSTRLEN 22
+#  else
+#    define INET_ADDRSTRLEN 16
+#  endif
+#endif
+
+#ifdef AF_INET6
+#  ifndef INET6_ADDRSTRLEN
+#    ifdef P_OS_WIN
+       /* On Windows it includes port number */
+#      define INET6_ADDRSTRLEN 65
+#    else
+#      define INET6_ADDRSTRLEN 46
+#    endif
+#  endif
 #endif
 
 struct _PSocketAddress {
