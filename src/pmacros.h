@@ -444,7 +444,7 @@
  * @def P_NO_RETURN
  * @brief Notifies compiler that function will never return a value (e.g. abort ())
  */
-#ifdef P_CC_MSVC
+#if defined(P_CC_MSVC) || (defined(P_CC_BORLAND) && __BORLANDC__ >= 0x0550)
 #  define P_NO_RETURN __declspec(noreturn)
 #elif __has_attribute(noreturn) || \
       defined(P_CC_GNU) || \
