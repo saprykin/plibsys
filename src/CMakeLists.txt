@@ -402,7 +402,6 @@ check_type_size ("long" PLIB_SIZEOF_LONG)
 
 if ((PLIB_TARGET_OS STREQUAL windows) AND NOT (PLIB_TARGET_OS STREQUAL cygwin))
         set (PLIB_NEED_WINDOWS_H true)
-        add_definitions (-DPLIB_HAS_SOCKADDR_STORAGE)
 endif()
 
 configure_file (${CMAKE_CURRENT_SOURCE_DIR}/plibconfig.h.in ${CMAKE_BINARY_DIR}/plibconfig.h)
@@ -461,72 +460,77 @@ if (NOT PLIB_TARGET_OS STREQUAL windows OR PLIB_TARGET_OS STREQUAL cygwin)
         else()
                 message (STATUS "Checking whether nanosleep() presents - no")
         endif()
+endif()
 
-        # Check for socklen_t definition
-        message (STATUS "Checking whether socklen_t is defined")
+if ((PLIB_TARGET_OS STREQUAL windows) AND NOT (PLIB_TARGET_OS STREQUAL cygwin))
+        set (PLIB_SOCKET_INCLUDES "#include <winsock2.h>
+                                   #include <ws2tcpip.h>
+                                   #include <windows.h>")
+else()
+        set (PLIB_SOCKET_INCLUDES "#include <sys/types.h>
+                                   #include <sys/socket.h>
+                                   #include <netinet/in.h>")
+endif()
 
-        check_c_source_compiles (
-                                 "#include <sys/types.h>
-                                  #include <sys/socket.h>
-                                 int main () {
-                                        socklen_t len = sizeof (socklen_t);
-                                        return len > 0 ? 0 : -1;
-                                 }"
-                                 PLIB_HAS_SOCKLEN_T
-                                )
+# Check for socklen_t definition
+message (STATUS "Checking whether socklen_t is defined")
 
-        if (PLIB_HAS_SOCKLEN_T)
-                message (STATUS "Checking whether socklen_t is defined - yes")
-                add_definitions (-DPLIB_HAS_SOCKLEN_T)
-        else()
-                message (STATUS "Checking whether socklen_t is defined - no")
-        endif()
+check_c_source_compiles (
+                         "${PLIB_SOCKET_INCLUDES}
+                          int main () {
+                                socklen_t len = sizeof (socklen_t);
+                                return len > 0 ? 0 : -1;
+                          }"
+                          PLIB_HAS_SOCKLEN_T
+                        )
 
-        # Check for sockaddr_storage structure
-        message (STATUS "Checking whether struct sockaddr_storage is defined")
+if (PLIB_HAS_SOCKLEN_T)
+        message (STATUS "Checking whether socklen_t is defined - yes")
+        add_definitions (-DPLIB_HAS_SOCKLEN_T)
+else()
+        message (STATUS "Checking whether socklen_t is defined - no")
+endif()
 
-        check_c_source_compiles (
-                                 "#include <sys/types.h>
-                                  #include <sys/socket.h>
-                                  #include <netinet/in.h>
-                                 int main () {
-                                        struct sockaddr_storage sock_addr;
-                                        sock_addr.ss_family = AF_INET;
+# Check for sockaddr_storage structure
+message (STATUS "Checking whether struct sockaddr_storage is defined")
 
-                                        return 0;
-                                 }"
-                                 PLIB_HAS_SOCKADDR_STORAGE
-                                )
+check_c_source_compiles (
+                         "${PLIB_SOCKET_INCLUDES}
+                          int main () {
+                                struct sockaddr_storage sock_addr;
+                                sock_addr.ss_family = AF_INET;
 
-        if (PLIB_HAS_SOCKADDR_STORAGE)
-                message (STATUS "Checking whether struct sockaddr_storage is defined - yes")
-                add_definitions (-DPLIB_HAS_SOCKADDR_STORAGE)
-        else()
-                message (STATUS "Checking whether struct sockaddr_storage is defined - no")
-        endif()
+                                return 0;
+                          }"
+                          PLIB_HAS_SOCKADDR_STORAGE
+                        )
 
-        # Check sa_len field in struct sockaddr
-        message (STATUS "Checking whether struct sockaddr has sa_len")
+if (PLIB_HAS_SOCKADDR_STORAGE)
+        message (STATUS "Checking whether struct sockaddr_storage is defined - yes")
+        add_definitions (-DPLIB_HAS_SOCKADDR_STORAGE)
+else()
+        message (STATUS "Checking whether struct sockaddr_storage is defined - no")
+endif()
 
-        check_c_source_compiles (
-                                 "#include <sys/types.h>
-                                  #include <sys/socket.h>
-                                  #include <netinet/in.h>
-                                 int main () {
-                                        struct sockaddr sock_addr;
-                                        sock_addr.sa_len = 0;
+# Check sa_len field in struct sockaddr
+message (STATUS "Checking whether struct sockaddr has sa_len")
 
-                                        return 0;
-                                 }"
-                                 PLIB_SOCKADDR_HAS_SA_LEN
-                                )
+check_c_source_compiles (
+                         "${PLIB_SOCKET_INCLUDES}
+                          int main () {
+                                struct sockaddr sock_addr;
+                                sock_addr.sa_len = 0;
 
-        if (PLIB_SOCKADDR_HAS_SA_LEN)
-                message (STATUS "Checking whether struct sockaddr has sa_len - yes")
-                add_definitions (-DPLIB_SOCKADDR_HAS_SA_LEN)
-        else()
-                message (STATUS "Checking whether struct sockaddr has sa_len - no")
-        endif()
+                                return 0;
+                          }"
+                          PLIB_SOCKADDR_HAS_SA_LEN
+                        )
+
+if (PLIB_SOCKADDR_HAS_SA_LEN)
+        message (STATUS "Checking whether struct sockaddr has sa_len - yes")
+        add_definitions (-DPLIB_SOCKADDR_HAS_SA_LEN)
+else()
+        message (STATUS "Checking whether struct sockaddr has sa_len - no")
 endif()
 
 add_library (plib SHARED ${PLIB_SRCS} ${PLIB_PLATFORM_SRCS} ${PLIB_PUBLIC_HDRS} ${PLIB_PRIVATE_HDRS})
