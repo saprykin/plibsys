@@ -27,6 +27,11 @@
 #include "ptypes.h"
 #include "perror.h"
 
+/* Disable false "no prototype" warnings for Borland */
+#ifdef P_CC_BORLAND
+#  pragma warn -8065
+#endif
+
 P_BEGIN_DECLS
 
 /** Base tree leaf structure */
