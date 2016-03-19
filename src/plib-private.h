@@ -25,7 +25,7 @@
 
 #include "pmacros.h"
 #include "ptypes.h"
-#include "perror.h"
+#include "perrortypes.h"
 
 /* Disable false "no prototype" warnings for Borland */
 #ifdef P_CC_BORLAND

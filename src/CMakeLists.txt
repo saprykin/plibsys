@@ -57,6 +57,7 @@ set (PLIB_PUBLIC_HDRS
         pcondvariable.h
         pcryptohash.h
         perror.h
+        perrortypes.h
         pdir.h
         pfile.h
         phashtable.h
