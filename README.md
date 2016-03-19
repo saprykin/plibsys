@@ -56,6 +56,7 @@ PLib was tested with the following compilers:
 * MSVC (x32, x64) 2003 and above
 * MinGW (x32, x64)
 * Open Watcom (x32)
+* Borland (x32)
 * GCC (x32, x64)
 * Clang (x32, x64)
 * Intel (x64)
