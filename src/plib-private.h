@@ -27,9 +27,13 @@
 #include "ptypes.h"
 #include "perrortypes.h"
 
-/* Disable false "no prototype" warnings for Borland */
+/* Disable Borland-specific warnings */
 #ifdef P_CC_BORLAND
-#  pragma warn -8065
+#  pragma warn -8065 /* No function prototype.		*/
+#  pragma warn -8008 /* Condition is always true.	*/
+#  pragma warn -8057 /* Parameter is never used.	*/
+#  pragma warn -8059 /* Structure packing was changed.	*/
+#  pragma warn -8066 /* Unrecheable code.		*/
 #endif
 
 P_BEGIN_DECLS
