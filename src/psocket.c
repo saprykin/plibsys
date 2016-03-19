@@ -208,7 +208,7 @@ __p_socket_set_details_from_fd (PSocket	*socket,
 	}
 
 	if (addrlen > 0)
-		family = address.ss_family;
+		P_UNUSED (family);
 	else {
 #ifdef SO_DOMAIN
 		optlen = sizeof (family);
@@ -288,11 +288,10 @@ __p_socket_init_once (void)
 #ifdef P_OS_WIN
 	WORD	ver_req;
 	WSADATA	wsa_data;
-	pint	err;
 
 	ver_req = MAKEWORD (2, 2);
 
-	if ((err = WSAStartup (ver_req, &wsa_data)) != 0)
+	if (WSAStartup (ver_req, &wsa_data) != 0)
 		return FALSE;
 
 	if (LOBYTE (wsa_data.wVersion) != 2 || HIBYTE (wsa_data.wVersion ) != 2 ) {
