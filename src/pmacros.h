@@ -356,6 +356,12 @@
  * @since 0.0.1
  */
 
+/**
+ * @def P_CC_BORLAND
+ * @brief Borland C/C++ compiler
+ * @since 0.0.1
+ */
+
 #ifdef DOXYGEN
 #  define P_CC_MSVC
 #  define P_CC_GNU
@@ -366,6 +372,7 @@
 #  define P_CC_XLC
 #  define P_CC_HP
 #  define P_CC_WATCOM
+#  define P_CC_BORLAND
 #endif
 
 /* Microsoft Visual C/C++ */
@@ -398,6 +405,9 @@
 /* Watcom C++ */
 #elif defined(__WATCOMC__)
 #  define P_CC_WATCOM
+/* Borland C/C++ */
+#elif defined(__BORLANDC__)
+#  define P_CC_BORLAND
 /* Intel C/C++ */
 #elif defined(__INTEL_COMPILER)
 #  define P_CC_INTEL
@@ -422,7 +432,7 @@
  * @def P_LIB_API
  * @brief Export symbols macro
  */
-#ifdef P_CC_MSVC
+#if defined(P_CC_MSVC) || defined(P_CC_BORLAND)
 #  define P_LIB_API __declspec(dllexport)
 #else
 #  define P_LIB_API

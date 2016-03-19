@@ -59,7 +59,7 @@ typedef unsigned int		puint32;
   * @brief Type for unsigned 64 bit
   */
 
-#if defined (P_OS_WIN) && defined (P_CC_MSVC)
+#if defined (P_OS_WIN) && (defined (P_CC_MSVC) || defined (P_CC_BORLAND))
   typedef signed __int64	pint64;
   typedef unsigned __int64	puint64;
 #else
@@ -156,7 +156,7 @@ typedef double		pdouble;
   */
 
 #if PLIB_SIZEOF_SIZE_T == 8
-#  if defined (P_OS_WIN) && defined (P_CC_MSVC)
+#  if defined (P_OS_WIN) && (defined (P_CC_MSVC) || defined (P_CC_BORLAND))
      typedef signed __int64	pssize;
      typedef unsigned __int64	psize;
      #define PSIZE_MODIFIER	"I64"
@@ -228,7 +228,7 @@ typedef double		pdouble;
   */
 
 #if PLIB_SIZEOF_VOID_P == 8
-#  if defined (P_OS_WIN) && defined (P_CC_MSVC)
+#  if defined (P_OS_WIN) && (defined (P_CC_MSVC) || defined (P_CC_BORLAND))
      typedef signed __int64	pintptr;
      typedef unsigned __int64	puintptr;
      #define PINTPTR_MODIFIER	"I64"
@@ -431,7 +431,7 @@ typedef pint64 poffset;
  * for printing and scanning values.
  */
 
-#if defined (P_OS_WIN) && defined (P_CC_MSVC)
+#if defined (P_OS_WIN) && (defined (P_CC_MSVC) || defined (P_CC_BORLAND))
   #define PINT16_MODIFIER	"h"
 #else
   #define PINT16_MODIFIER	""
@@ -444,7 +444,7 @@ typedef pint64 poffset;
 #define PINT32_FORMAT		"i"
 #define PUINT32_FORMAT		"u"
 
-#if defined (P_OS_WIN) && defined (P_CC_MSVC)
+#if defined (P_OS_WIN) && (defined (P_CC_MSVC) || defined (P_CC_BORLAND))
   #define PINT64_MODIFIER	"I64"
   #define PINT64_FORMAT		"I64i"
   #define PUINT64_FORMAT	"I64u"
