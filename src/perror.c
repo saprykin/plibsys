@@ -556,9 +556,9 @@ p_error_new ()
 }
 
 P_LIB_API PError *
-p_error_new_literal (pint	code,
-		     pint	native_code,
-		    const pchar	*message)
+p_error_new_literal (pint		code,
+		     pint		native_code,
+		     const pchar	*message)
 {
 	PError *ret;
 

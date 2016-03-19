@@ -103,9 +103,9 @@ p_socket_address_new (const pchar	*address,
 	PSocketAddress		*ret;
 #ifdef P_OS_WIN
 	struct sockaddr_storage	sa;
-	struct sockaddr_in 	*sin = (struct sockaddr_in *)&sa;
+	struct sockaddr_in 	*sin = (struct sockaddr_in *) &sa;
 #  ifdef AF_INET6
-	struct sockaddr_in6 	*sin6 = (struct sockaddr_in6 *)&sa;
+	struct sockaddr_in6 	*sin6 = (struct sockaddr_in6 *) &sa;
 #  endif /* AF_INET6 */
 	pint 			len;
 #endif /* P_OS_WIN */
@@ -314,9 +314,9 @@ p_socket_address_get_address (const PSocketAddress *addr)
 	if (!addr || addr->family == P_SOCKET_FAMILY_UNKNOWN)
 		return NULL;
 #ifdef P_OS_WIN
-	sin = (struct sockaddr_in *)&sa;
+	sin = (struct sockaddr_in *) &sa;
 #  ifdef AF_INET6
-	sin6 = (struct sockaddr_in6 *)&sa;
+	sin6 = (struct sockaddr_in6 *) &sa;
 #  endif /* AF_INET6 */
 #endif /* P_OS_WIN */
 
