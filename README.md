@@ -53,15 +53,15 @@ efforts.
 
 PLib was tested with the following compilers:
 
-* MSVC (x32, x64) 2003 and above
-* MinGW (x32, x64)
-* Open Watcom (x32)
-* Borland (x32)
-* GCC (x32, x64)
-* Clang (x32, x64)
-* Intel (x32, x64)
-* QCC (x32)
-* Oracle Solaris Studio (x32, x64)
+* MSVC (x86, x64) 2003 and above
+* MinGW (x86, x64)
+* Open Watcom (x86)
+* Borland (x86)
+* GCC (x86, x64, PPC32be, PPC64be, IA-64/32, IA-64, HPPA2.0-32)
+* Clang (x86, x64)
+* Intel (x86, x64)
+* QCC (x86)
+* Oracle Solaris Studio (x86, x64)
 
 ======= Building =======
 
