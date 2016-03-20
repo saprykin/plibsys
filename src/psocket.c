@@ -149,7 +149,9 @@ static pboolean
 __p_socket_set_details_from_fd (PSocket	*socket,
 				PError	**error)
 {
+#ifdef SO_DOMAIN
 	PSocketFamily		family;
+#endif
 	struct sockaddr_storage	address;
 	pint			fd, value;
 	socklen_t		addrlen, optlen;
@@ -207,10 +209,8 @@ __p_socket_set_details_from_fd (PSocket	*socket,
 		return FALSE;
 	}
 
-	if (addrlen > 0)
-		P_UNUSED (family);
-	else {
 #ifdef SO_DOMAIN
+	if (!(addrlen > 0)) {
 		optlen = sizeof (family);
 
 		if (getsockopt (socket->fd, SOL_SOCKET, SO_DOMAIN, (ppointer) &family, &optlen) != 0) {
@@ -220,8 +220,8 @@ __p_socket_set_details_from_fd (PSocket	*socket,
 					     "Failed to call getsockopt() to get socket SO_DOMAIN option");
 			return FALSE;
 		}
-#endif
 	}
+#endif
 
 	switch (address.ss_family) {
 	case P_SOCKET_FAMILY_INET:
