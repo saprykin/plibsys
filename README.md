@@ -59,8 +59,8 @@ PLib was tested with the following compilers:
 * Borland (x32)
 * GCC (x32, x64)
 * Clang (x32, x64)
-* Intel (x64)
-* QCC
+* Intel (x32, x64)
+* QCC (x32)
 * Oracle Solaris Studio (x32, x64)
 
 ======= Building =======
