@@ -32,11 +32,11 @@ before_build:
         - cd c:\projects
         - mkdir plib-build
         - cd plib-build
-        - ps: |
+        - ps: >-
                 if ($env:APPVEYOR_REPO_BRANCH -eq "appveyor_test") {
                         $env:BOOST_ARGS = "-DPLIB_TESTS_STATIC=ON -DBOOST_ROOT=C:\Libraries\boost_1_59_0"
                 }
-        - ps: |
+        - ps: >-
                 if ($env:USE_MINGW -eq "1") {
                         $env:PATH = "PATH=C:\MinGW\bin;C:\Program Files (x86)\CMake\bin"
                         $env:BUILD_TYPE = "-DCMAKE_BUILD_TYPE=" + $env:CONFIGURATION
@@ -49,7 +49,7 @@ before_build:
         - cmake %BUILD_TYPE% -G"%CMAKE_GENERATOR%" %BOOST_ARGS% c:\projects\plib
 
 build_script:
-        - ps: |
+        - ps: >-
                 if ($env:USE_MINGW -eq "1") {
                         mingw32-make
                 } elseif ($env:USE_MSYS -eq "1") {                        
