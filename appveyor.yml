@@ -34,4 +34,5 @@ build_script:
         - msbuild /verbosity:normal c:\projects\plib-build\PLib.sln
 
 test_script:
-        - ctest
+        - cd c:\projects\plib-build
+        - ctest -C Release
