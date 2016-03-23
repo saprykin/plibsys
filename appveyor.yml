@@ -30,11 +30,11 @@ before_build:
         - cd c:\projects
         - mkdir plib-build
         - cd plib-build
-        - cmake -DCMAKE_BUILD_TYPE=Release -G "Visual Studio 14 Win64" c:\projects\plib
+        - cmake -DCMAKE_BUILD_TYPE=Release -G"%CMAKE_GENERATOR%" c:\projects\plib
 
 build_script:
         - cd c:\projects\plib-build
-        - cmake -G"%CMAKE_GENERATOR%" c:\projects\plib
+        - nmake
 
 test_script:
         - ctest
