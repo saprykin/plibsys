@@ -38,13 +38,13 @@ before_build:
                 }
         - ps: |
                 if ($env:USE_MINGW -eq "1") {
-                        set PATH=C:\MinGW\bin;%PATH%
+                        set PATH=C:\MinGW\bin;$env:PATH
                         set BUILD_TYPE=-DCMAKE_BUILD_TYPE=$env:CONFIGURATION
                 } elseif ($env:USE_MSYS -eq "1") {
                         set BUILD_TYPE=-DCMAKE_BUILD_TYPE=$env:CONFIGURATION
                         c:\msys64\msys2_shell.bat                        
                 } elseif ($env:USE_OLD_MSBUILD -eq "1") {
-                        set PATH=C:\Windows\Microsoft.NET\Framework\v3.5;%PATH%
+                        set PATH=C:\Windows\Microsoft.NET\Framework\v3.5;$env:PATH
                 }
         - cmake %BUILD_TYPE% -G"%CMAKE_GENERATOR%" %BOOST_ARGS% c:\projects\plib
 
