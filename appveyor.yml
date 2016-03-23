@@ -42,18 +42,17 @@ before_build:
                         set BUILD_TYPE=-DCMAKE_BUILD_TYPE=$env:CONFIGURATION
                 } elseif ($env:USE_MSYS -eq "1") {
                         set BUILD_TYPE=-DCMAKE_BUILD_TYPE=$env:CONFIGURATION
+                        c:\msys64\msys2_shell.bat                        
                 } elseif ($env:USE_OLD_MSBUILD -eq "1") {
                         set PATH=C:\Windows\Microsoft.NET\Framework\v3.5;%PATH%
                 }
         - cmake %BUILD_TYPE% -G"%CMAKE_GENERATOR%" %BOOST_ARGS% c:\projects\plib
 
 build_script:
-        - pd: |
+        - ps: |
                 if ($env:USE_MINGW -eq "1") {
                         mingw32-make
-                } elseif ($env:USE_MSYS -eq "1") {
-                        c:\msys64\msys2_shell.bat
-                        cd /c/projects/plib-build
+                } elseif ($env:USE_MSYS -eq "1") {                        
                         make
                 } else {
                         msbuild /verbosity:normal c:\projects\plib-build\PLib.sln
