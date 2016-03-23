@@ -2,8 +2,6 @@ environment:
         matrix:
                 - CMAKE_GENERATOR: "Visual Studio 9 2008"
                   USE_OLD_MSBUILD: "1"
-                - CMAKE_GENERATOR: "Visual Studio 9 2008 Win64"
-                  USE_OLD_MSBUILD: "1"
                 - CMAKE_GENERATOR: "Visual Studio 10 2010"
                 - CMAKE_GENERATOR: "Visual Studio 10 2010 Win64"
                 - CMAKE_GENERATOR: "Visual Studio 11 2012"
