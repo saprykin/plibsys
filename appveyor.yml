@@ -38,10 +38,10 @@ before_build:
                 }
         - ps: |
                 if ($env:USE_MINGW -eq "1") {
-                        $env:PATH = "PATH=C:\MinGW\bin;" + $env:PATH
-                        $env:BUILD_TYPE = "-DCMAKE_BUILD_TYPE=$env:CONFIGURATION"
+                        $env:PATH = "PATH=C:\MinGW\bin;C:\Program Files (x86)\CMake\bin"
+                        $env:BUILD_TYPE = "-DCMAKE_BUILD_TYPE="" + $env:CONFIGURATION
                 } elseif ($env:USE_MSYS -eq "1") {
-                        $env:BUILD_TYPE = "-DCMAKE_BUILD_TYPE=$env:CONFIGURATION"
+                        $env:BUILD_TYPE = "-DCMAKE_BUILD_TYPE=" + $env:CONFIGURATION
                         c:\msys64\msys2_shell.bat
                 } elseif ($env:USE_OLD_MSBUILD -eq "1") {
                         $env:PATH = "C:\Windows\Microsoft.NET\Framework\v3.5;" + $env:PATH
