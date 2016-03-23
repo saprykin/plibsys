@@ -34,17 +34,17 @@ before_build:
         - cd plib-build
         - ps: |
                 if ($env:APPVEYOR_REPO_BRANCH -eq "appveyor_test") {
-                        set BOOST_ARGS=-DPLIB_TESTS_STATIC=ON -DBOOST_ROOT=C:\Libraries\boost_1_59_0
+                        $env:BOOST_ARGS = "-DPLIB_TESTS_STATIC=ON -DBOOST_ROOT=C:\Libraries\boost_1_59_0"
                 }
         - ps: |
                 if ($env:USE_MINGW -eq "1") {
-                        set PATH=C:\MinGW\bin;$env:PATH
-                        set BUILD_TYPE=-DCMAKE_BUILD_TYPE=$env:CONFIGURATION
+                        $env:PATH = "PATH=C:\MinGW\bin;" + $env:PATH
+                        $env:BUILD_TYPE = "-DCMAKE_BUILD_TYPE=$env:CONFIGURATION"
                 } elseif ($env:USE_MSYS -eq "1") {
-                        set BUILD_TYPE=-DCMAKE_BUILD_TYPE=$env:CONFIGURATION
-                        c:\msys64\msys2_shell.bat                        
+                        $env:BUILD_TYPE = "-DCMAKE_BUILD_TYPE=$env:CONFIGURATION"
+                        c:\msys64\msys2_shell.bat
                 } elseif ($env:USE_OLD_MSBUILD -eq "1") {
-                        set PATH=C:\Windows\Microsoft.NET\Framework\v3.5;$env:PATH
+                        $env:PATH = "C:\Windows\Microsoft.NET\Framework\v3.5;" + $env:PATH
                 }
         - cmake %BUILD_TYPE% -G"%CMAKE_GENERATOR%" %BOOST_ARGS% c:\projects\plib
 
