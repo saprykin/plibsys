@@ -30,11 +30,10 @@ before_build:
         - cd c:\projects
         - mkdir plib-build
         - cd plib-build
-        - cmake -DCMAKE_BUILD_TYPE=Release -G"%CMAKE_GENERATOR%" c:\projects\plib
+        - cmake -G"%CMAKE_GENERATOR%" c:\projects\plib
 
-build_script:
-        - cd c:\projects\plib-build
-        - nmake
+build:
+    project: c:\projects\plib-build\PLib.sln
 
 test_script:
         - ctest
