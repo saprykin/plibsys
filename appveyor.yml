@@ -31,7 +31,7 @@ before_build:
 
 build_script:
         - if "%USE_OLD_MSBUILD%"=="1" set PATH=C:\Windows\Microsoft.NET\Framework\v3.5;%PATH%
-        - msbuild /verbosity:quiet c:\projects\plib-build\PLib.sln
+        - msbuild /verbosity:minimal c:\projects\plib-build\PLib.sln
 
 test_script:
         - ctest
