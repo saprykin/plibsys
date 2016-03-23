@@ -29,9 +29,9 @@ branches:
 clone_folder: c:\projects\plib
 
 before_build:
-        - cd c:\projects
-        - mkdir plib-build
-        - cd plib-build
+        - cmd: cd c:\projects
+        - cmd: mkdir plib-build
+        - cmd: cd plib-build
         - ps: >-
                 if ($env:APPVEYOR_REPO_BRANCH -eq "appveyor_test") {
                         $env:BOOST_ARGS = "-DPLIB_TESTS_STATIC=ON -DBOOST_ROOT=C:\Libraries\boost_1_59_0"
@@ -46,7 +46,7 @@ before_build:
                 } elseif ($env:USE_OLD_MSBUILD -eq "1") {
                         $env:PATH = "C:\Windows\Microsoft.NET\Framework\v3.5;" + $env:PATH
                 }
-        - cmake %BUILD_TYPE% -G"%CMAKE_GENERATOR%" %BOOST_ARGS% c:\projects\plib
+        - cmd: cmake %BUILD_TYPE% -G"%CMAKE_GENERATOR%" %BOOST_ARGS% c:\projects\plib
 
 build_script:
         - ps: >-
@@ -59,5 +59,5 @@ build_script:
                 }
 
 test_script:
-        - cd c:\projects\plib-build
-        - ctest -C Release
+        - cmd: cd c:\projects\plib-build
+        - cmd: ctest -C Release
