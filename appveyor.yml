@@ -33,7 +33,7 @@ before_build:
         - cmake -DCMAKE_BUILD_TYPE=Release -G "Visual Studio 14 Win64" c:\projects\plib
 
 build_script:
-        - cd C:\Porjects\plib-build
+        - cd c:\projects\plib-build
         - cmake -G"%CMAKE_GENERATOR%" c:\projects\plib
 
 test_script:
