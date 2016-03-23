@@ -19,7 +19,7 @@ version: 0.0.1.{build}
 
 branches:
         only:
-                - master
+                - appveyor_test
 
 clone_folder: c:\projects\plib
 
