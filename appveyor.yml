@@ -23,9 +23,6 @@ branches:
 
 clone_folder: c:\projects\plib
 
-platform:
-        - x64
-
 before_build:
         - cd c:\projects
         - mkdir plib-build
