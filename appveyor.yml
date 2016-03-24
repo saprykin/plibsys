@@ -28,36 +28,5 @@ branches:
 
 clone_folder: c:\projects\plib
 
-before_build:
-        - cmd: cd c:\projects
-        - cmd: mkdir plib-build
-        - cmd: cd plib-build
-        - ps: >-
-                if ($env:APPVEYOR_REPO_BRANCH -eq "appveyor_test") {
-                        $env:BOOST_ARGS = "-DPLIB_TESTS_STATIC=ON -DBOOST_ROOT=C:\Libraries\boost_1_59_0"
-                }
-        - ps: >-
-                if ($env:USE_MINGW -eq "1") {
-                        $env:PATH = "PATH=C:\MinGW\bin;C:\Program Files (x86)\CMake\bin"
-                        $env:BUILD_TYPE = "-DCMAKE_BUILD_TYPE=" + $env:CONFIGURATION
-                } elseif ($env:USE_MSYS -eq "1") {
-                        $env:BUILD_TYPE = "-DCMAKE_BUILD_TYPE=" + $env:CONFIGURATION
-                        c:\msys64\msys2_shell.bat
-                } elseif ($env:USE_OLD_MSBUILD -eq "1") {
-                        $env:PATH = "C:\Windows\Microsoft.NET\Framework\v3.5;" + $env:PATH
-                }
-        - cmd: cmake %BUILD_TYPE% -G"%CMAKE_GENERATOR%" %BOOST_ARGS% c:\projects\plib
-
 build_script:
-        - ps: >-
-                if ($env:USE_MINGW -eq "1") {
-                        mingw32-make
-                } elseif ($env:USE_MSYS -eq "1") {                        
-                        make
-                } else {
-                        msbuild /verbosity:normal c:\projects\plib-build\PLib.sln
-                }
-
-test_script:
-        - cmd: cd c:\projects\plib-build
-        - cmd: ctest -C Release
+        - cmd: c:\projects\plib\contrib\build_main.bat
