@@ -16,5 +16,10 @@ if "%USE_MINGW%"=="1" (
         if "%USE_MSYS%"=="1" (
                 set "PATH=C:\msys64\usr\bin"
                 bash c:\projects\plib\contrib\appveyor\build_msys.sh
+        ) else (
+                if "%USE_CYGWIN%"=="1" (
+                        set "PATH=C:\cygwin\bin"
+                        bash c:\projects\plib\contrib\appveyor\build_msys.sh
+                )
         )
 )

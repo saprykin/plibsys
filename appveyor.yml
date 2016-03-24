@@ -4,6 +4,8 @@ environment:
                   USE_MINGW:       "1"
                 - CMAKE_GENERATOR: "Unix Makefiles"
                   USE_MSYS:        "1"
+                - CMAKE_GENERATOR: "Unix Makefiles"
+                  USE_CYGWIN:      "1"
                 - CMAKE_GENERATOR: "Visual Studio 9 2008"
                   USE_OLD_MSBUILD: "1"
                 - CMAKE_GENERATOR: "Visual Studio 10 2010"
