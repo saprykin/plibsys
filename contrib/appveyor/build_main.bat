@@ -6,15 +6,15 @@ if "%APPVEYOR_REPO_BRANCH%"=="appveyor_test" (
 
 if "%USE_MINGW%"=="1" (
         cd c:\projects\plib-build
-        set PATH=C:\MinGW\bin;C:\Program Files (x86)\CMake\bin
-        set BUILD_TYPE=-DCMAKE_BUILD_TYPE=%configuration%
+        set PATH="C:\MinGW\bin;C:\Program Files (x86)\CMake\bin"
+        set BUILD_TYPE="-DCMAKE_BUILD_TYPE=%configuration%"
 
         cmake %BUILD_TYPE% -G"%CMAKE_GENERATOR%" %BOOST_ARGS% c:\projects\plib
         mingw32-make
         ctest
 ) else (
         if "%USE_MSYS%"=="1" (
-                set PATH=C:\msys2\bin;C:\Program Files (x86)\CMake\bin
+                set PATH="C:\msys2\bin;C:\Program Files (x86)\CMake\bin"
                 c:\msys2\bin\bash c:\projects\plib\contrib\appveyor\build_msys.sh
         )
 )
