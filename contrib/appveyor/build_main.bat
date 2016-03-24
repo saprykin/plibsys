@@ -14,7 +14,7 @@ if "%USE_MINGW%"=="1" (
         ctest
 ) else (
         if "%USE_MSYS%"=="1" (
-                set "PATH=C:\msys2\bin;C:\Program Files (x86)\CMake\bin"
-                c:\msys2\bin\bash c:\projects\plib\contrib\appveyor\build_msys.sh
+                set "PATH=C:\msys64\usr\bin;C:\Program Files (x86)\CMake\bin"
+                bash c:\projects\plib\contrib\appveyor\build_msys.sh
         )
 )
