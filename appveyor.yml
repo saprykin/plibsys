@@ -29,4 +29,4 @@ branches:
 clone_folder: c:\projects\plib
 
 build_script:
-        - cmd: c:\projects\plib\contrib\build_main.bat
+        - cmd: c:\projects\plib\contrib\appveyor\build_main.bat
