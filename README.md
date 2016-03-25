@@ -1,6 +1,7 @@
 
 [![](https://api.travis-ci.org/saprykin/plib.svg?branch=master)](https://travis-ci.org/saprykin/plib)
 [![](https://ci.appveyor.com/api/projects/status/github/saprykin/plib?branch=appveyor_test&svg=true)](https://ci.appveyor.com/project/saprykin/plib)
+[![](https://scan.coverity.com/projects/8333/badge.svg)](https://scan.coverity.com/projects/saprykin-plib)
 
 ======= About PLib =======
 
