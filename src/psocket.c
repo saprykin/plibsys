@@ -429,7 +429,7 @@ p_socket_new (PSocketFamily	family,
 		flags |= FD_CLOEXEC;
 
 		if (fcntl (fd, F_SETFD, flags) < 0)
-			P_WARNING ("PSocket: Failed to set FD_CLOEXEC flag on socket descriptor")
+			P_WARNING ("PSocket: Failed to set FD_CLOEXEC flag on socket descriptor");
 	}
 #endif
 
@@ -945,7 +945,7 @@ p_socket_accept (const PSocket	*socket,
 		flags |= FD_CLOEXEC;
 
 		if (fcntl (res, F_SETFD, flags) < 0)
-			P_WARNING ("PSocket: Failed to set FD_CLOEXEC flag on socket descriptor")
+			P_WARNING ("PSocket: Failed to set FD_CLOEXEC flag on socket descriptor");
 	}
 #endif
 
