@@ -233,37 +233,57 @@ p_ini_file_parse (PIniFile	*file,
 		if (dst_line == NULL)
 			continue;
 
+		/* This should not happen */
+		if (strlen (dst_line) > P_INI_MAX_LINE_LENGTH)
+			dst_line[P_INI_MAX_LINE_LENGTH] = '\0';
+
 		if (dst_line[0] == '[' && dst_line[strlen (dst_line) - 1] == ']' &&
 		    sscanf (dst_line, "[%[^]]", key) == 1) {
 			/* New section found */
-			tmp_str = p_strchomp (key);
-			strcpy (key, tmp_str);
-			p_free (tmp_str);
+			if ((tmp_str = p_strchomp (key)) != NULL) {
+				/* This should not happen */
+				if (strlen (tmp_str) > P_INI_MAX_LINE_LENGTH)
+					tmp_str[P_INI_MAX_LINE_LENGTH] = '\0';
 
-			if (section != NULL) {
-				if (section->keys == NULL)
-					__p_ini_section_free (section);
-				else
-					file->sections = p_list_prepend (file->sections, section);
+				strcpy (key, tmp_str);
+				p_free (tmp_str);
+
+				if (section != NULL) {
+					if (section->keys == NULL)
+						__p_ini_section_free (section);
+					else
+						file->sections = p_list_prepend (file->sections, section);
+				}
+
+				section = __p_ini_section_new (key);
 			}
-
-			section = __p_ini_section_new (key);
 		} else if (sscanf (dst_line, "%[^=] = \"%[^\"]\"", key, value) == 2 ||
 			   sscanf (dst_line, "%[^=] = '%[^\']'", key, value) == 2 ||
 			   sscanf (dst_line, "%[^=] = %[^;#]", key, value) == 2) {
-				   /* New parameter found */
-				   tmp_str = p_strchomp (key);
-				   strcpy (key, tmp_str);
-				   p_free (tmp_str);
-				   tmp_str = p_strchomp (value);
-				   strcpy (value, tmp_str);
-				   p_free (tmp_str);
+			/* New parameter found */
+			if ((tmp_str = p_strchomp (key)) != NULL) {
+				/* This should not happen */
+				if (strlen (tmp_str) > P_INI_MAX_LINE_LENGTH)
+					tmp_str[P_INI_MAX_LINE_LENGTH] = '\0';
 
-				   if (strcmp (value, "\"\"") == 0 || (strcmp (value, "''") == 0))
-					   value[0] = '\0';
+				strcpy (key, tmp_str);
+				p_free (tmp_str);
 
-				   if (section != NULL && (param = __p_ini_parameter_new (key, value)) != NULL)
-					   section->keys = p_list_prepend (section->keys, param);
+				if ((tmp_str = p_strchomp (value)) != NULL) {
+					/* This should not happen */
+					if (strlen (tmp_str) > P_INI_MAX_LINE_LENGTH)
+						tmp_str[P_INI_MAX_LINE_LENGTH] = '\0';
+
+					strcpy (value, tmp_str);
+					p_free (tmp_str);
+
+					if (strcmp (value, "\"\"") == 0 || (strcmp (value, "''") == 0))
+						value[0] = '\0';
+
+					if (section != NULL && (param = __p_ini_parameter_new (key, value)) != NULL)
+						section->keys = p_list_prepend (section->keys, param);
+				}
+			}
 		}
 
 		p_free (dst_line);
