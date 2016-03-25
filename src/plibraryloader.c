@@ -28,23 +28,38 @@
 #include <dlfcn.h>
 #endif
 
-struct _PLibraryLoader {
 #ifdef P_OS_WIN
-	HINSTANCE	handle;
+	typedef HINSTANCE	plibrary_handle;
 #else
-	ppointer	handle;
+	typedef ppointer	plibrary_handle;
 #endif
+
+struct _PLibraryLoader {
+	plibrary_handle	handle;
 };
+
+static void __p_library_loader_clean_handle (plibrary_handle handle);
+
+static void
+__p_library_loader_clean_handle (plibrary_handle handle)
+{
+	if (handle == NULL)
+		return;
+
+#ifdef P_OS_WIN
+	if (!FreeLibrary (handle))
+		P_ERROR ("PLibraryLoader: failed to call FreeLibrary()");
+#else
+	if (dlclose (handle) != 0)
+		P_ERROR ("PLibraryLoader: failed to call dlclose()");
+#endif
+}
 
 P_LIB_API PLibraryLoader *
 p_library_loader_new (const pchar *path)
 {
 	PLibraryLoader *	loader;
-#ifdef P_OS_WIN
-	HINSTANCE 		handle;
-#else
-	ppointer		handle;
-#endif
+	plibrary_handle		handle;
 
 	loader = NULL;
 
@@ -65,6 +80,7 @@ p_library_loader_new (const pchar *path)
 
 	if ((loader = p_malloc0 (sizeof (PLibraryLoader))) == NULL) {
 		P_ERROR ("PLibraryLoader: failed to allocate memory");
+		__p_library_loader_clean_handle (handle);
 		return NULL;
 	}
 
@@ -96,15 +112,7 @@ p_library_loader_free (PLibraryLoader *loader)
 	if (loader == NULL)
 		return;
 
-	if (loader->handle != NULL) {
-#ifdef P_OS_WIN
-		if (!FreeLibrary (loader->handle))
-			P_ERROR ("PLibraryLoader: failed to call FreeLibrary()");
-#else
-		if (dlclose (loader->handle) != 0)
-			P_ERROR ("PLibraryLoader: failed to call dlclose()");
-#endif
-	}
+	__p_library_loader_clean_handle (loader->handle);
 
 	p_free (loader);
 }
