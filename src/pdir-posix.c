@@ -281,7 +281,12 @@ p_dir_get_next_entry (PDir	*dir,
 #endif
 
 	path_len = strlen (dir->path);
-	entry_path = p_malloc0 (path_len + strlen (ret->name) + 2);
+	
+	if ((entry_path = p_malloc0 (path_len + strlen (ret->name) + 2)) == NULL) {
+		P_WARNING ("PDir: failed to allocate memory for stat()");
+		ret->type = P_DIR_ENTRY_TYPE_OTHER;
+		return ret;
+	}
 
 	strcat (entry_path, dir->path);
 	*(entry_path + path_len) = '/';
@@ -290,8 +295,11 @@ p_dir_get_next_entry (PDir	*dir,
 	if (stat (entry_path, &sb) != 0) {
 		P_WARNING ("PDir: failed to call stat()");
 		ret->type = P_DIR_ENTRY_TYPE_OTHER;
+		p_free (entry_path);
 		return ret;
 	}
+
+	p_free (entry_path);
 
 	if (S_ISDIR (sb.st_mode))
 		ret->type = P_DIR_ENTRY_TYPE_DIR;
