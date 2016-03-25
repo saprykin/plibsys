@@ -36,6 +36,6 @@ addons:
                         name: "saprykin/plib"
                         description: "Highly portable C system library"
                 notification_email: xelfium@gmail.com
-                build_command_prepend: "mkdir ./plib-build; cd ./plib-build; cmake .."
+                build_command_prepend: "cd ./plib-build; cmake .."
                 build_command: "make"
                 branch_pattern: coverity_scan
