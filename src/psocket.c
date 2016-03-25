@@ -427,7 +427,9 @@ p_socket_new (PSocketFamily	family,
 
 	if (flags != -1 && (flags & FD_CLOEXEC) == 0) {
 		flags |= FD_CLOEXEC;
-		fcntl (fd, F_SETFD, flags);
+
+		if (fcntl (fd, F_SETFD, flags) < 0)
+			P_WARNING ("PSocket: Failed to set FD_CLOEXEC flag on socket descriptor")
 	}
 #endif
 
@@ -764,7 +766,8 @@ p_socket_bind (const PSocket	*socket,
 	value = !! (pint) allow_reuse;
 	/* Ignore errors here, the only likely error is "not supported", and
 	   this is a "best effort" thing mainly */
-	setsockopt (socket->fd, SOL_SOCKET, SO_REUSEADDR, &value, sizeof (value));
+	if (setsockopt (socket->fd, SOL_SOCKET, SO_REUSEADDR, &value, sizeof (value)) < 0)
+		P_WARNING ("PSocket: Failed to set SO_REUSEADDR option for socket descriptor");
 #endif
 
 	if (!p_socket_address_to_native (address, &addr, sizeof (addr))) {
@@ -938,9 +941,11 @@ p_socket_accept (const PSocket	*socket,
 #else
 	flags = fcntl (res, F_GETFD, 0);
 
-	if (flags != -1 &&  (flags & FD_CLOEXEC) == 0) {
+	if (flags != -1 && (flags & FD_CLOEXEC) == 0) {
 		flags |= FD_CLOEXEC;
-		fcntl (res, F_SETFD, flags);
+
+		if (fcntl (res, F_SETFD, flags) < 0)
+			P_WARNING ("PSocket: Failed to set FD_CLOEXEC flag on socket descriptor")
 	}
 #endif
 
