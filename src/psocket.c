@@ -380,8 +380,8 @@ p_socket_new (PSocketFamily	family,
 	pint	flags;
 #endif
 
-	if (family == P_SOCKET_FAMILY_UNKNOWN ||
-	    type == P_SOCKET_TYPE_UNKNOWN ||
+	if (family   == P_SOCKET_FAMILY_UNKNOWN ||
+	    type     == P_SOCKET_TYPE_UNKNOWN   ||
 	    protocol == P_SOCKET_PROTOCOL_UNKNOWN) {
 		p_error_set_error_p (error,
 				     (pint) P_ERROR_IO_INVALID_ARGUMENT,
@@ -408,14 +408,6 @@ p_socket_new (PSocketFamily	family,
 				     (pint) P_ERROR_IO_INVALID_ARGUMENT,
 				     0,
 				     "Unable to create socket with unknown family");
-		return NULL;
-	}
-
-	if (protocol == -1)  {
-		p_error_set_error_p (error,
-				     (pint) P_ERROR_IO_INVALID_ARGUMENT,
-				     0,
-				     "Unable to create socket with unknown protocol");
 		return NULL;
 	}
 
