@@ -52,4 +52,6 @@ build_script:
                     & msbuild /verbosity:normal C:\Projects\plib-build\PLib.sln;
                 }
 
-                & ctest -C Release;
+                if ($env:APPVEYOR_REPO_BRANCH -eq "appveyor_test") {
+                    & ctest -C Release;
+                }
