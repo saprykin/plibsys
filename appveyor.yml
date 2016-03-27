@@ -28,28 +28,28 @@ clone_folder: c:\projects\plib
 
 build_script:
         - ps: >-
-                New-Item -ItemType directory -Path C:\Projects\plib-build | Out-Null
-                Set-Location C:\Projects\plib-build | Out-Null
+                New-Item -ItemType directory -Path C:\Projects\plib-build | Out-Null;
+                Set-Location C:\Projects\plib-build | Out-Null;
 
                 If ($env:APPVEYOR_REPO_BRANCH -eq "appveyor_test") {
-                    $env:BOOST_ARGS="BOOST_ARGS=-DPLIB_TESTS_STATIC=ON -DBOOST_ROOT=C:\Libraries\boost_1_59_0"
+                    $env:BOOST_ARGS="BOOST_ARGS=-DPLIB_TESTS_STATIC=ON -DBOOST_ROOT=C:\Libraries\boost_1_59_0";
                 }
 
                 If ($env:USE_MINGW -eq "1") {
-                    $env:PATH="C:\MinGW\bin;C:\Program Files (x86)\CMake\bin"
-                    $env:BUILD_TYPE="-DCMAKE_BUILD_TYPE=$env:configuration"
+                    $env:PATH="C:\MinGW\bin;C:\Program Files (x86)\CMake\bin";
+                    $env:BUILD_TYPE="-DCMAKE_BUILD_TYPE=$env:configuration";
                 }
 
                 If ($env:USE_OLD_MSBUILD -eq "1") {
-                    $env:PATH="C:\Windows\Microsoft.NET\Framework\v3.5;%PATH%"
+                    $env:PATH="C:\Windows\Microsoft.NET\Framework\v3.5;$env:PATH";
                 }
 
-                & cmake -G"$env:CMAKE_GENERATOR" $env:BOOST_ARGS C:\Projects\plib
+                & cmake -G"$env:CMAKE_GENERATOR" $env:BOOST_ARGS C:\Projects\plib;
 
                 If ($env:USE_MINGW -eq "1") {
-                    & mingw32-make
+                    & mingw32-make;
                 } Else {
-                    & msbuild /verbosity:normal C:\Projects\plib-build\PLib.sln
+                    & msbuild /verbosity:normal C:\Projects\plib-build\PLib.sln;
                 }
 
-                & ctest -C Release
+                & ctest -C Release;
