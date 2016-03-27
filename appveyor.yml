@@ -27,7 +27,7 @@ branches:
 clone_folder: c:\projects\plib
 
 build_script:
-        -ps: >-
+        - ps: >-
                 New-Item -ItemType directory -Path C:\Projects\plib-build | Out-Null
                 Set-Location C:\Projects\plib-build | Out-Null
 
