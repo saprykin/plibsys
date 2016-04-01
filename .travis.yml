@@ -6,7 +6,7 @@ env:
                 - COVERITY_SCAN_PROJECT_NAME="saprykin/plib"
                 - COVERITY_SCAN_BRANCH_PATTERN="coverity_scan"
                 - COVERITY_SCAN_NOTIFICATION_EMAIL="xelfium@gmail.com"
-                - COVERITY_SCAN_BUILD_COMMAND="cd ./plib-build; cmake ..; make"
+                - COVERITY_SCAN_BUILD_COMMAND="make"
 
 language: cpp
 
@@ -18,14 +18,16 @@ branches:
 before_install:
         - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get update -qq ; fi
         - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get install libboost-test-dev ; fi
-        - if [[ "${TRAVIS_JOB_NUMBER##*.}" == "1" ]]; then curl -s "https://scan.coverity.com/scripts/travisci_build_coverity_scan.sh" | bash || true ; fi
 
-script:
+before_script:
         - mkdir ./plib-build
         - cd ./plib-build
         - cmake ..
+        - if [[ "${TRAVIS_JOB_NUMBER##*.}" == "1" ]]; then curl -s "https://scan.coverity.com/scripts/travisci_build_coverity_scan.sh" | bash || true ; fi
+
+script:
         - make
-        - if [[ "${COVERITY_SCAN_BRANCH}" != 1 ]]; then make test ; fi
+        - if [[ "${TRAVIS_BRANCH}" != "coverity_scan" ]]; then make test ; fi
 
 os:
         - linux
