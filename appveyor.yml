@@ -32,7 +32,8 @@ build_script:
                 Set-Location C:\Projects\plib-build | Out-Null;
 
                 If ($env:APPVEYOR_REPO_BRANCH -eq "appveyor_test") {
-                    $env:BOOST_ARGS="-DPLIB_TESTS_STATIC=ON -DBOOST_ROOT=C:\Libraries\boost_1_59_0";
+                    $env:VAR_BOOST_TESTS="-DPLIB_TESTS_STATIC=ON";
+                    $env:VAR_BOOST_ROOT="-DBOOST_ROOT=C:\Libraries\boost_1_59_0";
                 }
 
                 If ($env:USE_MINGW -eq "1") {
@@ -44,7 +45,7 @@ build_script:
                     $env:PATH="C:\Windows\Microsoft.NET\Framework\v3.5;$env:PATH";
                 }
 
-                & cmake -G"$env:CMAKE_GENERATOR" $env:BOOST_ARGS C:\Projects\plib;
+                & cmake -G"$env:CMAKE_GENERATOR" $env:VAR_BOOST_TESTS $env:VAR_BOOST_ROOT C:\Projects\plib;
 
                 If ($env:USE_MINGW -eq "1") {
                     & mingw32-make;
