@@ -32,7 +32,7 @@ build_script:
                 Set-Location C:\Projects\plib-build | Out-Null;
 
                 If ($env:APPVEYOR_REPO_BRANCH -eq "appveyor_test") {
-                    $env:BOOST_ARGS="BOOST_ARGS=-DPLIB_TESTS_STATIC=ON -DBOOST_ROOT=C:\Libraries\boost_1_59_0";
+                    $env:BOOST_ARGS="-DPLIB_TESTS_STATIC=ON -DBOOST_ROOT=C:\Libraries\boost_1_59_0";
                 }
 
                 If ($env:USE_MINGW -eq "1") {
