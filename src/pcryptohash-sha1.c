@@ -92,17 +92,17 @@ static void __p_sha1_process (PHashSHA1 *ctx, const puint32 data[16]);
 
 static void
 __p_sha1_swap_bytes (puint32	*data,
-		 puint		words)
+		     puint	words)
 {
-	pint byte_order = P_BYTE_ORDER;
-
-	if (byte_order == P_BIG_ENDIAN)
-		return;
-
+#ifndef PLIB_IS_BIGENDIAN
+	P_UNUSED (data);
+	P_UNUSED (words);
+#else
 	while (words-- > 0) {
 		*data = PUINT32_TO_BE (*data);
 		++data;
 	}
+#endif
 }
 
 static void

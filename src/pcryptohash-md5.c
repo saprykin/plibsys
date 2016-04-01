@@ -68,15 +68,15 @@ static void __p_md5_process (PHashMD5 *ctx, const puint32 data[16]);
 static void
 __p_md5_swap_bytes (puint32 *data, puint words)
 {
-	pint byte_order = P_BYTE_ORDER;
-
-	if (byte_order == P_LITTLE_ENDIAN)
-		return;
-
+#ifndef PLIB_IS_BIGENDIAN
+	P_UNUSED (data);
+	P_UNUSED (words);
+#else
 	while (words-- > 0) {
 		*data = PUINT32_TO_LE (*data);
 		++data;
 	}
+#endif
 }
 
 static void

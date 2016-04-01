@@ -169,15 +169,15 @@ static void
 __p_gost3411_swap_bytes (puint32	*data,
 			 puint		words)
 {
-	pint byte_order = P_BYTE_ORDER;
-
-	if (byte_order == P_LITTLE_ENDIAN)
-		return;
-
+#ifndef PLIB_IS_BIGENDIAN
+	P_UNUSED (data);
+	P_UNUSED (words);
+#else
 	while (words-- > 0) {
 		*data = PUINT32_TO_LE (*data);
 		++data;
 	}
+#endif
 }
 
 /* 256-bit sum */
