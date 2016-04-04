@@ -66,7 +66,7 @@ build_script:
 
                         $COVERITY_EXE = "$BUILD_DIR\PublishCoverity.0.11.0\tools\PublishCoverity.exe";
 
-                        & cov-build --dir "$BUILD_DIR\cov-int" $BUILD_COMMAND";
+                        & cov-build --dir "$BUILD_DIR\cov-int" $BUILD_COMMAND;
 
                         & $COVERITY_EXE compress -o "$BUILD_DIR\coverity.zip" -i "$BUILD_DIR\cov-int";
                         & $COVERITY_EXE publish -z "$BUILD_DIR\coverity.zip" -r $env:COVERITY_SCAN_PROJECT_NAME -t $env:COVERITY_SCAN_TOKEN -e $env:COVERITY_SCAN_NOTIFICATION_EMAIL --codeVersion $env:APPVEYOR_BUILD_VERSION;
