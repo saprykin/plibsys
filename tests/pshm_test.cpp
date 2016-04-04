@@ -65,6 +65,28 @@ static void * shm_test_thread (void *arg)
 
 BOOST_AUTO_TEST_SUITE (BOOST_TEST_MODULE)
 
+BOOST_AUTO_TEST_CASE (pshm_invalid_test)
+{
+	p_lib_init ();
+
+	BOOST_CHECK (p_shm_new (NULL, 0, P_SHM_ACCESS_READWRITE, NULL) == NULL);
+	BOOST_CHECK (p_shm_lock (NULL, NULL) == FALSE);
+	BOOST_CHECK (p_shm_unlock (NULL, NULL) == FALSE);
+	BOOST_CHECK (p_shm_get_address (NULL) == NULL);
+	BOOST_CHECK (p_shm_get_size (NULL) == 0);
+	p_shm_take_ownership (NULL);
+
+	PShm *shm = p_shm_new ("p_shm_invalid_test", 0, P_SHM_ACCESS_READWRITE, NULL);
+	p_shm_take_ownership (shm);
+	p_shm_free (shm);
+
+	shm = p_shm_new ("p_shm_invalid_test", 10, (PShmAccessPerms) -1, NULL);
+	p_shm_take_ownership (shm);
+	p_shm_free (shm);
+
+	p_lib_shutdown ();
+}
+
 BOOST_AUTO_TEST_CASE (pshm_general_test)
 {
 	PShm		*shm = NULL;
@@ -75,10 +97,6 @@ BOOST_AUTO_TEST_CASE (pshm_general_test)
 	pint		i;
 
 	p_lib_init ();
-
-	BOOST_REQUIRE (p_shm_get_address (shm) == NULL);
-	BOOST_REQUIRE (p_shm_get_size (shm) == 0);
-	p_shm_take_ownership (shm);
 
 	shm = p_shm_new ("p_shm_test_memory_block", 1024, P_SHM_ACCESS_READWRITE, NULL);
 	BOOST_REQUIRE (shm != NULL);
