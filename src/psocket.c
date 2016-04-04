@@ -796,6 +796,7 @@ p_socket_connect (PSocket		*socket,
 {
 	struct sockaddr_storage	buffer;
 	pint			err_code;
+	pint			conn_result;
 	PErrorIO		sock_err;
 
 	if (!socket || !address) {
@@ -817,43 +818,58 @@ p_socket_connect (PSocket		*socket,
 		return FALSE;
 	}
 
-	for (;;) {
-		if (connect (socket->fd, (struct sockaddr *) &buffer,
-			     (pint) p_socket_address_get_native_size (address)) < 0) {
-			err_code = __p_socket_get_errno ();
 #if !defined (P_OS_WIN) && defined (EINTR)
-			if (err_code == EINTR)
-				continue;
+	for (;;) {
+		conn_result = connect (socket->fd, (struct sockaddr *) &buffer,
+				       (pint) p_socket_address_get_native_size (address));
+
+		if (conn_result == 0)
+			break;
+
+		err_code = __p_socket_get_errno ();
+
+		if (err_code == EINTR)
+			continue;
+		else
+			break;
+	}
+#else
+	conn_result = connect (socket->fd, (struct sockaddr *) &buffer,
+			       (pint) p_socket_address_get_native_size (address));
+
+	if (conn_result != 0)
+		err_code = __p_socket_get_errno ();
 #endif
-			sock_err = __p_error_get_io_from_system (err_code);
 
-			if (sock_err == P_ERROR_IO_WOULD_BLOCK || sock_err == P_ERROR_IO_IN_PROGRESS) {
-				if (socket->blocking) {
-					if (p_socket_io_condition_wait (socket,
-									P_SOCKET_IO_CONDITION_POLLOUT,
-									error) == TRUE &&
-					    p_socket_check_connect_result (socket, error) == TRUE)
-						break;
-				} else
-					p_error_set_error_p (error,
-							     (pint) sock_err,
-							     err_code,
-							     "Couldn't block non-blocking socket");
-
-			} else
-				p_error_set_error_p (error,
-						     (pint) sock_err,
-						     err_code,
-						     "Failed to call connect() on socket");
-
-			return FALSE;
-		}
-
-		break;
+	if (conn_result == 0) {
+		socket->connected = TRUE;
+		return TRUE;
 	}
 
-	socket->connected = TRUE;
-	return TRUE;
+	sock_err = __p_error_get_io_from_system (err_code);
+
+	if (sock_err == P_ERROR_IO_WOULD_BLOCK || sock_err == P_ERROR_IO_IN_PROGRESS) {
+		if (socket->blocking) {
+			if (p_socket_io_condition_wait (socket,
+							P_SOCKET_IO_CONDITION_POLLOUT,
+							error) == TRUE &&
+			    p_socket_check_connect_result (socket, error) == TRUE) {
+				socket->connected = TRUE;
+				return TRUE;
+			}
+		} else
+			p_error_set_error_p (error,
+					     (pint) sock_err,
+					     err_code,
+					     "Couldn't block non-blocking socket");
+
+	} else
+		p_error_set_error_p (error,
+				     (pint) sock_err,
+				     err_code,
+				     "Failed to call connect() on socket");
+
+	return FALSE;
 }
 
 P_LIB_API pboolean
@@ -1212,34 +1228,45 @@ p_socket_close (PSocket	*socket,
 	if (!__p_socket_check (socket, error))
 		return FALSE;
 
-	for (;;) {
-#ifdef P_OS_WIN
-		res = closesocket (socket->fd);
-#else
-		res = close (socket->fd);
-#endif
-		if (res == -1) {
-			err_code = __p_socket_get_errno ();
 #if !defined (P_OS_WIN) && defined (EINTR)
-			if (err_code == EINTR)
-				continue;
+	for (;;) {
+		res = close (socket->fd);
+
+		if (res == 0)
+			break;
+
+		err_code = __p_socket_get_errno ();
+
+		if (err_code == EINTR)
+			continue;
+		else
+			break;
+	}
+#else
+#  ifdef P_OS_WIN
+	res = closesocket (socket->fd);
+#  else
+	res = close (socket->fd);
+#  endif
+
+	if (res != 0)
+		err_code = __p_socket_get_errno ();
 #endif
-			p_error_set_error_p (error,
-					     (pint) __p_error_get_io_from_system (err_code),
-					     err_code,
-					     "Failed to close socket");
 
-			return FALSE;
-		}
+	if (res == 0) {
+		socket->connected = FALSE;
+		socket->closed = TRUE;
+		socket->listening = FALSE;
 
-		break;
+		return TRUE;
 	}
 
-	socket->connected = FALSE;
-	socket->closed = TRUE;
-	socket->listening = FALSE;
+	p_error_set_error_p (error,
+			     (pint) __p_error_get_io_from_system (err_code),
+			     err_code,
+			     "Failed to close socket");
 
-	return TRUE;
+	return FALSE;
 }
 
 P_LIB_API pboolean
