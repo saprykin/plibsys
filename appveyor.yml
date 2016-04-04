@@ -53,8 +53,6 @@ build_script:
                         $env:PATH = "C:\Windows\Microsoft.NET\Framework\v3.5;$env:PATH";
                 }
 
-                & cmake -G"$env:CMAKE_GENERATOR" $VAR_BOOST_TESTS $VAR_BOOST_ROOT C:\Projects\plib;
-
                 If ($env:USE_MINGW -eq "1") {
                         $BUILD_COMMAND = "mingw32-make";
                 } Else {
@@ -67,13 +65,17 @@ build_script:
 
                         $COVERITY_EXE = "$BUILD_DIR\PublishCoverity.0.11.0\tools\PublishCoverity.exe";
 
+                        # Do not build tests for Coverity
+                        & cmake -G"$env:CMAKE_GENERATOR" C:\Projects\plib;
+
                         & cov-build --dir "$BUILD_DIR\cov-int" $BUILD_COMMAND $BUILD_PARAMS;
 
                         & $COVERITY_EXE compress -o "$BUILD_DIR\coverity.zip" -i "$BUILD_DIR\cov-int";
                         & $COVERITY_EXE publish -z "$BUILD_DIR\coverity.zip" -r $env:COVERITY_SCAN_PROJECT_NAME -t $env:COVERITY_SCAN_TOKEN -e $env:COVERITY_SCAN_NOTIFICATION_EMAIL --codeVersion $env:APPVEYOR_BUILD_VERSION;
-                } Else {
-                        & $BUILD_COMMAND $BUILD_PARAMS;
                 }
+
+                & cmake -G"$env:CMAKE_GENERATOR" $VAR_BOOST_TESTS $VAR_BOOST_ROOT C:\Projects\plib;
+                & $BUILD_COMMAND $BUILD_PARAMS;
 
                 If ($env:APPVEYOR_REPO_BRANCH -eq "appveyor_test") {
                         & ctest -C Release;
