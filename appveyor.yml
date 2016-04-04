@@ -1,4 +1,9 @@
 environment:
+        COVERITY_SCAN_PROJECT_NAME:       "saprykin/plib"
+        COVERITY_SCAN_NOTIFICATION_EMAIL: "xelfium@gmail.com"
+        COVERITY_SCAN_TOKEN:
+                secure: 6WFXzLxAMuUovtYc+u8OoruE/V6zhK2M4mZlrszRBIA=
+
         matrix:
                 - CMAKE_GENERATOR: "MinGW Makefiles"
                   USE_MINGW:       "1"
@@ -12,6 +17,7 @@ environment:
                 - CMAKE_GENERATOR: "Visual Studio 12 2013 Win64"
                 - CMAKE_GENERATOR: "Visual Studio 14 2015"
                 - CMAKE_GENERATOR: "Visual Studio 14 2015 Win64"
+                  USE_COVERITY:    "1"
 
 os: Visual Studio 2015
 
@@ -28,31 +34,46 @@ clone_folder: c:\projects\plib
 
 build_script:
         - ps: >-
-                New-Item -ItemType directory -Path C:\Projects\plib-build | Out-Null;
-                Set-Location C:\Projects\plib-build | Out-Null;
+                $BUILD_DIR = "C:\Projects\plib-build";
+
+                New-Item -ItemType directory -Path $BUILD_DIR | Out-Null;
+                Set-Location $BUILD_DIR | Out-Null;
 
                 If ($env:APPVEYOR_REPO_BRANCH -eq "appveyor_test") {
-                    $env:VAR_BOOST_TESTS="-DPLIB_TESTS_STATIC=ON";
-                    $env:VAR_BOOST_ROOT="-DBOOST_ROOT=C:\Libraries\boost_1_59_0";
+                        $VAR_BOOST_TESTS = "-DPLIB_TESTS_STATIC=ON";
+                        $VAR_BOOST_ROOT  = "-DBOOST_ROOT=C:\Libraries\boost_1_59_0";
                 }
 
                 If ($env:USE_MINGW -eq "1") {
-                    $env:PATH="C:\MinGW\bin;C:\Program Files (x86)\CMake\bin";
-                    $env:BUILD_TYPE="-DCMAKE_BUILD_TYPE=$env:configuration";
+                        $env:PATH   = "C:\MinGW\bin;C:\Program Files (x86)\CMake\bin";
+                        $BUILD_TYPE = "-DCMAKE_BUILD_TYPE=$env:configuration";
                 }
 
                 If ($env:USE_OLD_MSBUILD -eq "1") {
-                    $env:PATH="C:\Windows\Microsoft.NET\Framework\v3.5;$env:PATH";
+                        $env:PATH = "C:\Windows\Microsoft.NET\Framework\v3.5;$env:PATH";
                 }
 
-                & cmake -G"$env:CMAKE_GENERATOR" $env:VAR_BOOST_TESTS $env:VAR_BOOST_ROOT C:\Projects\plib;
+                & cmake -G"$env:CMAKE_GENERATOR" $VAR_BOOST_TESTS $VAR_BOOST_ROOT C:\Projects\plib;
 
                 If ($env:USE_MINGW -eq "1") {
-                    & mingw32-make;
+                        $BUILD_COMMAND = "mingw32-make";
                 } Else {
-                    & msbuild /verbosity:normal C:\Projects\plib-build\PLib.sln;
+                        $BUILD_COMMAND = "msbuild /verbosity:normal $BUILD_DIR\PLib.sln";
                 }
 
-                if ($env:APPVEYOR_REPO_BRANCH -eq "appveyor_test") {
-                    & ctest -C Release;
+                If ($env:USE_COVERITY -eq "1" -And $env:APPVEYOR_REPO_BRANCH -eq "appveyor_test") {
+                        & nuget install PublishCoverity -o $BUILD_DIR;
+
+                        $COVERITY_EXE = "$BUILD_DIR\PublishCoverity.0.11.0\tools\PublishCoverity.exe";
+
+                        & cov-build --dir "$BUILD_DIR\cov-int" $BUILD_COMMAND";
+
+                        & $COVERITY_EXE compress -o "$BUILD_DIR\coverity.zip" -i "$BUILD_DIR\cov-int";
+                        & $COVERITY_EXE publish -z "$BUILD_DIR\coverity.zip" -r $env:COVERITY_SCAN_PROJECT_NAME -t $env:COVERITY_SCAN_TOKEN -e $env:COVERITY_SCAN_NOTIFICATION_EMAIL --codeVersion $env:APPVEYOR_BUILD_VERSION;
+                } Else {
+                        & $BUILD_COMMAND;
+                }
+
+                If ($env:APPVEYOR_REPO_BRANCH -eq "appveyor_test") {
+                        & ctest -C Release;
                 }
