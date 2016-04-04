@@ -33,13 +33,13 @@ before_install:
 before_script:
         - mkdir ./plib-build
         - cd ./plib-build
-        - if [[ "${USE_GCOV}" == "1" ]]; then cmake -DCMAKE_C_FLAGS=--coverage .. ; else cmake .. ; fi
+        - if [[ "${USE_GCOV}" == "1" ]]; then cmake -DCMAKE_C_FLAGS="-g -O0 --coverage" .. ; else cmake .. ; fi
         - if [[ "${TRAVIS_JOB_NUMBER##*.}" == "1" ]]; then curl -s "https://scan.coverity.com/scripts/travisci_build_coverity_scan.sh" | bash || true ; fi
 
 script:
         - make
         - if [[ "${TRAVIS_BRANCH}" != "coverity_scan" ]]; then make test ; fi
 
-afrer_success:
+after_success:
         - if [[ "${USE_GCOV}" == "1" ]]; then lcov --directory . --capture --output-file coverage.info ; fi
         - if [[ "${USE_GCOV}" == "1" ]]; then coveralls-lcov coverage.info ; fi
