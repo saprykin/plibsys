@@ -86,6 +86,8 @@ BOOST_AUTO_TEST_CASE (puthread_general_test)
 	PUThread *thr1 = p_uthread_create ((PUThreadFunc) test_thread_func, (ppointer) &thread_wakes_1, TRUE);
 	PUThread *thr2 = p_uthread_create_full ((PUThreadFunc) test_thread_func, (ppointer) &thread_wakes_2, TRUE, P_UTHREAD_PRIORITY_NORMAL);
 
+	BOOST_CHECK (p_uthread_set_priority (thr1, P_UTHREAD_PRIORITY_NORMAL) == 0);
+
 	BOOST_REQUIRE (thr1 != NULL);
 	BOOST_REQUIRE (thr2 != NULL);
 
