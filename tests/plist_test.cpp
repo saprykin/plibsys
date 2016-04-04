@@ -55,6 +55,8 @@ BOOST_AUTO_TEST_SUITE (BOOST_TEST_MODULE)
 
 BOOST_AUTO_TEST_CASE (plist_invalid_test)
 {
+	p_lib_init ();
+
 	BOOST_CHECK (p_list_remove (NULL, NULL) == NULL);
 	BOOST_CHECK (p_list_last (NULL) == NULL);
 	BOOST_CHECK (p_list_length (NULL) == 0);
@@ -62,6 +64,8 @@ BOOST_AUTO_TEST_CASE (plist_invalid_test)
 
 	p_list_free (NULL);
 	p_list_foreach (NULL, NULL, NULL);
+
+	p_lib_shutdown ();
 }
 
 BOOST_AUTO_TEST_CASE (plist_general_test)
