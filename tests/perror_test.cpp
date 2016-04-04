@@ -44,6 +44,7 @@ BOOST_AUTO_TEST_CASE (perror_invalid_test)
 	BOOST_CHECK (p_error_get_message (NULL) == NULL);
 	BOOST_CHECK (p_error_get_code (NULL) == 0);
 	BOOST_CHECK (p_error_get_native_code (NULL) == 0);
+	BOOST_CHECK (p_error_get_domain (NULL) == P_ERROR_DOMAIN_NONE);
 	BOOST_CHECK (p_error_copy (NULL) == NULL);
 
 	PError *error = (PError *) 0x1;
@@ -73,30 +74,34 @@ BOOST_AUTO_TEST_CASE (perror_general_test)
 
 	BOOST_CHECK (error != NULL);
 	BOOST_CHECK (p_error_get_code (error) == 0);
+	BOOST_CHECK (p_error_get_domain (error) == P_ERROR_DOMAIN_NONE);
 	BOOST_CHECK (p_error_get_message (error) == NULL);
 
 	PError *copy_error = p_error_copy (error);
 
 	BOOST_CHECK (copy_error != NULL);
 	BOOST_CHECK (p_error_get_code (copy_error) == 0);
+	BOOST_CHECK (p_error_get_domain (error) == P_ERROR_DOMAIN_NONE);
 	BOOST_CHECK (p_error_get_message (copy_error) == NULL);
 
 	p_error_free (copy_error);
 	copy_error = NULL;
 
-	p_error_set_error (error, 10, -10, PERROR_TEST_MESSAGE);
+	p_error_set_error (error, (pint) P_ERROR_DOMAIN_IO, -10, PERROR_TEST_MESSAGE);
 
-	BOOST_CHECK (p_error_get_code (error) == 10);
+	BOOST_CHECK (p_error_get_code (error) == (pint) P_ERROR_DOMAIN_IO);
 	BOOST_CHECK (p_error_get_native_code (error) == -10);
+	BOOST_CHECK (p_error_get_domain (error) == P_ERROR_DOMAIN_IO);
 	BOOST_CHECK (strcmp (p_error_get_message (error), PERROR_TEST_MESSAGE) == 0);
 
 	/* Change internal data */
-	p_error_set_code (error, 20);
+	p_error_set_code (error, (pint) P_ERROR_DOMAIN_IPC);
 	p_error_set_native_code (error, -20);
 	p_error_set_message (error, PERROR_TEST_MESSAGE_2);
 
-	BOOST_CHECK (p_error_get_code (error) == 20);
+	BOOST_CHECK (p_error_get_code (error) == (pint) P_ERROR_DOMAIN_IPC);
 	BOOST_CHECK (p_error_get_native_code (error) == -20);
+	BOOST_CHECK (p_error_get_domain (error) == P_ERROR_DOMAIN_IPC);
 	BOOST_CHECK (strcmp (p_error_get_message (error), PERROR_TEST_MESSAGE_2) == 0);
 
 	/* Revert data back */
@@ -108,7 +113,9 @@ BOOST_AUTO_TEST_CASE (perror_general_test)
 
 	BOOST_CHECK (copy_error != NULL);
 	BOOST_CHECK (p_error_get_code (copy_error) == 10);
+	BOOST_CHECK (p_error_get_domain (error) == P_ERROR_DOMAIN_NONE);
 	BOOST_CHECK (p_error_get_native_code (copy_error) == -10);
+
 	BOOST_CHECK (strcmp (p_error_get_message (copy_error), PERROR_TEST_MESSAGE) == 0);
 
 	p_error_free (copy_error);
@@ -118,12 +125,14 @@ BOOST_AUTO_TEST_CASE (perror_general_test)
 
 	BOOST_CHECK (p_error_get_code (error) == 20);
 	BOOST_CHECK (p_error_get_native_code (error) == -20);
+	BOOST_CHECK (p_error_get_domain (error) == P_ERROR_DOMAIN_NONE);
 	BOOST_CHECK (strcmp (p_error_get_message (error), PERROR_TEST_MESSAGE_2) == 0);
 
 	p_error_clear (error);
 
 	BOOST_CHECK (p_error_get_code (error) == 0);
 	BOOST_CHECK (p_error_get_native_code (error) == 0);
+	BOOST_CHECK (p_error_get_domain (error) == P_ERROR_DOMAIN_NONE);
 	BOOST_CHECK (p_error_get_message (error) == NULL);
 
 	p_error_free (error);
@@ -134,6 +143,7 @@ BOOST_AUTO_TEST_CASE (perror_general_test)
 
 	BOOST_CHECK (p_error_get_code (error) == 30);
 	BOOST_CHECK (p_error_get_native_code (error) == -30);
+	BOOST_CHECK (p_error_get_domain (error) == P_ERROR_DOMAIN_NONE);
 	BOOST_CHECK (strcmp (p_error_get_message (error), PERROR_TEST_MESSAGE) == 0);
 
 	copy_error = p_error_copy (error);
@@ -141,6 +151,7 @@ BOOST_AUTO_TEST_CASE (perror_general_test)
 	BOOST_CHECK (copy_error != NULL);
 	BOOST_CHECK (p_error_get_code (copy_error) == 30);
 	BOOST_CHECK (p_error_get_native_code (copy_error) == -30);
+	BOOST_CHECK (p_error_get_domain (error) == P_ERROR_DOMAIN_NONE);
 	BOOST_CHECK (strcmp (p_error_get_message (copy_error), PERROR_TEST_MESSAGE) == 0);
 
 	p_error_free (copy_error);
@@ -152,6 +163,7 @@ BOOST_AUTO_TEST_CASE (perror_general_test)
 
 	BOOST_CHECK (p_error_get_code (error) == 10);
 	BOOST_CHECK (p_error_get_native_code (error) == -10);
+	BOOST_CHECK (p_error_get_domain (error) == P_ERROR_DOMAIN_NONE);
 	BOOST_CHECK (strcmp (p_error_get_message (error), PERROR_TEST_MESSAGE) == 0);
 
 	p_error_free (error);
