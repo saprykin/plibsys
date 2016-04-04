@@ -40,6 +40,8 @@ BOOST_AUTO_TEST_CASE (pfile_general_test)
 {
 	p_lib_init ();
 
+	BOOST_CHECK (p_file_remove (NULL, NULL) == FALSE);
+
 	BOOST_CHECK (p_file_is_exists (PFILE_TEST_FILE) == FALSE);
 	BOOST_CHECK (p_file_remove ("."P_DIR_SEPARATOR"pfile_test_file_remove.txt", NULL) == FALSE);
 
