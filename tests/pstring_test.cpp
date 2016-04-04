@@ -134,6 +134,10 @@ BOOST_AUTO_TEST_CASE (strtok_test)
 	pchar test_string[] = "1,2,3";
 	pchar *token, *next_token;
 
+	token = p_strtok (test_string, ",", NULL);
+	BOOST_CHECK (token != NULL);
+	BOOST_CHECK (strcmp (token, test_string) == 0);
+
 	token = p_strtok (test_string, ",", &next_token);
 	BOOST_CHECK (token != NULL);
 	BOOST_CHECK (strcmp (token, "1") == 0);
@@ -217,14 +221,22 @@ BOOST_AUTO_TEST_CASE (strtod_test)
 	BOOST_CHECK_CLOSE (p_strtod ("-0"), 0.0, 0.0001);
 	BOOST_CHECK_CLOSE (p_strtod ("-0.0"), 0.0, 0.0001);
 	BOOST_CHECK_CLOSE (p_strtod ("3.14"), 3.14, 0.0001);
+	BOOST_CHECK_CLOSE (p_strtod ("+3.14"), 3.14, 0.0001);
 	BOOST_CHECK_CLOSE (p_strtod ("-12.256"), -12.256, 0.0001);
 	BOOST_CHECK_CLOSE (p_strtod ("0.056"), 0.056, 0.0001);
 	BOOST_CHECK_CLOSE (p_strtod ("-0.057"), -0.057, 0.0001);
 	BOOST_CHECK_CLOSE (p_strtod ("1.5423e2"), 154.23, 0.0001);
 	BOOST_CHECK_CLOSE (p_strtod ("1e3"), 1000.0, 0.0001);
+	BOOST_CHECK_CLOSE (p_strtod ("1e+3"), 1000.0, 0.0001);
 	BOOST_CHECK_CLOSE (p_strtod ("-2.56e1"), -25.6, 0.0001);
+	BOOST_CHECK_CLOSE (p_strtod ("-2.56e+1"), -25.6, 0.0001);
 	BOOST_CHECK_CLOSE (p_strtod ("123e-2"), 1.23, 0.0001);
 	BOOST_CHECK_CLOSE (p_strtod ("3.14e-1"), 0.314, 0.0001);
+	BOOST_CHECK_CLOSE (p_strtod ("3.14e60"), 3.14e60, 0.0001);
+	BOOST_CHECK_CLOSE (p_strtod ("3.14e-60"), 3.14e-60, 0.0001);
+	BOOST_CHECK_CLOSE (p_strtod ("2.14e10"), 2.14e10, 0.0001);
+	BOOST_CHECK_CLOSE (p_strtod ("2.14e-10"), 2.14e-10, 0.0001);
+	BOOST_CHECK_CLOSE (p_strtod ("1.10e310"), 1.10e308, 0.0001);
 
 	p_lib_shutdown ();
 }
