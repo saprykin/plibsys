@@ -98,9 +98,13 @@ BOOST_AUTO_TEST_CASE (pshmbuffer_bad_input_test)
 
 	BOOST_CHECK (p_shm_buffer_new (NULL, 0, NULL) == NULL);
 	BOOST_CHECK (p_shm_buffer_read (NULL, NULL, 0, NULL) == -1);
-	BOOST_CHECK (p_shm_buffer_read (NULL, NULL, 0, NULL) == -1);
+	BOOST_CHECK (p_shm_buffer_write (NULL, NULL, 0, NULL) == -1);
 	BOOST_CHECK (p_shm_buffer_get_free_space (NULL, NULL) == -1);
 	BOOST_CHECK (p_shm_buffer_get_used_space (NULL, NULL) == -1);
+
+	PShmBuffer *buf = p_shm_buffer_new ("pshm_invalid_buffer", 0, NULL);
+	p_shm_buffer_take_ownership (buf);
+	p_shm_buffer_free (buf);
 
 	p_shm_buffer_clear (NULL);
 	p_shm_buffer_free (NULL);
