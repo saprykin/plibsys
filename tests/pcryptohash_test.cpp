@@ -39,6 +39,7 @@ BOOST_AUTO_TEST_CASE (pcryptohash_invalid_test)
 	PCryptoHash	*hash;
 	psize		len;
 	pssize		md5_len;
+	pchar		*hash_str;
 	puchar		*buf;
 
 	p_lib_init ();
@@ -72,6 +73,15 @@ BOOST_AUTO_TEST_CASE (pcryptohash_invalid_test)
 	len = ((psize) md5_len) - 1;
 	p_crypto_hash_get_digest (hash, buf, &len);
 	BOOST_CHECK (len == 0);
+
+	hash_str = p_crypto_hash_get_string (hash);
+	BOOST_CHECK (strcmp (hash_str, "900150983cd24fb0d6963f7d28e17f72") == 0);
+	p_free (hash_str);
+
+	p_crypto_hash_update (hash, (const puchar *) ("abc"), 3);
+	hash_str = p_crypto_hash_get_string (hash);
+	BOOST_CHECK (strcmp (hash_str, "900150983cd24fb0d6963f7d28e17f72") == 0);
+	p_free (hash_str);
 
 	p_crypto_hash_free (hash);
 	p_free (buf);
