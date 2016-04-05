@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2015 Alexander Saprykin <xelfium@gmail.com>
+ * Copyright (C) 2010-2016 Alexander Saprykin <xelfium@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -104,7 +104,7 @@ P_LIB_API pchar *		p_crypto_hash_get_string	(PCryptoHash		*hash);
  * @brief Gets hash in raw representation.
  * @param hash #PCryptoHash context to get digest from.
  * @param buf Buffer to store digest with hash raw representation.
- * @param len Size of @a buf when calling, count of written bytes after.
+ * @param[in, out] len Size of @a buf when calling, count of written bytes after.
  * @note Before getting raw digest hash context will be closed for further updates.
  * @since 0.0.1
  */
