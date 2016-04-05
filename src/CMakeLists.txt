@@ -11,6 +11,13 @@ plib_detect_c_compiler (PLIB_C_COMPILER)
 plib_detect_target_os (PLIB_TARGET_OS)
 plib_detect_os_bits (PLIB_OS_BITS)
 
+if (PLIB_COVERAGE)
+        if (PLIB_C_COMPILER MATCHES "gcc|clang")
+                set (CMAKE_BUILD_TYPE "Debug")
+                set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -coverage")
+        endif()
+endif()
+
 # CMP0042, see http://www.cmake.org/Wiki/CMake_RPATH_handling
 if (PLIB_TARGET_OS STREQUAL darwin)
         set (CMAKE_MACOSX_RPATH TRUE)
