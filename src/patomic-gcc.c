@@ -1,5 +1,5 @@
-/* 
- * Copyright (C) 2010-2014 Alexander Saprykin <xelfium@gmail.com>
+/*
+ * Copyright (C) 2010-2016 Alexander Saprykin <xelfium@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
  * See gatomic-gcc.c for other copyrights and details.
  */
 
-#include "plib.h"
+#include "patomic.h"
 
 P_LIB_API pint
 p_atomic_int_exchange_and_add (volatile pint	*atomic,
