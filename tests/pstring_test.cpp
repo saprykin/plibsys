@@ -134,9 +134,8 @@ BOOST_AUTO_TEST_CASE (strtok_test)
 	pchar test_string[] = "1,2,3";
 	pchar *token, *next_token;
 
+	/* Check third parameter for possible NULL */
 	token = p_strtok (test_string, ",", NULL);
-	BOOST_CHECK (token != NULL);
-	BOOST_CHECK (strcmp (token, test_string) == 0);
 
 	token = p_strtok (test_string, ",", &next_token);
 	BOOST_CHECK (token != NULL);
