@@ -28,7 +28,7 @@ before_install:
         - if [[ "${TRAVIS_OS_NAME}" == "linux" ]]; then sudo apt-get update -qq ; fi
         - if [[ "${TRAVIS_OS_NAME}" == "linux" ]]; then sudo apt-get install libboost-test-dev ; fi
         - if [[ "${USE_GCOV}" == "1" ]] && [[ "${TRAVIS_OS_NAME}" == "linux" ]]; then pip install --user cpp-coveralls ; fi
-        - if [[ "${USE_GCOV}" == "1" ]] && [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then brew update ; brew install pyenv ; eval "$(pyenv init -)" ; pyenv install 2.7.6 ; pyenv global 2.7.6 ; pyenv rehash ; pip install cpp-coveralls ; pyenv rehash ; fi
+        - if [[ "${USE_GCOV}" == "1" ]] && [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then brew update ; eval "$(pyenv init -)" ; pyenv install 2.7.6 ; pyenv global 2.7.6 ; pyenv rehash ; pip install cpp-coveralls ; pyenv rehash ; fi
 
 before_script:
         - mkdir ./plib-build
@@ -41,4 +41,4 @@ script:
         - if [[ "${TRAVIS_BRANCH}" != "coverity_scan" ]]; then make test ; fi
 
 after_success:
-        - if [[ "${USE_GCOV}" == "1" ]]; then coveralls --gcov-options '\-lp' ; fi
+        - if [[ "${USE_GCOV}" == "1" ]]; then coveralls --root ${TRAVIS_BUILD_DIR} --build-root ${TRAVIS_BUILD_DIR}/plib-build --gcov-options '\-lp' ; fi
