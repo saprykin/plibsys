@@ -61,6 +61,8 @@ BOOST_AUTO_TEST_CASE (pdir_general_test)
 	p_dir_remove (PDIR_TEST_DIR, NULL);
 
 	BOOST_REQUIRE (p_dir_create (PDIR_TEST_DIR, 0777, NULL) == TRUE);
+	BOOST_REQUIRE (p_dir_create (PDIR_TEST_DIR, 0777, NULL) == TRUE);
+	BOOST_REQUIRE (p_dir_create (PDIR_TEST_DIR_IN, 0777, NULL) == TRUE);
 	BOOST_REQUIRE (p_dir_create (PDIR_TEST_DIR_IN, 0777, NULL) == TRUE);
 
 	FILE *file = fopen (PDIR_TEST_FILE, "w");
