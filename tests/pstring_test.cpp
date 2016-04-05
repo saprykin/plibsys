@@ -137,9 +137,11 @@ BOOST_AUTO_TEST_CASE (strtok_test)
 	/* Check third parameter for possible NULL */
 	token = p_strtok (test_string, ",", NULL);
 
-	token = p_strtok (test_string, ",", &next_token);
-	BOOST_CHECK (token != NULL);
-	BOOST_CHECK (strcmp (token, "1") == 0);
+	if (strcmp (token, "1") != 0) {
+		token = p_strtok (test_string, ",", &next_token);
+		BOOST_CHECK (token != NULL);
+		BOOST_CHECK (strcmp (token, "1") == 0);
+	}
 
 	token = p_strtok (NULL, ",", &next_token);
 	BOOST_CHECK (token != NULL);
