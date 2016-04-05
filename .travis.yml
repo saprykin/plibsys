@@ -41,4 +41,4 @@ script:
         - if [[ "${TRAVIS_BRANCH}" != "coverity_scan" ]]; then make test ; fi
 
 after_success:
-        - if [[ "${USE_GCOV}" == "1" ]]; then coveralls --root ${TRAVIS_BUILD_DIR} --build-root ${TRAVIS_BUILD_DIR}/plib-build --gcov-options '\-lp' ; fi
+        - if [[ "${USE_GCOV}" == "1" ]]; then coveralls --root ${TRAVIS_BUILD_DIR} --gcov-options '\-lp' ; fi
