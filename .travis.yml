@@ -27,9 +27,8 @@ before_install:
         - if ([[ "${TRAVIS_JOB_NUMBER##*.}" == "1" ]] || [[ "${TRAVIS_JOB_NUMBER##*.}" == "3" ]]) && [[ "${TRAVIS_BRANCH}" != "coverity_scan" ]]; then export USE_GCOV="1" ; fi
         - if [[ "${TRAVIS_OS_NAME}" == "linux" ]]; then sudo apt-get update -qq ; fi
         - if [[ "${TRAVIS_OS_NAME}" == "linux" ]]; then sudo apt-get install libboost-test-dev ; fi
-        - if [[ "${USE_GCOV}" == "1" ]] && [[ "${TRAVIS_OS_NAME}" == "linux" ]]; then sudo apt-get install lcov ; fi
-        - if [[ "${USE_GCOV}" == "1" ]] && [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then brew install lcov ; fi
-        - if [[ "${USE_GCOV}" == "1" ]]; then gem install coveralls-lcov ; fi
+        - if [[ "${USE_GCOV}" == "1" ]] && [[ "${TRAVIS_OS_NAME}" == "linux" ]]; then pip install --user cpp-coveralls ; fi
+        - if [[ "${USE_GCOV}" == "1" ]] && [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then brew update ; brew install pyenv ; eval "$(pyenv init -)" ; pyenv install 2.7.6 ; pyenv global 2.7.6 ; pyenv rehash ; pip install cpp-coveralls ; pyenv rehash ; fi
 
 before_script:
         - mkdir ./plib-build
@@ -42,5 +41,4 @@ script:
         - if [[ "${TRAVIS_BRANCH}" != "coverity_scan" ]]; then make test ; fi
 
 after_success:
-        - if [[ "${USE_GCOV}" == "1" ]]; then lcov --directory . --capture --output-file coverage.info ; fi
-        - if [[ "${USE_GCOV}" == "1" ]]; then coveralls-lcov coverage.info ; fi
+        - if [[ "${USE_GCOV}" == "1" ]]; then coveralls --gcov-options '\-lp' ; fi
