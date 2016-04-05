@@ -227,7 +227,7 @@ endif()
 # Detect atomic operations
 set (PLIB_MEMORY_BARRIER_NEEDED true)
 
-if (PLIB_C_COMPILER MATCHES "gcc|qcc")
+if (PLIB_C_COMPILER MATCHES "gcc|qcc|clang")
         message (STATUS "Checking for GCC builtin atomic operations")
 
         check_c_source_compiles (
