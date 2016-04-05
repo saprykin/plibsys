@@ -20,6 +20,10 @@ option (PLIB_TESTS_STATIC "Use Boost Unit Test Framework without compilation" OF
 option (PLIB_BUILD_STATIC "Also build static version of the library" ON)
 option (PLIB_COVERAGE "Enable gcov coverage (GCC and Clang)" OFF)
 
+if (NOT CMAKE_BUILD_TYPE)
+        set (CMAKE_BUILD_TYPE "Debug")
+endif()
+
 enable_testing ()
 
 subdirs (src)
