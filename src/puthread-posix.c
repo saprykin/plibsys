@@ -48,10 +48,12 @@ struct _PUThread {
 	PUThreadPriority	prio;
 };
 
-static int p_uthread_priority_map[P_UTHREAD_PRIORITY_HIGHEST + 1];
-
 #if defined (POSIX_MIN_PRIORITY) && defined (POSIX_MAX_PRIORITY)
 #  define P_HAVE_PRIORITIES
+#endif
+
+#ifdef P_HAVE_PRIORITIES
+static int p_uthread_priority_map[P_UTHREAD_PRIORITY_HIGHEST + 1];
 #endif
 
 void
@@ -82,13 +84,13 @@ __p_uthread_init (void)
 # endif /* !P_OS_FREEBSD */
 	pthread_getschedparam (pthread_self (), &policy, &sched);
 	normal_prio = sched.sched_priority;
-#endif /* POSIX_MIN_PRIORITY && POSIX_MAX_PRIORITY */
 
 	p_uthread_priority_map[P_UTHREAD_PRIORITY_LOWEST]	= min_prio;
 	p_uthread_priority_map[P_UTHREAD_PRIORITY_LOW]		= (min_prio * 6 + normal_prio * 4) / 10;
 	p_uthread_priority_map[P_UTHREAD_PRIORITY_NORMAL]	= normal_prio;
 	p_uthread_priority_map[P_UTHREAD_PRIORITY_HIGH]		= (normal_prio + max_prio * 2) / 3;
 	p_uthread_priority_map[P_UTHREAD_PRIORITY_HIGHEST]	= max_prio;
+#endif /* POSIX_MIN_PRIORITY && POSIX_MAX_PRIORITY */
 }
 
 void
