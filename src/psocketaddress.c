@@ -76,24 +76,35 @@ p_socket_address_new_from_native (pconstpointer	native,
 	family = ((struct sockaddr *) native)->sa_family;
 
 	if (family == AF_INET) {
+		if (len < sizeof (struct sockaddr_in)) {
+			P_WARNING ("PSocketAddress: not enough space to convert from native");
+			p_free (ret);
+			return NULL;
+		}
+
 		memcpy (&ret->addr.sin_addr, &((struct sockaddr_in *) native)->sin_addr, sizeof (struct in_addr));
 		ret->family = P_SOCKET_FAMILY_INET;
 		ret->port = ntohs (((struct sockaddr_in *) native)->sin_port);
 		return ret;
 	}
-
 #ifdef AF_INET6
-	if (family == AF_INET6) {
+	else if (family == AF_INET6) {
+		if (len < sizeof (struct sockaddr_in6)) {
+			P_WARNING ("PSocketAddress: not enough space to convert from native");
+			p_free (ret);
+			return NULL;
+		}
+
 		memcpy (&ret->addr.sin6_addr, &((struct sockaddr_in6 *) native)->sin6_addr, sizeof (struct in6_addr));
 		ret->family = P_SOCKET_FAMILY_INET6;
 		ret->port = ntohs (((struct sockaddr_in *) native)->sin_port);
 		return ret;
 	}
 #endif
-
-	p_free (ret);
-
-	return NULL;
+	else {
+		p_free (ret);
+		return NULL;
+	}
 }
 
 P_LIB_API PSocketAddress *
