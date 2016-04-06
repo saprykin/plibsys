@@ -269,29 +269,13 @@ p_tree_clear (PTree *tree)
 		} else {
 			prev_node = cur_node->left;
 
-			while (prev_node->right != NULL && prev_node->right != cur_node)
+			while (prev_node->right != NULL)
 				prev_node = prev_node->right;
 
-			if (prev_node->right == NULL) {
-				prev_node->right = cur_node;
-				next_node        = cur_node->left;
-				cur_node->left   = NULL;
-				cur_node         = next_node;
-			} else {
-				next_node        = cur_node->right;
-				prev_node->right = NULL;
-
-				if (tree->key_destroy_func != NULL)
-					tree->key_destroy_func (cur_node->key);
-
-				if (tree->value_destroy_func != NULL)
-					tree->value_destroy_func (cur_node->key);
-
-				tree->free_node_func (cur_node);
-				--tree->nnodes;
-
-				cur_node = next_node;
-			}
+			prev_node->right = cur_node;
+			next_node        = cur_node->left;
+			cur_node->left   = NULL;
+			cur_node         = next_node;
 		}
 	}
 
