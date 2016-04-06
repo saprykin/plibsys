@@ -35,12 +35,20 @@
 
 #include <boost/test/floating_point_comparison.hpp>
 
+#define PINIFILE_STRESS_LINE	2048
+#define PINIFILE_MAX_LINE	1024
+
 static bool create_test_ini_file ()
 {
 	FILE *file = fopen ("." P_DIR_SEPARATOR "p_ini_test_file.ini", "w");
 
 	if (file == NULL)
 		return false;
+
+	pchar *buf = (pchar *) p_malloc0 (PINIFILE_STRESS_LINE + 1);
+
+	for (int i = 0; i < PINIFILE_STRESS_LINE; ++i)
+		buf[i] = (pchar) (97 + i % 20);
 
 	/* Empty section */
 	fprintf (file, "[empty_section]\n");
@@ -63,18 +71,28 @@ static bool create_test_ini_file ()
 	fprintf (file, "string_parameter_4 = 12345 ;Comment\n");
 	fprintf (file, "string_parameter_4 = 54321\n");
 	fprintf (file, "string_parameter_5 = 'Test string'\n");
+	fprintf (file, "string_parameter_6 = %s\n", buf);
+	fprintf (file, "string_parameter_7 = ''\n");
+	fprintf (file, "string_parameter_8 = \"\"\n");
+	fprintf (file, "%s = stress line\n", buf);
 
 	/* Boolean section */
 	fprintf (file, "[boolean_section]\n");
 	fprintf (file, "boolean_parameter_1 = TRUE ;True value\n");
 	fprintf (file, "boolean_parameter_2 = 0 ;False value\n");
 	fprintf (file, "boolean_parameter_3 = false ;False value\n");
+	fprintf (file, "boolean_parameter_4 = 1 ;True value\n");
 
 	/* List section */
 	fprintf (file, "[list_section]\n");
 	fprintf (file, "list_parameter_1 = {1\t2\t5\t10} ;First list\n");
 	fprintf (file, "list_parameter_2 = {2.0 3.0 5.0} #Second list\n");
 	fprintf (file, "list_parameter_3 = {true FALSE 1} #Last list\n");
+
+	/* Empty section */
+	fprintf (file, "[empty_section]\n");
+
+	p_free (buf);
 
 	return fclose (file) == 0;
 }
@@ -88,6 +106,7 @@ BOOST_AUTO_TEST_CASE (pinifile_bad_input_test)
 	p_lib_init ();
 
 	p_ini_file_free (ini);
+	BOOST_CHECK (p_ini_file_new (NULL) == NULL);
 	BOOST_CHECK (p_ini_file_parse (ini, NULL) == FALSE);
 	BOOST_CHECK (p_ini_file_is_parsed (ini) == FALSE);
 	BOOST_CHECK (p_ini_file_is_key_exists (ini, "string_section", "string_paramter_1") == FALSE);
@@ -98,6 +117,11 @@ BOOST_AUTO_TEST_CASE (pinifile_bad_input_test)
 	BOOST_CHECK (p_ini_file_parameter_int (ini, "numeric_section", "int_parameter_1", 0) == 0);
 	BOOST_CHECK (p_ini_file_parameter_list (ini, "list_section", "list_parameter_1") == NULL);
 	BOOST_CHECK (p_ini_file_parameter_string (ini, "string_section", "string_parameter_1", NULL) == NULL);
+
+	ini = p_ini_file_new ("./bad_file_path/fake.ini");
+	BOOST_CHECK (ini != NULL);
+	BOOST_CHECK (p_ini_file_parse (ini, NULL) == FALSE);
+	p_ini_file_free (ini);
 
 	BOOST_REQUIRE (create_test_ini_file ());
 
@@ -112,6 +136,8 @@ BOOST_AUTO_TEST_CASE (pinifile_read_test)
 	BOOST_REQUIRE (ini != NULL);
 	BOOST_CHECK (p_ini_file_is_parsed (ini) == FALSE);
 
+	BOOST_REQUIRE (p_ini_file_parse (ini, NULL) == TRUE);
+	BOOST_CHECK (p_ini_file_is_parsed (ini) == TRUE);
 	BOOST_REQUIRE (p_ini_file_parse (ini, NULL) == TRUE);
 	BOOST_CHECK (p_ini_file_is_parsed (ini) == TRUE);
 
@@ -133,6 +159,7 @@ BOOST_AUTO_TEST_CASE (pinifile_read_test)
 	p_list_foreach (list, (PFunc) p_free, NULL);
 	p_list_free (list);
 
+	BOOST_CHECK (p_ini_file_parameter_list (ini, "numeric_section", "int_parameter_1") == NULL);
 	BOOST_CHECK (p_ini_file_parameter_int (ini, "numeric_section", "int_parameter_1", -1) == 4);
 	BOOST_CHECK (p_ini_file_parameter_int (ini, "numeric_section", "int_parameter_2", -1) == 5);
 	BOOST_CHECK (p_ini_file_parameter_int (ini, "numeric_section", "int_parameter_3", -1) == 6);
@@ -140,10 +167,11 @@ BOOST_AUTO_TEST_CASE (pinifile_read_test)
 	BOOST_CHECK_CLOSE (p_ini_file_parameter_double (ini, "numeric_section", "float_parameter_2", -1.0), 0.15, 0.0001);
 	BOOST_CHECK (p_ini_file_is_key_exists (ini, "numeric_section", "int_parameter_1") == TRUE);
 	BOOST_CHECK (p_ini_file_is_key_exists (ini, "numeric_section", "float_parameter_1") == TRUE);
+	BOOST_CHECK (p_ini_file_is_key_exists (ini, "numeric_section_false", "float_parameter_1") == FALSE);
 
 	/* Test string section */
 	list = p_ini_file_keys (ini, "string_section");
-	BOOST_CHECK (p_list_length (list) == 5);
+	BOOST_CHECK (p_list_length (list) == 8);
 	p_list_foreach (list, (PFunc) p_free, NULL);
 	p_list_free (list);
 
@@ -171,15 +199,31 @@ BOOST_AUTO_TEST_CASE (pinifile_read_test)
 	BOOST_CHECK (strcmp (str, "Test string") == 0);
 	p_free (str);
 
+	str = p_ini_file_parameter_string (ini, "string_section", "string_parameter_6", NULL);
+	BOOST_REQUIRE (str != NULL);
+	BOOST_CHECK (strlen (str) > 0 && strlen (str) < PINIFILE_MAX_LINE);
+	p_free (str);
+
+	str = p_ini_file_parameter_string (ini, "string_section", "string_parameter_7", NULL);
+	BOOST_REQUIRE (str != NULL);
+	BOOST_CHECK (strcmp (str, "") == 0);
+	p_free (str);
+
+	str = p_ini_file_parameter_string (ini, "string_section", "string_parameter_8", NULL);
+	BOOST_REQUIRE (str != NULL);
+	BOOST_CHECK (strcmp (str, "") == 0);
+	p_free (str);
+
 	/* Test boolean section */
 	list = p_ini_file_keys (ini, "boolean_section");
-	BOOST_CHECK (p_list_length (list) == 3);
+	BOOST_CHECK (p_list_length (list) == 4);
 	p_list_foreach (list, (PFunc) p_free, NULL);
 	p_list_free (list);
 
 	BOOST_CHECK (p_ini_file_parameter_boolean (ini, "boolean_section", "boolean_parameter_1", FALSE) == TRUE);
 	BOOST_CHECK (p_ini_file_parameter_boolean (ini, "boolean_section", "boolean_parameter_2", TRUE) == FALSE);
 	BOOST_CHECK (p_ini_file_parameter_boolean (ini, "boolean_section", "boolean_parameter_3", TRUE) == FALSE);
+	BOOST_CHECK (p_ini_file_parameter_boolean (ini, "boolean_section", "boolean_parameter_4", FALSE) == TRUE);
 
 	/* Test list section */
 	list = p_ini_file_keys (ini, "list_section");
