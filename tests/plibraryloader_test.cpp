@@ -48,6 +48,7 @@ BOOST_AUTO_TEST_CASE (plibraryloader_general_test)
 	BOOST_CHECK (p_library_loader_new ("./unexistent_file.nofile") == NULL);
 	BOOST_CHECK (p_library_loader_get_symbol (NULL, NULL) == NULL);
 	BOOST_CHECK (p_library_loader_get_symbol (NULL, "unexistent_symbol") == NULL);
+
 	p_library_loader_free (NULL);
 
 	/* General tests */
@@ -56,6 +57,12 @@ BOOST_AUTO_TEST_CASE (plibraryloader_general_test)
 
 	loader = p_library_loader_new (boost::unit_test::framework::master_test_suite().argv[1]);
 	BOOST_REQUIRE (loader != NULL);
+
+	BOOST_CHECK (p_library_loader_get_symbol (loader, "there_is_no_such_a_symbol") == (PFuncAddr) NULL);
+
+	err_msg = p_library_loader_get_last_error ();
+	BOOST_CHECK (err_msg != NULL);
+	p_free (err_msg);
 
 	shutdown_func = (void (*) (void)) p_library_loader_get_symbol (loader, "p_lib_shutdown");
 
