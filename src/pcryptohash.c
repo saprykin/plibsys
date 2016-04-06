@@ -193,7 +193,7 @@ P_LIB_API PCryptoHashType
 p_crypto_hash_get_type (const PCryptoHash *hash)
 {
 	if (hash == NULL)
-		return -1;
+		return (PCryptoHashType) -1;
 
 	return hash->type;
 }

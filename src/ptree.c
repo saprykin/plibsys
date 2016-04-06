@@ -286,7 +286,7 @@ P_LIB_API PTreeType
 p_tree_get_type (const PTree *tree)
 {
 	if (tree == NULL)
-		return -1;
+		return (PTreeType) -1;
 
 	return tree->type;
 }
