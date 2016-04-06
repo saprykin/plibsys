@@ -651,6 +651,8 @@ SET (PLIB_SUMMARY
         Platform CFLAGS:        ${PLIB_PLATFORM_CFLAGS}
         Platform LDFLAGS:       ${PLIB_PLATFORM_LDFLAGS}
         Platform libraries:     ${PLIB_PLATFORM_LINK_LIBRARIES}
+
+        Coverage support:       ${PLIB_COVERAGE}
 ")
 
 message ("${PLIB_SUMMARY}")
