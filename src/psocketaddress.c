@@ -255,7 +255,6 @@ p_socket_address_to_native (const PSocketAddress	*addr,
 		memcpy (&sin6->sin6_addr, &addr->addr.sin6_addr, sizeof (struct in6_addr));
 		sin->sin_family = AF_INET6;
 		sin->sin_port = htons (addr->port);
-		memset (sin->sin_zero, 0, sizeof (sin->sin_zero));
 		return TRUE;
 	}
 #endif
