@@ -34,6 +34,21 @@
 
 BOOST_AUTO_TEST_SUITE (BOOST_TEST_MODULE)
 
+static ppointer pmem_alloc (psize nbytes)
+{
+	return (ppointer) malloc (nbytes);
+}
+
+static ppointer pmem_realloc (ppointer block, psize nbytes)
+{
+	return (ppointer) realloc (block, nbytes);
+}
+
+static void pmem_free (ppointer block)
+{
+	free (block);
+}
+
 BOOST_AUTO_TEST_CASE (pmem_general_test)
 {
 	PMemVTable	vtable;
@@ -42,9 +57,9 @@ BOOST_AUTO_TEST_CASE (pmem_general_test)
 
 	p_lib_init ();
 
-	vtable.free = NULL;
-	vtable.malloc = NULL;
-	vtable.realloc = NULL;
+	vtable.free	= NULL;
+	vtable.malloc	= NULL;
+	vtable.realloc	= NULL;
 
 	BOOST_CHECK (p_malloc (0) == NULL);
 	BOOST_CHECK (p_malloc0 (0) == NULL);
@@ -52,6 +67,12 @@ BOOST_AUTO_TEST_CASE (pmem_general_test)
 	BOOST_CHECK (p_mem_set_vtable (NULL) == FALSE);
 	BOOST_CHECK (p_mem_set_vtable (&vtable) == FALSE);
 	p_free (NULL);
+
+	vtable.free	= pmem_free;
+	vtable.malloc	= pmem_alloc;
+	vtable.realloc	= pmem_realloc;
+
+	BOOST_CHECK (p_mem_set_vtable (&vtable) == TRUE);
 
 	/* Test memory allocation using system functions */
 	ptr = p_malloc (1024);
@@ -97,6 +118,12 @@ BOOST_AUTO_TEST_CASE (pmem_general_test)
 		BOOST_CHECK (*(((pchar *) ptr) + i) == (pchar) ((i - 1) % 127));
 
 	p_free (ptr);
+
+	vtable.malloc	= (ppointer (*)(psize)) malloc;
+	vtable.realloc	= (ppointer (*)(ppointer, psize)) realloc;
+	vtable.free	= (void (*)(ppointer)) free;
+
+	BOOST_CHECK (p_mem_set_vtable (&vtable) == TRUE);
 
 	/* Test memory mapping */
 	ptr = p_mem_mmap (0, NULL);
