@@ -217,11 +217,6 @@ BOOST_AUTO_TEST_CASE (phashtable_stress_test)
 		BOOST_CHECK (p_hash_table_lookup (table, PINT_TO_POINTER (keys[i])) ==
 			     PINT_TO_POINTER (values[i]));
 
-		PList *keys_list = p_hash_table_lookup_by_value (table, PINT_TO_POINTER (values[i]), NULL);
-		BOOST_CHECK (p_list_length (keys_list) == 1);
-		BOOST_CHECK (PPOINTER_TO_INT (keys_list->data) == keys[i]);
-		p_list_free (keys_list);
-
 		p_hash_table_remove (table, PINT_TO_POINTER (keys[i]));
 		BOOST_CHECK (p_hash_table_lookup (table, PINT_TO_POINTER (keys[i])) == (ppointer) (-1));
 	}
