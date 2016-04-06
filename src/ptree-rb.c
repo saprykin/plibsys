@@ -467,13 +467,9 @@ __p_tree_rb_remove (__PTreeBaseNode	**root_node,
 	if (child_node != NULL) {
 		((__PTreeRBNode *) child_node)->parent = child_parent;
 
-		/* Check if we need to balance the tree */
-		if (__p_tree_rb_is_black ((__PTreeRBNode *) cur_node) == TRUE) {
-			if (__p_tree_rb_is_red ((__PTreeRBNode *) child_node) == TRUE)
+		/* Check if we need to repaint the node */
+		if (__p_tree_rb_is_black ((__PTreeRBNode *) cur_node) == TRUE)
 				((__PTreeRBNode *) child_node)->color = P_TREE_RB_COLOR_BLACK;
-			else
-				__p_tree_rb_balance_remove ((__PTreeRBNode *) child_node, root_node);
-		}
 	}
 
 	/* Free unused node */
