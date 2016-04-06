@@ -117,6 +117,7 @@ BOOST_AUTO_TEST_CASE (pshmbuffer_general_test)
 	p_lib_init ();
 
 	pchar		test_buf[sizeof (test_str)];
+	pchar		*large_buf;
 	PShmBuffer	*buffer = NULL;
 
 	/* Buffer may be from the previous test on UNIX systems */
@@ -139,12 +140,19 @@ BOOST_AUTO_TEST_CASE (pshmbuffer_general_test)
 	BOOST_CHECK (p_shm_buffer_get_free_space (buffer, NULL) == (1024 - sizeof (test_str)));
 	BOOST_CHECK (p_shm_buffer_get_used_space (buffer, NULL) == sizeof (test_str));
 	BOOST_CHECK (p_shm_buffer_read (buffer, (ppointer) test_buf, sizeof (test_buf), NULL) == sizeof (test_str));
+	BOOST_CHECK (p_shm_buffer_read (buffer, (ppointer) test_buf, sizeof (test_buf), NULL) == 0);
 
 	BOOST_CHECK (strncmp (test_buf, test_str, sizeof (test_str)) == 0);
 	BOOST_CHECK (p_shm_buffer_get_free_space (buffer, NULL) == 1024);
 	BOOST_CHECK (p_shm_buffer_get_used_space (buffer, NULL) == 0);
 
 	p_shm_buffer_clear (buffer);
+
+	large_buf = (pchar *) p_malloc0 (2048);
+	BOOST_REQUIRE (large_buf != NULL);
+	BOOST_CHECK (p_shm_buffer_write (buffer, (ppointer) large_buf, 2048, NULL) == 0);
+
+	p_free (large_buf);
 	p_shm_buffer_free (buffer);
 
 	p_lib_shutdown ();
