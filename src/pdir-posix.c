@@ -198,7 +198,7 @@ p_dir_get_next_entry (PDir	*dir,
 
 #if defined(P_OS_SOLARIS)
 	name_max = (pint) (FILENAME_MAX);
-#elif defined(P_OS_SCO)
+#elif defined(P_OS_SCO) || defined(P_OS_IRIX)
 	name_max = (pint) pathconf (dir->orig_path, _PC_NAME_MAX);
 
 	if (name_max == -1) {
@@ -212,7 +212,7 @@ p_dir_get_next_entry (PDir	*dir,
 			return NULL;
 		}
 	}
-#elif defined(P_OS_QNX6) || defined(P_OS_UNIXWARE) || defined(P_OS_IRIX)
+#elif defined(P_OS_QNX6) || defined(P_OS_UNIXWARE)
 	name_max = (pint) (NAME_MAX);
 #endif
 
