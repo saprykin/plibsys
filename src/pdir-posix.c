@@ -32,7 +32,8 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 
-#if defined(P_OS_SOLARIS) || defined(P_OS_QNX6) || defined(P_OS_UNIXWARE) || defined(P_OS_SCO)
+#if defined(P_OS_SOLARIS) || defined(P_OS_QNX6) || defined(P_OS_UNIXWARE) || defined(P_OS_SCO) || \
+    defined(P_OS_IRIX)
 #  define P_DIR_NEED_BUF_ALLOC 1
 #endif
 
@@ -211,7 +212,7 @@ p_dir_get_next_entry (PDir	*dir,
 			return NULL;
 		}
 	}
-#elif defined(P_OS_QNX6) ||defined(P_OS_UNIXWARE)
+#elif defined(P_OS_QNX6) || defined(P_OS_UNIXWARE) || defined(P_OS_IRIX)
 	name_max = (pint) (NAME_MAX);
 #endif
 
@@ -281,7 +282,7 @@ p_dir_get_next_entry (PDir	*dir,
 #endif
 
 	path_len = strlen (dir->path);
-	
+
 	if ((entry_path = p_malloc0 (path_len + strlen (ret->name) + 2)) == NULL) {
 		P_WARNING ("PDir: failed to allocate memory for stat()");
 		ret->type = P_DIR_ENTRY_TYPE_OTHER;
