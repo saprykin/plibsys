@@ -30,7 +30,8 @@
 #  include <boost/test/unit_test.hpp>
 #endif
 
-static pint semaphore_test_val = 10;
+static pint semaphore_test_val	= 10;
+static pint is_thread_exit	= 0;
 
 static void clean_error (PError **error)
 {
@@ -52,8 +53,14 @@ static void * semaphore_test_thread (void *)
 		p_uthread_exit (1);
 
 	for (i = 0; i < 1000; ++i) {
-		if (!p_semaphore_acquire (sem, NULL))
+		if (!p_semaphore_acquire (sem, NULL)) {
+			if (is_thread_exit > 0) {
+				semaphore_test_val = 10;
+				break;
+			}
+
 			p_uthread_exit (1);
+		}
 
 		if (semaphore_test_val == 10)
 			--semaphore_test_val;
@@ -62,9 +69,17 @@ static void * semaphore_test_thread (void *)
 			++semaphore_test_val;
 		}
 
-		if (!p_semaphore_release (sem, NULL))
+		if (!p_semaphore_release (sem, NULL)) {
+			if (is_thread_exit > 0) {
+				semaphore_test_val = 10;
+				break;
+			}
+
 			p_uthread_exit (1);
+		}
 	}
+
+	++is_thread_exit;
 
 	p_semaphore_free (sem);
 	p_uthread_exit (0);
