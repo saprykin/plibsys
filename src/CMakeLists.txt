@@ -456,7 +456,8 @@ if (NOT PLIB_TARGET_OS STREQUAL windows OR PLIB_TARGET_OS STREQUAL cygwin)
         check_c_source_compiles (
                                  "#include <time.h>
                                  int main () {
-                                        nanosleep ((const struct timespec[]){{0, 500000000L}}, NULL);
+                                        struct timespec time_sp = {0, 500000000L};
+                                        nanosleep (&time_sp, NULL);
                                         return 0;
                                  }"
                                  PLIB_HAS_NANOSLEEP
