@@ -59,17 +59,15 @@ static int p_uthread_priority_map[P_UTHREAD_PRIORITY_HIGHEST + 1];
 void
 __p_uthread_init (void)
 {
-	int			min_prio, max_prio, normal_prio;
 #ifdef P_HAVE_PRIORITIES
+	int			min_prio, max_prio, normal_prio;
 	int			policy;
 	struct sched_param	sched;
-#endif
 
 	min_prio	= 0;
 	max_prio	= 0;
 	normal_prio	= 0;
 
-#ifdef P_HAVE_PRIORITIES
 # ifdef P_OS_FREEBSD
 	/* FreeBSD threads use different priority values from the POSIX_
 	 * defines so we just set them here. The corresponding macros
