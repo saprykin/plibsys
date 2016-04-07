@@ -148,7 +148,12 @@ p_semaphore_new (const pchar		*name,
 	strcpy (new_name, name);
 	strcat (new_name, P_SEM_SUFFIX);
 
+#ifdef P_OS_IRIX
+	/* IRIX uses filename styled IPC names */
+	ret->platform_key = __p_ipc_get_platform_key (new_name, FALSE);
+#else
 	ret->platform_key = __p_ipc_get_platform_key (new_name, TRUE);
+#endif
 	ret->init_val = init_val;
 	ret->mode = mode;
 
