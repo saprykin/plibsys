@@ -351,6 +351,12 @@
  */
 
 /**
+ * @def P_CC_MIPS
+ * @brief MIPSpro C/C++ compiler
+ * @since 0.0.1
+ */
+
+/**
  * @def P_CC_WATCOM
  * @brief Watcom C compiler
  * @since 0.0.1
@@ -371,6 +377,7 @@
 #  define P_CC_SUN
 #  define P_CC_XLC
 #  define P_CC_HP
+#  define P_CC_MIPS
 #  define P_CC_WATCOM
 #  define P_CC_BORLAND
 #endif
@@ -402,6 +409,10 @@
 /* HP C/aC++ */
 #elif defined(__HP_cc) || defined(__HP_aCC)
 #  define P_CC_HP
+/* MIPSpro C/C++ */
+#elif (defined(__sgi) || defined(sgi)) && \
+      (defined(_COMPILER_VERSION) || defined(_SGI_COMPILER_VERSION))
+#  define P_CC_MIPS
 /* Watcom C++ */
 #elif defined(__WATCOMC__)
 #  define P_CC_WATCOM
