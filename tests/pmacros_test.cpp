@@ -42,11 +42,12 @@ BOOST_AUTO_TEST_CASE (pmacros_general_test)
 	p_lib_init ();
 
 	/* Test OS detection macros */
-#if !defined (P_OS_DARWIN) && !defined (P_OS_MAC9) && !defined (P_OS_BSD4) && \
-    !defined (P_OS_AIX) && !defined (P_OS_HPUX) && !defined (P_OS_SOLARIS) && \
-    !defined (P_OS_QNX) && !defined (P_OS_QNX6) && !defined (P_OS_UNIX) &&    \
-    !defined (P_OS_LINUX) && !defined (P_OS_WIN) && !defined (P_OS_CYGWIN) && \
-    !defined (P_OS_SCO) && !defined (P_OS_UNIXWARE) && !defined (P_OS_VMS)
+#if !defined (P_OS_DARWIN) && !defined (P_OS_MAC9)     && !defined (P_OS_BSD4)    && \
+    !defined (P_OS_AIX)    && !defined (P_OS_HPUX)     && !defined (P_OS_SOLARIS) && \
+    !defined (P_OS_QNX)    && !defined (P_OS_QNX6)     && !defined (P_OS_UNIX)    && \
+    !defined (P_OS_LINUX)  && !defined (P_OS_WIN)      && !defined (P_OS_CYGWIN)  && \
+    !defined (P_OS_SCO)    && !defined (P_OS_UNIXWARE) && !defined (P_OS_VMS)     && \
+    !defined (P_OS_IRIX)
 	BOOST_CHECK (false);
 #endif
 
@@ -109,10 +110,10 @@ BOOST_AUTO_TEST_CASE (pmacros_general_test)
 #endif
 
 	/* Test for compiler detection macros */
-#if !defined (P_CC_MSVC) && !defined (P_CC_GNU) && !defined (P_CC_MINGW) && \
-    !defined (P_CC_INTEL) && !defined (P_CC_CLANG) && !defined (P_CC_SUN) && \
-    !defined (P_CC_XLC) && !defined (P_CC_HP) && !defined (P_CC_WATCOM) && \
-    !defined (P_CC_BORLAND)
+#if !defined (P_CC_MSVC)    && !defined (P_CC_GNU)   && !defined (P_CC_MINGW)  && \
+    !defined (P_CC_INTEL)   && !defined (P_CC_CLANG) && !defined (P_CC_SUN)    && \
+    !defined (P_CC_XLC)     && !defined (P_CC_HP)    && !defined (P_CC_WATCOM) && \
+    !defined (P_CC_BORLAND) && !defined (P_CC_MIPS)
 	BOOST_CHECK (false);
 #endif
 
