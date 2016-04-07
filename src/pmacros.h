@@ -127,6 +127,12 @@
  */
 
 /**
+ * @def P_OS_IRIX
+ * @brief SGI IRIX operating system
+ * @since 0.0.1
+ */
+
+/**
  * @def P_OS_VMS
  * @brief VMS operating system
  * @since 0.0.1
@@ -204,6 +210,7 @@
 #  define P_OS_SCO
 #  define P_OS_UNIXWARE
 #  define P_OS_UNIXWARE7
+#  define P_OS_IRIX
 #  define P_OS_VMS
 #  define P_OS_UNIX
 #  define P_OS_LINUX
@@ -276,6 +283,9 @@
 #elif defined(__svr4__) && defined(i386)
 #  define P_OS_UNIXWARE
 #  define P_OS_UNIXWARE7
+/* SGI IRIX */
+#elif defined(__sgi) || defined(sgi)
+#  define P_OS_IRIX
 /* VMS */
 #elif defined(VMS) || defined(__VMS)
 #  define P_OS_VMS
