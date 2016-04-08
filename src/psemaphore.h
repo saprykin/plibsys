@@ -37,6 +37,9 @@
  * the deadlock or inconsistent state. This could happen if you have not removed all the
  * opened semaphores explicitly before terminating the application.
  *
+ * - IRIX allows to open several instances of the global semaphore within the single process,
+ * but it will close the object after the first close call from the any of the process thread.
+ *
  * Use third argument as #P_SEM_ACCESS_CREATE in p_semaphore_new() to reset semaphore value
  * while openning it. This argument is ignored on Windows. System V semaphores are more
  * resistant to crashes (leaving in locked state) than POSIX ones.

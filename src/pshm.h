@@ -40,6 +40,9 @@
  * - HP-UX has limitations due to its MPAS/MGAS features, so you couldn't attach to the same
  * memory segment twice from the same process.
  *
+ * - IRIX allows to open several instances of the same buffer within the single process, but
+ * it will close the object after the first close call from the any of the process thread.
+ *
  * Keep these facts in mind while developing cross-platform applications. Also note that
  * you must synchronize multi-thread access to shared memory by youself or
  * using p_shm_lock() and p_shm_unlock() routines.
