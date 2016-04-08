@@ -335,7 +335,9 @@ p_socket_address_get_address (const PSocketAddress *addr)
 #  endif /* AF_INET6 */
 #endif /* P_OS_WIN */
 
+#ifdef P_OS_WIN
 	memset (&sa, 0, sizeof (sa));
+#endif
 
 #ifdef P_OS_WIN
 	sa.ss_family = addr->family;
