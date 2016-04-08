@@ -134,6 +134,7 @@ p_socket_address_new (const pchar	*address,
 #ifdef P_OS_WIN
 	memset (&sa, 0, sizeof (sa));
 	len = sizeof (sa);
+	sin->sin_family = AF_INET;
 
 	if (WSAStringToAddressA ((LPSTR) address, AF_INET, NULL, (LPSOCKADDR) &sa, &len) == 0) {
 		memcpy (&ret->addr.sin_addr, &sin->sin_addr, sizeof (struct in_addr));
@@ -141,10 +142,14 @@ p_socket_address_new (const pchar	*address,
 		return ret;
 	}
 #  ifdef AF_INET6
-	else if (WSAStringToAddressA ((LPSTR) address, AF_INET6, NULL, (LPSOCKADDR) &sa, &len) == 0) {
-		memcpy (&ret->addr.sin6_addr, &sin6->sin6_addr, sizeof (struct in6_addr));
-		ret->family = P_SOCKET_FAMILY_INET6;
-		return ret;
+	else {
+		sin6->sin6_family = AF_INET6;
+
+		if (WSAStringToAddressA ((LPSTR) address, AF_INET6, NULL, (LPSOCKADDR) &sa, &len) == 0) {
+			memcpy (&ret->addr.sin6_addr, &sin6->sin6_addr, sizeof (struct in6_addr));
+			ret->family = P_SOCKET_FAMILY_INET6;
+			return ret;
+		}
 	}
 #  endif /* AF_INET6 */
 #else /* P_OS_WIN */
