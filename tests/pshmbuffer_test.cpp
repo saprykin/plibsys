@@ -32,7 +32,10 @@
 #  include <boost/test/unit_test.hpp>
 #endif
 
-static pchar test_str[] = "This is a test string!";
+static pchar test_str[]    = "This is a test string!";
+static pint is_thread_exit = 0;
+static pint read_count     = 0;
+static pint write_count    = 0;
 
 #ifndef P_OS_HPUX
 volatile static pboolean is_working = TRUE;
@@ -47,14 +50,43 @@ static void * shm_buffer_test_write_thread (void *)
 	while (is_working == TRUE) {
 		p_uthread_sleep (3);
 
-		if (p_shm_buffer_get_free_space (buffer, NULL) < sizeof (test_str))
+		pssize op_result = p_shm_buffer_get_free_space (buffer, NULL);
+
+		if (op_result < 0) {
+			if (is_thread_exit > 0)
+				break;
+			else {
+				++is_thread_exit;
+				p_shm_buffer_free (buffer);
+				p_uthread_exit (1);
+			}
+		}
+
+		if (op_result < sizeof (test_str))
 			continue;
 
-		if (p_shm_buffer_write (buffer, (ppointer) test_str, sizeof (test_str), NULL) != sizeof (test_str)) {
+		op_result = p_shm_buffer_write (buffer, (ppointer) test_str, sizeof (test_str), NULL);
+
+		if (op_result < 0) {
+			if (is_thread_exit > 0)
+				break;
+			else {
+				++is_thread_exit;
+				p_shm_buffer_free (buffer);
+				p_uthread_exit (1);
+			}
+		}
+
+		if (op_result != sizeof (test_str)) {
+			++is_thread_exit;
 			p_shm_buffer_free (buffer);
 			p_uthread_exit (1);
 		}
+
+		++read_count;
 	}
+
+	++is_thread_exit;
 
 	p_shm_buffer_free (buffer);
 	p_uthread_exit (0);
@@ -71,19 +103,49 @@ static void * shm_buffer_test_read_thread (void *)
 	while (is_working == TRUE) {
 		p_uthread_sleep (3);
 
-		if (p_shm_buffer_get_used_space (buffer, NULL) < sizeof (test_str))
+		pssize op_result = p_shm_buffer_get_used_space (buffer, NULL);
+
+		if (op_result < 0) {
+			if (is_thread_exit > 0)
+				break;
+			else {
+				++is_thread_exit;
+				p_shm_buffer_free (buffer);
+				p_uthread_exit (1);
+			}
+		}
+
+		if (op_result < sizeof (test_str))
 			continue;
 
-		if (p_shm_buffer_read (buffer, (ppointer) test_buf, sizeof (test_buf), NULL) != sizeof (test_buf)) {
+		op_result = p_shm_buffer_read (buffer, (ppointer) test_buf, sizeof (test_buf), NULL);
+
+		if (op_result < 0) {
+			if (is_thread_exit > 0)
+				break;
+			else {
+				++is_thread_exit;
+				p_shm_buffer_free (buffer);
+				p_uthread_exit (1);
+			}
+		}
+
+		if (op_result != sizeof (test_buf)) {
+			++is_thread_exit;
 			p_shm_buffer_free (buffer);
 			p_uthread_exit (1);
 		}
 
 		if (strncmp (test_buf, test_str, sizeof (test_buf)) != 0) {
+			++is_thread_exit;
 			p_shm_buffer_free (buffer);
 			p_uthread_exit (1);
 		}
+
+		++write_count;
 	}
+
+	++is_thread_exit;
 
 	p_shm_buffer_free (buffer);
 	p_uthread_exit (0);
@@ -187,6 +249,9 @@ BOOST_AUTO_TEST_CASE (pshmbuffer_thread_test)
 
 	BOOST_CHECK (p_uthread_join (thr1) == 0);
 	BOOST_CHECK (p_uthread_join (thr2) == 0);
+
+	BOOST_CHECK (read_count > 0);
+	BOOST_CHECK (write_count > 0);
 
 	p_shm_buffer_free (buffer);
 	p_uthread_free (thr1);
