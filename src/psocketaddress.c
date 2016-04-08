@@ -335,19 +335,19 @@ p_socket_address_get_address (const PSocketAddress *addr)
 #  endif /* AF_INET6 */
 #endif /* P_OS_WIN */
 
+	memset (&sa, 0, sizeof (sa));
+
 #ifdef P_OS_WIN
 	sa.ss_family = addr->family;
 
 	if (addr->family == P_SOCKET_FAMILY_INET) {
 		addrlen = sizeof (struct sockaddr_in);
 		memcpy (&sin->sin_addr, &addr->addr.sin_addr, sizeof (struct in_addr));
-		sin->sin_port = 0;
 	}
 #  ifdef AF_INET6
 	else {
 		addrlen = sizeof (struct sockaddr_in6);
 		memcpy (&sin6->sin6_addr, &addr->addr.sin6_addr, sizeof (struct in6_addr));
-		sin6->sin6_port = 0;
 	}
 #  endif /* AF_INET6 */
 
