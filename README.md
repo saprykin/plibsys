@@ -46,6 +46,7 @@ the following platforms:
 * Solaris
 * AIX
 * HP-UX
+* IRIX64
 * QNX Neutrino
 * UnixWare 7
 * SCO OpenServer 5
@@ -61,11 +62,12 @@ PLib was tested with the following compilers:
 * MinGW (x86, x64)
 * Open Watcom (x86)
 * Borland (x86)
-* GCC (x86, x64, PPC32be, PPC64be, IA-64/32, IA-64, HPPA2.0-32)
+* GCC (x86, x64, PPC32be, PPC64be, IA-64/32, IA-64, HPPA2.0-32, MIPS32)
 * Clang (x86, x64)
 * Intel (x86, x64)
 * QCC (x86)
 * Oracle Solaris Studio (x86, x64)
+* MIPSpro (MIPS32)
 
 ======= Building =======
 
