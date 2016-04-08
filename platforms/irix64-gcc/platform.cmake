@@ -1,0 +1,12 @@
+set (PLIB_THREAD_MODEL posix)
+set (PLIB_IPC_MODEL posix)
+set (PLIB_TIME_PROFILER_MODEL posix)
+set (PLIB_DIR_MODEL posix)
+
+set (PLIB_PLATFORM_DEFINES
+        -D_PTHREADS
+        -D_POSIX_C_SOURCE=199506L
+        -D_BSD_TYPES
+)
+
+set (PLIB_PLATFORM_LINK_LIBRARIES pthread)
