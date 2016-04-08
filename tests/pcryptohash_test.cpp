@@ -141,7 +141,7 @@ BOOST_AUTO_TEST_CASE (md5_test)
 
 	BOOST_CHECK (hash_len == 16);
 
-	for (int i = 0; i < hash_len; ++i)
+	for (unsigned int i = 0; i < hash_len; ++i)
 		BOOST_CHECK (hash_dig[i] == hash_etalon_1[i]);
 
 	p_crypto_hash_reset (md5_hash);
@@ -168,7 +168,7 @@ BOOST_AUTO_TEST_CASE (md5_test)
 
 	BOOST_CHECK (hash_len == 16);
 
-	for (int i = 0; i < hash_len; ++i)
+	for (unsigned int i = 0; i < hash_len; ++i)
 		BOOST_CHECK (hash_dig[i] == hash_etalon_2[i]);
 
 	p_crypto_hash_reset (md5_hash);
@@ -194,7 +194,7 @@ BOOST_AUTO_TEST_CASE (md5_test)
 	p_crypto_hash_get_digest (md5_hash, hash_dig, &hash_len);
 	BOOST_CHECK (hash_len == 16);
 
-	for (int i = 0; i < hash_len; ++i)
+	for (unsigned int i = 0; i < hash_len; ++i)
 		BOOST_CHECK (hash_dig[i] == hash_etalon_3[i]);
 
 	p_crypto_hash_reset (md5_hash);
@@ -269,7 +269,7 @@ BOOST_AUTO_TEST_CASE (sha1_test)
 
 	BOOST_CHECK (hash_len == 20);
 
-	for (int i = 0; i < hash_len; ++i)
+	for (unsigned int i = 0; i < hash_len; ++i)
 		BOOST_CHECK (hash_dig[i] == hash_etalon_1[i]);
 
 	p_crypto_hash_reset (sha1_hash);
@@ -296,7 +296,7 @@ BOOST_AUTO_TEST_CASE (sha1_test)
 
 	BOOST_CHECK (hash_len == 20);
 
-	for (int i = 0; i < hash_len; ++i)
+	for (unsigned int i = 0; i < hash_len; ++i)
 		BOOST_CHECK (hash_dig[i] == hash_etalon_2[i]);
 
 	p_crypto_hash_reset (sha1_hash);
@@ -323,7 +323,7 @@ BOOST_AUTO_TEST_CASE (sha1_test)
 
 	BOOST_CHECK (hash_len == 20);
 
-	for (int i = 0; i < hash_len; ++i)
+	for (unsigned int i = 0; i < hash_len; ++i)
 		BOOST_CHECK (hash_dig[i] == hash_etalon_3[i]);
 
 	p_crypto_hash_reset (sha1_hash);
@@ -401,7 +401,7 @@ BOOST_AUTO_TEST_CASE (gost3411_94_test)
 
 	BOOST_CHECK (hash_len == 32);
 
-	for (int i = 0; i < hash_len; ++i)
+	for (unsigned int i = 0; i < hash_len; ++i)
 		BOOST_CHECK (hash_dig[i] == hash_etalon_1[i]);
 
 	p_crypto_hash_reset (gost3411_94_hash);
@@ -428,7 +428,7 @@ BOOST_AUTO_TEST_CASE (gost3411_94_test)
 
 	BOOST_CHECK (hash_len == 32);
 
-	for (int i = 0; i < hash_len; ++i)
+	for (unsigned int i = 0; i < hash_len; ++i)
 		BOOST_CHECK (hash_dig[i] == hash_etalon_2[i]);
 
 	p_crypto_hash_reset (gost3411_94_hash);
