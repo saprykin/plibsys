@@ -450,6 +450,9 @@ if (NOT PLIB_TARGET_OS STREQUAL windows OR PLIB_TARGET_OS STREQUAL cygwin)
                 add_definitions (-DPLIB_MMAP_HAS_MAP_ANON)
         endif()
 
+        set (OLD_CMAKE_REQUIRED_LIBRARIES ${CMAKE_REQUIRED_LIBRARIES})
+        set (CMAKE_REQUIRED_LIBRARIES ${CMAKE_REQUIRED_LIBRARIES} ${PLIB_PLATFORM_LINK_LIBRARIES})
+
         # Check for nanosleep() call
         message (STATUS "Checking whether nanosleep() presents")
 
@@ -469,6 +472,8 @@ if (NOT PLIB_TARGET_OS STREQUAL windows OR PLIB_TARGET_OS STREQUAL cygwin)
         else()
                 message (STATUS "Checking whether nanosleep() presents - no")
         endif()
+
+        set (CMAKE_REQUIRED_LIBRARIES ${OLD_CMAKE_REQUIRED_LIBRARIES})
 endif()
 
 if ((PLIB_TARGET_OS STREQUAL windows) AND NOT (PLIB_TARGET_OS STREQUAL cygwin))
