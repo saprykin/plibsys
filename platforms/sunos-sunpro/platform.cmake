@@ -3,7 +3,7 @@ set (PLIB_IPC_MODEL sysv)
 set (PLIB_TIME_PROFILER_MODEL solaris)
 set (PLIB_DIR_MODEL posix)
 
-set (PLIB_PLATFORM_LINK_LIBRARIES socket nsl)
+set (PLIB_PLATFORM_LINK_LIBRARIES socket nsl rt)
 
 set (PLIB_PLATFORM_DEFINES
         -D_REENTRANT
