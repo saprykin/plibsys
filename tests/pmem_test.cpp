@@ -34,17 +34,17 @@
 
 BOOST_AUTO_TEST_SUITE (BOOST_TEST_MODULE)
 
-static ppointer pmem_alloc (psize nbytes)
+extern "C" ppointer pmem_alloc (psize nbytes)
 {
 	return (ppointer) malloc (nbytes);
 }
 
-static ppointer pmem_realloc (ppointer block, psize nbytes)
+extern "C" ppointer pmem_realloc (ppointer block, psize nbytes)
 {
 	return (ppointer) realloc (block, nbytes);
 }
 
-static void pmem_free (ppointer block)
+extern "C" void pmem_free (ppointer block)
 {
 	free (block);
 }
@@ -119,9 +119,9 @@ BOOST_AUTO_TEST_CASE (pmem_general_test)
 
 	p_free (ptr);
 
-	vtable.malloc	= (ppointer (*)(psize)) malloc;
-	vtable.realloc	= (ppointer (*)(ppointer, psize)) realloc;
-	vtable.free	= (void (*)(ppointer)) free;
+	vtable.malloc	= malloc;
+	vtable.realloc	= realloc;
+	vtable.free	= free;
 
 	BOOST_CHECK (p_mem_set_vtable (&vtable) == TRUE);
 
