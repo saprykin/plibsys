@@ -62,11 +62,11 @@ PLib was tested with the following compilers:
 * MinGW (x86, x64)
 * Open Watcom (x86)
 * Borland (x86)
-* GCC (x86, x64, PPC32be, PPC64be, IA-64/32, IA-64, HPPA2.0-32, MIPS32)
+* GCC (x86, x64, PPC32be, PPC64be, IA-64/32, IA-64, HPPA2.0-32, MIPS32, AArch32, SPARCv9)
 * Clang (x86, x64)
 * Intel (x86, x64)
 * QCC (x86)
-* Oracle Solaris Studio (x86, x64)
+* Oracle Solaris Studio (x86, x64, SPARCv9)
 * MIPSpro (MIPS32)
 
 ======= Building =======
