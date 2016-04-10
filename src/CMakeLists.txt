@@ -153,7 +153,8 @@ set (PLIB_PLATFORM_SRCS
 
 set (CMAKE_REQUIRED_DEFINITIONS "${CMAKE_REQUIRED_DEFINITIONS} ${PLIB_PLATFORM_DEFINES}")
 
-if ((PLIB_TARGET_OS STREQUAL windows) AND NOT (PLIB_TARGET_OS STREQUAL cygwin))
+if ((PLIB_TARGET_OS STREQUAL windows) AND NOT (PLIB_TARGET_OS STREQUAL cygwin)
+                                      AND NOT (PLIB_TARGET_OS STREQUAL msys))
         check_c_source_compiles (
                                  "#include <windows.h>
                                  int main () {
@@ -408,13 +409,15 @@ endif()
 check_type_size ("size_t" PLIB_SIZEOF_SIZE_T)
 check_type_size ("long" PLIB_SIZEOF_LONG)
 
-if ((PLIB_TARGET_OS STREQUAL windows) AND NOT (PLIB_TARGET_OS STREQUAL cygwin))
+if ((PLIB_TARGET_OS STREQUAL windows) AND NOT (PLIB_TARGET_OS STREQUAL cygwin)
+                                      AND NOT (PLIB_TARGET_OS STREQUAL msys))
         set (PLIB_NEED_WINDOWS_H true)
 endif()
 
 configure_file (${CMAKE_CURRENT_SOURCE_DIR}/plibconfig.h.in ${CMAKE_BINARY_DIR}/plibconfig.h)
 
-if (NOT PLIB_TARGET_OS STREQUAL windows OR PLIB_TARGET_OS STREQUAL cygwin)
+if (NOT PLIB_TARGET_OS STREQUAL windows OR PLIB_TARGET_OS STREQUAL cygwin
+                                        OR PLIB_TARGET_OS STREQUAL msys)
         # Check for anonymous mmap()
         message (STATUS "Checking whether mmap has anonymous mapping")
 
@@ -476,7 +479,8 @@ if (NOT PLIB_TARGET_OS STREQUAL windows OR PLIB_TARGET_OS STREQUAL cygwin)
         set (CMAKE_REQUIRED_LIBRARIES ${OLD_CMAKE_REQUIRED_LIBRARIES})
 endif()
 
-if ((PLIB_TARGET_OS STREQUAL windows) AND NOT (PLIB_TARGET_OS STREQUAL cygwin))
+if ((PLIB_TARGET_OS STREQUAL windows) AND NOT (PLIB_TARGET_OS STREQUAL cygwin)
+                                      AND NOT (PLIB_TARGET_OS STREQUAL msys))
         set (PLIB_SOCKET_INCLUDES "#include <winsock2.h>
                                    #include <ws2tcpip.h>
                                    #include <windows.h>")
@@ -602,7 +606,8 @@ else()
         set (PLIB_INSTALL_TARGETS plib)
 endif()
 
-if ((PLIB_TARGET_OS STREQUAL windows) AND NOT (PLIB_TARGET_OS STREQUAL cygwin))
+if ((PLIB_TARGET_OS STREQUAL windows) AND NOT (PLIB_TARGET_OS STREQUAL cygwin)
+                                      AND NOT (PLIB_TARGET_OS STREQUAL msys))
         install (TARGETS ${PLIB_INSTALL_TARGETS}
                 DESTINATION lib
                 RUNTIME DESTINATION lib
