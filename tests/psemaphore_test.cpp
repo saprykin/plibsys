@@ -30,6 +30,7 @@
 #  include <boost/test/unit_test.hpp>
 #endif
 
+#ifndef P_OS_MSYS
 static pint semaphore_test_val	= 10;
 static pint is_thread_exit	= 0;
 
@@ -84,11 +85,13 @@ static void * semaphore_test_thread (void *)
 	p_semaphore_free (sem);
 	p_uthread_exit (0);
 }
+#endif /* !P_OS_MSYS */
 
 BOOST_AUTO_TEST_SUITE (BOOST_TEST_MODULE)
 
 BOOST_AUTO_TEST_CASE (psemaphore_general_test)
 {
+#ifndef P_OS_MSYS
 	PSemaphore	*sem = NULL;
 	PError		*error = NULL;
 	pint		i;
@@ -132,10 +135,12 @@ BOOST_AUTO_TEST_CASE (psemaphore_general_test)
 	p_semaphore_free (sem);
 
 	p_lib_shutdown ();
+#endif /* !P_OS_MSYS */
 }
 
 BOOST_AUTO_TEST_CASE (psemaphore_thread_test)
 {
+#ifndef P_OS_MSYS
 	PUThread	*thr1, *thr2;
 	PSemaphore	*sem = NULL;
 
@@ -173,6 +178,7 @@ BOOST_AUTO_TEST_CASE (psemaphore_thread_test)
 	p_uthread_free (thr2);
 
 	p_lib_shutdown ();
+#endif /* !P_OS_MSYS */
 }
 
 BOOST_AUTO_TEST_SUITE_END()

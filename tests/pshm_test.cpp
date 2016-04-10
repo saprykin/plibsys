@@ -33,6 +33,7 @@
 #  include <boost/test/unit_test.hpp>
 #endif
 
+#ifndef P_OS_MSYS
 static void * shm_test_thread (void *arg)
 {
 	pint		rand_num;
@@ -62,11 +63,13 @@ static void * shm_test_thread (void *arg)
 
 	p_uthread_exit (0);
 }
+#endif /* !P_OS_MSYS */
 
 BOOST_AUTO_TEST_SUITE (BOOST_TEST_MODULE)
 
 BOOST_AUTO_TEST_CASE (pshm_invalid_test)
 {
+#ifndef P_OS_MSYS
 	p_lib_init ();
 
 	BOOST_CHECK (p_shm_new (NULL, 0, P_SHM_ACCESS_READWRITE, NULL) == NULL);
@@ -85,14 +88,16 @@ BOOST_AUTO_TEST_CASE (pshm_invalid_test)
 	p_shm_free (shm);
 
 	p_lib_shutdown ();
+#endif
 }
 
 BOOST_AUTO_TEST_CASE (pshm_general_test)
 {
+#ifndef P_OS_MSYS
 	PShm		*shm = NULL;
-#ifndef P_OS_HPUX
+#  ifndef P_OS_HPUX
 	PShm		*shm2 = NULL;
-#endif
+#  endif
 	ppointer	addr, addr2;
 	pint		i;
 
@@ -110,7 +115,7 @@ BOOST_AUTO_TEST_CASE (pshm_general_test)
 	addr = p_shm_get_address (shm);
 	BOOST_REQUIRE (addr != NULL);
 
-#ifndef P_OS_HPUX
+#  ifndef P_OS_HPUX
 	shm2 = p_shm_new ("p_shm_test_memory_block", 1024, P_SHM_ACCESS_READONLY, NULL);
 
 	if (shm2 == NULL) {
@@ -123,7 +128,7 @@ BOOST_AUTO_TEST_CASE (pshm_general_test)
 
 	addr2 = p_shm_get_address (shm2);
 	BOOST_REQUIRE (shm2 != NULL);
-#endif
+#  endif
 
 	for (i = 0; i < 512; ++i) {
 		BOOST_CHECK (p_shm_lock (shm, NULL));
@@ -131,19 +136,19 @@ BOOST_AUTO_TEST_CASE (pshm_general_test)
 		BOOST_CHECK (p_shm_unlock (shm, NULL));
 	}
 
-#ifndef P_OS_HPUX
+#  ifndef P_OS_HPUX
 	for (i = 0; i < 512; ++i) {
 		BOOST_CHECK (p_shm_lock (shm2, NULL));
 		BOOST_CHECK (*(((pchar *) addr) + i) == 'a');
 		BOOST_CHECK (p_shm_unlock (shm2, NULL));
 	}
-#else
+#  else
 	for (i = 0; i < 512; ++i) {
 		BOOST_CHECK (p_shm_lock (shm, NULL));
 		BOOST_CHECK (*(((pchar *) addr) + i) == 'a');
 		BOOST_CHECK (p_shm_unlock (shm, NULL));
 	}
-#endif
+#  endif
 
 	for (i = 0; i < 1024; ++i) {
 		BOOST_CHECK (p_shm_lock (shm, NULL));
@@ -151,7 +156,7 @@ BOOST_AUTO_TEST_CASE (pshm_general_test)
 		BOOST_CHECK (p_shm_unlock (shm, NULL));
 	}
 
-#ifndef P_OS_HPUX
+#  ifndef P_OS_HPUX
 	for (i = 0; i < 1024; ++i) {
 		BOOST_CHECK (p_shm_lock (shm2, NULL));
 		BOOST_CHECK (*(((pchar *) addr) + i) != 'c');
@@ -163,7 +168,7 @@ BOOST_AUTO_TEST_CASE (pshm_general_test)
 		BOOST_CHECK (*(((pchar *) addr) + i) == 'b');
 		BOOST_CHECK (p_shm_unlock (shm2, NULL));
 	}
-#else
+#  else
 	for (i = 0; i < 1024; ++i) {
 		BOOST_CHECK (p_shm_lock (shm, NULL));
 		BOOST_CHECK (*(((pchar *) addr) + i) != 'c');
@@ -175,7 +180,7 @@ BOOST_AUTO_TEST_CASE (pshm_general_test)
 		BOOST_CHECK (*(((pchar *) addr) + i) == 'b');
 		BOOST_CHECK (p_shm_unlock (shm, NULL));
 	}
-#endif
+#  endif
 
 	p_shm_free (shm);
 
@@ -194,15 +199,17 @@ BOOST_AUTO_TEST_CASE (pshm_general_test)
 
 	p_shm_free (shm);
 
-#ifndef P_OS_HPUX
+#  ifndef P_OS_HPUX
 	p_shm_free (shm2);
-#endif
+#  endif
 
 	p_lib_shutdown ();
+#endif /* !P_OS_MSYS */
 }
 
 BOOST_AUTO_TEST_CASE (pshm_thread_test)
 {
+#ifndef P_OS_MSYS
 	PShm		*shm;
 	PUThread	*thr1, *thr2, *thr3;
 	ppointer	addr;
@@ -262,6 +269,7 @@ BOOST_AUTO_TEST_CASE (pshm_thread_test)
 	p_shm_free (shm);
 
 	p_lib_shutdown ();
+#endif /* !P_OS_MSYS */
 }
 
 BOOST_AUTO_TEST_SUITE_END()
