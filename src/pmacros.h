@@ -176,7 +176,13 @@
 
 /**
  * @def P_OS_CYGWIN
- * @brief Microsoft's Windows POSIX environment
+ * @brief Microsoft's Windows POSIX runtime environment
+ * @since 0.0.1
+ */
+
+/**
+ * @def P_OS_MSYS
+ * @brief Microsoft's Windows POSIX development environment
  * @since 0.0.1
  */
 
@@ -219,6 +225,7 @@
 #  define P_OS_MAC32
 #  define P_OS_MAC64
 #  define P_OS_CYGWIN
+#  define P_OS_MSYS
 #  define P_OS_WIN
 #  define P_OS_WIN64
 #endif
@@ -235,8 +242,11 @@
 /* Mac OS 9 */
 # elif defined(Macintosh) || defined(macintosh)
 #  define P_OS_MAC9
-#elif defined(__CYGWIN__)
+/* MSYS */
+#elif defined(__MSYS__)
+#  define P_OS_MSYS
 /* Cygwin */
+#elif defined(__CYGWIN__)
 #  define P_OS_CYGWIN
 /* Microsoft Windows */
 #elif defined(_WIN64) || defined(_M_X64) || defined(_M_AMD64)
