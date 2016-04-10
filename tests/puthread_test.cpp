@@ -52,11 +52,15 @@ static void * test_thread_nonjoinable_func (void *data)
 {
 	pint *counter =  static_cast < pint * > (data);
 
+	is_threads_working = TRUE;
+
 	for (int i = thread_to_wakes; i > 0; --i) {
 		p_uthread_sleep (10);
 		++(*counter);
 		p_uthread_yield ();
 	}
+
+	is_threads_working = FALSE;
 
 	p_uthread_exit (0);
 }
@@ -114,6 +118,10 @@ BOOST_AUTO_TEST_CASE (puthread_nonjoinable_test)
 	p_uthread_sleep (3000);
 
 	BOOST_CHECK (p_uthread_join (thr1) == -1);
+
+	while (is_threads_working == TRUE)
+		p_uthread_sleep (10);
+
 	BOOST_CHECK (thread_wakes_1 == thread_to_wakes);
 
 	p_lib_shutdown ();
