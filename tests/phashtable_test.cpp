@@ -92,6 +92,19 @@ BOOST_AUTO_TEST_CASE (phashtable_general_test)
 	BOOST_REQUIRE (PPOINTER_TO_INT (list->data) == 1);
 	p_list_free (list);
 
+	/* False remove */
+	p_hash_table_remove (table, PINT_TO_POINTER (2));
+	list = p_hash_table_values (table);
+	BOOST_REQUIRE (list != NULL);
+	BOOST_REQUIRE (p_list_length (list) == 1);
+	BOOST_REQUIRE (PPOINTER_TO_INT (list->data) == 10);
+	p_list_free (list);
+	list = p_hash_table_keys (table);
+	BOOST_REQUIRE (list != NULL);
+	BOOST_REQUIRE (p_list_length (list) == 1);
+	BOOST_REQUIRE (PPOINTER_TO_INT (list->data) == 1);
+	p_list_free (list);
+
 	/* Replace existing value */
 	p_hash_table_insert (table, PINT_TO_POINTER (1), PINT_TO_POINTER (15));
 	list = p_hash_table_values (table);
@@ -208,6 +221,7 @@ BOOST_AUTO_TEST_CASE (phashtable_stress_test)
 		keys[counter]   = rand_number;
 		values[counter] = rand () + 1;
 
+		p_hash_table_remove (table, PINT_TO_POINTER (keys[counter]));
 		p_hash_table_insert (table, PINT_TO_POINTER (keys[counter]), PINT_TO_POINTER (values[counter]));
 
 		++counter;
