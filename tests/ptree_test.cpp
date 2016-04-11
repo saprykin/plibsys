@@ -204,13 +204,29 @@ general_tree_test (PTree *tree, PTreeType type, bool check_cmp, bool check_notif
 
 	BOOST_CHECK (p_tree_get_nnodes (tree) == 6);
 
+	p_tree_insert (tree, PINT_TO_POINTER (1), PINT_TO_POINTER (100));
+	p_tree_insert (tree, PINT_TO_POINTER (5), PINT_TO_POINTER (500));
+
+	BOOST_CHECK (p_tree_get_nnodes (tree) == 6);
+
+	p_tree_insert (tree, PINT_TO_POINTER (1), PINT_TO_POINTER (10));
+	p_tree_insert (tree, PINT_TO_POINTER (5), PINT_TO_POINTER (50));
+
+	BOOST_CHECK (p_tree_get_nnodes (tree) == 6);
+
 	if (check_cmp)
 		BOOST_CHECK (tree_data.cmp_counter > 0);
 	else
 		BOOST_CHECK (tree_data.cmp_counter == 0);
 
-	BOOST_CHECK (tree_data.key_sum          == 0);
-	BOOST_CHECK (tree_data.value_sum        == 0);
+	if (check_notify) {
+		BOOST_CHECK (tree_data.key_sum   == 12);
+		BOOST_CHECK (tree_data.value_sum == 660);
+	} else {
+		BOOST_CHECK (tree_data.key_sum   == 0);
+		BOOST_CHECK (tree_data.value_sum == 0);
+	}
+
 	BOOST_CHECK (tree_data.traverse_counter == 0);
 	BOOST_CHECK (tree_data.key_order_errors == 0);
 
