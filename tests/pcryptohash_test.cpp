@@ -51,6 +51,7 @@ BOOST_AUTO_TEST_CASE (pcryptohash_invalid_test)
 	BOOST_CHECK (p_crypto_hash_get_length (NULL) == 0);
 	BOOST_CHECK (p_crypto_hash_get_string (NULL) == NULL);
 	BOOST_CHECK ((pint) p_crypto_hash_get_type (NULL) == -1);
+	p_crypto_hash_free (NULL);
 
 	p_crypto_hash_update (NULL, NULL, 0);
 	p_crypto_hash_get_digest (NULL, NULL, NULL);
@@ -439,6 +440,19 @@ BOOST_AUTO_TEST_CASE (gost3411_94_test)
 	hash_str = p_crypto_hash_get_string (gost3411_94_hash);
 
 	BOOST_CHECK (strcmp (hash_str, "110ddcb6697d508710c64a62f39e7f202d1ffa20314011a0ebaad1281583d77e") == 0);
+	p_free (hash_str);
+
+	p_crypto_hash_reset (gost3411_94_hash);
+	BOOST_REQUIRE (p_crypto_hash_get_string (gost3411_94_hash) == NULL);
+
+	/* Repeat test */
+	p_crypto_hash_update (gost3411_94_hash, (const puchar *) "message digest", 14);
+	p_crypto_hash_update (gost3411_94_hash, (const puchar *) "message digest", 14);
+	p_crypto_hash_update (gost3411_94_hash, (const puchar *) "message digest", 14);
+	p_crypto_hash_update (gost3411_94_hash, (const puchar *) "message digest", 14);
+
+	hash_str = p_crypto_hash_get_string (gost3411_94_hash);
+	BOOST_CHECK (strcmp (hash_str, "1564064cce4fe1386be063f98d7ab17fc724fa7f02be4fa6847a2162be20d807") == 0);
 	p_free (hash_str);
 
 	p_crypto_hash_reset (gost3411_94_hash);
