@@ -130,6 +130,7 @@ BOOST_AUTO_TEST_CASE (pcondvariable_general_test)
 	BOOST_REQUIRE (p_cond_variable_broadcast (queue_empty_cond) == FALSE);
 	BOOST_REQUIRE (p_cond_variable_signal (queue_empty_cond) == FALSE);
 	BOOST_REQUIRE (p_cond_variable_wait (queue_empty_cond, cond_mutex) == FALSE);
+	p_cond_variable_free (NULL);
 
 	queue_empty_cond = p_cond_variable_new ();
 	BOOST_REQUIRE (queue_empty_cond != NULL);

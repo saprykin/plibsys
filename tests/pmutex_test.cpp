@@ -68,6 +68,7 @@ BOOST_AUTO_TEST_CASE (pmutex_general_test)
 	BOOST_REQUIRE (p_mutex_lock (global_mutex) == FALSE);
 	BOOST_REQUIRE (p_mutex_unlock (global_mutex) == FALSE);
 	BOOST_REQUIRE (p_mutex_trylock (global_mutex) == FALSE);
+	p_mutex_free (global_mutex);
 
 	mutex_test_val = 10;
 	global_mutex = p_mutex_new ();
