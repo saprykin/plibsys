@@ -108,7 +108,8 @@ p_tree_new_full (PTreeType		type,
 		ret->free_node_func   = __p_tree_avl_node_free;
 		break;
 	default:
-		break;
+		p_free (ret);
+		return NULL;
 	}
 
 	return ret;
