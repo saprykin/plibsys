@@ -38,4 +38,12 @@ BOOST_AUTO_TEST_CASE (pmain_general_test)
 	p_lib_shutdown ();
 }
 
+BOOST_AUTO_TEST_CASE (pmain_double_test)
+{
+	p_lib_init ();
+	p_lib_init ();
+	p_lib_shutdown ();
+	p_lib_shutdown ();
+}
+
 BOOST_AUTO_TEST_SUITE_END()
