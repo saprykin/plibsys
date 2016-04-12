@@ -589,7 +589,7 @@ if (PLIB_PLATFORM_LDFLAGS)
         endif()
 endif()
 
-if (PLIB_C_COMPILER STREQUAL msvc)
+if (MSVC)
         add_definitions (-D_CRT_SECURE_NO_WARNINGS)
         add_definitions (-D_WINSOCK_DEPRECATED_NO_WARNINGS)
 endif()
