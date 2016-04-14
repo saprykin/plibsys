@@ -99,6 +99,7 @@ set (PLIB_PRIVATE_HDRS
 )
 
 set (PLIB_SRCS
+        patomic.c
         pcryptohash.c
         pcryptohash-gost3411.c
         pcryptohash-md5.c
@@ -174,32 +175,6 @@ if ((PLIB_TARGET_OS STREQUAL windows) AND NOT (PLIB_TARGET_OS STREQUAL cygwin)
                                  PLIB_HAS_VISTA_CV
         )
 
-        check_c_source_compiles (
-                                 "#include <windows.h>
-                                 int main () {
-                                        LONGLONG dest = 0;
-                                        LONGLONG exch = 0;
-                                        LONGLONG comp = 1;
-
-                                        InterlockedCompareExchange64 (&dest, exch, comp);
-                                        return 0;
-                                 }"
-                                 PLIB_HAS_INTERLOCKED_64
-        )
-
-        check_c_source_compiles (
-                                 "#include <windows.h>
-                                 int main () {
-                                        PVOID dest = 0;
-                                        PVOID exch = 0;
-                                        PVOID comp = 1;
-
-                                        InterlockedCompareExchangePointer (&dest, exch, comp);
-                                        return 0;
-                                 }"
-                                 PLIB_HAS_INTERLOCKED_POINTER
-        )
-
         if (PLIB_HAS_GETTICKCOUNT_64)
                 add_definitions (-DPLIB_HAS_GETTICKCOUNT_64)
         endif()
@@ -208,15 +183,7 @@ if ((PLIB_TARGET_OS STREQUAL windows) AND NOT (PLIB_TARGET_OS STREQUAL cygwin)
                 add_definitions (-DPLIB_HAS_VISTA_CV)
         endif()
 
-        if (PLIB_HAS_INTERLOCKED_64)
-                add_definitions (-DPLIB_HAS_INTERLOCKED_64)
-        endif()
-
-        if (PLIB_HAS_INTERLOCKED_POINTER)
-                add_definitions (-DPLIB_HAS_INTERLOCKED_POINTER)
-        endif()
-
-        if (PLIB_HAS_VISTA_CV OR PLIB_HAS_GETTICKCOUNT_64 OR PLIB_HAS_INTERLOCKED_64)
+        if (PLIB_HAS_VISTA_CV OR PLIB_HAS_GETTICKCOUNT_64)
                 add_definitions (-D_WIN32_WINNT=0x0600)
                 add_definitions (-DNTDDI_VERSION=0x06000000)
         else()
@@ -225,137 +192,26 @@ if ((PLIB_TARGET_OS STREQUAL windows) AND NOT (PLIB_TARGET_OS STREQUAL cygwin)
         endif()
 endif()
 
-# Detect atomic operations
-set (PLIB_MEMORY_BARRIER_NEEDED true)
-
 if (PLIB_C_COMPILER MATCHES "gcc|qcc|clang")
-        message (STATUS "Checking for GCC builtin atomic operations")
+        message (STATUS "Checking for lock-free atomic intrinsics")
 
         check_c_source_compiles (
                                  "int main () {
-                                int i;
-                                __sync_synchronize ();
-                                __sync_bool_compare_and_swap (&i, 0, 1);
-                                __sync_fetch_and_add (&i, 1);
+                                __GCC_HAVE_SYNC_COMPARE_AND_SWAP_4;
                                 return 0;
                                 }"
-                                PLIB_HAS_BUILTIN_ATOMIC_OPERATIONS
+                                PLIB_ATOMIC_LOCK_FREE
         )
 
         if (PLIB_HAS_BUILTIN_ATOMIC_OPERATIONS)
-                message (STATUS "Checking for GCC builtin atomic operations - works")
+                message (STATUS "Checking for lock-free atomic intrinsics - works")
         else()
-                message (STATUS "Checking for GCC builtin atomic operations - not works")
-        endif()
-
-        if (PLIB_HAS_BUILTIN_ATOMIC_OPERATIONS)
-                set (PLIB_MEMORY_BARRIER_NEEDED true)
-        else()
-                if (CMAKE_SYSTEM_PROCESSOR STREQUAL "i386")
-                        set (PLIB_MEMORY_BARRIER_NEEDED false)
-                elseif (CMAKE_SYSTEM_PROCESSOR MATCHES "i[1-9]86")
-                        set (PLIB_MEMORY_BARRIER_NEEDED false)
-                        add_definitions (-DP_ATOMIC_I486)
-                elseif (CMAKE_SYSTEM_PROCESSOR MATCHES "sparc.*")
-                        message (STATUS "Checking for SPARC V9 instruction set")
-
-                        check_c_source_compiles (
-                                        "int main () {
-                                                int tmp1, tmp2, tmp3;
-                                                __asm__ __volatile__(\"casx [%2], %0, %1\"
-                                                        : \"=&r\" (tmp1), \"=&r\" (tmp2) : \"r\" (&tmp3));
-                                                return 0;
-                                        }"
-                                        PLIB_HAS_SPARCV9
-                        )
-
-                        if (PLIB_HAS_SPARCV9)
-                                message (STATUS "Checking for SPARC V9 instruction set - works")
-                        else()
-                                message (STATUS "Checking for SPARC V9 instruction set - not works")
-                        endif()
-
-                        if (PLIB_HAS_SPARCV9)
-                                add_definitions (-DP_ATOMIC_SPARCV9)
-                        else()
-                                message (WARNING
-                                                 "Try to rerun configure with '-mcpu=v9' complier flag,
-                                                 when you are using a sparc with v9 instruction set (most
-                                                 sparcs nowadays). This will make the code for atomic
-                                                 operations much faster. The resulting code will not run
-                                                 on very old sparcs though.")
-                        endif()
-
-                        set (PLIB_MEMORY_BARRIER_NEEDED true)
-                elseif (CMAKE_SYSTEM_PROCESSOR MATCHES "alpha.*")
-                        set (PLIB_MEMORY_BARRIER_NEEDED true)
-                        add_definitions (-DP_ATOMIC_ALPHA)      
-                elseif (CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64")
-                        set (PLIB_MEMORY_BARRIER_NEEDED false)
-                        add_definitions (-DP_ATOMIC_X86_64)
-                elseif (CMAKE_SYSTEM_PROCESSOR MATCHES "powerpc.*")
-                        set (PLIB_MEMORY_BARRIER_NEEDED true)
-                        add_definitions (-DP_ATOMIC_POWERPC)
-
-                        message (STATUS "Checking for PowerPC asm numeric labels")
-
-                        check_c_source_compiles (
-                                        "int main () {
-                                                __asm__ __volatile__ (\"1: nop\n\"
-                                                                      \"   bne- 1b\");
-                                                return 0;
-                                        }"
-                                        PLIB_HAS_POWERPC_LABELS
-                        )
-
-                        if (PLIB_HAS_POWERPC_LABELS)
-                                message (STATUS "Checking for PowerPC asm numeric labels - works")
-                        else()
-                                message (STATUS "Checking for PowerPC asm numeric labels - not works")
-                        endif()
-
-                        if (PLIB_HAS_POWERPC_LABELS)
-                                add_definitions (-DASM_NUMERIC_LABELS)
-                        endif()
-                elseif (CMAKE_SYSTEM_PROCESSOR STREQUAL "ia64")
-                        set (PLIB_MEMORY_BARRIER_NEEDED true)
-                        add_definitions (-DP_ATOMIC_IA64)
-                elseif (CMAKE_SYSTEM_PROCESSOR MATCHES "s390|s390x")
-                        set (PLIB_MEMORY_BARRIER_NEEDED false)
-                        add_definitions (-DP_ATOMIC_S390)
-                elseif (CMAKE_SYSTEM_PROCESSOR MATCHES "arm.*")
-                        set (PLIB_MEMORY_BARRIER_NEEDED false)
-                        add_definitions (-DP_ATOMIC_ARM)
-                elseif (CMAKE_SYSTEM_PROCESSOR MATCHES "(crisv32.*)|(etraxfs.*)")
-                        set (PLIB_MEMORY_BARRIER_NEEDED false)
-                        add_definitions (-DP_ATOMIC_CRISV32)
-                elseif (CMAKE_SYSTEM_PROCESSOR MATCHES "(cris.*)|(etrax.*)")
-                        set (PLIB_MEMORY_BARRIER_NEEDED false)
-                        add_definitions (-DP_ATOMIC_CRIS)
-                endif()
+                message (STATUS "Checking for lock-free atomic intrinsics - not works")
         endif()
 else()
         if (PLIB_TARGET_OS MATCHES "(mingw.*)|(windows.*)")
-                set (PLIB_MEMORY_BARRIER_NEEDED false)
+                set (PLIB_ATOMIC_LOCK_FREE true)
         endif()
-endif()
-
-message (STATUS "Checking whether memory barrier needed")
-
-if (PLIB_MEMORY_BARRIER_NEEDED)
-        message (STATUS "Checking whether memory barrier needed - yes")
-else()
-        message (STATUS "Checking whether memory barrier needed - no")
-endif()
-
-if (PLIB_HAS_BUILTIN_ATOMIC_OPERATIONS)
-        set (PLIB_SRCS patomic-gcc.c ${PLIB_SRCS})
-else()
-        set (PLIB_SRCS patomic.c ${PLIB_SRCS})
-endif()
-
-if (PLIB_MEMORY_BARRIER_NEEDED)
-        add_definitions (-DP_ATOMIC_OP_MEMORY_BARRIER_NEEDED)
 endif()
 
 if (EXISTS PLIB_CONFIG_FILE)
