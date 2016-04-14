@@ -203,7 +203,7 @@ if (PLIB_C_COMPILER MATCHES "gcc|qcc|clang")
                                 PLIB_ATOMIC_LOCK_FREE
         )
 
-        if (PLIB_HAS_BUILTIN_ATOMIC_OPERATIONS)
+        if (PLIB_ATOMIC_LOCK_FREE)
                 message (STATUS "Checking for lock-free atomic intrinsics - works")
         else()
                 message (STATUS "Checking for lock-free atomic intrinsics - not works")
