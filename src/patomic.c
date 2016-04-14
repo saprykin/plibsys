@@ -29,37 +29,30 @@
 #ifdef PLIB_ATOMIC_LOCK_FREE
 #  if defined (__GCC_HAVE_SYNC_COMPARE_AND_SWAP_4)
 #    if !defined (__ATOMIC_SEQ_CST) || defined (P_CC_CLANG)
+/* LCOV_EXCL_START */
 pint
 (p_atomic_int_get) (const volatile pint *atomic)
 {
-	/* LCOV_EXCL_START */
 	return p_atomic_int_get (atomic);
-	/* LCOV_EXCL_STOP */
 }
 
-/* LCOV_EXCL_START */
 void
 (p_atomic_int_set) (volatile pint	*atomic,
 		    pint		newval)
 {
 	p_atomic_int_set (atomic, newval);
 }
-/* LCOV_EXCL_STOP */
 
-/* LCOV_EXCL_START */
 void
 (p_atomic_int_inc) (volatile pint *atomic)
 {
 	p_atomic_int_inc (atomic);
 }
-/* LCOV_EXCL_STOP */
 
 pboolean
 (p_atomic_int_dec_and_test) (volatile pint *atomic)
 {
-	/* LCOV_EXCL_START */
 	return p_atomic_int_dec_and_test (atomic);
-	/* LCOV_EXCL_STOP */
 }
 
 pboolean
@@ -67,111 +60,88 @@ pboolean
 				     pint		oldval,
 				     pint		newval)
 {
-	/* LCOV_EXCL_START */
 	return p_atomic_int_compare_and_exchange (atomic, oldval, newval);
-	/* LCOV_EXCL_STOP */
 }
 
 pint
 (p_atomic_int_add) (volatile pint	*atomic,
 		    pint		val)
 {
-	/* LCOV_EXCL_START */
 	return p_atomic_int_add (atomic, val);
-	/* LCOV_EXCL_STOP */
 }
 
 puint
 (p_atomic_int_and) (volatile puint	*atomic,
 		    puint		val)
 {
-	/* LCOV_EXCL_START */
 	return p_atomic_int_and (atomic, val);
-	/* LCOV_EXCL_STOP */
 }
 
 puint
 (p_atomic_int_or) (volatile puint	*atomic,
 		   puint		val)
 {
-	/* LCOV_EXCL_START */
 	return p_atomic_int_or (atomic, val);
-	/* LCOV_EXCL_STOP */
 }
 
 puint
 (p_atomic_int_xor) (volatile puint	*atomic,
 		    puint		val)
 {
-	/* LCOV_EXCL_START */
 	return p_atomic_int_xor (atomic, val);
-	/* LCOV_EXCL_STOP */
 }
 
 ppointer
 (p_atomic_pointer_get) (const volatile void *atomic)
 {
-	/* LCOV_EXCL_START */
 	return p_atomic_pointer_get ((const volatile ppointer *) atomic);
-	/* LCOV_EXCL_STOP */
 }
 
-/* LCOV_EXCL_START */
 void
 (p_atomic_pointer_set) (volatile void	*atomic,
 			ppointer	newval)
 {
 	p_atomic_pointer_set ((volatile ppointer *) atomic, newval);
 }
-/* LCOV_EXCL_STOP */
 
 pboolean
 (p_atomic_pointer_compare_and_exchange) (volatile void	*atomic,
 					 ppointer	oldval,
 					 ppointer	newval)
 {
-	/* LCOV_EXCL_START */
 	return p_atomic_pointer_compare_and_exchange ((volatile ppointer *) atomic,
 						      oldval,
 						      newval);
-	/* LCOV_EXCL_STOP */
 }
 
 pssize
 (p_atomic_pointer_add) (volatile void	*atomic,
 			pssize		val)
 {
-	/* LCOV_EXCL_START */
 	return p_atomic_pointer_add ((volatile ppointer *) atomic, val);
-	/* LCOV_EXCL_STOP */
 }
 
 psize
 (p_atomic_pointer_and) (volatile void	*atomic,
 			psize		val)
 {
-	/* LCOV_EXCL_START */
 	return p_atomic_pointer_and ((volatile ppointer *) atomic, val);
-	/* LCOV_EXCL_STOP */
 }
 
 psize
 (p_atomic_pointer_or) (volatile void	*atomic,
 		       psize		val)
 {
-	/* LCOV_EXCL_START */
 	return p_atomic_pointer_or ((volatile ppointer *) atomic, val);
-	/* LCOV_EXCL_STOP */
 }
 
 psize
 (p_atomic_pointer_xor) (volatile void	*atomic,
 			psize		val)
 {
-	/* LCOV_EXCL_START */
 	return p_atomic_pointer_xor ((volatile ppointer *) atomic, val);
-	/* LCOV_EXCL_STOP */
 }
+/* LCOV_EXCL_STOP */
 #    endif /* !defined (__ATOMIC_SEQ_CST) || defined (P_CC_CLANG) */
 #  elif defined (P_OS_WIN)
 
