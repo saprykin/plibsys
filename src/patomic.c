@@ -22,7 +22,6 @@
  * are presented.
  */
 
-#include "plibconfig.h"
 #include "patomic.h"
 #include "pmutex.h"
 
