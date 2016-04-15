@@ -160,7 +160,7 @@ FORCEINLINE
 #        endif /* P_CC_WATCOM */
 VOID MemoryBarrier (VOID)
 {
-	LONG Barrier;
+	LONG Barrier = 0;
 	(void) (Barrier);
 	__asm {
 		xchg Barrier, eax
