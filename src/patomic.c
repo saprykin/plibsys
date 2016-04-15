@@ -1,4 +1,5 @@
 /*
+ * Copyright (C) 2011 Ryan Lortie <desrt@desrt.ca>
  * Copyright (C) 2010-2016 Alexander Saprykin <xelfium@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -18,8 +19,7 @@
 
 /*
  * This file was taken from GLib and adopted for using along with PLib.
- * See gatomic.c for other copyrights and details. All original comments
- * are presented.
+ * See gatomic.c for other copyrights and details.
  */
 
 #include "patomic.h"
@@ -464,7 +464,6 @@ puint
 
 	return oldval;
 }
-
 
 ppointer
 (p_atomic_pointer_get) (const volatile void *atomic)

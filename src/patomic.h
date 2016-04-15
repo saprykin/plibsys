@@ -1,4 +1,5 @@
 /*
+ * Copyright (C) 2011 Ryan Lortie <desrt@desrt.ca>
  * Copyright (C) 2010-2016 Alexander Saprykin <xelfium@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -44,165 +45,235 @@
 P_BEGIN_DECLS
 
 /**
- * @brief Gets integer value from @a *atomic atomically.
- * @param atomic Pointer to integer to get value from.
+ * @brief Gets #pint value from @a atomic.
+ * @param atomic Pointer to #pint to get the value from.
  * @return Integer value.
  * @since 0.0.1
+ *
+ * This call acts as a full compiler and hardware memory barrier (before the get).
  */
 P_LIB_API pint		p_atomic_int_get			(const volatile pint	*atomic);
 
 /**
- * @brief Sets integer value to @a *atomic atomically.
- * @param[out] atomic Pointer to integer to set value for.
- * @param newval New value.
+ * @brief Sets integer value to @a atomic.
+ * @param[out] atomic Pointer to #pint to set the value for.
+ * @param newval New #pint value.
  * @since 0.0.1
+ *
+ * This call acts as a full compiler and hardware memory barrier (after the set).
  */
 P_LIB_API void		p_atomic_int_set			(volatile pint		*atomic,
 								 pint			newval);
 
 /**
- * @brief Increments integer value from @a *atomic atomically.
- * @param[in, out] atomic Pointer to integer to increment the value.
+ * @brief Increments #pint value from @a atomic by 1.
+ * @param[in, out] atomic Pointer to #pint to increment the value.
  * @since 0.0.1
+ *
+ * Think of this operation as an atomic version of `{ *atomic += 1; }`.
+ *
+ * This call acts as a full compiler and hardware memory barrier.
  */
 P_LIB_API void		p_atomic_int_inc			(volatile pint		*atomic);
 
 /**
- * @brief Decrements integer value from @a *atomic atomically and tests the result.
- * @param[in, out] atomic Pointer to integer to decrement the value.
- * @return TRUE if new value is equal to zero, FALSE otherwise.
+ * @brief Decrements #pint value from @a atomic by 1 and tests the result for zero.
+ * @param[in, out] atomic Pointer to #pint to decrement the value.
+ * @return TRUE if the new value is equal to zero, FALSE otherwise.
  * @since 0.0.1
+ *
+ * Think of this operation as an atomic version of
+ * `{ *atomic -= 1; return (*atomic == 0); }`.
+ *
+ * This call acts as a full compiler and hardware memory barrier.
  */
 P_LIB_API pboolean	p_atomic_int_dec_and_test		(volatile pint		*atomic);
 
 /**
- * @brief Compares @a oldval with value pointed to by @a atomic and if they are equal,
- * atomically exchanges @a *atomic with @a newval. Acts as a memory barrier.
- * @param[in, out] atomic Pointer to integer.
- * @param oldval Old value.
- * @param newval New value.
- * @return TRUE if @a *atomic was equiled @a oldval, FALSE otherwise.
+ * @brief Compares @a oldval with the value pointed to by @a atomic and if
+ * they are equal, atomically exchanges the value of @a atomic with @a newval.
+ * @param[in, out] atomic Pointer to #pint.
+ * @param oldval Old #pint value.
+ * @param newval New #pint value.
+ * @return TRUE if @a atomic value was equaled @a oldval, FALSE otherwise.
  * @since 0.0.1
+ *
+ * This compare and exchange is done atomically.
+ *
+ * Think of this operation as an atomic version of
+ * `{ if (*atomic == oldval) { *atomic = newval; return TRUE; } else return FALSE; }`.
+ *
+ * This call acts as a full compiler and hardware memory barrier.
  */
 P_LIB_API pboolean	p_atomic_int_compare_and_exchange	(volatile pint		*atomic,
 								 pint			oldval,
 								 pint			newval);
 
 /**
- * @brief Atomically adds integer value.
- * @param[in, out] atomic Pointer to integer.
- * @param val Integer to add to @a atomic integer.
+ * @brief Atomically adds #pint value to @a atomic value.
+ * @param[in, out] atomic Pointer to #pint.
+ * @param val Integer to add to @a atomic value.
  * @return Old value before the addition.
  * @since 0.0.1
+ *
+ * Think of this operation as an atomic version of
+ * `{ tmp = *atomic; *atomic += val; return tmp; }`.
+ *
+ * This call acts as a full compiler and hardware memory barrier.
  */
 P_LIB_API pint		p_atomic_int_add			(volatile pint		*atomic,
 								 pint			val);
 
 /**
- * @brief Atomically performs bitwise 'and' operation of the unsigned integer
- * @a *atomic and unsigned integer @a val storing result value back into the @a *atomic.
- * @param[in, out] atomic Pointer to unsigned integer.
- * @param val Unsigned integer to perform bitwise 'and' with @a *atomic integer.
- * @return Old value before the operation.
+ * @brief Atomically performs bitwise 'and' operation of @a atomic value
+ * and @a val storing result back in @a atomic.
+ * @param[in, out] atomic Pointer to #puint.
+ * @param val #puint to perform bitwise 'and' with @a atomic value.
+ * @return Old @a atomic value before the operation.
  * @since 0.0.1
+ *
+ * This call acts as a full compiler and hardware memory barrier.
+ *
+ * Think of this operation as an atomic version of
+ * `{ tmp = *atomic; *atomic &= val; return tmp; }`.
  */
 P_LIB_API puint		p_atomic_int_and			(volatile puint		*atomic,
 								 puint			val);
 
 
 /**
- * @brief Atomically performs bitwise 'or' operation of the unsigned integer
- * @a *atomic and unsigned integer @a val storing result value back into the @a *atomic.
- * @param[in, out] atomic Pointer to unsigned integer.
- * @param val Unsigned integer to perform bitwise 'or' with @a *atomic integer.
- * @return Old value before the operation.
+ * @brief Atomically performs bitwise 'or' operation of @a atomic value
+ * and @a val storing result back in @a atomic.
+ * @param[in, out] atomic Pointer to #puint.
+ * @param val #puint to perform bitwise 'or' with @a atomic value.
+ * @return Old @a atomic value before the operation.
  * @since 0.0.1
+ *
+ * Think of this operation as an atomic version of
+ * `{ tmp = *atomic; *atomic |= val; return tmp; }`.
+ *
+ * This call acts as a full compiler and hardware memory barrier.
  */
 P_LIB_API puint		p_atomic_int_or				(volatile puint		*atomic,
 								 puint			val);
 
 /**
- * @brief Atomically performs bitwise 'xor' operation of the unsigned integer
- * @a *atomic and unsigned integer @a val storing result value back into the @a *atomic.
- * @param[in, out] atomic Pointer to unsigned integer.
- * @param val Unsigned integer to perform bitwise 'xor' with @a *atomic integer.
- * @return Old value before the operation.
+ * @brief Atomically performs bitwise 'xor' operation of @a atomic value
+ * and @a val storing result back in @a atomic.
+ * @param[in, out] atomic Pointer to #puint.
+ * @param val #puint to perform bitwise 'xor' with @a atomic value.
+ * @return Old @a atomic value before the operation.
  * @since 0.0.1
+ *
+ * Think of this operation as an atomic version of
+ * `{ tmp = *atomic; *atomic ^= val; return tmp; }`.
+ *
+ * This call acts as a full compiler and hardware memory barrier.
  */
 P_LIB_API puint		p_atomic_int_xor			(volatile puint		*atomic,
 								 puint			val);
 
 /**
- * @brief Gets #ppointer-sized value from @a atomic atomically.
- * @param atomic Pointer to get value from.
+ * @brief Gets #ppointer-sized value from @a atomic.
+ * @param atomic Pointer to get the value from.
  * @return Value from the pointer.
  * @since 0.0.1
+ *
+ * This call acts as a full compiler and hardware memory barrier (before the get).
  */
 P_LIB_API ppointer	p_atomic_pointer_get			(const volatile void	*atomic);
 
 /**
- * @brief Sets value to #ppointer-sized variable @a atomic atomically.
- * @param[out] atomic Pointer to set value for.
- * @param newval New pointer value.
+ * @brief Sets the value of @a newval to #ppointer-sized @a atomic.
+ * @param[out] atomic Pointer to set the value for.
+ * @param newval Pointer to the new value.
  * @since 0.0.1
+ *
+ * This call acts as a full compiler and hardware memory barrier (after the set).
  */
 P_LIB_API void		p_atomic_pointer_set			(volatile void		*atomic,
 								 ppointer		newval);
 
 /**
- * @brief Compares value from the @a oldval pointer with value pointed to by
- * the @a atomic pointer and if they are equal, atomically exchanges @a *atomic
- * with @a newval. Acts as a memory barrier.
- * @param[in, out] atomic Pointer to compare value from.
- * @param oldval Old value pointer.
- * @param newval New value pointer.
- * @return TRUE if @a *atomic was equiled @a oldval, FALSE otherwise.
+ * @brief Compares @a oldval with the value pointed to by @a atomic and if
+ * they are equal, atomically exchanges the value of @a atomic with @a newval.
+ * @param[in, out] atomic Pointer to #ppointer-sized value.
+ * @param oldval Old #ppointer-sized value.
+ * @param newval New #ppointer-sized value.
+ * @return TRUE if @a atomic value was equaled @a oldval, FALSE otherwise.
  * @since 0.0.1
+ *
+ * This compare and exchange is done atomically.
+ *
+ * Think of this operation as an atomic version of
+ * `{ if (*atomic == oldval) { *atomic = newval; return TRUE; } else return FALSE; }`.
+ *
+ * This call acts as a full compiler and hardware memory barrier.
  */
 P_LIB_API pboolean	p_atomic_pointer_compare_and_exchange	(volatile void		*atomic,
 								 ppointer 		oldval,
 								 ppointer		newval);
 
 /**
- * @brief Atomically adds #ppointer-sized value.
+ * @brief Atomically adds #ppointer-sized value to @a atomic value.
  * @param[in, out] atomic Pointer to #ppointer-sized value.
  * @param val Value to add to @a atomic value.
  * @return Old value before the addition.
  * @since 0.0.1
+ *
+ * Think of this operation as an atomic version of
+ * `{ tmp = *atomic; *atomic += val; return tmp; }`.
+ *
+ * This call acts as a full compiler and hardware memory barrier.
  */
 P_LIB_API pssize	p_atomic_pointer_add			(volatile void		*atomic,
 								 pssize			val);
 
 /**
- * @brief Atomically performs bitwise 'and' operation of the #ppointer-sized
- * @a *atomic and #ppointer-sized @a val storing result value back into the @a *atomic.
- * @param[in, out] atomic Pointer to #ppointer-sized value.
- * @param val Value to perform bitwise 'and' with @a *atomic value.
- * @return Old value before the operation.
+ * @brief Atomically performs bitwise 'and' operation of #ppointer-sized
+ * @a atomic value and @a val storing result back in @a atomic.
+ * @param[in, out] atomic Pointer to #ppointer-size value.
+ * @param val #psize to perform bitwise 'and' with @a atomic value.
+ * @return Old @a atomic value before the operation.
  * @since 0.0.1
+ *
+ * Think of this operation as an atomic version of
+ * `{ tmp = *atomic; *atomic &= val; return tmp; }`.
+ *
+ * This call acts as a full compiler and hardware memory barrier.
  */
 P_LIB_API psize		p_atomic_pointer_and			(volatile void		*atomic,
 								 psize			val);
 
 
 /**
- * @brief Atomically performs bitwise 'or' operation of the #ppointer-sized
- * @a *atomic and #ppointer-sized @a val storing result value back into the @a *atomic.
- * @param[in, out] atomic Pointer to #ppointer-sized value.
- * @param val Value to perform bitwise 'or' with @a *atomic value.
- * @return Old value before the operation.
+ * @brief Atomically performs bitwise 'or' operation of #ppointer-sized
+ * @a atomic value and @a val storing result back in @a atomic.
+ * @param[in, out] atomic Pointer to #ppointer-size value.
+ * @param val #psize to perform bitwise 'or' with @a atomic value.
+ * @return Old @a atomic value before the operation.
  * @since 0.0.1
+ *
+ * Think of this operation as an atomic version of
+ * `{ tmp = *atomic; *atomic |= val; return tmp; }`.
+ *
+ * This call acts as a full compiler and hardware memory barrier.
  */
 P_LIB_API psize		p_atomic_pointer_or			(volatile void		*atomic,
 								 psize			val);
 
 /**
- * @brief Atomically performs bitwise 'xor' operation of the #ppointer-sized
- * @a *atomic and #ppointer-sized @a val storing result value back into the @a *atomic.
- * @param[in, out] atomic Pointer to #ppointer-sized value.
- * @param val Value to perform bitwise 'xor' with @a *atomic value.
- * @return Old value before the operation.
+ * @brief Atomically performs bitwise 'xor' operation of #ppointer-sized
+ * @a atomic value and @a val storing result back in @a atomic.
+ * @param[in, out] atomic Pointer to #ppointer-size value.
+ * @param val #psize to perform bitwise 'xor' with @a atomic value.
+ * @return Old @a atomic value before the operation.
  * @since 0.0.1
+ *
+ * Think of this operation as an atomic version of
+ * `{ tmp = *atomic; *atomic ^= val; return tmp; }`.
+ *
+ * This call acts as a full compiler and hardware memory barrier.
  */
 P_LIB_API psize		p_atomic_pointer_xor			(volatile void		*atomic,
 								 psize			val);
