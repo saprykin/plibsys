@@ -208,8 +208,9 @@ P_LIB_API psize		p_atomic_pointer_xor			(volatile void		*atomic,
 								 psize			val);
 
 #if defined (PLIB_ATOMIC_LOCK_FREE) && defined (__GCC_HAVE_SYNC_COMPARE_AND_SWAP_4)
-   /* We prefer the new C11-style atomic extension of GCC if available */
-#  if defined (__ATOMIC_SEQ_CST) && !defined (P_CC_CLANG)
+   /* We prefer the new C11-style atomic extension of GCC if available,
+    * see: https://bugzilla.gnome.org/show_bug.cgi?id=730807 */
+#  if defined (__ATOMIC_SEQ_CST)
 
 #    define p_atomic_int_get(atomic)						\
 ({										\
