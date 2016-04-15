@@ -250,28 +250,28 @@ pint
 (p_atomic_int_add) (volatile pint	*atomic,
 		    pint		val)
 {
-	return InterlockedExchangeAdd ((LONG volatile *) atomic, (LONG) val);
+	return (pint) InterlockedExchangeAdd ((LONG volatile *) atomic, (LONG) val);
 }
 
 puint
 (p_atomic_int_and) (volatile puint	*atomic,
 		    puint		val)
 {
-	return InterlockedAnd ((LONG volatile *) atomic, (LONG) val);
+	return (puint) InterlockedAnd ((LONG volatile *) atomic, (LONG) val);
 }
 
 puint
 (p_atomic_int_or) (volatile puint	*atomic,
 		   puint		val)
 {
-	return InterlockedOr ((LONG volatile *) atomic, (LONG) val);
+	return (puint) InterlockedOr ((LONG volatile *) atomic, (LONG) val);
 }
 
 puint
 (p_atomic_int_xor) (volatile puint	*atomic,
 		    puint		val)
 {
-	return InterlockedXor ((LONG volatile *) atomic, (LONG) val);
+	return (puint) InterlockedXor ((LONG volatile *) atomic, (LONG) val);
 }
 
 ppointer
@@ -308,9 +308,9 @@ pssize
 			pssize		val)
 {
 #    if PLIB_SIZEOF_VOID_P == 8
-	return InterlockedExchangeAdd64 ((LONGLONG volatile *) atomic, (LONGLONG) val);
+	return (pssize) InterlockedExchangeAdd64 ((LONGLONG volatile *) atomic, (LONGLONG) val);
 #    else
-	return InterlockedExchangeAdd ((LONG volatile *) atomic, (LONG) val);
+	return (pssize) InterlockedExchangeAdd ((LONG volatile *) atomic, (LONG) val);
 #    endif
 }
 
@@ -319,9 +319,9 @@ psize
 			psize		val)
 {
 #    if PLIB_SIZEOF_VOID_P == 8
-	return InterlockedAnd64 ((LONGLONG volatile *) atomic, (LONGLONG) val);
+	return (psize) InterlockedAnd64 ((LONGLONG volatile *) atomic, (LONGLONG) val);
 #    else
-	return InterlockedAnd ((LONG volatile *) atomic, (LONG) val);
+	return (psize) InterlockedAnd ((LONG volatile *) atomic, (LONG) val);
 #    endif
 }
 
@@ -330,9 +330,9 @@ psize
 		       psize		val)
 {
 #    if PLIB_SIZEOF_VOID_P == 8
-	return InterlockedOr64 ((LONGLONG volatile *) atomic, (LONGLONG) val);
+	return (psize) InterlockedOr64 ((LONGLONG volatile *) atomic, (LONGLONG) val);
 #    else
-	return InterlockedOr ((LONG volatile *) atomic, (LONG) val);
+	return (psize) InterlockedOr ((LONG volatile *) atomic, (LONG) val);
 #    endif
 }
 
@@ -341,9 +341,9 @@ psize
 			psize		val)
 {
 #    if PLIB_SIZEOF_VOID_P == 8
-	return InterlockedXor64 ((LONGLONG volatile *) atomic, (LONGLONG) val);
+	return (psize) InterlockedXor64 ((LONGLONG volatile *) atomic, (LONGLONG) val);
 #    else
-	return InterlockedXor ((LONG volatile *) atomic, (LONG) val);
+	return (psize) InterlockedXor ((LONG volatile *) atomic, (LONG) val);
 #    endif
 }
 #  else
