@@ -160,10 +160,10 @@ _pInterlockedAnd (volatile puint	*atomic,
 {
 	LONG i, j;
 
-	j = *atomic;
+	j = (LONG) (*atomic);
 	do {
 		i = j;
-		j = InterlockedCompareExchange (atomic, i & val, i);
+		j = InterlockedCompareExchange ((LONG volatile *) atomic, i & ((LONG) val), i);
 	} while (i != j);
 
 	return j;
@@ -177,10 +177,10 @@ _pInterlockedOr (volatile puint	*atomic,
 {
 	LONG i, j;
 
-	j = *atomic;
+	j = (LONG) (*atomic);
 	do {
 		i = j;
-		j = InterlockedCompareExchange (atomic, i | val, i);
+		j = InterlockedCompareExchange ((LONG volatile *) atomic, i | ((LONG) val), i);
 	} while (i != j);
 
 	return j;
@@ -194,10 +194,10 @@ _pInterlockedXor (volatile puint	*atomic,
 {
 	LONG i, j;
 
-	j = *atomic;
+	j = (LONG) (*atomic);
 	do {
 		i = j;
-		j = InterlockedCompareExchange (atomic, i ^ val, i);
+		j = InterlockedCompareExchange ((LONG volatile *) atomic, i ^ ((LONG) val), i);
 	} while (i != j);
 
 	return j;
@@ -227,13 +227,13 @@ void
 void
 (p_atomic_int_inc) (volatile pint *atomic)
 {
-	InterlockedIncrement (atomic);
+	InterlockedIncrement ((LONG volatile *) atomic);
 }
 
 pboolean
 (p_atomic_int_dec_and_test) (volatile pint *atomic)
 {
-	return InterlockedDecrement (atomic) == 0;
+	return InterlockedDecrement ((LONG volatile *) atomic) == 0;
 }
 
 pboolean
@@ -241,35 +241,37 @@ pboolean
 				     pint		oldval,
 				     pint		newval)
 {
-	return InterlockedCompareExchange (atomic, newval, oldval) == oldval;
+	return InterlockedCompareExchange ((LONG volatile *) atomic,
+					   (LONG) newval,
+					   (LONG) oldval) == oldval;
 }
 
 pint
 (p_atomic_int_add) (volatile pint	*atomic,
 		    pint		val)
 {
-	return InterlockedExchangeAdd (atomic, val);
+	return InterlockedExchangeAdd ((LONG volatile *) atomic, (LONG) val);
 }
 
 puint
 (p_atomic_int_and) (volatile puint	*atomic,
 		    puint		val)
 {
-	return InterlockedAnd (atomic, val);
+	return InterlockedAnd ((LONG volatile *) atomic, (LONG) val);
 }
 
 puint
 (p_atomic_int_or) (volatile puint	*atomic,
 		   puint		val)
 {
-	return InterlockedOr (atomic, val);
+	return InterlockedOr ((LONG volatile *) atomic, (LONG) val);
 }
 
 puint
 (p_atomic_int_xor) (volatile puint	*atomic,
 		    puint		val)
 {
-	return InterlockedXor (atomic, val);
+	return InterlockedXor ((LONG volatile *) atomic, (LONG) val);
 }
 
 ppointer
@@ -296,7 +298,9 @@ pboolean
 					 ppointer	oldval,
 					 ppointer	newval)
 {
-	return InterlockedCompareExchangePointer ((volatile PVOID *) atomic, newval, oldval) == oldval;
+	return InterlockedCompareExchangePointer ((volatile PVOID *) atomic,
+						  (PVOID) newval,
+						  (PVOID) oldval) == oldval;
 }
 
 pssize
@@ -304,9 +308,9 @@ pssize
 			pssize		val)
 {
 #    if PLIB_SIZEOF_VOID_P == 8
-	return InterlockedExchangeAdd64 (atomic, val);
+	return InterlockedExchangeAdd64 ((LONGLONG volatile *) atomic, (LONGLONG) val);
 #    else
-	return InterlockedExchangeAdd (atomic, val);
+	return InterlockedExchangeAdd ((LONG volatile *) atomic, (LONG) val);
 #    endif
 }
 
@@ -315,9 +319,9 @@ psize
 			psize		val)
 {
 #    if PLIB_SIZEOF_VOID_P == 8
-	return InterlockedAnd64 (atomic, val);
+	return InterlockedAnd64 ((LONGLONG volatile *) atomic, (LONGLONG) val);
 #    else
-	return InterlockedAnd (atomic, val);
+	return InterlockedAnd ((LONG volatile *) atomic, (LONG) val);
 #    endif
 }
 
@@ -326,9 +330,9 @@ psize
 		       psize		val)
 {
 #    if PLIB_SIZEOF_VOID_P == 8
-	return InterlockedOr64 (atomic, val);
+	return InterlockedOr64 ((LONGLONG volatile *) atomic, (LONGLONG) val);
 #    else
-	return InterlockedOr (atomic, val);
+	return InterlockedOr ((LONG volatile *) atomic, (LONG) val);
 #    endif
 }
 
@@ -337,9 +341,9 @@ psize
 			psize		val)
 {
 #    if PLIB_SIZEOF_VOID_P == 8
-	return InterlockedXor64 (atomic, val);
+	return InterlockedXor64 ((LONGLONG volatile *) atomic, (LONGLONG) val);
 #    else
-	return InterlockedXor (atomic, val);
+	return InterlockedXor ((LONG volatile *) atomic, (LONG) val);
 #    endif
 }
 #  else
