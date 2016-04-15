@@ -30,6 +30,20 @@
  * Atomic operations can be used to avoid thread synchronization primitives such as
  * mutexes, semaphores and so on. These operations are performed atomically and can't be
  * preempted by another thread.
+ *
+ * Lock-free atomic operations require software and hardware support. Usually
+ * lock-free atomic operations are implemented on low-level using assembly
+ * inlines. Some of the compilers provide built-in routines to perform atomic
+ * operations. You can test #PLIB_ATOMIC_LOCK_FREE macro to check whether such
+ * a support is provided or not.
+ *
+ * If there is no hardware or software support for lock-free atomic operations then
+ * they can be simulated (though in rather slower manner) using thread global
+ * synchronization privitive (i.e. mutex), but it could block threads while performing
+ * atomic operations on distinct variables from distinct threads.
+ *
+ * Windows platform provides all required lock-free operations in most cases,
+ * so it always has lock-free support.
  */
 
 #if !defined (__PLIB_H_INSIDE__) && !defined (PLIB_COMPILATION)
