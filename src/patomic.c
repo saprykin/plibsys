@@ -155,15 +155,15 @@ psize
 
 /* Inlined versions for older compiler */
 static LONG
-_pInterlockedAnd (volatile puint	*atomic,
-		  puint			val)
+_pInterlockedAnd (LONG volatile	*atomic,
+		  LONG		val)
 {
 	LONG i, j;
 
-	j = (LONG) (*atomic);
+	j = *atomic;
 	do {
 		i = j;
-		j = InterlockedCompareExchange ((LONG volatile *) atomic, i & ((LONG) val), i);
+		j = InterlockedCompareExchange (atomic, i & val, i);
 	} while (i != j);
 
 	return j;
@@ -172,15 +172,15 @@ _pInterlockedAnd (volatile puint	*atomic,
 #      define InterlockedAnd(a,b) _pInterlockedAnd(a,b)
 
 static LONG
-_pInterlockedOr (volatile puint	*atomic,
-		 puint		val)
+_pInterlockedOr (LONG volatile 	*atomic,
+		 LONG		val)
 {
 	LONG i, j;
 
-	j = (LONG) (*atomic);
+	j = *atomic;
 	do {
 		i = j;
-		j = InterlockedCompareExchange ((LONG volatile *) atomic, i | ((LONG) val), i);
+		j = InterlockedCompareExchange (atomic, i | val, i);
 	} while (i != j);
 
 	return j;
@@ -189,15 +189,15 @@ _pInterlockedOr (volatile puint	*atomic,
 #      define InterlockedOr(a,b) _pInterlockedOr(a,b)
 
 static LONG
-_pInterlockedXor (volatile puint	*atomic,
-		  puint			val)
+_pInterlockedXor (LONG volatile	*atomic,
+		  LONG		val)
 {
 	LONG i, j;
 
-	j = (LONG) (*atomic);
+	j = *atomic;
 	do {
 		i = j;
-		j = InterlockedCompareExchange ((LONG volatile *) atomic, i ^ ((LONG) val), i);
+		j = InterlockedCompareExchange (atomic, i ^ val, i);
 	} while (i != j);
 
 	return j;
