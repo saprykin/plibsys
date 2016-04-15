@@ -145,6 +145,30 @@ psize
 #  elif defined (P_OS_WIN)
 
 #    include <windows.h>
+
+     /* Prepare MemoryBarrier() */
+#    if defined (P_CC_WATCOM) || defined (P_CC_BORLAND)
+#      if defined (_M_X64) || defined (_M_AMD64)
+#        define MemoryBarrier __faststorefence
+#      elseif defined (_M_IA64)
+#        define MemoryBarrier __mf
+#      else
+#        ifdef P_CC_WATCOM
+inline
+#        else
+FORCEINLINE
+#        endif /* P_CC_WATCOM */
+VOID MemoryBarrier (VOID)
+{
+	LONG Barrier;
+	(void) (Barrier);
+	__asm {
+		xchg Barrier, eax
+	}
+}
+#      endif /* _M_X64 || _M_AMD64 */
+#    endif /* P_CC_WATCOM || P_CC_BORLAND */
+
 #    if !defined (P_OS_WIN64) && !(defined (P_CC_MSVC) && _MSC_VER <= 1200) && \
 	!defined (P_CC_WATCOM) && !defined (P_CC_BORLAND)
 #      define InterlockedAnd _InterlockedAnd
@@ -152,7 +176,7 @@ psize
 #      define InterlockedXor _InterlockedXor
 #    endif
 
-#    if (!defined (P_CC_MSVC) || _MSC_VER <= 1200) && !defined (P_CC_WATCOM) && !defined (P_CC_BORLAND)
+#    if (!defined (P_CC_MSVC) || _MSC_VER <= 1200) || defined (P_CC_WATCOM) || defined (P_CC_BORLAND)
 
 /* Inlined versions for older compiler */
 static LONG
