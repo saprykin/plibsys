@@ -145,13 +145,14 @@ psize
 #  elif defined (P_OS_WIN)
 
 #    include <windows.h>
-#    if !defined (P_OS_WIN64) && !(defined (P_CC_MSVC) && _MSC_VER <= 1200)
+#    if !defined (P_OS_WIN64) && !(defined (P_CC_MSVC) && _MSC_VER <= 1200) && \
+	!defined (P_CC_WATCOM) && !defined (P_CC_BORLAND)
 #      define InterlockedAnd _InterlockedAnd
 #      define InterlockedOr _InterlockedOr
 #      define InterlockedXor _InterlockedXor
 #    endif
 
-#    if !defined (P_CC_MSVC) || _MSC_VER <= 1200
+#    if (!defined (P_CC_MSVC) || _MSC_VER <= 1200) && !defined (P_CC_WATCOM) && !defined (P_CC_BORLAND)
 
 /* Inlined versions for older compiler */
 static LONG
