@@ -45,6 +45,8 @@
 P_BEGIN_DECLS
 
 /**
+#if !defined (PLIB_ATOMIC_LOCK_FREE) || !defined (__GCC_HAVE_SYNC_COMPARE_AND_SWAP_4)
+/**
  * @brief Gets #pint value from @a atomic.
  * @param atomic Pointer to #pint to get the value from.
  * @return Integer value.
@@ -275,6 +277,8 @@ P_LIB_API psize		p_atomic_pointer_or			(volatile void		*atomic,
  */
 P_LIB_API psize		p_atomic_pointer_xor			(volatile void		*atomic,
 								 psize			val);
+#endif /* !defined (PLIB_ATOMIC_LOCK_FREE) || !defined (__GCC_HAVE_SYNC_COMPARE_AND_SWAP_4) */
+
 
 #if defined (PLIB_ATOMIC_LOCK_FREE) && defined (__GCC_HAVE_SYNC_COMPARE_AND_SWAP_4)
    /* We prefer the new C11-style atomic extension of GCC if available,
