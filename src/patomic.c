@@ -27,7 +27,7 @@
 
 #ifdef PLIB_ATOMIC_LOCK_FREE
 #  if defined (__GCC_HAVE_SYNC_COMPARE_AND_SWAP_4)
-#    if !defined (__ATOMIC_SEQ_CST)
+#    if !defined (__ATOMIC_SEQ_CST) || defined (P_CC_CLANG)
 /* LCOV_EXCL_START */
 pint
 (p_atomic_int_get) (const volatile pint *atomic)
