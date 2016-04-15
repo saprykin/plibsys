@@ -369,7 +369,7 @@ P_LIB_API pboolean		p_socket_is_connected		(const PSocket		*socket);
  * connection checking call has failed or there was an error during connection and
  * you should check last error using @a error object.
  *
- * If socket is still pending for connection you will get #P_ERROR_IO_CONNECTING.
+ * If socket is still pending for connection you will get #P_ERROR_IO_IN_PROGRESS.
  *
  * After calling p_socket_connect() on non-blocking socket, you can wait for connection
  * operation to be finished using p_socket_io_condition_wait() with #P_SOCKET_IO_CONDITION_POLLOUT

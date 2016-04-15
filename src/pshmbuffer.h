@@ -50,6 +50,7 @@ P_BEGIN_DECLS
  * is already exists then size will be ignored and existing buffer will be returned.
  * @param name Unique buffer name.
  * @param size Buffer size in bytes, can't be changed later.
+ * @param[out] error Error report object, NULL to ignore.
  * @return Pointer to #PShmBuffer structure in case of success, NULL otherwise.
  * @since 0.0.1
  */

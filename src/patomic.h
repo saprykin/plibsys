@@ -45,6 +45,15 @@
 P_BEGIN_DECLS
 
 /**
+ * @def PLIB_ATOMIC_LOCK_FREE
+ * @brief This macro defined if target platform provides lock-free atomic
+ * operations by underlying software and hardware.
+ */
+
+#ifdef DOXYGEN
+#define PLIB_ATOMIC_LOCK_FREE
+#endif
+
 #if !defined (PLIB_ATOMIC_LOCK_FREE) || !defined (__GCC_HAVE_SYNC_COMPARE_AND_SWAP_4)
 /**
  * @brief Gets #pint value from @a atomic.
@@ -279,6 +288,7 @@ P_LIB_API psize		p_atomic_pointer_xor			(volatile void		*atomic,
 								 psize			val);
 #endif /* !defined (PLIB_ATOMIC_LOCK_FREE) || !defined (__GCC_HAVE_SYNC_COMPARE_AND_SWAP_4) */
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 
 #if defined (PLIB_ATOMIC_LOCK_FREE) && defined (__GCC_HAVE_SYNC_COMPARE_AND_SWAP_4)
    /* We prefer the new C11-style atomic extension of GCC if available,
@@ -449,6 +459,8 @@ P_LIB_API psize		p_atomic_pointer_xor			(volatile void		*atomic,
 	(p_atomic_pointer_xor ((atomic), (psize) (val)))
 
 #endif /* PLIB_ATOMIC_LOCK_FREE && __GCC_HAVE_SYNC_COMPARE_AND_SWAP_4 */
+
+#endif /* !DOXYGEN_SHOULD_SKIP_THIS */
 
 P_END_DECLS
 
