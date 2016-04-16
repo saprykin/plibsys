@@ -390,7 +390,7 @@ P_LIB_API psize		p_atomic_pointer_xor			(volatile void		*atomic,
 ({													\
 	ppointer tmp_pointer = oldval;									\
 	(pboolean) __atomic_compare_exchange_n ((volatile psize *) (atomic),				\
-						&tmp_ppointer,						\
+						&tmp_pointer,						\
 						(newval),						\
 						0,							\
 						__ATOMIC_SEQ_CST, __ATOMIC_SEQ_CST);			\
