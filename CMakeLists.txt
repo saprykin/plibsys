@@ -18,7 +18,7 @@ configure_file (
 
 option (PLIB_TESTS_STATIC "Use Boost Unit Test Framework without compilation" OFF)
 option (PLIB_BUILD_STATIC "Also build static version of the library" ON)
-option (PLIB_PREFER_ATOMIC_LOCK_FREE "Prefer lock-free atomic operations if possible" ON)
+option (PLIB_ATOMIC_PREFER_LOCK_FREE "Prefer lock-free atomic operations if possible" ON)
 option (PLIB_ATOMIC_ALLOW_CXX11 "Allow C++11 atomic operations" OFF)
 option (PLIB_COVERAGE "Enable gcov coverage (GCC and Clang)" OFF)
 

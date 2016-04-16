@@ -194,7 +194,7 @@ endif()
 
 set (PLIB_ATOMIC_LOCK_FREE no)
 
-if (PLIB_PREFER_ATOMIC_LOCK_FREE)
+if (PLIB_ATOMIC_PREFER_LOCK_FREE)
         message (STATUS "Checking for lock-free atomic intrinsics")
 
         if (PLIB_TARGET_OS MATCHES "(mingw.*)|(windows.*)")
@@ -544,7 +544,7 @@ SET (PLIB_SUMMARY
         Platform libraries:         ${PLIB_PLATFORM_LINK_LIBRARIES}
 
         Coverage support:           ${PLIB_COVERAGE}
-        Prefer atomic lock-free:    ${PLIB_PREFER_ATOMIC_LOCK_FREE}
+        Prefer atomic lock-free:    ${PLIB_ATOMIC_PREFER_LOCK_FREE}
         Allow C++11 atomic:         ${PLIB_ATOMIC_ALLOW_CXX11}
         
 ")
