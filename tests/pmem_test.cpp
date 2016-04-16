@@ -119,9 +119,9 @@ BOOST_AUTO_TEST_CASE (pmem_general_test)
 
 	p_free (ptr);
 
-	vtable.malloc	= malloc;
-	vtable.realloc	= realloc;
-	vtable.free	= free;
+	vtable.malloc	= (ppointer (*)(psize)) malloc;
+	vtable.realloc	= (ppointer (*)(ppointer, psize)) realloc;
+	vtable.free	= (void (*)(ppointer)) free;
 
 	BOOST_CHECK (p_mem_set_vtable (&vtable) == TRUE);
 
