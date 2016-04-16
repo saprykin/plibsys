@@ -26,8 +26,7 @@
 #include "pmutex.h"
 
 #ifdef PLIB_ATOMIC_LOCK_FREE
-#  if defined (__GCC_HAVE_SYNC_COMPARE_AND_SWAP_4)
-#    if !defined (__ATOMIC_SEQ_CST) || defined (P_CC_CLANG)
+#  if defined (__GCC_HAVE_SYNC_COMPARE_AND_SWAP_4) || (defined (__ATOMIC_SEQ_CST) && !defined (P_CC_CLANG))
 /* LCOV_EXCL_START */
 pint
 (p_atomic_int_get) (const volatile pint *atomic)
@@ -141,7 +140,6 @@ psize
 	return p_atomic_pointer_xor ((volatile ppointer *) atomic, val);
 }
 /* LCOV_EXCL_STOP */
-#    endif /* !defined (__ATOMIC_SEQ_CST) */
 #  elif defined (P_OS_WIN)
 
 #    include <windows.h>
@@ -380,12 +378,12 @@ psize
 }
 #  else
 #    error PLIB_ATOMIC_LOCK_FREE defined, but incapable of lock-free atomics.
-#  endif /* defined (__GCC_HAVE_SYNC_COMPARE_AND_SWAP_4) */
+#  endif /* __GCC_HAVE_SYNC_COMPARE_AND_SWAP_4 || __ATOMIC_SEQ_CST */
 
 #else /* PLIB_ATOMIC_LOCK_FREE */
 
 /* We have to use the slow, but safe locking method. */
-static PMutex *p_atomic_mutex;
+static PMutex *p_atomic_mutex = NULL;
 
 pint
 (p_atomic_int_get) (const volatile pint *atomic)

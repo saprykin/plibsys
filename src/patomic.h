@@ -68,7 +68,6 @@ P_BEGIN_DECLS
 #define PLIB_ATOMIC_LOCK_FREE
 #endif
 
-#if !defined (PLIB_ATOMIC_LOCK_FREE) || !defined (__GCC_HAVE_SYNC_COMPARE_AND_SWAP_4)
 /**
  * @brief Gets #pint value from @a atomic.
  * @param atomic Pointer to #pint to get the value from.
@@ -300,81 +299,138 @@ P_LIB_API psize		p_atomic_pointer_or			(volatile void		*atomic,
  */
 P_LIB_API psize		p_atomic_pointer_xor			(volatile void		*atomic,
 								 psize			val);
-#endif /* !defined (PLIB_ATOMIC_LOCK_FREE) || !defined (__GCC_HAVE_SYNC_COMPARE_AND_SWAP_4) */
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
-#if defined (PLIB_ATOMIC_LOCK_FREE) && defined (__GCC_HAVE_SYNC_COMPARE_AND_SWAP_4)
+#if defined (PLIB_ATOMIC_LOCK_FREE) && \
+   (defined (__GCC_HAVE_SYNC_COMPARE_AND_SWAP_4) || (defined (__ATOMIC_SEQ_CST) && !defined (P_CC_CLANG)))
    /* We prefer the new C11-style atomic extension of GCC if available,
     * see also:
     * https://bugzilla.gnome.org/show_bug.cgi?id=730807
     * https://bugzilla.gnome.org/show_bug.cgi?id=731513
-    */
-#  if defined (__ATOMIC_SEQ_CST) && !defined (P_CC_CLANG)
-
-#    define p_atomic_int_get(atomic)						\
-({										\
-	(pint) __atomic_load_4 ((atomic), __ATOMIC_SEQ_CST);			\
+   */
+#  if (defined (__ATOMIC_SEQ_CST) && !defined (P_CC_CLANG))
+#    define p_atomic_int_get(atomic)									\
+({													\
+	(pint) __atomic_load_4 ((atomic), __ATOMIC_SEQ_CST);						\
 })
 
-#    define p_atomic_int_set(atomic, newval)					\
-({										\
-	__atomic_store_4 ((atomic), (newval), __ATOMIC_SEQ_CST);		\
+#    define p_atomic_int_set(atomic, newval)								\
+({													\
+	__atomic_store_4 ((atomic), (newval), __ATOMIC_SEQ_CST);					\
 })
 
 #    if (PLIB_SIZEOF_VOID_P == 8)
 
-#      define p_atomic_pointer_get(atomic)					\
-({										\
-	(ppointer) __atomic_load_8 ((atomic), __ATOMIC_SEQ_CST);		\
+#      define p_atomic_pointer_get(atomic)								\
+({													\
+	(ppointer) __atomic_load_8 ((atomic), __ATOMIC_SEQ_CST);					\
 })
 
-#      define p_atomic_pointer_set(atomic, newval)				\
-({										\
-	__atomic_store_8 ((atomic), (psize) (newval), __ATOMIC_SEQ_CST);	\
+#      define p_atomic_pointer_set(atomic, newval)							\
+({													\
+	__atomic_store_8 ((atomic), (psize) (newval), __ATOMIC_SEQ_CST);				\
 })
 
 #    else /* PLIB_SIZEOF_VOID_P == 8 */
 
-#      define p_atomic_pointer_get(atomic)					\
-({										\
-	(ppointer) __atomic_load_4 ((atomic), __ATOMIC_SEQ_CST);		\
+#      define p_atomic_pointer_get(atomic)								\
+({													\
+	(ppointer) __atomic_load_4 ((atomic), __ATOMIC_SEQ_CST);					\
 })
 
-#      define p_atomic_pointer_set(atomic, newval)				\
-({										\
-	__atomic_store_4 ((atomic), (psize) (newval), __ATOMIC_SEQ_CST);	\
+#      define p_atomic_pointer_set(atomic, newval)							\
+({													\
+	__atomic_store_4 ((atomic), (psize) (newval), __ATOMIC_SEQ_CST);				\
 })
 
 #    endif /* PLIB_SIZEOF_VOID_P == 8 */
 
-#    else /* defined(__ATOMIC_SEQ_CST) && !defined (P_CC_CLANG) */
+#    define p_atomic_int_inc(atomic)									\
+({													\
+	(void) __atomic_fetch_and_add ((atomic), 1, __ATOMIC_SEQ_CST);					\
+})
 
-#      define p_atomic_int_get(atomic)						\
+#    define p_atomic_int_dec_and_test(atomic)								\
+({													\
+	__atomic_fetch_and_sub ((atomic), 1, __ATOMIC_SEQ_CST) == 1;					\
+})
+
+#    define p_atomic_int_compare_and_exchange(atomic, oldval, newval)					\
+({													\
+	(pboolean) __atomic_bool_compare_and_swap ((atomic), (oldval), (newval), __ATOMIC_SEQ_CST);	\
+})
+
+#    define p_atomic_int_add(atomic, val)								\
+({													\
+	(pint) __atomic_fetch_and_add ((atomic), (val), __ATOMIC_SEQ_CST);				\
+})
+
+#    define p_atomic_int_and(atomic, val)								\
+({													\
+	(puint) __atomic_fetch_and_and ((atomic), (val), __ATOMIC_SEQ_CST);				\
+})
+
+#    define p_atomic_int_or(atomic, val)								\
+({													\
+	(puint) __atomic_fetch_and_or ((atomic), (val), __ATOMIC_SEQ_CST);				\
+})
+
+#    define p_atomic_int_xor(atomic, val)								\
+({													\
+	(puint) __atomic_fetch_and_xor ((atomic), (val), __ATOMIC_SEQ_CST);				\
+})
+
+#    define p_atomic_pointer_compare_and_exchange(atomic, oldval, newval)				\
+({													\
+	(pboolean) __atomic_bool_compare_and_swap ((atomic), (oldval), (newval), __ATOMIC_SEQ_CST);	\
+})
+
+#    define p_atomic_pointer_add(atomic, val)								\
+({													\
+	(pssize) __atomic_fetch_and_add ((atomic), (ppointer) (val), __ATOMIC_SEQ_CST);			\
+})
+
+#    define p_atomic_pointer_and(atomic, val)								\
+({													\
+	(psize) __atomic_fetch_and_and ((atomic), (ppointer) (val), __ATOMIC_SEQ_CST);			\
+})
+
+#    define p_atomic_pointer_or(atomic, val)								\
+({													\
+	(psize) __atomic_fetch_and_or ((atomic), (ppointer) (val), __ATOMIC_SEQ_CST);			\
+})
+
+#    define p_atomic_pointer_xor(atomic, val)								\
+({													\
+	(psize) __atomic_fetch_and_xor ((atomic), (ppointer) (val), __ATOMIC_SEQ_CST);			\
+})
+
+#  else /* __ATOMIC_SEQ_CST && !P_CC_CLANG */
+
+#    define p_atomic_int_get(atomic)						\
 ({										\
 	__sync_synchronize ();							\
 	(pint) *(atomic);							\
 })
 
-#      define p_atomic_int_set(atomic, newval)					\
+#    define p_atomic_int_set(atomic, newval)					\
 ({										\
 	*(atomic) = (newval);							\
 	__sync_synchronize ();							\
 })
 
-#      define p_atomic_pointer_get(atomic)					\
+#    define p_atomic_pointer_get(atomic)					\
 ({										\
 	__sync_synchronize ();							\
 	(ppointer) *(atomic);							\
 })
 
-#      define p_atomic_pointer_set(atomic, newval)				\
+#    define p_atomic_pointer_set(atomic, newval)				\
 ({										\
 	*(atomic) = (__typeof__ (*(atomic))) (psize) (newval);			\
 	__sync_synchronize ();							\
 })
-
-#    endif /* !defined(__ATOMIC_SEQ_CST) */
 
 #    define p_atomic_int_inc(atomic)						\
 ({										\
@@ -435,8 +491,9 @@ P_LIB_API psize		p_atomic_pointer_xor			(volatile void		*atomic,
 ({										\
 	(psize) __sync_fetch_and_xor ((atomic), (ppointer) (val));		\
 })
+#  endif /* __ATOMIC_SEQ_CST && !P_CC_CLANG */
 
-#else /* defined(PLIB_ATOMIC_LOCK_FREE) && defined(__GCC_HAVE_SYNC_COMPARE_AND_SWAP_4) */
+#else /* PLIB_ATOMIC_LOCK_FREE */
 
 #  define p_atomic_int_get(atomic)					\
 	(p_atomic_int_get ((pint *) (atomic)))
@@ -472,7 +529,7 @@ P_LIB_API psize		p_atomic_pointer_xor			(volatile void		*atomic,
 #  define p_atomic_pointer_xor(atomic, val)				\
 	(p_atomic_pointer_xor ((atomic), (psize) (val)))
 
-#endif /* PLIB_ATOMIC_LOCK_FREE && __GCC_HAVE_SYNC_COMPARE_AND_SWAP_4 */
+#endif /* PLIB_ATOMIC_LOCK_FREE */
 
 #endif /* !DOXYGEN_SHOULD_SKIP_THIS */
 
