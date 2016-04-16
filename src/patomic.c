@@ -26,7 +26,8 @@
 #include "pmutex.h"
 
 #ifdef PLIB_ATOMIC_LOCK_FREE
-#  if defined (__GCC_HAVE_SYNC_COMPARE_AND_SWAP_4) || (defined (__ATOMIC_SEQ_CST) && !defined (P_CC_CLANG))
+#  if defined (__GCC_HAVE_SYNC_COMPARE_AND_SWAP_4) || \
+     (defined (PLIB_ATOMIC_ALLOW_CXX11) && defined (__ATOMIC_SEQ_CST))
 /* LCOV_EXCL_START */
 pint
 (p_atomic_int_get) (const volatile pint *atomic)
@@ -378,7 +379,7 @@ psize
 }
 #  else
 #    error PLIB_ATOMIC_LOCK_FREE defined, but incapable of lock-free atomics.
-#  endif /* __GCC_HAVE_SYNC_COMPARE_AND_SWAP_4 || __ATOMIC_SEQ_CST */
+#  endif /* __GCC_HAVE_SYNC_COMPARE_AND_SWAP_4 || (PLIB_ATOMIC_ALLOW_CXX11 && __ATOMIC_SEQ_CST) */
 
 #else /* PLIB_ATOMIC_LOCK_FREE */
 

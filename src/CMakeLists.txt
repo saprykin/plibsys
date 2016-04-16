@@ -208,14 +208,16 @@ if (PLIB_PREFER_ATOMIC_LOCK_FREE)
                                          PLIB_ATOMIC_LOCK_FREE_CPL
                 )
 
-                if (NOT PLIB_ATOMIC_LOCK_FREE_CPL)
-                        check_c_source_compiles (
-                                                 "int main () {
-                                                 __ATOMIC_SEQ_CST;
-                                                 return 0;
-                                                 }"
-                                                 PLIB_ATOMIC_LOCK_FREE_CPL
-                        )
+                if (PLIB_ATOMIC_ALLOW_CXX11)
+                        if (NOT PLIB_ATOMIC_LOCK_FREE_CPL)
+                                check_c_source_compiles (
+                                                         "int main () {
+                                                         __ATOMIC_SEQ_CST;
+                                                         return 0;
+                                                         }"
+                                                         PLIB_ATOMIC_LOCK_FREE_CPL
+                                )
+                        endif()
                 endif()
 
                 if (PLIB_ATOMIC_LOCK_FREE_CPL)
@@ -227,6 +229,10 @@ if (PLIB_PREFER_ATOMIC_LOCK_FREE)
                 message (STATUS "Checking for lock-free atomic intrinsics - works")
         else()
                 message (STATUS "Checking for lock-free atomic intrinsics - not works")
+        endif()
+
+        if (PLIB_ATOMIC_ALLOW_CXX11)
+                add_definitions (-DPLIB_ATOMIC_ALLOW_CXX11)
         endif()
 endif()
 
@@ -539,6 +545,7 @@ SET (PLIB_SUMMARY
 
         Coverage support:           ${PLIB_COVERAGE}
         Prefer atomic lock-free:    ${PLIB_PREFER_ATOMIC_LOCK_FREE}
+        Allow C++11 atomic:         ${PLIB_ATOMIC_ALLOW_CXX11}
         
 ")
 

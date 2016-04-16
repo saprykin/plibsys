@@ -303,13 +303,14 @@ P_LIB_API psize		p_atomic_pointer_xor			(volatile void		*atomic,
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
 #if defined (PLIB_ATOMIC_LOCK_FREE) && \
-   (defined (__GCC_HAVE_SYNC_COMPARE_AND_SWAP_4) || (defined (__ATOMIC_SEQ_CST) && !defined (P_CC_CLANG)))
+   (defined (__GCC_HAVE_SYNC_COMPARE_AND_SWAP_4) || \
+   (defined (PLIB_ATOMIC_ALLOW_CXX11) && defined (__ATOMIC_SEQ_CST)))
    /* We prefer the new C11-style atomic extension of GCC if available,
     * see also:
     * https://bugzilla.gnome.org/show_bug.cgi?id=730807
     * https://bugzilla.gnome.org/show_bug.cgi?id=731513
    */
-#  if (defined (__ATOMIC_SEQ_CST) && !defined (P_CC_CLANG))
+#  if (defined (PLIB_ATOMIC_ALLOW_CXX11) && defined (__ATOMIC_SEQ_CST))
 #    define p_atomic_int_get(atomic)									\
 ({													\
 	(pint) __atomic_load_4 ((atomic), __ATOMIC_SEQ_CST);						\
@@ -416,7 +417,7 @@ P_LIB_API psize		p_atomic_pointer_xor			(volatile void		*atomic,
 	(psize) __atomic_fetch_xor ((atomic), (ppointer) (val), __ATOMIC_SEQ_CST);			\
 })
 
-#  else /* __ATOMIC_SEQ_CST && !P_CC_CLANG */
+#  else /* PLIB_ATOMIC_ALLOW_CXX11 && __ATOMIC_SEQ_CST */
 
 #    define p_atomic_int_get(atomic)						\
 ({										\
@@ -501,7 +502,7 @@ P_LIB_API psize		p_atomic_pointer_xor			(volatile void		*atomic,
 ({										\
 	(psize) __sync_fetch_and_xor ((atomic), (ppointer) (val));		\
 })
-#  endif /* __ATOMIC_SEQ_CST && !P_CC_CLANG */
+#  endif /* PLIB_ATOMIC_ALLOW_CXX11 && __ATOMIC_SEQ_CST */
 
 #else /* PLIB_ATOMIC_LOCK_FREE */
 
