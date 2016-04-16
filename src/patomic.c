@@ -175,7 +175,8 @@ VOID MemoryBarrier (VOID)
 #      define InterlockedXor _InterlockedXor
 #    endif
 
-#    if (!defined (P_CC_MSVC) || _MSC_VER <= 1200) || defined (P_CC_WATCOM) || defined (P_CC_BORLAND)
+#    if (defined (P_CC_MSVC) && _MSC_VER <= 1200) || defined (P_CC_WATCOM) \
+						  || defined (P_CC_BORLAND)
 
 /* Inlined versions for older compiler */
 static LONG
