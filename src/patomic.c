@@ -169,8 +169,7 @@ VOID MemoryBarrier (VOID)
 #      endif /* _M_X64 || _M_AMD64 */
 #    endif /* P_CC_WATCOM || P_CC_BORLAND */
 
-#    if !defined (P_OS_WIN64) && !(defined (P_CC_MSVC) && _MSC_VER <= 1200) && \
-	!defined (P_CC_WATCOM) && !defined (P_CC_BORLAND)
+#    if !defined (P_OS_WIN64) && (defined (P_CC_MSVC) && _MSC_VER > 1200)
 #      define InterlockedAnd _InterlockedAnd
 #      define InterlockedOr _InterlockedOr
 #      define InterlockedXor _InterlockedXor
