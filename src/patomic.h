@@ -348,62 +348,72 @@ P_LIB_API psize		p_atomic_pointer_xor			(volatile void		*atomic,
 
 #    define p_atomic_int_inc(atomic)									\
 ({													\
-	(void) __atomic_fetch_and_add ((atomic), 1, __ATOMIC_SEQ_CST);					\
+	(void) __atomic_fetch_add ((atomic), 1, __ATOMIC_SEQ_CST);					\
 })
 
 #    define p_atomic_int_dec_and_test(atomic)								\
 ({													\
-	__atomic_fetch_and_sub ((atomic), 1, __ATOMIC_SEQ_CST) == 1;					\
+	__atomic_fetch_sub ((atomic), 1, __ATOMIC_SEQ_CST) == 1;					\
 })
 
 #    define p_atomic_int_compare_and_exchange(atomic, oldval, newval)					\
 ({													\
-	(pboolean) __atomic_bool_compare_and_swap ((atomic), (oldval), (newval), __ATOMIC_SEQ_CST);	\
+	pint tmp_int = oldval;										\
+	(pboolean) __atomic_compare_exchange_n ((volatile pint *) (atomic),				\
+						&tmp_int,						\
+						(newval),						\
+						0,							\
+						__ATOMIC_SEQ_CST, __ATOMIC_SEQ_CST);			\
 })
 
 #    define p_atomic_int_add(atomic, val)								\
 ({													\
-	(pint) __atomic_fetch_and_add ((atomic), (val), __ATOMIC_SEQ_CST);				\
+	(pint) __atomic_fetch_add ((atomic), (val), __ATOMIC_SEQ_CST);					\
 })
 
 #    define p_atomic_int_and(atomic, val)								\
 ({													\
-	(puint) __atomic_fetch_and_and ((atomic), (val), __ATOMIC_SEQ_CST);				\
+	(puint) __atomic_fetch_and ((atomic), (val), __ATOMIC_SEQ_CST);					\
 })
 
 #    define p_atomic_int_or(atomic, val)								\
 ({													\
-	(puint) __atomic_fetch_and_or ((atomic), (val), __ATOMIC_SEQ_CST);				\
+	(puint) __atomic_fetch_or ((atomic), (val), __ATOMIC_SEQ_CST);					\
 })
 
 #    define p_atomic_int_xor(atomic, val)								\
 ({													\
-	(puint) __atomic_fetch_and_xor ((atomic), (val), __ATOMIC_SEQ_CST);				\
+	(puint) __atomic_fetch_xor ((atomic), (val), __ATOMIC_SEQ_CST);					\
 })
 
 #    define p_atomic_pointer_compare_and_exchange(atomic, oldval, newval)				\
 ({													\
-	(pboolean) __atomic_bool_compare_and_swap ((atomic), (oldval), (newval), __ATOMIC_SEQ_CST);	\
+	ppointer tmp_pointer = oldval;									\
+	(pboolean) __atomic_compare_exchange_n ((volatile psize *) (atomic),				\
+						&tmp_ppointer,						\
+						(newval),						\
+						0,							\
+						__ATOMIC_SEQ_CST, __ATOMIC_SEQ_CST);			\
 })
 
 #    define p_atomic_pointer_add(atomic, val)								\
 ({													\
-	(pssize) __atomic_fetch_and_add ((atomic), (ppointer) (val), __ATOMIC_SEQ_CST);			\
+	(pssize) __atomic_fetch_add ((atomic), (ppointer) (val), __ATOMIC_SEQ_CST);			\
 })
 
 #    define p_atomic_pointer_and(atomic, val)								\
 ({													\
-	(psize) __atomic_fetch_and_and ((atomic), (ppointer) (val), __ATOMIC_SEQ_CST);			\
+	(psize) __atomic_fetch_and ((atomic), (ppointer) (val), __ATOMIC_SEQ_CST);			\
 })
 
 #    define p_atomic_pointer_or(atomic, val)								\
 ({													\
-	(psize) __atomic_fetch_and_or ((atomic), (ppointer) (val), __ATOMIC_SEQ_CST);			\
+	(psize) __atomic_fetch_or ((atomic), (ppointer) (val), __ATOMIC_SEQ_CST);			\
 })
 
 #    define p_atomic_pointer_xor(atomic, val)								\
 ({													\
-	(psize) __atomic_fetch_and_xor ((atomic), (ppointer) (val), __ATOMIC_SEQ_CST);			\
+	(psize) __atomic_fetch_xor ((atomic), (ppointer) (val), __ATOMIC_SEQ_CST);			\
 })
 
 #  else /* __ATOMIC_SEQ_CST && !P_CC_CLANG */
