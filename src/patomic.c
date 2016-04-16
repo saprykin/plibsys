@@ -170,9 +170,16 @@ VOID MemoryBarrier (VOID)
 #    endif /* P_CC_WATCOM || P_CC_BORLAND */
 
 #    if !defined (P_OS_WIN64) && (defined (P_CC_MSVC) && _MSC_VER > 1200)
+       /* Tell compiler about intrinsics to suppress warnings,
+	* see: https://msdn.microsoft.com/en-us/library/hh977023.aspx
+	*/
+#      include <intrin.h>
 #      define InterlockedAnd _InterlockedAnd
 #      define InterlockedOr _InterlockedOr
 #      define InterlockedXor _InterlockedXor
+#      pragma intrinsic(_InterlockedAnd)
+#      pragma intrinsic(_InterlockedOr)
+#      pragma intrinsic(_InterlockedXor)
 #    endif
 
 #    if (defined (P_CC_MSVC) && _MSC_VER <= 1200) || defined (P_CC_WATCOM) \
