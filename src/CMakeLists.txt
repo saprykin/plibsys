@@ -192,25 +192,41 @@ if ((PLIB_TARGET_OS STREQUAL windows) AND NOT (PLIB_TARGET_OS STREQUAL cygwin)
         endif()
 endif()
 
-if (PLIB_C_COMPILER MATCHES "gcc|qcc|clang")
+set (PLIB_ATOMIC_LOCK_FREE no)
+
+if (PLIB_PREFER_ATOMIC_LOCK_FREE)
         message (STATUS "Checking for lock-free atomic intrinsics")
 
-        check_c_source_compiles (
-                                 "int main () {
-                                __GCC_HAVE_SYNC_COMPARE_AND_SWAP_4;
-                                return 0;
-                                }"
-                                PLIB_ATOMIC_LOCK_FREE
-        )
+        if (PLIB_TARGET_OS MATCHES "(mingw.*)|(windows.*)")
+                set (PLIB_ATOMIC_LOCK_FREE true)
+        else()
+                check_c_source_compiles (
+                                         "int main () {
+                                         __GCC_HAVE_SYNC_COMPARE_AND_SWAP_4;
+                                         return 0;
+                                         }"
+                                         PLIB_ATOMIC_LOCK_FREE_CPL
+                )
+
+                if (NOT PLIB_ATOMIC_LOCK_FREE_CPL)
+                        check_c_source_compiles (
+                                                 "int main () {
+                                                 __ATOMIC_SEQ_CST;
+                                                 return 0;
+                                                 }"
+                                                 PLIB_ATOMIC_LOCK_FREE_CPL
+                        )
+                endif()
+
+                if (PLIB_ATOMIC_LOCK_FREE_CPL)
+                        set (PLIB_ATOMIC_LOCK_FREE yes)
+                endif()
+        endif()
 
         if (PLIB_ATOMIC_LOCK_FREE)
                 message (STATUS "Checking for lock-free atomic intrinsics - works")
         else()
                 message (STATUS "Checking for lock-free atomic intrinsics - not works")
-        endif()
-else()
-        if (PLIB_TARGET_OS MATCHES "(mingw.*)|(windows.*)")
-                set (PLIB_ATOMIC_LOCK_FREE true)
         endif()
 endif()
 
@@ -505,21 +521,25 @@ SET (PLIB_SUMMARY
 "
         == Build configuration ==
 
-        Platfrom:               ${PLIB_TARGET_OS}
-        Compiler:               ${PLIB_C_COMPILER}
-        Address model:          ${PLIB_OS_BITS} bit
+        Platfrom:                   ${PLIB_TARGET_OS}
+        Compiler:                   ${PLIB_C_COMPILER}
+        Address model:              ${PLIB_OS_BITS} bit
 
-        Thread model:           ${PLIB_THREAD_MODEL}
-        IPC model:              ${PLIB_IPC_MODEL}
-        DIR model:              ${PLIB_DIR_MODEL}
-        Time profiler model:    ${PLIB_TIME_PROFILER_MODEL}
+        Thread model:               ${PLIB_THREAD_MODEL}
+        IPC model:                  ${PLIB_IPC_MODEL}
+        DIR model:                  ${PLIB_DIR_MODEL}
+        Time profiler model:        ${PLIB_TIME_PROFILER_MODEL}
 
-        Platform defines:       ${PLIB_PLATFORM_DEFINES}
-        Platform CFLAGS:        ${PLIB_PLATFORM_CFLAGS}
-        Platform LDFLAGS:       ${PLIB_PLATFORM_LDFLAGS}
-        Platform libraries:     ${PLIB_PLATFORM_LINK_LIBRARIES}
+        Atomic lock-free:           ${PLIB_ATOMIC_LOCK_FREE}
 
-        Coverage support:       ${PLIB_COVERAGE}
+        Platform defines:           ${PLIB_PLATFORM_DEFINES}
+        Platform CFLAGS:            ${PLIB_PLATFORM_CFLAGS}
+        Platform LDFLAGS:           ${PLIB_PLATFORM_LDFLAGS}
+        Platform libraries:         ${PLIB_PLATFORM_LINK_LIBRARIES}
+
+        Coverage support:           ${PLIB_COVERAGE}
+        Prefer atomic lock-free:    ${PLIB_PREFER_ATOMIC_LOCK_FREE}
+        
 ")
 
 message ("${PLIB_SUMMARY}")
