@@ -44,7 +44,6 @@ struct _PSocket {
 	pint		fd;
 	pint		listen_backlog;
 	pint		timeout;
-	puint		inited		: 1;
 	puint		blocking	: 1;
 	puint		keepalive	: 1;
 	puint		closed		: 1;
@@ -126,14 +125,6 @@ static pboolean
 __p_socket_check (const PSocket *socket,
 		  PError	**error)
 {
-	if (!socket->inited) {
-		p_error_set_error_p (error,
-				     (pint) P_ERROR_IO_INVALID_ARGUMENT,
-				     0,
-				     "Socket is not initialized");
-		return FALSE;
-	}
-
 	if (socket->closed)  {
 		p_error_set_error_p (error,
 				     (pint) P_ERROR_IO_NOT_AVAILABLE,
@@ -352,7 +343,6 @@ p_socket_new_from_fd (pint	fd,
 
 	ret->timeout = 0;
 	ret->blocking = TRUE;
-	ret->inited = TRUE;
 
 #ifdef P_OS_WIN
 	if ((ret->events = WSACreateEvent ()) == WSA_INVALID_EVENT) {
@@ -463,7 +453,6 @@ p_socket_new (PSocketFamily	family,
 	ret->family = family;
 	ret->protocol = protocol;
 	ret->type = type;
-	ret->inited = TRUE;
 
 	p_socket_set_listen_backlog (ret, P_SOCKET_DEFAULT_BACKLOG);
 
@@ -1224,9 +1213,6 @@ p_socket_close (PSocket	*socket,
 
 	if (socket->closed)
 		return TRUE;
-
-	if (!__p_socket_check (socket, error))
-		return FALSE;
 
 #if !defined (P_OS_WIN) && defined (EINTR)
 	for (;;) {
