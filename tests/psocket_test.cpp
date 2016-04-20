@@ -552,10 +552,19 @@ BOOST_AUTO_TEST_CASE (psocket_bad_input_test)
 	BOOST_CHECK (error != NULL);
 	clean_error (&error);
 
+	BOOST_CHECK (p_socket_new (P_SOCKET_FAMILY_INET,
+				   (PSocketType) -1,
+				   P_SOCKET_PROTOCOL_TCP,
+				   NULL) == NULL);
+	BOOST_CHECK (p_socket_new ((PSocketFamily) -1,
+				   P_SOCKET_TYPE_SEQPACKET,
+				   P_SOCKET_PROTOCOL_TCP,
+				   NULL) == NULL);
 	BOOST_CHECK (p_socket_new (P_SOCKET_FAMILY_UNKNOWN,
 				   P_SOCKET_TYPE_UNKNOWN,
 				   P_SOCKET_PROTOCOL_UNKNOWN,
 				   &error) == NULL);
+	BOOST_CHECK (p_socket_new_from_fd (1, NULL) == NULL);
 	BOOST_CHECK (error != NULL);
 	clean_error (&error);
 
@@ -567,6 +576,8 @@ BOOST_AUTO_TEST_CASE (psocket_bad_input_test)
 	BOOST_CHECK (p_socket_get_blocking (NULL) == FALSE);
 	BOOST_CHECK (p_socket_get_timeout (NULL) == -1);
 	BOOST_CHECK (p_socket_get_listen_backlog (NULL) == -1);
+	BOOST_CHECK (p_socket_io_condition_wait (NULL, P_SOCKET_IO_CONDITION_POLLIN, NULL) == FALSE);
+	BOOST_CHECK (p_socket_io_condition_wait (NULL, P_SOCKET_IO_CONDITION_POLLOUT, NULL) == FALSE);
 
 	BOOST_CHECK (p_socket_get_local_address (NULL, &error) == NULL);
 	BOOST_CHECK (error != NULL);
@@ -662,6 +673,8 @@ BOOST_AUTO_TEST_CASE (psocket_general_udp_test)
 	BOOST_CHECK (p_socket_get_keepalive (socket) == FALSE);
 
 	p_socket_set_listen_backlog (socket, 12);
+	p_socket_set_timeout (socket, -10);
+	BOOST_CHECK (p_socket_get_timeout (socket) == 0);
 	p_socket_set_timeout (socket, 10);
 
 	BOOST_CHECK (p_socket_get_listen_backlog (socket) == 12);
@@ -685,6 +698,13 @@ BOOST_AUTO_TEST_CASE (psocket_general_udp_test)
 	BOOST_CHECK (p_socket_get_type (fd_socket) == P_SOCKET_TYPE_DATAGRAM);
 	BOOST_CHECK (p_socket_get_keepalive (fd_socket) == FALSE);
 
+	p_socket_set_keepalive (fd_socket, FALSE);
+	BOOST_CHECK (p_socket_get_keepalive (fd_socket) == FALSE);
+
+	p_socket_set_keepalive (fd_socket, TRUE);
+	p_socket_set_keepalive (fd_socket, FALSE);
+	BOOST_CHECK (p_socket_get_keepalive (fd_socket) == FALSE);
+
 	/* Test UDP local address */
 	PSocketAddress *addr = p_socket_get_local_address (socket, NULL);
 	BOOST_CHECK (addr != NULL);
@@ -700,20 +720,44 @@ BOOST_AUTO_TEST_CASE (psocket_general_udp_test)
 	BOOST_CHECK (addr != NULL);
 	BOOST_CHECK (p_socket_connect (socket, addr, NULL) == TRUE);
 
+	BOOST_CHECK (p_socket_io_condition_wait (socket, P_SOCKET_IO_CONDITION_POLLIN, NULL) == FALSE);
+	BOOST_CHECK (p_socket_io_condition_wait (socket, P_SOCKET_IO_CONDITION_POLLOUT, NULL) == TRUE);
+
 	sock_addr = p_socket_get_remote_address (socket, NULL);
 	BOOST_CHECK (sock_addr != NULL);
 
 	BOOST_CHECK (compare_socket_addresses (sock_addr, addr) == TRUE);
-
-	p_socket_address_free (sock_addr);
-	p_socket_address_free (addr);
 
 	BOOST_CHECK (p_socket_set_buffer_size (socket, P_SOCKET_DIRECTION_RCV, 72 * 1024, NULL) == TRUE);
 	BOOST_CHECK (p_socket_set_buffer_size (socket, P_SOCKET_DIRECTION_SND, 72 * 1024, NULL) == TRUE);
 
 	BOOST_CHECK (p_socket_is_connected (socket) == TRUE);
 	BOOST_CHECK (p_socket_check_connect_result (socket, NULL) == TRUE);
-	BOOST_CHECK (p_socket_close (socket, NULL));
+	BOOST_CHECK (p_socket_shutdown (socket, TRUE, TRUE, NULL) == TRUE);
+	BOOST_CHECK (p_socket_close (socket, NULL) == TRUE);
+
+	pchar sock_buf[10];
+
+	BOOST_CHECK (p_socket_bind (socket, sock_addr, TRUE, NULL) == FALSE);
+	BOOST_CHECK (p_socket_connect (socket, addr, NULL) == FALSE);
+	BOOST_CHECK (p_socket_listen (socket, NULL) == FALSE);
+	BOOST_CHECK (p_socket_accept (socket, NULL) == FALSE);
+	BOOST_CHECK (p_socket_receive (socket, sock_buf, sizeof (sock_buf), NULL) == -1);
+	BOOST_CHECK (p_socket_receive_from (socket, NULL, sock_buf, sizeof (sock_buf), NULL) == -1);
+	BOOST_CHECK (p_socket_send (socket, sock_buf, sizeof (sock_buf), NULL) == -1);
+	BOOST_CHECK (p_socket_send_to (socket, addr, sock_buf, sizeof (sock_buf), NULL) == -1);
+	BOOST_CHECK (p_socket_shutdown (socket, TRUE, TRUE, NULL) == FALSE);
+	BOOST_CHECK (p_socket_get_local_address (socket, NULL) == NULL);
+	BOOST_CHECK (p_socket_check_connect_result (socket, NULL) == FALSE);
+
+	p_socket_set_keepalive (socket, TRUE);
+	BOOST_CHECK (p_socket_get_keepalive (socket) == FALSE);
+
+	BOOST_CHECK (p_socket_io_condition_wait (socket, P_SOCKET_IO_CONDITION_POLLIN, NULL) == FALSE);
+	BOOST_CHECK (p_socket_io_condition_wait (socket, P_SOCKET_IO_CONDITION_POLLOUT, NULL) == FALSE);
+
+	p_socket_address_free (sock_addr);
+	p_socket_address_free (addr);
 	p_socket_free (socket);
 	p_socket_free (fd_socket);
 
@@ -731,6 +775,9 @@ BOOST_AUTO_TEST_CASE (psocket_general_tcp_test)
 					NULL);
 	p_socket_set_blocking (socket, FALSE);
 	p_socket_set_listen_backlog (socket, 11);
+
+	p_socket_set_timeout (socket, -12);
+	BOOST_CHECK (p_socket_get_timeout (socket) == 0);
 	p_socket_set_timeout (socket, 12);
 
 	BOOST_CHECK (socket != NULL);
@@ -744,6 +791,13 @@ BOOST_AUTO_TEST_CASE (psocket_general_tcp_test)
 	BOOST_CHECK (p_socket_get_type (socket) == P_SOCKET_TYPE_STREAM);
 	BOOST_CHECK (p_socket_get_keepalive (socket) == FALSE);
 
+	p_socket_set_keepalive (socket, FALSE);
+	BOOST_CHECK (p_socket_get_keepalive (socket) == FALSE);
+
+	p_socket_set_keepalive (socket, TRUE);
+	p_socket_set_keepalive (socket, FALSE);
+	BOOST_CHECK (p_socket_get_keepalive (socket) == FALSE);
+
 	PSocketAddress *sock_addr = p_socket_address_new ("127.0.0.1", 0);
 	BOOST_CHECK (sock_addr != NULL);
 
@@ -754,16 +808,41 @@ BOOST_AUTO_TEST_CASE (psocket_general_tcp_test)
 
 	BOOST_CHECK (compare_socket_addresses (sock_addr, addr) == TRUE);
 
-	p_socket_address_free (sock_addr);
-	p_socket_address_free (addr);
-
 	BOOST_CHECK (p_socket_set_buffer_size (socket, P_SOCKET_DIRECTION_RCV, 72 * 1024, NULL) == TRUE);
 	BOOST_CHECK (p_socket_set_buffer_size (socket, P_SOCKET_DIRECTION_SND, 72 * 1024, NULL) == TRUE);
+
+	BOOST_CHECK (p_socket_io_condition_wait (socket, P_SOCKET_IO_CONDITION_POLLIN, NULL) == FALSE);
+	BOOST_CHECK (p_socket_io_condition_wait (socket, P_SOCKET_IO_CONDITION_POLLOUT, NULL) == FALSE);
 
 	/* In case of success p_socket_check_connect_result() marks socket as connected */
 	BOOST_CHECK (p_socket_is_connected (socket) == FALSE);
 	BOOST_CHECK (p_socket_check_connect_result (socket, NULL) == TRUE);
-	BOOST_CHECK (p_socket_close (socket, NULL));
+	BOOST_CHECK (p_socket_shutdown (socket, TRUE, TRUE, NULL) == FALSE);
+	BOOST_CHECK (p_socket_close (socket, NULL) == TRUE);
+
+	pchar sock_buf[10];
+
+	BOOST_CHECK (p_socket_bind (socket, sock_addr, TRUE, NULL) == FALSE);
+	BOOST_CHECK (p_socket_connect (socket, addr, NULL) == FALSE);
+	BOOST_CHECK (p_socket_listen (socket, NULL) == FALSE);
+	BOOST_CHECK (p_socket_accept (socket, NULL) == FALSE);
+	BOOST_CHECK (p_socket_receive (socket, sock_buf, sizeof (sock_buf), NULL) == -1);
+	BOOST_CHECK (p_socket_receive_from (socket, NULL, sock_buf, sizeof (sock_buf), NULL) == -1);
+	BOOST_CHECK (p_socket_send (socket, sock_buf, sizeof (sock_buf), NULL) == -1);
+	BOOST_CHECK (p_socket_send_to (socket, addr, sock_buf, sizeof (sock_buf), NULL) == -1);
+	BOOST_CHECK (p_socket_shutdown (socket, TRUE, TRUE, NULL) == FALSE);
+	BOOST_CHECK (p_socket_get_local_address (socket, NULL) == NULL);
+	BOOST_CHECK (p_socket_check_connect_result (socket, NULL) == FALSE);
+
+	p_socket_set_keepalive (socket, TRUE);
+	BOOST_CHECK (p_socket_get_keepalive (socket) == FALSE);
+
+	BOOST_CHECK (p_socket_io_condition_wait (socket, P_SOCKET_IO_CONDITION_POLLIN, NULL) == FALSE);
+	BOOST_CHECK (p_socket_io_condition_wait (socket, P_SOCKET_IO_CONDITION_POLLOUT, NULL) == FALSE);
+
+	p_socket_address_free (sock_addr);
+	p_socket_address_free (addr);
+
 	p_socket_free (socket);
 
 	p_lib_shutdown ();
