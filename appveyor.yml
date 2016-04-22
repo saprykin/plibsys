@@ -78,5 +78,5 @@ build_script:
                 & $BUILD_COMMAND $BUILD_PARAMS;
 
                 If ($env:APPVEYOR_REPO_BRANCH -eq "appveyor_test") {
-                        & ctest -C Release;
+                        & ctest -V -C Release;
                 }

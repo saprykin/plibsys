@@ -39,7 +39,7 @@ before_script:
 
 script:
         - make
-        - if [[ "${TRAVIS_BRANCH}" != "coverity_scan" ]]; then make test ; fi
+        - if [[ "${TRAVIS_BRANCH}" != "coverity_scan" ]]; then ctest -V ; fi
 
 after_success:
         - if [[ "${USE_GCOV}" == "1" ]]; then lcov --directory . --capture --output-file coverage.info ; fi
