@@ -194,6 +194,25 @@ endif()
 set (PLIB_ATOMIC_LOCK_FREE no)
 
 if (NOT PLIB_ATOMIC_MODEL AND PLIB_TARGET_OS MATCHES "(mingw.*)|(windows.*)")
+        message (STATUS "Checking for MemoryBarrier() call")
+
+        # Check for MemoryBarrier()
+        check_c_source_compiles (
+                                 "#include <windows.h>
+                                  int main () {
+                                  MemoryBarrier();
+                                  return 0;
+                                 }"
+                                 PLIB_ATOMIC_HAS_MEMBAR
+        )
+
+        if (PLIB_ATOMIC_HAS_MEMBAR)
+                message (STATUS "Checking for MemoryBarrier() call - works")
+                add_definitions (-DPLIB_ATOMIC_HAS_MEMBAR)
+        else()
+                message (STATUS "Checking for MemoryBarrier() call - not works")
+        endif()
+
         set (PLIB_ATOMIC_LOCK_FREE true)
         set (PLIB_ATOMIC_MODEL "win")
 endif()
@@ -210,7 +229,7 @@ if (NOT PLIB_ATOMIC_MODEL)
                                           __atomic_compare_exchange_n (&i, &tmp_int, 1, 0,
                                                                        __ATOMIC_SEQ_CST, __ATOMIC_SEQ_CST);
                                           __atomic_fetch_add (&i, 1, __ATOMIC_SEQ_CST);
-                                         return 0;
+                                          return 0;
                                          }"
                                          PLIB_ATOMIC_IMPL_GCCATOMIC
                 )
@@ -229,7 +248,7 @@ if (NOT PLIB_ATOMIC_MODEL)
                                           __sync_synchronize ();
                                           __sync_bool_compare_and_swap (&i, 0, 1);
                                           __sync_fetch_and_add (&i, 1);
-                                         return 0;
+                                          return 0;
                                          }"
                                          PLIB_ATOMIC_IMPL_GCCSYNC
                 )
