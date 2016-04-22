@@ -814,7 +814,6 @@ BOOST_AUTO_TEST_CASE (psocket_general_tcp_test)
 	/* In case of success p_socket_check_connect_result() marks socket as connected */
 	BOOST_CHECK (p_socket_is_connected (socket) == FALSE);
 	BOOST_CHECK (p_socket_check_connect_result (socket, NULL) == TRUE);
-	BOOST_CHECK (p_socket_shutdown (socket, TRUE, TRUE, NULL) == FALSE);
 	BOOST_CHECK (p_socket_close (socket, NULL) == TRUE);
 
 	pchar sock_buf[10];
