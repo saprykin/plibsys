@@ -193,34 +193,10 @@ endif()
 
 set (PLIB_ATOMIC_LOCK_FREE no)
 
-if (NOT PLIB_ATOMIC_MODEL AND PLIB_TARGET_OS MATCHES "(mingw.*)|(windows.*)")
-        message (STATUS "Checking for MemoryBarrier() call")
-
-        # Check for MemoryBarrier()
-        check_c_source_compiles (
-                                 "#include <windows.h>
-                                  int main () {
-                                  MemoryBarrier();
-                                  return 0;
-                                 }"
-                                 PLIB_ATOMIC_HAS_MEMBAR
-        )
-
-        if (PLIB_ATOMIC_HAS_MEMBAR)
-                message (STATUS "Checking for MemoryBarrier() call - works")
-                add_definitions (-DPLIB_ATOMIC_HAS_MEMBAR)
-        else()
-                message (STATUS "Checking for MemoryBarrier() call - not works")
-        endif()
-
-        set (PLIB_ATOMIC_LOCK_FREE true)
-        set (PLIB_ATOMIC_MODEL "win")
-endif()
-
 if (NOT PLIB_ATOMIC_MODEL)
         message (STATUS "Checking for lock-free atomic intrinsics")
 
-        if (NOT PLIB_C_COMPILER MATCHES "clang")
+        if (NOT PLIB_C_COMPILER STREQUAL clang)
                 # GCC __atomic* intrinsics
                 check_c_source_compiles (
                                          "int main () {
@@ -259,10 +235,16 @@ if (NOT PLIB_ATOMIC_MODEL)
                 endif()
         endif()
 
-        # Atomic simulation
         if (NOT PLIB_ATOMIC_LOCK_FREE)
-                set (PLIB_ATOMIC_LOCK_FREE no)
-                set (PLIB_ATOMIC_MODEL "sim")
+                if (PLIB_TARGET_OS STREQUAL windows AND (PLIB_C_COMPILER STREQUAL borland OR
+                                                         PLIB_C_COMPILER STREQUAL watcom  OR
+                                                         PLIB_C_COMPILER STREQUAL icc))
+                        set (PLIB_ATOMIC_LOCK_FREE true)
+                        set (PLIB_ATOMIC_MODEL "win")
+                else()
+                        set (PLIB_ATOMIC_LOCK_FREE no)
+                        set (PLIB_ATOMIC_MODEL "sim")
+                endif()
         endif()
 
         if (PLIB_ATOMIC_LOCK_FREE)
