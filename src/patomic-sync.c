@@ -92,7 +92,7 @@ P_LIB_API void
 p_atomic_pointer_set (volatile void	*atomic,
 		      ppointer		val)
 {
-	ppointer cur_val = (ppointer) ((volatile psize *) atomic);
+	volatile psize *cur_val = (volatile psize *) atomic;
 
 	*cur_val = *((psize *) val);
 	__sync_synchronize ();
