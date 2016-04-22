@@ -192,9 +192,9 @@ P_LIB_API puint		p_atomic_int_xor			(volatile puint		*atomic,
 P_LIB_API ppointer	p_atomic_pointer_get			(const volatile void	*atomic);
 
 /**
- * @brief Sets the value of @a val to #ppointer-sized @a atomic.
+ * @brief Sets the @a val to #ppointer-sized @a atomic.
  * @param[out] atomic Pointer to set the value for.
- * @param val Pointer to the new value.
+ * @param val New value for @a atomic.
  * @since 0.0.1
  *
  * This call acts as a full compiler and hardware memory barrier (after the set).
