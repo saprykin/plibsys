@@ -201,22 +201,24 @@ endif()
 if (NOT PLIB_ATOMIC_MODEL)
         message (STATUS "Checking for lock-free atomic intrinsics")
 
-        # GCC __atomic* intrinsics
-        check_c_source_compiles (
-                                 "int main () {
-                                  int i, tmp_int = 0;
-                                  __atomic_store_4 (&i, 0, __ATOMIC_SEQ_CST);
-                                  __atomic_compare_exchange_n (&i, &tmp_int, 1, 0,
-                                                               __ATOMIC_SEQ_CST, __ATOMIC_SEQ_CST);
-                                  __atomic_fetch_add (&i, 1, __ATOMIC_SEQ_CST);
-                                 return 0;
-                                 }"
-                                 PLIB_ATOMIC_IMPL_GCCATOMIC
-        )
+        if (NOT PLIB_C_COMPILER MATCHES "clang")
+                # GCC __atomic* intrinsics
+                check_c_source_compiles (
+                                         "int main () {
+                                          int i, tmp_int = 0;
+                                          __atomic_store_4 (&i, 0, __ATOMIC_SEQ_CST);
+                                          __atomic_compare_exchange_n (&i, &tmp_int, 1, 0,
+                                                                       __ATOMIC_SEQ_CST, __ATOMIC_SEQ_CST);
+                                          __atomic_fetch_add (&i, 1, __ATOMIC_SEQ_CST);
+                                         return 0;
+                                         }"
+                                         PLIB_ATOMIC_IMPL_GCCATOMIC
+                )
 
-        if (PLIB_ATOMIC_IMPL_GCCATOMIC)
-                set (PLIB_ATOMIC_LOCK_FREE yes)
-                set (PLIB_ATOMIC_MODEL "c11")
+                if (PLIB_ATOMIC_IMPL_GCCATOMIC)
+                        set (PLIB_ATOMIC_LOCK_FREE yes)
+                        set (PLIB_ATOMIC_MODEL "c11")
+                endif()
         endif()
 
         # GCC __sync* intinsics
