@@ -99,7 +99,6 @@ set (PLIB_PRIVATE_HDRS
 )
 
 set (PLIB_SRCS
-        patomic.c
         pcryptohash.c
         pcryptohash-gost3411.c
         pcryptohash-md5.c
@@ -194,35 +193,55 @@ endif()
 
 set (PLIB_ATOMIC_LOCK_FREE no)
 
-if (PLIB_ATOMIC_PREFER_LOCK_FREE)
+if (NOT PLIB_ATOMIC_MODEL AND PLIB_TARGET_OS MATCHES "(mingw.*)|(windows.*)")
+        set (PLIB_ATOMIC_LOCK_FREE true)
+        set (PLIB_ATOMIC_MODEL "win")
+endif()
+
+if (NOT PLIB_ATOMIC_MODEL)
         message (STATUS "Checking for lock-free atomic intrinsics")
 
-        if (PLIB_TARGET_OS MATCHES "(mingw.*)|(windows.*)")
-                set (PLIB_ATOMIC_LOCK_FREE true)
-        else()
+        # GCC __atomic* intrinsics
+        check_c_source_compiles (
+                                 "int main () {
+                                  int i, tmp_int = 0;
+                                  __atomic_store_4 (&i, 0, __ATOMIC_SEQ_CST);
+                                  __atomic_compare_exchange_n (&i, &tmp_int, 1, 0,
+                                                               __ATOMIC_SEQ_CST, __ATOMIC_SEQ_CST);
+                                  __atomic_fetch_add (&i, 1, __ATOMIC_SEQ_CST);
+                                 return 0;
+                                 }"
+                                 PLIB_ATOMIC_IMPL_GCCATOMIC
+        )
+
+        if (PLIB_ATOMIC_IMPL_GCCATOMIC)
+                set (PLIB_ATOMIC_LOCK_FREE yes)
+                set (PLIB_ATOMIC_MODEL "c11")
+        endif()
+
+        # GCC __sync* intinsics
+        if (NOT PLIB_ATOMIC_LOCK_FREE)
                 check_c_source_compiles (
                                          "int main () {
-                                         __GCC_HAVE_SYNC_COMPARE_AND_SWAP_4;
+                                          int i;
+                                          __sync_synchronize ();
+                                          __sync_bool_compare_and_swap (&i, 0, 1);
+                                          __sync_fetch_and_add (&i, 1);
                                          return 0;
                                          }"
-                                         PLIB_ATOMIC_LOCK_FREE_CPL
+                                         PLIB_ATOMIC_IMPL_GCCSYNC
                 )
 
-                if (PLIB_ATOMIC_ALLOW_CXX11)
-                        if (NOT PLIB_ATOMIC_LOCK_FREE_CPL)
-                                check_c_source_compiles (
-                                                         "int main () {
-                                                         __ATOMIC_SEQ_CST;
-                                                         return 0;
-                                                         }"
-                                                         PLIB_ATOMIC_LOCK_FREE_CPL
-                                )
-                        endif()
-                endif()
-
-                if (PLIB_ATOMIC_LOCK_FREE_CPL)
+                if (PLIB_ATOMIC_IMPL_GCCSYNC)
                         set (PLIB_ATOMIC_LOCK_FREE yes)
+                        set (PLIB_ATOMIC_MODEL "sync")
                 endif()
+        endif()
+
+        # Atomic simulation
+        if (NOT PLIB_ATOMIC_LOCK_FREE)
+                set (PLIB_ATOMIC_LOCK_FREE no)
+                set (PLIB_ATOMIC_MODEL "sim")
         endif()
 
         if (PLIB_ATOMIC_LOCK_FREE)
@@ -230,11 +249,9 @@ if (PLIB_ATOMIC_PREFER_LOCK_FREE)
         else()
                 message (STATUS "Checking for lock-free atomic intrinsics - not works")
         endif()
-
-        if (PLIB_ATOMIC_ALLOW_CXX11)
-                add_definitions (-DPLIB_ATOMIC_ALLOW_CXX11)
-        endif()
 endif()
+
+set (PLIB_SRCS "patomic-${PLIB_ATOMIC_MODEL}" ${PLIB_SRCS})
 
 if (EXISTS PLIB_CONFIG_FILE)
         file (RENOVE ${PLIB_CONFIG_FILE})
@@ -527,26 +544,23 @@ SET (PLIB_SUMMARY
 "
         == Build configuration ==
 
-        Platfrom:                   ${PLIB_TARGET_OS}
-        Compiler:                   ${PLIB_C_COMPILER}
-        Address model:              ${PLIB_OS_BITS} bit
+        Platfrom:               ${PLIB_TARGET_OS}
+        Compiler:               ${PLIB_C_COMPILER}
+        Address model:          ${PLIB_OS_BITS} bit
 
-        Thread model:               ${PLIB_THREAD_MODEL}
-        IPC model:                  ${PLIB_IPC_MODEL}
-        DIR model:                  ${PLIB_DIR_MODEL}
-        Time profiler model:        ${PLIB_TIME_PROFILER_MODEL}
+        Thread model:           ${PLIB_THREAD_MODEL}
+        IPC model:              ${PLIB_IPC_MODEL}
+        DIR model:              ${PLIB_DIR_MODEL}
+        Time profiler model:    ${PLIB_TIME_PROFILER_MODEL}
+        Atomic model:           ${PLIB_ATOMIC_MODEL}
 
-        Atomic lock-free:           ${PLIB_ATOMIC_LOCK_FREE}
+        Platform defines:       ${PLIB_PLATFORM_DEFINES}
+        Platform CFLAGS:        ${PLIB_PLATFORM_CFLAGS}
+        Platform LDFLAGS:       ${PLIB_PLATFORM_LDFLAGS}
+        Platform libraries:     ${PLIB_PLATFORM_LINK_LIBRARIES}
 
-        Platform defines:           ${PLIB_PLATFORM_DEFINES}
-        Platform CFLAGS:            ${PLIB_PLATFORM_CFLAGS}
-        Platform LDFLAGS:           ${PLIB_PLATFORM_LDFLAGS}
-        Platform libraries:         ${PLIB_PLATFORM_LINK_LIBRARIES}
+        Coverage support:       ${PLIB_COVERAGE}
 
-        Coverage support:           ${PLIB_COVERAGE}
-        Prefer atomic lock-free:    ${PLIB_ATOMIC_PREFER_LOCK_FREE}
-        Allow C++11 atomic:         ${PLIB_ATOMIC_ALLOW_CXX11}
-        
 ")
 
 message ("${PLIB_SUMMARY}")

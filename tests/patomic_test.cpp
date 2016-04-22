@@ -39,6 +39,8 @@ BOOST_AUTO_TEST_CASE (patomic_general_test)
 {
 	p_lib_init ();
 
+	(void) p_atomic_is_lock_free ();
+
 	pint atomic_int = 0;
 	p_atomic_int_set (&atomic_int, 10);
 
@@ -65,13 +67,13 @@ BOOST_AUTO_TEST_CASE (patomic_general_test)
 	p_atomic_int_set (&atomic_int, 4);
 	BOOST_CHECK (p_atomic_int_get (&atomic_int) == 4);
 
-	BOOST_CHECK (p_atomic_int_xor (&atomic_int, (puint) 1) == 4);
+	BOOST_CHECK (p_atomic_int_xor ((puint *) &atomic_int, (puint) 1) == 4);
 	BOOST_CHECK (p_atomic_int_get (&atomic_int) == 5);
 
-	BOOST_CHECK (p_atomic_int_or (&atomic_int, (puint) 2) == 5);
+	BOOST_CHECK (p_atomic_int_or ((puint *) &atomic_int, (puint) 2) == 5);
 	BOOST_CHECK (p_atomic_int_get (&atomic_int) == 7);
 
-	BOOST_CHECK (p_atomic_int_and (&atomic_int, (puint) 1) == 7);
+	BOOST_CHECK (p_atomic_int_and ((puint *) &atomic_int, (puint) 1) == 7);
 	BOOST_CHECK (p_atomic_int_get (&atomic_int) == 1);
 
 	p_atomic_int_set (&atomic_int, 51);

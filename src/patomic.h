@@ -17,11 +17,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA.
  */
 
-/*
- * This file was taken from GLib and adopted for using along with PLib.
- * See gatomic.h for other copyrights and details.
- */
-
 /**
  * @file patomic.h
  * @brief Atomic operations
@@ -34,7 +29,7 @@
  * Lock-free atomic operations require software and hardware support. Usually
  * lock-free atomic operations are implemented on low-level using assembly
  * inlines. Some of the compilers provide built-in routines to perform atomic
- * operations. You can test #PLIB_ATOMIC_LOCK_FREE macro to check whether such
+ * operations. You can use p_atomic_is_lock_free() call to check whether such
  * a support is provided or not.
  *
  * If there is no hardware or software support for lock-free atomic operations then
@@ -59,16 +54,6 @@
 P_BEGIN_DECLS
 
 /**
- * @def PLIB_ATOMIC_LOCK_FREE
- * @brief This macro defined if target platform provides lock-free atomic
- * operations by underlying software and hardware.
- */
-
-#ifdef DOXYGEN
-#define PLIB_ATOMIC_LOCK_FREE
-#endif
-
-/**
  * @brief Gets #pint value from @a atomic.
  * @param atomic Pointer to #pint to get the value from.
  * @return Integer value.
@@ -81,13 +66,13 @@ P_LIB_API pint		p_atomic_int_get			(const volatile pint	*atomic);
 /**
  * @brief Sets integer value to @a atomic.
  * @param[out] atomic Pointer to #pint to set the value for.
- * @param newval New #pint value.
+ * @param val New #pint value.
  * @since 0.0.1
  *
  * This call acts as a full compiler and hardware memory barrier (after the set).
  */
 P_LIB_API void		p_atomic_int_set			(volatile pint		*atomic,
-								 pint			newval);
+								 pint			val);
 
 /**
  * @brief Increments #pint value from @a atomic by 1.
@@ -209,13 +194,13 @@ P_LIB_API ppointer	p_atomic_pointer_get			(const volatile void	*atomic);
 /**
  * @brief Sets the value of @a newval to #ppointer-sized @a atomic.
  * @param[out] atomic Pointer to set the value for.
- * @param newval Pointer to the new value.
+ * @param val Pointer to the new value.
  * @since 0.0.1
  *
  * This call acts as a full compiler and hardware memory barrier (after the set).
  */
 P_LIB_API void		p_atomic_pointer_set			(volatile void		*atomic,
-								 ppointer		newval);
+								 ppointer		val);
 
 /**
  * @brief Compares @a oldval with the value pointed to by @a atomic and if
@@ -300,249 +285,15 @@ P_LIB_API psize		p_atomic_pointer_or			(volatile void		*atomic,
 P_LIB_API psize		p_atomic_pointer_xor			(volatile void		*atomic,
 								 psize			val);
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-
-#if defined (PLIB_ATOMIC_LOCK_FREE) && \
-   (defined (__GCC_HAVE_SYNC_COMPARE_AND_SWAP_4) || \
-   (defined (PLIB_ATOMIC_ALLOW_CXX11) && defined (__ATOMIC_SEQ_CST)))
-   /* We prefer the new C11-style atomic extension of GCC if available,
-    * see also:
-    * https://bugzilla.gnome.org/show_bug.cgi?id=730807
-    * https://bugzilla.gnome.org/show_bug.cgi?id=731513
-   */
-#  if (defined (PLIB_ATOMIC_ALLOW_CXX11) && defined (__ATOMIC_SEQ_CST))
-#    define p_atomic_int_get(atomic)									\
-({													\
-	(pint) __atomic_load_4 ((atomic), __ATOMIC_SEQ_CST);						\
-})
-
-#    define p_atomic_int_set(atomic, newval)								\
-({													\
-	__atomic_store_4 ((atomic), (newval), __ATOMIC_SEQ_CST);					\
-})
-
-#    if (PLIB_SIZEOF_VOID_P == 8)
-
-#      define p_atomic_pointer_get(atomic)								\
-({													\
-	(ppointer) __atomic_load_8 ((atomic), __ATOMIC_SEQ_CST);					\
-})
-
-#      define p_atomic_pointer_set(atomic, newval)							\
-({													\
-	__atomic_store_8 ((atomic), (psize) (newval), __ATOMIC_SEQ_CST);				\
-})
-
-#    else /* PLIB_SIZEOF_VOID_P == 8 */
-
-#      define p_atomic_pointer_get(atomic)								\
-({													\
-	(ppointer) __atomic_load_4 ((atomic), __ATOMIC_SEQ_CST);					\
-})
-
-#      define p_atomic_pointer_set(atomic, newval)							\
-({													\
-	__atomic_store_4 ((atomic), (psize) (newval), __ATOMIC_SEQ_CST);				\
-})
-
-#    endif /* PLIB_SIZEOF_VOID_P == 8 */
-
-#    define p_atomic_int_inc(atomic)									\
-({													\
-	(void) __atomic_fetch_add ((atomic), 1, __ATOMIC_SEQ_CST);					\
-})
-
-#    define p_atomic_int_dec_and_test(atomic)								\
-({													\
-	__atomic_fetch_sub ((atomic), 1, __ATOMIC_SEQ_CST) == 1;					\
-})
-
-#    define p_atomic_int_compare_and_exchange(atomic, oldval, newval)					\
-({													\
-	pint tmp_int = oldval;										\
-	(pboolean) __atomic_compare_exchange_n ((volatile pint *) (atomic),				\
-						&tmp_int,						\
-						(newval),						\
-						0,							\
-						__ATOMIC_SEQ_CST, __ATOMIC_SEQ_CST);			\
-})
-
-#    define p_atomic_int_add(atomic, val)								\
-({													\
-	(pint) __atomic_fetch_add ((atomic), (val), __ATOMIC_SEQ_CST);					\
-})
-
-#    define p_atomic_int_and(atomic, val)								\
-({													\
-	(puint) __atomic_fetch_and ((atomic), (val), __ATOMIC_SEQ_CST);					\
-})
-
-#    define p_atomic_int_or(atomic, val)								\
-({													\
-	(puint) __atomic_fetch_or ((atomic), (val), __ATOMIC_SEQ_CST);					\
-})
-
-#    define p_atomic_int_xor(atomic, val)								\
-({													\
-	(puint) __atomic_fetch_xor ((atomic), (val), __ATOMIC_SEQ_CST);					\
-})
-
-#    define p_atomic_pointer_compare_and_exchange(atomic, oldval, newval)				\
-({													\
-	ppointer tmp_pointer = oldval;									\
-	(pboolean) __atomic_compare_exchange_n ((volatile psize *) (atomic),				\
-						&tmp_pointer,						\
-						(newval),						\
-						0,							\
-						__ATOMIC_SEQ_CST, __ATOMIC_SEQ_CST);			\
-})
-
-#    define p_atomic_pointer_add(atomic, val)								\
-({													\
-	(pssize) __atomic_fetch_add ((atomic), (ppointer) (val), __ATOMIC_SEQ_CST);			\
-})
-
-#    define p_atomic_pointer_and(atomic, val)								\
-({													\
-	(psize) __atomic_fetch_and ((atomic), (ppointer) (val), __ATOMIC_SEQ_CST);			\
-})
-
-#    define p_atomic_pointer_or(atomic, val)								\
-({													\
-	(psize) __atomic_fetch_or ((atomic), (ppointer) (val), __ATOMIC_SEQ_CST);			\
-})
-
-#    define p_atomic_pointer_xor(atomic, val)								\
-({													\
-	(psize) __atomic_fetch_xor ((atomic), (ppointer) (val), __ATOMIC_SEQ_CST);			\
-})
-
-#  else /* PLIB_ATOMIC_ALLOW_CXX11 && __ATOMIC_SEQ_CST */
-
-#    define p_atomic_int_get(atomic)						\
-({										\
-	__sync_synchronize ();							\
-	(pint) *(atomic);							\
-})
-
-#    define p_atomic_int_set(atomic, newval)					\
-({										\
-	*(atomic) = (newval);							\
-	__sync_synchronize ();							\
-})
-
-#    define p_atomic_pointer_get(atomic)					\
-({										\
-	__sync_synchronize ();							\
-	(ppointer) *(atomic);							\
-})
-
-#    define p_atomic_pointer_set(atomic, newval)				\
-({										\
-	*(atomic) = (__typeof__ (*(atomic))) (psize) (newval);			\
-	__sync_synchronize ();							\
-})
-
-#    define p_atomic_int_inc(atomic)						\
-({										\
-	(void) __sync_fetch_and_add ((atomic), 1);				\
-})
-
-#    define p_atomic_int_dec_and_test(atomic)					\
-({										\
-	__sync_fetch_and_sub ((atomic), 1) == 1;				\
-})
-
-#    define p_atomic_int_compare_and_exchange(atomic, oldval, newval)		\
-({										\
-	(pboolean) __sync_bool_compare_and_swap ((atomic), (oldval), (newval));	\
-})
-
-#    define p_atomic_int_add(atomic, val)					\
-({										\
-	(pint) __sync_fetch_and_add ((atomic), (val));				\
-})
-
-#    define p_atomic_int_and(atomic, val)					\
-({										\
-	(puint) __sync_fetch_and_and ((atomic), (val));				\
-})
-
-#    define p_atomic_int_or(atomic, val)					\
-({										\
-	(puint) __sync_fetch_and_or ((atomic), (val));				\
-})
-
-#    define p_atomic_int_xor(atomic, val)					\
-({										\
-	(puint) __sync_fetch_and_xor ((atomic), (val));				\
-})
-
-#    define p_atomic_pointer_compare_and_exchange(atomic, oldval, newval)	\
-({										\
-	(pboolean) __sync_bool_compare_and_swap ((atomic), (oldval), (newval));	\
-})
-
-#    define p_atomic_pointer_add(atomic, val)					\
-({										\
-	(pssize) __sync_fetch_and_add ((atomic), (ppointer) (val));		\
-})
-
-#    define p_atomic_pointer_and(atomic, val)					\
-({										\
-	(psize) __sync_fetch_and_and ((atomic), (ppointer) (val));		\
-})
-
-#    define p_atomic_pointer_or(atomic, val)					\
-({										\
-	(psize) __sync_fetch_and_or ((atomic), (ppointer) (val));		\
-})
-
-#    define p_atomic_pointer_xor(atomic, val)					\
-({										\
-	(psize) __sync_fetch_and_xor ((atomic), (ppointer) (val));		\
-})
-#  endif /* PLIB_ATOMIC_ALLOW_CXX11 && __ATOMIC_SEQ_CST */
-
-#else /* PLIB_ATOMIC_LOCK_FREE */
-
-#  define p_atomic_int_get(atomic)					\
-	(p_atomic_int_get ((pint *) (atomic)))
-#  define p_atomic_int_set(atomic, newval)				\
-	(p_atomic_int_set ((pint *) (atomic), (pint) (newval)))
-#  define p_atomic_int_compare_and_exchange(atomic, oldval, newval)	\
-	(p_atomic_int_compare_and_exchange ((pint *) (atomic), (oldval), (newval)))
-#  define p_atomic_int_add(atomic, val)					\
-	(p_atomic_int_add ((pint *) (atomic), (val)))
-#  define p_atomic_int_and(atomic, val)					\
-	(p_atomic_int_and ((puint *) (atomic), (val)))
-#  define p_atomic_int_or(atomic, val)					\
-	(p_atomic_int_or ((puint *) (atomic), (val)))
-#  define p_atomic_int_xor(atomic, val)					\
-	(p_atomic_int_xor ((puint *) (atomic), (val)))
-#  define p_atomic_int_inc(atomic)					\
-	(p_atomic_int_inc ((pint *) (atomic)))
-#  define p_atomic_int_dec_and_test(atomic)				\
-	(p_atomic_int_dec_and_test ((pint *) (atomic)))
-
-#  define p_atomic_pointer_get(atomic)					\
-	(p_atomic_pointer_get (atomic))
-#  define p_atomic_pointer_set(atomic, newval)				\
-	(p_atomic_pointer_set ((atomic), (ppointer) (newval)))
-#  define p_atomic_pointer_compare_and_exchange(atomic, oldval, newval)	\
-	(p_atomic_pointer_compare_and_exchange ((atomic), (ppointer) (oldval), (ppointer) (newval)))
-#  define p_atomic_pointer_add(atomic, val)				\
-	(p_atomic_pointer_add ((atomic), (pssize) (val)))
-#  define p_atomic_pointer_and(atomic, val)				\
-	(p_atomic_pointer_and ((atomic), (psize) (val)))
-#  define p_atomic_pointer_or(atomic, val)				\
-	(p_atomic_pointer_or ((atomic), (psize) (val)))
-#  define p_atomic_pointer_xor(atomic, val)				\
-	(p_atomic_pointer_xor ((atomic), (psize) (val)))
-
-#endif /* PLIB_ATOMIC_LOCK_FREE */
-
-#endif /* !DOXYGEN_SHOULD_SKIP_THIS */
+/**
+ * @brief Checks whether atomic operations are lock-free.
+ * @return TRUE in case of success, FALSE otherwise.
+ * @since 0.0.1
+ *
+ * Some underlying atomic model implementations may not support lock-free
+ * operations depending on hardware or software.
+ */
+P_LIB_API pboolean	p_atomic_is_lock_free			(void);
 
 P_END_DECLS
 

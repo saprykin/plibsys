@@ -6,7 +6,6 @@
 #cmakedefine PLIB_NEED_LIMITS_H
 #cmakedefine PLIB_NEED_VALUES_H
 #cmakedefine PLIB_IS_BIGENDIAN
-#cmakedefine PLIB_ATOMIC_LOCK_FREE
 
 #ifdef PLIB_NEED_WINDOWS_H
 #include <winsock2.h>
