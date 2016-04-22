@@ -94,7 +94,7 @@ p_atomic_pointer_set (volatile void	*atomic,
 {
 	volatile psize *cur_val = (volatile psize *) atomic;
 
-	*cur_val = *((psize *) val);
+	*cur_val = (psize) val;
 	__sync_synchronize ();
 }
 
