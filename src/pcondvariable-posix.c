@@ -1,4 +1,4 @@
-/* 
+/*
  * Copyright (C) 2010-2013 Alexander Saprykin <xelfium@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -52,7 +52,7 @@ p_cond_variable_free (PCondVariable *cond)
 {
 	if (cond == NULL)
 		return;
-	
+
 	if (pthread_cond_destroy (&cond->hdl) != 0)
 		P_WARNING ("PCondVariable: failed to destroy handler");
 
@@ -65,7 +65,7 @@ p_cond_variable_wait (PCondVariable	*cond,
 {
 	if (cond == NULL || mutex == NULL)
 		return FALSE;
-	
+
 	/* Cast is eligible since there is only one filed in PMutex structure */
 	if (pthread_cond_wait (&cond->hdl, (pthread_mutex_t *) mutex) != 0) {
 		P_ERROR ("PCondVariable: failed to wait");
