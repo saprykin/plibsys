@@ -36,7 +36,79 @@
 #define PDIR_TEST_DIR_IN	"."P_DIR_SEPARATOR"pdir_test_dir"P_DIR_SEPARATOR"test_2"
 #define PDIR_TEST_FILE		"."P_DIR_SEPARATOR"pdir_test_dir"P_DIR_SEPARATOR"test_file.txt"
 
+extern "C" ppointer pmem_alloc (psize nbytes)
+{
+	P_UNUSED (nbytes);
+	return (ppointer) NULL;
+}
+
+extern "C" ppointer pmem_realloc (ppointer block, psize nbytes)
+{
+	P_UNUSED (block);
+	P_UNUSED (nbytes);
+	return (ppointer) NULL;
+}
+
+extern "C" void pmem_free (ppointer block)
+{
+	P_UNUSED (block);
+}
+
 BOOST_AUTO_TEST_SUITE (BOOST_TEST_MODULE)
+
+BOOST_AUTO_TEST_CASE (pdir_nomem_test)
+{
+	p_lib_init ();
+
+	PMemVTable vtable;
+
+	vtable.free	= pmem_free;
+	vtable.malloc	= pmem_alloc;
+	vtable.realloc	= pmem_realloc;
+
+	BOOST_CHECK (p_mem_set_vtable (&vtable) == TRUE);
+
+	/* Cleanup previous run */
+	p_dir_remove (PDIR_TEST_DIR, NULL);
+
+	BOOST_REQUIRE (p_dir_create (PDIR_TEST_DIR, 0777, NULL) == TRUE);
+	BOOST_REQUIRE (p_dir_create (PDIR_TEST_DIR_IN, 0777, NULL) == TRUE);
+
+	BOOST_CHECK (p_dir_new (PDIR_TEST_DIR"/", NULL) == NULL);
+
+	/* Revert memory management back */
+	vtable.malloc	= (ppointer (*)(psize)) malloc;
+	vtable.realloc	= (ppointer (*)(ppointer, psize)) realloc;
+	vtable.free	= (void (*)(ppointer)) free;
+
+	BOOST_CHECK (p_mem_set_vtable (&vtable) == TRUE);
+
+	/* Try out of memory when iterating */
+	PDir *dir = p_dir_new (PDIR_TEST_DIR"/", NULL);
+	BOOST_CHECK (dir != NULL);
+
+	vtable.free	= pmem_free;
+	vtable.malloc	= pmem_alloc;
+	vtable.realloc	= pmem_realloc;
+
+	BOOST_CHECK (p_mem_set_vtable (&vtable) == TRUE);
+
+	BOOST_CHECK (p_dir_get_next_entry (dir, NULL) == NULL);
+
+	/* Cleanup */
+	vtable.malloc	= (ppointer (*)(psize)) malloc;
+	vtable.realloc	= (ppointer (*)(ppointer, psize)) realloc;
+	vtable.free	= (void (*)(ppointer)) free;
+
+	BOOST_CHECK (p_mem_set_vtable (&vtable) == TRUE);
+
+	p_dir_free (dir);
+
+	BOOST_CHECK (p_dir_remove (PDIR_TEST_DIR_IN, NULL) == TRUE);
+	BOOST_CHECK (p_dir_remove (PDIR_TEST_DIR, NULL) == TRUE);
+
+	p_lib_shutdown ();
+}
 
 BOOST_AUTO_TEST_CASE (pdir_general_test)
 {
