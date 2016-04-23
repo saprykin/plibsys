@@ -122,6 +122,8 @@ p_mem_set_vtable (PMemVTable *table)
 	p_mem_table.realloc	= table->realloc;
 	p_mem_table.free	= table->free;
 
+	p_mem_table_inited = TRUE;
+
 	return TRUE;
 }
 
