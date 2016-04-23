@@ -97,7 +97,7 @@ P_LIB_API void		p_free			(ppointer	mem);
  * @return TRUE if table was accepted, FALSE otherwise.
  * @note All members of @a table must be non-NULL.
  * @warning Do not forget to set default memory management functions
- * before calling p_lib_shutdown() because p_lib_init() always use
+ * before calling p_lib_shutdown() because p_lib_init() always uses
  * system allocator.
  * @since 0.0.1
  *
