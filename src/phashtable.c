@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2015 Alexander Saprykin <xelfium@gmail.com>
+ * Copyright (C) 2010-2016 Alexander Saprykin <xelfium@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,9 +46,6 @@ static PHashTableNode * __p_hash_table_find_node (const PHashTable *table, pcons
 static puint
 __p_hash_table_calc_hash (pconstpointer pointer, psize modulo)
 {
-	if (modulo == 0)
-		return 0;
-
 	/* As simple as we can :) */
 	return (puint) ((P_POINTER_TO_INT (pointer) + 37) % modulo);
 }
@@ -58,9 +55,6 @@ __p_hash_table_find_node (const PHashTable *table, pconstpointer key)
 {
 	puint		hash;
 	PHashTableNode	*ret;
-
-	if (table == NULL)
-		return NULL;
 
 	hash = __p_hash_table_calc_hash (key, table->size);
 
@@ -205,14 +199,13 @@ p_hash_table_remove (PHashTable *table, pconstpointer key)
 					prev_node->next = node->next;
 
 				p_free (node);
-				return;
+				break;
 			} else {
 				prev_node = node;
 				node = node->next;
 			}
 		}
-	} else
-		return;
+	}
 }
 
 P_LIB_API PList *
