@@ -33,6 +33,26 @@
 #  include <boost/test/unit_test.hpp>
 #endif
 
+#define PHASHTABLE_STRESS_COUNT	10000
+
+extern "C" ppointer pmem_alloc (psize nbytes)
+{
+	P_UNUSED (nbytes);
+	return (ppointer) NULL;
+}
+
+extern "C" ppointer pmem_realloc (ppointer block, psize nbytes)
+{
+	P_UNUSED (block);
+	P_UNUSED (nbytes);
+	return (ppointer) NULL;
+}
+
+extern "C" void pmem_free (ppointer block)
+{
+	P_UNUSED (block);
+}
+
 static int test_hash_table_values (pconstpointer a, pconstpointer b)
 {
 	return a > b ? 0 : (a < b ? -1 : 1);
@@ -40,7 +60,36 @@ static int test_hash_table_values (pconstpointer a, pconstpointer b)
 
 BOOST_AUTO_TEST_SUITE (BOOST_TEST_MODULE)
 
-#define PHASHTABLE_STRESS_COUNT	10000
+BOOST_AUTO_TEST_CASE (phashtable_nomem_test)
+{
+	p_lib_init ();
+
+	PHashTable *table = p_hash_table_new ();
+	BOOST_CHECK (table != NULL);
+
+	PMemVTable vtable;
+
+	vtable.free	= pmem_free;
+	vtable.malloc	= pmem_alloc;
+	vtable.realloc	= pmem_realloc;
+
+	BOOST_CHECK (p_mem_set_vtable (&vtable) == TRUE);
+
+	BOOST_CHECK (p_hash_table_new () == NULL);
+	p_hash_table_insert (table, PINT_TO_POINTER (1), PINT_TO_POINTER (10));
+	BOOST_CHECK (p_hash_table_keys (table) == NULL);
+	BOOST_CHECK (p_hash_table_values (table) == NULL);
+
+	vtable.malloc	= (ppointer (*)(psize)) malloc;
+	vtable.realloc	= (ppointer (*)(ppointer, psize)) realloc;
+	vtable.free	= (void (*)(ppointer)) free;
+
+	BOOST_CHECK (p_mem_set_vtable (&vtable) == TRUE);
+
+	p_hash_table_free (table);
+
+	p_lib_shutdown ();
+}
 
 BOOST_AUTO_TEST_CASE (phashtable_invalid_test)
 {
