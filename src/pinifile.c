@@ -194,9 +194,9 @@ p_ini_file_parse (PIniFile	*file,
 		return FALSE;
 	}
 
-	dst_line	= NULL;
-	section		= NULL;
-	param		= NULL;
+	dst_line = NULL;
+	section  = NULL;
+	param    = NULL;
 
 	memset (src_line, 0, sizeof (src_line));
 
