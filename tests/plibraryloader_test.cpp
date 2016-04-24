@@ -24,13 +24,69 @@
 
 #include "plib.h"
 
+#include <stdio.h>
+
 #ifdef PLIB_TESTS_STATIC
 #  include <boost/test/included/unit_test.hpp>
 #else
 #  include <boost/test/unit_test.hpp>
 #endif
 
+extern "C" ppointer pmem_alloc (psize nbytes)
+{
+	P_UNUSED (nbytes);
+	return (ppointer) NULL;
+}
+
+extern "C" ppointer pmem_realloc (ppointer block, psize nbytes)
+{
+	P_UNUSED (block);
+	P_UNUSED (nbytes);
+	return (ppointer) NULL;
+}
+
+extern "C" void pmem_free (ppointer block)
+{
+	P_UNUSED (block);
+}
+
 BOOST_AUTO_TEST_SUITE (BOOST_TEST_MODULE)
+
+BOOST_AUTO_TEST_CASE (plibraryloader_nomem_test)
+{
+	p_lib_init ();
+
+	/* We assume that 2nd argument is a PLib library path */
+	BOOST_REQUIRE (boost::unit_test::framework::master_test_suite().argc == 2);
+
+	/* Cleanup from previous run */
+	p_file_remove ("." P_DIR_SEPARATOR "p_empty_file.txt", NULL);
+
+	FILE *file = fopen ("." P_DIR_SEPARATOR "p_empty_file.txt", "w");
+	BOOST_CHECK (file != NULL);
+	BOOST_CHECK (fclose (file) == 0);
+
+	PMemVTable vtable;
+
+	vtable.free	= pmem_free;
+	vtable.malloc	= pmem_alloc;
+	vtable.realloc	= pmem_realloc;
+
+	BOOST_CHECK (p_mem_set_vtable (&vtable) == TRUE);
+
+	BOOST_CHECK (p_library_loader_new ("." P_DIR_SEPARATOR "p_empty_file.txt") == NULL);
+	BOOST_CHECK (p_library_loader_new (boost::unit_test::framework::master_test_suite().argv[1]) == NULL);
+
+	vtable.malloc	= (ppointer (*)(psize)) malloc;
+	vtable.realloc	= (ppointer (*)(ppointer, psize)) realloc;
+	vtable.free	= (void (*)(ppointer)) free;
+
+	BOOST_CHECK (p_mem_set_vtable (&vtable) == TRUE);
+
+	BOOST_CHECK (p_file_remove ("." P_DIR_SEPARATOR "p_empty_file.txt", NULL) == TRUE);
+
+	p_lib_shutdown ();
+}
 
 BOOST_AUTO_TEST_CASE (plibraryloader_general_test)
 {
