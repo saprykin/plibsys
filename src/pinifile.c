@@ -57,9 +57,6 @@ __p_ini_parameter_new (const pchar	*name,
 {
 	PIniParameter *ret;
 
-	if (name == NULL || val == NULL)
-		return NULL;
-
 	if ((ret = p_malloc0 (sizeof (PIniParameter))) == NULL)
 		return NULL;
 
@@ -80,9 +77,6 @@ __p_ini_parameter_new (const pchar	*name,
 static void
 __p_ini_parameter_free (PIniParameter *param)
 {
-	if (param == NULL)
-		return;
-
 	p_free (param->name);
 	p_free (param->value);
 	p_free (param);
@@ -92,9 +86,6 @@ static PIniSection *
 __p_ini_section_new (const pchar *name)
 {
 	PIniSection *ret;
-
-	if (name == NULL)
-		return NULL;
 
 	if ((ret = p_malloc0 (sizeof (PIniSection))) == NULL)
 		return NULL;
@@ -110,9 +101,6 @@ __p_ini_section_new (const pchar *name)
 static void
 __p_ini_section_free (PIniSection *section)
 {
-	if (section == NULL)
-		return;
-
 	p_list_foreach (section->keys, (PFunc) __p_ini_parameter_free, NULL);
 	p_list_free (section->keys);
 	p_free (section->name);
