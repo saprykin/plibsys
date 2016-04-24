@@ -116,9 +116,6 @@ __p_shm_create_handle (PShm	*shm,
 static void
 __p_shm_clean_handle (PShm *shm)
 {
-	if (shm == NULL)
-		return;
-
 	if (shm->addr && !UnmapViewOfFile ((char *) shm->addr))
 		P_ERROR ("PShm: UnmapViewOfFile() failed");
 

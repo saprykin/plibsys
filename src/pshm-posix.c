@@ -140,9 +140,6 @@ __p_shm_create_handle (PShm	*shm,
 static void
 __p_shm_clean_handle (PShm *shm)
 {
-	if (shm == NULL)
-		return;
-
 	if (shm->addr != NULL && munmap (shm->addr, shm->size) == -1)
 		P_ERROR ("PShm: failed to unmap shared memory with munmap()");
 

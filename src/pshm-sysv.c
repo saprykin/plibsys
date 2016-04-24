@@ -144,9 +144,6 @@ __p_shm_clean_handle (PShm *shm)
 {
 	struct shmid_ds shm_stat;
 
-	if (shm == NULL)
-		return;
-
 	if (shm->addr != NULL) {
 		if (shmdt (shm->addr) == -1)
 			P_ERROR ("PShm: shmdt() failed");
