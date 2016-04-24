@@ -38,7 +38,25 @@
 #define PINIFILE_STRESS_LINE	2048
 #define PINIFILE_MAX_LINE	1024
 
-static bool create_test_ini_file ()
+extern "C" ppointer pmem_alloc (psize nbytes)
+{
+	P_UNUSED (nbytes);
+	return (ppointer) NULL;
+}
+
+extern "C" ppointer pmem_realloc (ppointer block, psize nbytes)
+{
+	P_UNUSED (block);
+	P_UNUSED (nbytes);
+	return (ppointer) NULL;
+}
+
+extern "C" void pmem_free (ppointer block)
+{
+	P_UNUSED (block);
+}
+
+static bool create_test_ini_file (bool last_empty_section)
 {
 	FILE *file = fopen ("." P_DIR_SEPARATOR "p_ini_test_file.ini", "w");
 
@@ -90,7 +108,8 @@ static bool create_test_ini_file ()
 	fprintf (file, "list_parameter_3 = {true FALSE 1} #Last list\n");
 
 	/* Empty section */
-	fprintf (file, "[empty_section]\n");
+	if (last_empty_section)
+		fprintf (file, "[empty_section_2]\n");
 
 	p_free (buf);
 
@@ -98,6 +117,52 @@ static bool create_test_ini_file ()
 }
 
 BOOST_AUTO_TEST_SUITE (BOOST_TEST_MODULE)
+
+BOOST_AUTO_TEST_CASE (pinifile_nomem_test)
+{
+	p_lib_init ();
+
+	BOOST_REQUIRE (create_test_ini_file (false));
+
+	PIniFile *ini = p_ini_file_new  ("." P_DIR_SEPARATOR "p_ini_test_file.ini");
+	BOOST_CHECK (ini != NULL);
+
+	PMemVTable vtable;
+
+	vtable.free	= pmem_free;
+	vtable.malloc	= pmem_alloc;
+	vtable.realloc	= pmem_realloc;
+
+	BOOST_CHECK (p_mem_set_vtable (&vtable) == TRUE);
+
+	BOOST_CHECK (p_ini_file_new ("." P_DIR_SEPARATOR "p_ini_test_file.ini") == NULL);
+	BOOST_CHECK (p_ini_file_parse (ini, NULL) == TRUE);
+	BOOST_CHECK (p_ini_file_sections (ini) == NULL);
+
+	vtable.malloc	= (ppointer (*)(psize)) malloc;
+	vtable.realloc	= (ppointer (*)(ppointer, psize)) realloc;
+	vtable.free	= (void (*)(ppointer)) free;
+
+	BOOST_CHECK (p_mem_set_vtable (&vtable) == TRUE);
+
+	p_ini_file_free (ini);
+
+	ini = p_ini_file_new ("." P_DIR_SEPARATOR "p_ini_test_file.ini");
+	BOOST_CHECK (ini != NULL);
+
+	BOOST_CHECK (p_ini_file_parse (ini, NULL) == TRUE);
+	PList *section_list = p_ini_file_sections (ini);
+	BOOST_CHECK (section_list != NULL);
+	BOOST_CHECK (p_list_length (section_list) == 4);
+
+	p_list_foreach (section_list, (PFunc) p_free, NULL);
+	p_list_free (section_list);
+	p_ini_file_free (ini);
+
+	BOOST_CHECK (p_file_remove ("." P_DIR_SEPARATOR "p_ini_test_file.ini", NULL) == TRUE);
+
+	p_lib_shutdown ();
+}
 
 BOOST_AUTO_TEST_CASE (pinifile_bad_input_test)
 {
@@ -123,7 +188,7 @@ BOOST_AUTO_TEST_CASE (pinifile_bad_input_test)
 	BOOST_CHECK (p_ini_file_parse (ini, NULL) == FALSE);
 	p_ini_file_free (ini);
 
-	BOOST_REQUIRE (create_test_ini_file ());
+	BOOST_REQUIRE (create_test_ini_file (true));
 
 	p_lib_shutdown ();
 }
@@ -163,8 +228,10 @@ BOOST_AUTO_TEST_CASE (pinifile_read_test)
 	BOOST_CHECK (p_ini_file_parameter_int (ini, "numeric_section", "int_parameter_1", -1) == 4);
 	BOOST_CHECK (p_ini_file_parameter_int (ini, "numeric_section", "int_parameter_2", -1) == 5);
 	BOOST_CHECK (p_ini_file_parameter_int (ini, "numeric_section", "int_parameter_3", -1) == 6);
+	BOOST_CHECK (p_ini_file_parameter_int (ini, "numeric_section", "int_parameter_def", 10) == 10);
 	BOOST_CHECK_CLOSE (p_ini_file_parameter_double (ini, "numeric_section", "float_parameter_1", -1.0), 3.24, 0.0001);
 	BOOST_CHECK_CLOSE (p_ini_file_parameter_double (ini, "numeric_section", "float_parameter_2", -1.0), 0.15, 0.0001);
+	BOOST_CHECK_CLOSE (p_ini_file_parameter_double (ini, "numeric_section_no", "float_parameter_def", 10.0), 10.0, 0.0001);
 	BOOST_CHECK (p_ini_file_is_key_exists (ini, "numeric_section", "int_parameter_1") == TRUE);
 	BOOST_CHECK (p_ini_file_is_key_exists (ini, "numeric_section", "float_parameter_1") == TRUE);
 	BOOST_CHECK (p_ini_file_is_key_exists (ini, "numeric_section_false", "float_parameter_1") == FALSE);
@@ -214,6 +281,11 @@ BOOST_AUTO_TEST_CASE (pinifile_read_test)
 	BOOST_CHECK (strcmp (str, "") == 0);
 	p_free (str);
 
+	str = p_ini_file_parameter_string (ini, "string_section", "string_parameter_def", "default_value");
+	BOOST_REQUIRE (str != NULL);
+	BOOST_CHECK (strcmp (str, "default_value") == 0);
+	p_free (str);
+
 	/* Test boolean section */
 	list = p_ini_file_keys (ini, "boolean_section");
 	BOOST_CHECK (p_list_length (list) == 4);
@@ -224,6 +296,7 @@ BOOST_AUTO_TEST_CASE (pinifile_read_test)
 	BOOST_CHECK (p_ini_file_parameter_boolean (ini, "boolean_section", "boolean_parameter_2", TRUE) == FALSE);
 	BOOST_CHECK (p_ini_file_parameter_boolean (ini, "boolean_section", "boolean_parameter_3", TRUE) == FALSE);
 	BOOST_CHECK (p_ini_file_parameter_boolean (ini, "boolean_section", "boolean_parameter_4", FALSE) == TRUE);
+	BOOST_CHECK (p_ini_file_parameter_boolean (ini, "boolean_section", "boolean_section_def", TRUE) == TRUE);
 
 	/* Test list section */
 	list = p_ini_file_keys (ini, "list_section");
@@ -270,9 +343,12 @@ BOOST_AUTO_TEST_CASE (pinifile_read_test)
 	p_list_foreach (list_val, (PFunc) p_free, NULL);
 	p_list_free (list_val);
 
+	/* -- False list parameter */
+	BOOST_CHECK (p_ini_file_parameter_list (ini, "list_section_no", "list_parameter_def") == NULL);
+
 	p_ini_file_free (ini);
 
-	BOOST_CHECK (p_file_remove ("." P_DIR_SEPARATOR "p_ini_test_file.ini", NULL));
+	BOOST_CHECK (p_file_remove ("." P_DIR_SEPARATOR "p_ini_test_file.ini", NULL) == TRUE);
 
 	p_lib_shutdown ();
 }
