@@ -43,9 +43,6 @@ static void __p_library_loader_clean_handle (plibrary_handle handle);
 static void
 __p_library_loader_clean_handle (plibrary_handle handle)
 {
-	if (handle == NULL)
-		return;
-
 #ifdef P_OS_WIN
 	if (!FreeLibrary (handle))
 		P_ERROR ("PLibraryLoader: failed to call FreeLibrary()");
