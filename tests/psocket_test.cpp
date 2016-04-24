@@ -42,6 +42,24 @@ typedef struct _SocketTestData {
 	pboolean	shutdown_channel;
 } SocketTestData;
 
+extern "C" ppointer pmem_alloc (psize nbytes)
+{
+	P_UNUSED (nbytes);
+	return (ppointer) NULL;
+}
+
+extern "C" ppointer pmem_realloc (ppointer block, psize nbytes)
+{
+	P_UNUSED (block);
+	P_UNUSED (nbytes);
+	return (ppointer) NULL;
+}
+
+extern "C" void pmem_free (ppointer block)
+{
+	P_UNUSED (block);
+}
+
 static void clean_error (PError **error)
 {
 	if (error == NULL || *error == NULL)
@@ -541,6 +559,58 @@ static void * tcp_socket_receiver_thread (void *arg)
 }
 
 BOOST_AUTO_TEST_SUITE (BOOST_TEST_MODULE)
+
+BOOST_AUTO_TEST_CASE (psocket_nomem_test)
+{
+	p_lib_init ();
+
+	PSocket *socket = p_socket_new (P_SOCKET_FAMILY_INET,
+					P_SOCKET_TYPE_DATAGRAM,
+					P_SOCKET_PROTOCOL_UDP,
+					NULL);
+	BOOST_CHECK (socket != NULL);
+
+	PSocketAddress *sock_addr = p_socket_address_new ("127.0.0.1", 32211);
+
+	BOOST_CHECK (sock_addr != NULL);
+	BOOST_CHECK (p_socket_bind (socket, sock_addr, TRUE, NULL) == TRUE);
+
+	p_socket_address_free (sock_addr);
+
+	p_socket_set_timeout (socket, 1000);
+	sock_addr = p_socket_address_new ("127.0.0.1", 32215);
+	BOOST_CHECK (sock_addr != NULL);
+	BOOST_CHECK (p_socket_connect (socket, sock_addr, NULL) == TRUE);
+
+	p_socket_address_free (sock_addr);
+
+	PMemVTable vtable;
+
+	vtable.free	= pmem_free;
+	vtable.malloc	= pmem_alloc;
+	vtable.realloc	= pmem_realloc;
+
+	BOOST_CHECK (p_mem_set_vtable (&vtable) == TRUE);
+
+	BOOST_CHECK (p_socket_new (P_SOCKET_FAMILY_INET,
+				   P_SOCKET_TYPE_DATAGRAM,
+				   P_SOCKET_PROTOCOL_UDP,
+				   NULL) == NULL);
+	BOOST_CHECK (p_socket_new_from_fd (p_socket_get_fd (socket), NULL) == NULL);
+	BOOST_CHECK (p_socket_get_local_address (socket, NULL) == NULL);
+	BOOST_CHECK (p_socket_get_remote_address (socket, NULL) == NULL);
+
+	vtable.malloc	= (ppointer (*)(psize)) malloc;
+	vtable.realloc	= (ppointer (*)(ppointer, psize)) realloc;
+	vtable.free	= (void (*)(ppointer)) free;
+
+	BOOST_CHECK (p_mem_set_vtable (&vtable) == TRUE);
+
+	p_socket_close (socket, NULL);
+	p_socket_free (socket);
+
+	p_lib_shutdown ();
+}
 
 BOOST_AUTO_TEST_CASE (psocket_bad_input_test)
 {
