@@ -65,7 +65,48 @@ static void * shm_test_thread (void *arg)
 }
 #endif /* !P_OS_MSYS */
 
+extern "C" ppointer pmem_alloc (psize nbytes)
+{
+	P_UNUSED (nbytes);
+	return (ppointer) NULL;
+}
+
+extern "C" ppointer pmem_realloc (ppointer block, psize nbytes)
+{
+	P_UNUSED (block);
+	P_UNUSED (nbytes);
+	return (ppointer) NULL;
+}
+
+extern "C" void pmem_free (ppointer block)
+{
+	P_UNUSED (block);
+}
+
 BOOST_AUTO_TEST_SUITE (BOOST_TEST_MODULE)
+
+BOOST_AUTO_TEST_CASE (pshm_nomem_test)
+{
+	p_lib_init ();
+
+	PMemVTable vtable;
+
+	vtable.free	= pmem_free;
+	vtable.malloc	= pmem_alloc;
+	vtable.realloc	= pmem_realloc;
+
+	BOOST_CHECK (p_mem_set_vtable (&vtable) == TRUE);
+
+	BOOST_CHECK (p_shm_new ("p_shm_test_memory_block", 1024, P_SHM_ACCESS_READWRITE, NULL) == NULL);
+
+	vtable.malloc	= (ppointer (*)(psize)) malloc;
+	vtable.realloc	= (ppointer (*)(ppointer, psize)) realloc;
+	vtable.free	= (void (*)(ppointer)) free;
+
+	BOOST_CHECK (p_mem_set_vtable (&vtable) == TRUE);
+
+	p_lib_shutdown ();
+}
 
 BOOST_AUTO_TEST_CASE (pshm_invalid_test)
 {
