@@ -129,9 +129,6 @@ __p_semaphore_create_handle (PSemaphore *sem, PError **error)
 static void
 __p_semaphore_clean_handle (PSemaphore *sem)
 {
-	if (sem == NULL)
-		return;
-
 	if (sem->sem_hdl != P_SEM_INVALID_HDL && sem->sem_created && semctl (sem->sem_hdl, 0, IPC_RMID) == -1)
 		P_ERROR ("PSemaphore: failed to perform IPC_RMID");
 

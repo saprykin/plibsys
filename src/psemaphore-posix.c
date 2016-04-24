@@ -98,9 +98,6 @@ __p_semaphore_create_handle (PSemaphore *sem,
 static void
 __p_semaphore_clean_handle (PSemaphore *sem)
 {
-	if (sem == NULL)
-		return;
-
 	if (sem->sem_hdl != P_SEM_INVALID_HDL && sem_close (sem->sem_hdl) == -1)
 		P_ERROR ("PSemaphore: failed to perform sem_close()");
 
