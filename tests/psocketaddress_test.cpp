@@ -32,7 +32,92 @@
 #  include <boost/test/unit_test.hpp>
 #endif
 
+extern "C" ppointer pmem_alloc (psize nbytes)
+{
+	P_UNUSED (nbytes);
+	return (ppointer) NULL;
+}
+
+extern "C" ppointer pmem_realloc (ppointer block, psize nbytes)
+{
+	P_UNUSED (block);
+	P_UNUSED (nbytes);
+	return (ppointer) NULL;
+}
+
+extern "C" void pmem_free (ppointer block)
+{
+	P_UNUSED (block);
+}
+
 BOOST_AUTO_TEST_SUITE (BOOST_TEST_MODULE)
+
+BOOST_AUTO_TEST_CASE (psocketaddress_nomem_test)
+{
+	p_lib_init ();
+
+	PSocketAddress *sock_addr = p_socket_address_new ("192.168.0.1", 1058);
+	BOOST_CHECK (sock_addr != NULL);
+
+	psize native_size = p_socket_address_get_native_size (sock_addr);
+	BOOST_CHECK (native_size > 0);
+
+	ppointer addr_buf = p_malloc0 (native_size);
+	BOOST_CHECK (addr_buf != NULL);
+
+	BOOST_CHECK (p_socket_address_to_native (sock_addr, addr_buf, native_size - 1) == FALSE);
+	BOOST_CHECK (p_socket_address_to_native (sock_addr, addr_buf, native_size) == TRUE);
+	p_socket_address_free (sock_addr);
+
+#ifdef AF_INET6
+	PSocketAddress *sock_addr6 = p_socket_address_new ("2001:cdba:345f:24ab:fe45:5423:3257:9652", 1058);
+	BOOST_CHECK (sock_addr6 != NULL);
+
+	psize native_size6 = p_socket_address_get_native_size (sock_addr6);
+	BOOST_CHECK (native_size6 > 0);
+
+	ppointer addr_buf6 = p_malloc0 (native_size6);
+	BOOST_CHECK (addr_buf6 != NULL);
+
+	BOOST_CHECK (p_socket_address_to_native (sock_addr6, addr_buf6, native_size6 - 1) == FALSE);
+	BOOST_CHECK (p_socket_address_to_native (sock_addr6, addr_buf6, native_size6) == TRUE);
+	p_socket_address_free (sock_addr6);
+#endif
+
+	PMemVTable vtable;
+
+	vtable.free	= pmem_free;
+	vtable.malloc	= pmem_alloc;
+	vtable.realloc	= pmem_realloc;
+
+	BOOST_CHECK (p_mem_set_vtable (&vtable) == TRUE);
+
+	BOOST_CHECK (p_socket_address_new ("192.168.0.1", 1058) == NULL);
+	BOOST_CHECK (p_socket_address_new_any (P_SOCKET_FAMILY_INET, 1058) == NULL);
+	BOOST_CHECK (p_socket_address_new_loopback (P_SOCKET_FAMILY_INET, 1058) == NULL);
+	BOOST_CHECK (p_socket_address_new_from_native (addr_buf, native_size) == NULL);
+#ifdef AF_INET6
+	BOOST_CHECK (p_socket_address_new_from_native (addr_buf6, native_size6) == NULL);
+#endif
+
+	vtable.malloc	= (ppointer (*)(psize)) malloc;
+	vtable.realloc	= (ppointer (*)(ppointer, psize)) realloc;
+	vtable.free	= (void (*)(ppointer)) free;
+
+	BOOST_CHECK (p_mem_set_vtable (&vtable) == TRUE);
+
+	BOOST_CHECK (p_socket_address_new_from_native (addr_buf, native_size - 1) == NULL);
+#ifdef AF_INET6
+	BOOST_CHECK (p_socket_address_new_from_native (addr_buf6, native_size6 - 1) == NULL);
+#endif
+
+	p_free (addr_buf);
+#ifdef AF_INET6
+	p_free (addr_buf6);
+#endif
+
+	p_lib_shutdown ();
+}
 
 BOOST_AUTO_TEST_CASE (psocketaddress_bad_input_test)
 {
