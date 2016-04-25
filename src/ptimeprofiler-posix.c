@@ -42,9 +42,6 @@ __p_time_profiler_current_ticks (const PTimeProfiler *profiler)
 	struct timespec	ts;
 #endif
 
-	if (profiler == NULL)
-		return 0;
-
 #if _POSIX_MONOTONIC_CLOCK >= 0
 	if (profiler->hasMonotonicClock) {
 		if (clock_gettime (CLOCK_MONOTONIC, &ts) != 0) {

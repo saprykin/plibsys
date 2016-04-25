@@ -35,9 +35,6 @@ __p_time_profiler_current_ticks (const PTimeProfiler *profiler)
 {
 	LARGE_INTEGER	tcounter;
 
-	if (profiler == NULL)
-		return 0;
-
 	if (profiler->hasPerformanceCounter) {
 		if (QueryPerformanceCounter (&tcounter) == FALSE) {
 			P_ERROR ("PTimeProfiler: Failed to get current ticks count");

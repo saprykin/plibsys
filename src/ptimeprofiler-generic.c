@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Alexander Saprykin <xelfium@gmail.com>
+ * Copyright (C) 2013-2016 Alexander Saprykin <xelfium@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,9 +31,6 @@ static puint64
 __p_time_profiler_current_ticks (const PTimeProfiler *profiler)
 {
 	pint64 val;
-
-	if (profiler == NULL)
-		return 0;
 
 	if ((val = (pint64) time (NULL)) == -1) {
 		P_ERROR ("PTimeProfiler: Failed to get time using time()");
