@@ -179,9 +179,6 @@ p_socket_address_new_any (PSocketFamily	family,
 	struct in6_addr	any6_addr = IN6ADDR_ANY_INIT;
 #endif
 
-	if (family == P_SOCKET_FAMILY_UNKNOWN)
-		return NULL;
-
 	if ((ret = p_malloc0 (sizeof (PSocketAddress))) == NULL) {
 		P_ERROR ("PSocketAddress: failed to allocate memory");
 		return NULL;
@@ -190,9 +187,13 @@ p_socket_address_new_any (PSocketFamily	family,
 	if (family == P_SOCKET_FAMILY_INET)
 		memcpy (&ret->addr.sin_addr, any_addr, sizeof (any_addr));
 #ifdef AF_INET6
-	else
+	else if (family == P_SOCKET_FAMILY_INET6)
 		memcpy (&ret->addr.sin6_addr, &any6_addr.s6_addr, sizeof (any6_addr.s6_addr));
 #endif
+	else {
+		p_free (ret);
+		return NULL;
+	}
 
 	ret->family = family;
 	ret->port = port;
@@ -210,9 +211,6 @@ p_socket_address_new_loopback (PSocketFamily	family,
 	struct in6_addr	loop6_addr = IN6ADDR_LOOPBACK_INIT;
 #endif
 
-	if (family == P_SOCKET_FAMILY_UNKNOWN)
-		return NULL;
-
 	if ((ret = p_malloc0 (sizeof (PSocketAddress))) == NULL) {
 		P_ERROR ("PSocketAddress: failed to allocate memory");
 		return NULL;
@@ -221,9 +219,13 @@ p_socket_address_new_loopback (PSocketFamily	family,
 	if (family == P_SOCKET_FAMILY_INET)
 		memcpy (&ret->addr.sin_addr, loop_addr, sizeof (loop_addr));
 #ifdef AF_INET6
-	else
+	else if (family == P_SOCKET_FAMILY_INET6)
 		memcpy (&ret->addr.sin6_addr, &loop6_addr.s6_addr, sizeof (loop6_addr.s6_addr));
 #endif
+	else {
+		p_free (ret);
+		return NULL;
+	}
 
 	ret->family = family;
 	ret->port = port;
