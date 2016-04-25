@@ -43,28 +43,19 @@ __p_tree_rb_is_black (__PTreeRBNode *node)
 static pboolean
 __p_tree_rb_is_red (__PTreeRBNode *node)
 {
-	if (node == NULL)
-		return FALSE;
-
 	return ((node->color) & P_TREE_RB_COLOR_RED) > 0 ? TRUE : FALSE;
 }
 
 static __PTreeRBNode *
 __p_tree_rb_get_gparent (__PTreeRBNode *node)
 {
-	if (node == NULL || node->parent == NULL)
-		return NULL;
-	else
-		return node->parent->parent;
+	return node->parent->parent;
 }
 
 static __PTreeRBNode *
 __p_tree_rb_get_uncle (__PTreeRBNode *node)
 {
 	__PTreeRBNode *gparent = __p_tree_rb_get_gparent (node);
-
-	if (gparent == NULL)
-		return NULL;
 
 	if ((__PTreeRBNode *) gparent->base.left == node->parent)
 		return (__PTreeRBNode *) gparent->base.right;
@@ -75,9 +66,6 @@ __p_tree_rb_get_uncle (__PTreeRBNode *node)
 static __PTreeRBNode *
 __p_tree_rb_get_sibling (__PTreeRBNode *node)
 {
-	if (node == NULL || node->parent == NULL)
-		return NULL;
-
 	if (node->parent->base.left == (__PTreeBaseNode *) node)
 		return (__PTreeRBNode *) node->parent->base.right;
 	else
@@ -143,9 +131,6 @@ __p_tree_rb_balance_insert (__PTreeRBNode *node, __PTreeBaseNode **root)
 {
 	__PTreeRBNode *uncle;
 	__PTreeRBNode *gparent;
-
-	if (node == NULL || root == NULL)
-		return;
 
 	while (TRUE) {
 		/* Case 1: We are at the root  */
@@ -240,9 +225,6 @@ __p_tree_rb_insert (__PTreeBaseNode	**root_node,
 	__PTreeBaseNode	*parent_node;
 	pint		cmp_result;
 
-	if (root_node == NULL || compare_func == NULL)
-		return FALSE;
-
 	cur_node    = root_node;
 	parent_node = *root_node;
 
@@ -293,9 +275,6 @@ static void
 __p_tree_rb_balance_remove (__PTreeRBNode *node, __PTreeBaseNode **root)
 {
 	__PTreeRBNode *sibling;
-
-	if (node == NULL || root == NULL)
-		return;
 
 	while (TRUE) {
 		/* Case 1: We are at the root */
@@ -413,9 +392,6 @@ __p_tree_rb_remove (__PTreeBaseNode	**root_node,
 	__PTreeBaseNode	*child_node;
 	__PTreeRBNode	*child_parent;
 	pint		cmp_result;
-
-	if (root_node == NULL || *root_node == NULL || compare_func == NULL)
-		return FALSE;
 
 	cur_node = *root_node;
 

@@ -31,9 +31,6 @@ __p_tree_bst_insert (__PTreeBaseNode	**root_node,
 	__PTreeBaseNode	**cur_node;
 	pint		cmp_result;
 
-	if (root_node == NULL || compare_func == NULL)
-		return FALSE;
-
 	cur_node = root_node;
 
 	while (*cur_node != NULL) {
@@ -81,9 +78,6 @@ __p_tree_bst_remove (__PTreeBaseNode	**root_node,
 	__PTreeBaseNode	*prev_node;
 	__PTreeBaseNode	**node_pointer;
 	pint		cmp_result;
-
-	if (root_node == NULL || *root_node == NULL || compare_func == NULL)
-		return FALSE;
 
 	cur_node     = *root_node;
 	node_pointer = root_node;

@@ -174,9 +174,6 @@ __p_tree_avl_balance_insert (__PTreeAVLNode *node, __PTreeBaseNode **root)
 {
 	__PTreeAVLNode *parent;
 
-	if (node == NULL || root == NULL)
-		return;
-
 	while (TRUE) {
 		parent = node->parent;
 
@@ -272,9 +269,6 @@ __p_tree_avl_insert (__PTreeBaseNode	**root_node,
 	__PTreeBaseNode	*parent_node;
 	pint		cmp_result;
 
-	if (root_node == NULL || compare_func == NULL)
-		return FALSE;
-
 	cur_node    = root_node;
 	parent_node = *root_node;
 
@@ -327,9 +321,6 @@ __p_tree_avl_balance_remove (__PTreeAVLNode *node, __PTreeBaseNode **root)
 	__PTreeAVLNode	*parent;
 	__PTreeAVLNode	*sibling;
 	pint		sibling_balance;
-
-	if (node == NULL || root == NULL)
-		return;
 
 	while (TRUE) {
 		parent = node->parent;
@@ -402,9 +393,6 @@ __p_tree_avl_remove (__PTreeBaseNode	**root_node,
 	__PTreeBaseNode	*child_node;
 	__PTreeAVLNode	*child_parent;
 	pint		cmp_result;
-
-	if (root_node == NULL || *root_node == NULL || compare_func == NULL)
-		return FALSE;
 
 	cur_node = *root_node;
 
