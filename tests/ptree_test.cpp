@@ -56,6 +56,24 @@ typedef struct _TreeData {
 
 static TreeData tree_data = {0, 0, 0, 0, 0, 0, 0, 0, 0};
 
+extern "C" ppointer pmem_alloc (psize nbytes)
+{
+	P_UNUSED (nbytes);
+	return (ppointer) NULL;
+}
+
+extern "C" ppointer pmem_realloc (ppointer block, psize nbytes)
+{
+	P_UNUSED (block);
+	P_UNUSED (nbytes);
+	return (ppointer) NULL;
+}
+
+extern "C" void pmem_free (ppointer block)
+{
+	P_UNUSED (block);
+}
+
 static pint
 tree_complexity (PTree *tree)
 {
@@ -463,6 +481,38 @@ stress_tree_test (PTree *tree, int node_count)
 	p_free (values);
 
 	return true;
+}
+
+BOOST_AUTO_TEST_CASE (ptree_nomem_test)
+{
+	p_lib_init ();
+
+	PMemVTable vtable;
+
+	for (int i = (int) P_TREE_TYPE_BINARY; i <= (int) P_TREE_TYPE_AVL; ++i) {
+		PTree *tree = p_tree_new ((PTreeType) i, (PCompareFunc) compare_keys);
+		BOOST_CHECK (tree != NULL);
+
+		vtable.free	= pmem_free;
+		vtable.malloc	= pmem_alloc;
+		vtable.realloc	= pmem_realloc;
+
+		BOOST_CHECK (p_mem_set_vtable (&vtable) == TRUE);
+
+		BOOST_CHECK (p_tree_new ((PTreeType) i, (PCompareFunc) compare_keys) == NULL);
+		p_tree_insert (tree, PINT_TO_POINTER (1), PINT_TO_POINTER (10));
+		BOOST_CHECK (p_tree_get_nnodes (tree) == 0);
+
+		vtable.malloc	= (ppointer (*)(psize)) malloc;
+		vtable.realloc	= (ppointer (*)(ppointer, psize)) realloc;
+		vtable.free	= (void (*)(ppointer)) free;
+
+		BOOST_CHECK (p_mem_set_vtable (&vtable) == TRUE);
+
+		p_tree_free (tree);
+	}
+
+	p_lib_shutdown ();
 }
 
 BOOST_AUTO_TEST_CASE (ptree_invalid_test)
