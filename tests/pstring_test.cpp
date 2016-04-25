@@ -36,9 +36,50 @@
 
 #include <boost/test/floating_point_comparison.hpp>
 
+extern "C" ppointer pmem_alloc (psize nbytes)
+{
+	P_UNUSED (nbytes);
+	return (ppointer) NULL;
+}
+
+extern "C" ppointer pmem_realloc (ppointer block, psize nbytes)
+{
+	P_UNUSED (block);
+	P_UNUSED (nbytes);
+	return (ppointer) NULL;
+}
+
+extern "C" void pmem_free (ppointer block)
+{
+	P_UNUSED (block);
+}
+
 BOOST_AUTO_TEST_SUITE (BOOST_TEST_MODULE)
 
-BOOST_AUTO_TEST_CASE (strdup_test)
+BOOST_AUTO_TEST_CASE (pstring_nomem_test)
+{
+	p_lib_init ();
+
+	PMemVTable vtable;
+
+	vtable.free	= pmem_free;
+	vtable.malloc	= pmem_alloc;
+	vtable.realloc	= pmem_realloc;
+
+	BOOST_CHECK (p_mem_set_vtable (&vtable) == TRUE);
+
+	BOOST_CHECK (p_strdup ("test string") == NULL);
+
+	vtable.malloc	= (ppointer (*)(psize)) malloc;
+	vtable.realloc	= (ppointer (*)(ppointer, psize)) realloc;
+	vtable.free	= (void (*)(ppointer)) free;
+
+	BOOST_CHECK (p_mem_set_vtable (&vtable) == TRUE);
+
+	p_lib_shutdown ();
+}
+
+BOOST_AUTO_TEST_CASE (pstring_strdup_test)
 {
 	p_lib_init ();
 
@@ -51,7 +92,7 @@ BOOST_AUTO_TEST_CASE (strdup_test)
 	p_lib_shutdown ();
 }
 
-BOOST_AUTO_TEST_CASE (strchomp_test)
+BOOST_AUTO_TEST_CASE (pstring_strchomp_test)
 {
 	p_lib_init ();
 
@@ -124,7 +165,7 @@ BOOST_AUTO_TEST_CASE (strchomp_test)
 	p_lib_shutdown ();
 }
 
-BOOST_AUTO_TEST_CASE (strtok_test)
+BOOST_AUTO_TEST_CASE (pstring_strtok_test)
 {
 	p_lib_init ();
 
@@ -203,7 +244,7 @@ BOOST_AUTO_TEST_CASE (strtok_test)
 	p_lib_shutdown ();
 }
 
-BOOST_AUTO_TEST_CASE (strtod_test)
+BOOST_AUTO_TEST_CASE (pstring_strtod_test)
 {
 	p_lib_init ();
 
