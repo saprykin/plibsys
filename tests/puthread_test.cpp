@@ -35,6 +35,24 @@ static pint thread_wakes_2 = 0;
 static pint thread_to_wakes = 100;
 static volatile pboolean is_threads_working = TRUE;
 
+extern "C" ppointer pmem_alloc (psize nbytes)
+{
+	P_UNUSED (nbytes);
+	return (ppointer) NULL;
+}
+
+extern "C" ppointer pmem_realloc (ppointer block, psize nbytes)
+{
+	P_UNUSED (block);
+	P_UNUSED (nbytes);
+	return (ppointer) NULL;
+}
+
+extern "C" void pmem_free (ppointer block)
+{
+	P_UNUSED (block);
+}
+
 static void * test_thread_func (void *data)
 {
 	pint *counter =  static_cast < pint * > (data);
@@ -67,6 +85,36 @@ static void * test_thread_nonjoinable_func (void *data)
 
 BOOST_AUTO_TEST_SUITE (BOOST_TEST_MODULE)
 
+BOOST_AUTO_TEST_CASE (puthread_nomem_test)
+{
+	p_lib_init ();
+
+	PMemVTable vtable;
+
+	vtable.free	= pmem_free;
+	vtable.malloc	= pmem_alloc;
+	vtable.realloc	= pmem_realloc;
+
+	BOOST_CHECK (p_mem_set_vtable (&vtable) == TRUE);
+
+	BOOST_CHECK (p_uthread_create ((PUThreadFunc) test_thread_func,
+				       (ppointer) &thread_wakes_1,
+				       TRUE) == NULL);
+
+	BOOST_CHECK (p_uthread_create_full ((PUThreadFunc) test_thread_func,
+					    (ppointer) &thread_wakes_2,
+					    TRUE,
+					    P_UTHREAD_PRIORITY_NORMAL) == NULL);
+
+	vtable.malloc	= (ppointer (*)(psize)) malloc;
+	vtable.realloc	= (ppointer (*)(ppointer, psize)) realloc;
+	vtable.free	= (void (*)(ppointer)) free;
+
+	BOOST_CHECK (p_mem_set_vtable (&vtable) == TRUE);
+
+	p_lib_shutdown ();
+}
+
 BOOST_AUTO_TEST_CASE (puthread_bad_input_test)
 {
 	p_lib_init ();
@@ -87,8 +135,14 @@ BOOST_AUTO_TEST_CASE (puthread_general_test)
 	thread_wakes_1 = 0;
 	thread_wakes_2 = 0;
 
-	PUThread *thr1 = p_uthread_create ((PUThreadFunc) test_thread_func, (ppointer) &thread_wakes_1, TRUE);
-	PUThread *thr2 = p_uthread_create_full ((PUThreadFunc) test_thread_func, (ppointer) &thread_wakes_2, TRUE, P_UTHREAD_PRIORITY_NORMAL);
+	PUThread *thr1 = p_uthread_create ((PUThreadFunc) test_thread_func,
+					   (ppointer) &thread_wakes_1,
+					   TRUE);
+
+	PUThread *thr2 = p_uthread_create_full ((PUThreadFunc) test_thread_func,
+						(ppointer) &thread_wakes_2,
+						TRUE,
+						P_UTHREAD_PRIORITY_NORMAL);
 
 	BOOST_CHECK (p_uthread_set_priority (thr1, P_UTHREAD_PRIORITY_NORMAL) == 0);
 
@@ -111,7 +165,9 @@ BOOST_AUTO_TEST_CASE (puthread_nonjoinable_test)
 
 	thread_wakes_1 = 0;
 
-	PUThread *thr1 = p_uthread_create ((PUThreadFunc) test_thread_nonjoinable_func, (ppointer) &thread_wakes_1, FALSE);
+	PUThread *thr1 = p_uthread_create ((PUThreadFunc) test_thread_nonjoinable_func,
+					   (ppointer) &thread_wakes_1,
+					   FALSE);
 
 	BOOST_REQUIRE (thr1 != NULL);
 
