@@ -78,7 +78,7 @@ p_spinlock_unlock (PSpinLock *spinlock)
 	if (spinlock == NULL)
 		return FALSE;
 
-	__atomic_store_4 (&(spinlock->spin), val, __ATOMIC_RELEASE);
+	__atomic_store_4 (&(spinlock->spin), 0, __ATOMIC_RELEASE);
 
 	return TRUE;
 }
