@@ -23,7 +23,7 @@
  *
  * Spinlock is an inter-thread synchronization primitive based on atomic
  * operations. It allows to guard critical section from concurrent access
- * from multiple threads at once. It is very similar to mutex in semantics,
+ * of multiple threads at once. It is very similar to mutex in semantics,
  * but inside it provides more light-weight and fast locking mechanism
  * without thread sleeping and undesirable context switching. Thus spinlocks
  * should be used only for small code sections, otherwise long-time spinning
@@ -32,8 +32,7 @@
  * As spinlock is based on atomic operations it would have the real meaning
  * only if underlying atomic model is lock-free (not simulated using mutex).
  * You can check if the atomic model is lock-free with p_atomic_is_lock_free().
- * Otherwise usage of spinlocks can bring more waiting time than with mutex
- * itself.
+ * Otherwise usage of spinlocks will be same as ordinary mutex.
  *
  * To create a new spinlock primitive p_spinlock_new() routine should be
  * called, to delete unused spinlock primitive use p_spinlock_free().
@@ -42,7 +41,7 @@
  * the beginning of a critical section. Only one thread is allowed to pass
  * this call, others will wait for p_spinlock_unlock() call which marks
  * end of the critical section. This way critical section code is guarded
- * against concurrent access from the multiple threads at once.
+ * against concurrent access of the multiple threads at once.
  */
 
 #if !defined (__PLIB_H_INSIDE__) && !defined (PLIB_COMPILATION)
@@ -75,6 +74,12 @@ P_LIB_API PSpinLock *	p_spinlock_new		(void);
  *
  * Thread will not sleep in this call if another thread is holding a lock,
  * instead it will try to lock @a spinlock in infinite loop.
+ *
+ * If atomic model is not lock-free this call will have the same effect
+ * as p_mutex_lock().
+ *
+ * Do not lock spinlock recursively - this may lead to application
+ * deadlock
  */
 P_LIB_API pboolean	p_spinlock_lock		(PSpinLock *spinlock);
 
@@ -85,7 +90,12 @@ P_LIB_API pboolean	p_spinlock_lock		(PSpinLock *spinlock);
  * @since 0.0.1
  *
  * Tries to lock @a spinlock and returns immediately if it is not available for
- * locking. Do not lock spinlock recursively - this may lead to application
+ * locking.
+ *
+ * If atomic model is not lock-free this call will have the same effect
+ * as p_mutex_trylock().
+ *
+ * Do not lock spinlock recursively - this may lead to application
  * deadlock.
  */
 P_LIB_API pboolean	p_spinlock_trylock	(PSpinLock *spinlock);
@@ -99,6 +109,10 @@ P_LIB_API pboolean	p_spinlock_trylock	(PSpinLock *spinlock);
  * If @a spinlock was previously locked then it becomes unlocked. Any thread
  * can unlock any spinlock. It is also safe to call this routine on unlocked
  * spinlock.
+ *
+ * If atomic model is not lock-free this call will have the same effect
+ * as p_mutex_unlock(), thus it is not safe to call this routine on unlocked
+ * spinlock.
  */
 P_LIB_API pboolean	p_spinlock_unlock	(PSpinLock *spinlock);
 
@@ -109,6 +123,9 @@ P_LIB_API pboolean	p_spinlock_unlock	(PSpinLock *spinlock);
  *
  * It doesn't unlock @a spinlock before freeing memory, so you should do it
  * manually.
+ *
+ * If atomic model is not lock-free this call will have the same effect
+ * as p_mutex_free().
  */
 P_LIB_API void		p_spinlock_free		(PSpinLock *spinlock);
 
