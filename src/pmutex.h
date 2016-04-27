@@ -1,5 +1,5 @@
-/* 
- * Copyright (C) 2010-2013 Alexander Saprykin <xelfium@gmail.com>
+/*
+ * Copyright (C) 2010-2016 Alexander Saprykin <xelfium@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,8 +23,8 @@
  *
  * Mutex is a thread synchronization primitive. It's a binary semaphore in other
  * words. PLib supports different mutex implementations: System V, POSIX, Sun Solaris
- * and Windows. PLib is compiled using one of them (depend which of implementations
- * are available on target system). Because of that some non-usual actions (double-lock,
+ * and Windows. PLib is compiled using one of them (depends on which of implementations
+ * are available on a target system). Because of that some non-usual actions (double-lock,
  * unlock non-locked mutex) can lead to unpredictable behaviour. Do not rely on such
  * features when writing cross-platform applications.
  */
@@ -68,7 +68,7 @@ P_LIB_API pboolean	p_mutex_lock	(PMutex *mutex);
  * @since 0.0.1
  *
  * Tries to lock @a mutex and returns immediately if it is not available for
- * locking. Do not recursively lock mutex - this may lead to application
+ * locking. Do not lock mutex recursively - this may lead to application
  * deadlock (implementation dependent).
  */
 P_LIB_API pboolean	p_mutex_trylock	(PMutex *mutex);
@@ -79,7 +79,7 @@ P_LIB_API pboolean	p_mutex_trylock	(PMutex *mutex);
  * @return TRUE in case of success, FALSE otherwise.
  * @since 0.0.1
  *
- * If @a mutex was previousely lock then it becomes unlocked. Do not use
+ * If @a mutex was previously locked then it becomes unlocked. Do not use
  * this function on non-locked mutexes - behavior may be unpredictable.
  * It's implementation dependent whether only the same thread can lock and
  * unlock mutex.
