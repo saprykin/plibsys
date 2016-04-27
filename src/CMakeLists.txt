@@ -81,6 +81,7 @@ set (PLIB_PUBLIC_HDRS
 	pshmbuffer.h
 	psocket.h
 	psocketaddress.h
+	pspinlock.h
 	pstring.h
 	ptimeprofiler.h
 	ptree.h
@@ -117,6 +118,7 @@ set (PLIB_SRCS
 	pshmbuffer.c
 	psocket.c
 	psocketaddress.c
+	pspinlock.c
 	pstring.c
 	ptree.c
 	ptree-avl.c
