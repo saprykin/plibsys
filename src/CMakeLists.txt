@@ -118,7 +118,6 @@ set (PLIB_SRCS
 	pshmbuffer.c
 	psocket.c
 	psocketaddress.c
-	pspinlock.c
 	pstring.c
 	ptree.c
 	ptree-avl.c
@@ -257,7 +256,11 @@ if (NOT PLIB_ATOMIC_MODEL)
 	endif()
 endif()
 
-set (PLIB_SRCS "patomic-${PLIB_ATOMIC_MODEL}" ${PLIB_SRCS})
+set (PLIB_SRCS
+	patomic-${PLIB_ATOMIC_MODEL}.c
+	pspinlock-${PLIB_ATOMIC_MODEL}.c
+	${PLIB_SRCS}
+)
 
 if (EXISTS PLIB_CONFIG_FILE)
 	file (RENOVE ${PLIB_CONFIG_FILE})
