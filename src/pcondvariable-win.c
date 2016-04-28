@@ -128,7 +128,7 @@ p_cond_variable_signal (PCondVariable *cond)
 P_LIB_API pboolean
 p_cond_variable_broadcast (PCondVariable *cond)
 {
-#ifndef PLIB_HAS_VISTA_CV
+#ifndef PLIBSYS_HAS_VISTA_CV
 	pint waiters;
 #endif
 
