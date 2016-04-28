@@ -1,8 +1,8 @@
 
-[![](https://api.travis-ci.org/saprykin/plib.svg?branch=master)](https://travis-ci.org/saprykin/plib)
-[![](https://ci.appveyor.com/api/projects/status/github/saprykin/plib?branch=appveyor_test&svg=true)](https://ci.appveyor.com/project/saprykin/plib)
-[![](https://scan.coverity.com/projects/8333/badge.svg)](https://scan.coverity.com/projects/saprykin-plib)
-[![](https://codecov.io/gh/saprykin/plib/branch/master/graph/badge.svg)](https://codecov.io/gh/saprykin/plib)
+[![](https://api.travis-ci.org/saprykin/plibsys.svg?branch=master)](https://travis-ci.org/saprykin/plibsys)
+[![](https://ci.appveyor.com/api/projects/status/github/saprykin/plibsys?branch=appveyor_test&svg=true)](https://ci.appveyor.com/project/saprykin/plibsys)
+[![](https://scan.coverity.com/projects/8333/badge.svg)](https://scan.coverity.com/projects/saprykin-plibsys)
+[![](https://codecov.io/gh/saprykin/plibsys/branch/master/graph/badge.svg)](https://codecov.io/gh/saprykin/plibsys)
 [![](http://img.shields.io/:license-gpl2-blue.svg?style=flat)](http://www.gnu.org/licenses/gpl-2.0.html)
 
 ======= About PLibSYS =======
