@@ -18,8 +18,23 @@
 
 /**
  * @file pdir.h
- * @brief Filesystem directory
+ * @brief Filesystem interface
  * @author Alexander Saprykin
+ *
+ * Traditional filesystem can be presented as a combination of directories and
+ * files within a defined hierarchy. Directory contains the so called entries:
+ * files and other directories. #PDir allows to iterate through these entries
+ * without reading their content, thus building a filesystem hierarchy tree.
+ *
+ * Think of this module as an interface to the well-known `dirent` API.
+ *
+ * First you need to open a directory for iterating through its content entries
+ * using p_dir_new(). After that every next entry inside the directory can be
+ * read with p_dir_get_next_entry() call until it returns NULL (though it's
+ * better to check error code to be sure no error occurred).
+ *
+ * Also some directory manipulation routines are provided to create, remove and
+ * check existance.
  */
 
 #if !defined (__PLIB_H_INSIDE__) && !defined (PLIB_COMPILATION)
@@ -45,16 +60,16 @@ typedef enum _PDirEntryType {
 	P_DIR_ENTRY_TYPE_OTHER	= 3	/**< Other	*/
 } PDirEntryType;
 
-/** Structure with directory entry information */
+/** Structure with a directory entry information */
 typedef struct _PDirEntry {
 	char		*name;	/**< Name	*/
 	PDirEntryType	type;	/**< Type	*/
 } PDirEntry;
 
 /**
- * @brief Creates new #PDir object.
- * @param path Path to directory.
- * @return Pointer to newly created #PDir object in case of success,
+ * @brief Creates a new #PDir object.
+ * @param path Directory path.
+ * @return Pointer to a newly created #PDir object in case of success,
  * NULL otherwise.
  * @param[out] error Error report object, NULL to ignore.
  * @since 0.0.1
@@ -65,21 +80,21 @@ P_LIB_API PDir *	p_dir_new		(const pchar	*path,
 						 PError		**error);
 
 /**
- * @brief Creates directory on filesystem.
- * @param path Path to new directory.
+ * @brief Creates a new directory on filesystem.
+ * @param path Directory path.
  * @param mode Directory permissions to use, ignored on Windows.
  * @param[out] error Error report object, NULL to ignore.
  * @return TRUE in case of success, FALSE otherwise.
  * @since 0.0.1
- * @note Call returns TRUE if directory @a path is already exists.
+ * @note Call returns TRUE if the directory @a path is already exists.
  */
 P_LIB_API pboolean	p_dir_create		(const pchar	*path,
 						 pint		mode,
 						 PError		**error);
 
 /**
- * @brief Removes empty directory.
- * @param path Path to directory to remove.
+ * @brief Removes an empty directory.
+ * @param path Directory path to remove.
  * @param[out] error Error report object, NULL to ignore.
  * @return TRUE in case of success, FALSE otherwise.
  * @since 0.0.1
@@ -90,17 +105,17 @@ P_LIB_API pboolean	p_dir_remove		(const pchar	*path,
 						 PError		**error);
 
 /**
- * @brief Checks whether directory exists or not.
- * @param path Path to directory.
+ * @brief Checks whether a directory exists or not.
+ * @param path Directory path.
  * @return TRUE in case of success, FALSE otherwise.
  * @since 0.0.1
  */
 P_LIB_API pboolean	p_dir_is_exists		(const pchar	*path);
 
 /**
- * @brief Gets original directory path used to create #PDir object.
- * @param dir #PDir object to retrieve path from.
- * @return Directory path in case of success, NULL otherwise.
+ * @brief Gets the original directory path used to create a #PDir object.
+ * @param dir #PDir object to retrieve the path from.
+ * @return The directory path in case of success, NULL otherwise.
  * @since 0.0.1
  *
  * Caller takes ownership of the returned string. Use p_free()
@@ -109,14 +124,14 @@ P_LIB_API pboolean	p_dir_is_exists		(const pchar	*path);
 P_LIB_API pchar *	p_dir_get_path		(const PDir	*dir);
 
 /**
- * @brief Gets next directory entry info.
- * @param dir Directory to get next entry from.
+ * @brief Gets the next directory entry info.
+ * @param dir Directory to get the next entry from.
  * @param[out] error Error report object, NULL to ignore.
- * @return Info for next entry in case of success, NULL otherwise.
+ * @return Info for the next entry in case of success, NULL otherwise.
  * @since 0.0.1
  *
  * Caller takes ownership of the returned object. Use p_dir_entry_free()
- * to free memory of directory entry after usage.
+ * to free memory of a directory entry after usage.
  *
  * Error is set only if it is occurred. You should check @a error object
  * for #P_ERROR_IO_NO_MORE code.
@@ -125,7 +140,7 @@ P_LIB_API PDirEntry *	p_dir_get_next_entry	(PDir		*dir,
 						 PError		**error);
 
 /**
- * @brief Resets directory entry pointer.
+ * @brief Resets the directory entry pointer.
  * @param dir Directory to reset entry pointer.
  * @param[out] error Error report object, NULL to ignore.
  * @return TRUE in case of success, FALSE otherwise.
