@@ -56,7 +56,7 @@ BOOST_AUTO_TEST_CASE (plibraryloader_nomem_test)
 {
 	p_libsys_init ();
 
-	/* We assume that 2nd argument is a PLib library path */
+	/* We assume that 2nd argument is ourself library path */
 	BOOST_REQUIRE (boost::unit_test::framework::master_test_suite().argc == 2);
 
 	/* Cleanup from previous run */
@@ -96,7 +96,7 @@ BOOST_AUTO_TEST_CASE (plibraryloader_general_test)
 
 	p_libsys_init ();
 
-	/* We assume that 2nd argument is a PLib library path */
+	/* We assume that 2nd argument is ourself library path */
 	BOOST_REQUIRE (boost::unit_test::framework::master_test_suite().argc == 2);
 
 	/* Invalid usage */
@@ -132,7 +132,7 @@ BOOST_AUTO_TEST_CASE (plibraryloader_general_test)
 
 	p_library_loader_free (loader);
 
-	/* We have already loaded reference to PLib, it's OK */
+	/* We have already loaded reference to ourself library, it's OK */
 	shutdown_func ();
 }
 
