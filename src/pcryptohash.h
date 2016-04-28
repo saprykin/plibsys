@@ -125,7 +125,7 @@ P_LIB_API void			p_crypto_hash_reset		(PCryptoHash		*hash);
 P_LIB_API pchar *		p_crypto_hash_get_string	(PCryptoHash		*hash);
 
 /**
- * @brief Gets hash in raw representation.
+ * @brief Gets hash in a raw representation.
  * @param hash #PCryptoHash context to get digest from.
  * @param buf Buffer to store digest with a hash raw representation.
  * @param[in, out] len Size of @a buf when calling, count of written bytes after.

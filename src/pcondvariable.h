@@ -75,7 +75,8 @@ typedef struct _PCondVariable PCondVariable;
 
 /**
  * @brief Creates new #PCondVariable.
- * @return Pointer to newly created #PCondVariable structure, or NULL if failed.
+ * @return Pointer to a newly created #PCondVariable structure, or NULL if
+ * failed.
  * @since 0.0.1
  */
 P_LIB_API PCondVariable *	p_cond_variable_new		(void);
