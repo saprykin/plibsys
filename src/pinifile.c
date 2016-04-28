@@ -285,7 +285,9 @@ p_ini_file_parse (PIniFile	*file,
 			file->sections = p_list_append (file->sections, section);
 	}
 
-	fclose (in_file);
+	if (fclose (in_file) != 0)
+		P_WARNING ("PIniFile: Failed to close file after parsing");
+
 	file->is_parsed = TRUE;
 
 	return TRUE;
