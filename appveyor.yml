@@ -1,5 +1,5 @@
 environment:
-        COVERITY_SCAN_PROJECT_NAME:       "saprykin/plib"
+        COVERITY_SCAN_PROJECT_NAME:       "saprykin/plibsys"
         COVERITY_SCAN_NOTIFICATION_EMAIL: "xelfium@gmail.com"
         COVERITY_SCAN_TOKEN:
                 secure: 6WFXzLxAMuUovtYc+u8OoruE/V6zhK2M4mZlrszRBIA=
@@ -30,17 +30,17 @@ branches:
                 - master
                 - appveyor_test
 
-clone_folder: c:\projects\plib
+clone_folder: c:\projects\plibsys
 
 build_script:
         - ps: >-
-                $BUILD_DIR = "C:\Projects\plib-build";
+                $BUILD_DIR = "C:\Projects\plibsys-build";
 
                 New-Item -ItemType directory -Path $BUILD_DIR | Out-Null;
                 Set-Location $BUILD_DIR | Out-Null;
 
                 If ($env:APPVEYOR_REPO_BRANCH -eq "appveyor_test") {
-                        $VAR_BOOST_TESTS = "-DPLIB_TESTS_STATIC=ON";
+                        $VAR_BOOST_TESTS = "-DPLIBSYS_TESTS_STATIC=ON";
                         $VAR_BOOST_ROOT  = "-DBOOST_ROOT=C:\Libraries\boost_1_59_0";
                 }
 
@@ -57,7 +57,7 @@ build_script:
                         $BUILD_COMMAND = "mingw32-make";
                 } Else {
                         $BUILD_COMMAND = "msbuild";
-                        $BUILD_PARAMS  = @("/verbosity:normal", "$BUILD_DIR\PLib.sln", "/p:Configuration=$env:configuration");
+                        $BUILD_PARAMS  = @("/verbosity:normal", "$BUILD_DIR\PLibSYS.sln", "/p:Configuration=$env:configuration");
                 }
 
                 If ($env:USE_COVERITY -eq "1" -And $env:APPVEYOR_REPO_BRANCH -eq "appveyor_test") {
@@ -66,7 +66,7 @@ build_script:
                         $COVERITY_EXE = "$BUILD_DIR\PublishCoverity.0.11.0\tools\PublishCoverity.exe";
 
                         # Do not build tests for Coverity
-                        & cmake -G"$env:CMAKE_GENERATOR" C:\Projects\plib;
+                        & cmake -G"$env:CMAKE_GENERATOR" C:\Projects\plibsys;
 
                         & cov-build --dir "$BUILD_DIR\cov-int" $BUILD_COMMAND $BUILD_PARAMS;
 
@@ -74,7 +74,7 @@ build_script:
                         & $COVERITY_EXE publish -z "$BUILD_DIR\coverity.zip" -r $env:COVERITY_SCAN_PROJECT_NAME -t $env:COVERITY_SCAN_TOKEN -e $env:COVERITY_SCAN_NOTIFICATION_EMAIL --codeVersion $env:APPVEYOR_BUILD_VERSION;
                 }
 
-                & cmake -G"$env:CMAKE_GENERATOR" $BUILD_TYPE $VAR_BOOST_TESTS $VAR_BOOST_ROOT C:\Projects\plib;
+                & cmake -G"$env:CMAKE_GENERATOR" $BUILD_TYPE $VAR_BOOST_TESTS $VAR_BOOST_ROOT C:\Projects\plibsys;
                 & $BUILD_COMMAND $BUILD_PARAMS;
 
                 If ($env:APPVEYOR_REPO_BRANCH -eq "appveyor_test") {
