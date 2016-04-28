@@ -16,19 +16,19 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA.
  */
 
-#ifndef PLIB_TESTS_STATIC
+#ifndef PLIBSYS_TESTS_STATIC
 #  define BOOST_TEST_DYN_LINK
 #endif
 
 #define BOOST_TEST_MODULE pstring_test
 
-#include "plib.h"
+#include "plibsys.h"
 
 #include <string.h>
 #include <float.h>
 #include <math.h>
 
-#ifdef PLIB_TESTS_STATIC
+#ifdef PLIBSYS_TESTS_STATIC
 #  include <boost/test/included/unit_test.hpp>
 #else
 #  include <boost/test/unit_test.hpp>
@@ -58,7 +58,7 @@ BOOST_AUTO_TEST_SUITE (BOOST_TEST_MODULE)
 
 BOOST_AUTO_TEST_CASE (pstring_nomem_test)
 {
-	p_lib_init ();
+	p_libsys_init ();
 
 	PMemVTable vtable;
 
@@ -76,12 +76,12 @@ BOOST_AUTO_TEST_CASE (pstring_nomem_test)
 
 	BOOST_CHECK (p_mem_set_vtable (&vtable) == TRUE);
 
-	p_lib_shutdown ();
+	p_libsys_shutdown ();
 }
 
 BOOST_AUTO_TEST_CASE (pstring_strdup_test)
 {
-	p_lib_init ();
+	p_libsys_init ();
 
 	const pchar *test_str_1 = "Test string";
 
@@ -89,12 +89,12 @@ BOOST_AUTO_TEST_CASE (pstring_strdup_test)
 	BOOST_CHECK (new_string != NULL);
 	p_free (new_string);
 
-	p_lib_shutdown ();
+	p_libsys_shutdown ();
 }
 
 BOOST_AUTO_TEST_CASE (pstring_strchomp_test)
 {
-	p_lib_init ();
+	p_libsys_init ();
 
 	const pchar *test_chomp_str_orig = "Test chomp string";
 	const pchar *test_chomp_str_1 = "Test chomp string  ";
@@ -162,12 +162,12 @@ BOOST_AUTO_TEST_CASE (pstring_strchomp_test)
 	new_string = p_strchomp (test_chomp_str_11);
 	BOOST_CHECK (new_string == NULL);
 
-	p_lib_shutdown ();
+	p_libsys_shutdown ();
 }
 
 BOOST_AUTO_TEST_CASE (pstring_strtok_test)
 {
-	p_lib_init ();
+	p_libsys_init ();
 
 	BOOST_CHECK (p_strtok (NULL, NULL, NULL) == NULL);
 
@@ -241,12 +241,12 @@ BOOST_AUTO_TEST_CASE (pstring_strtok_test)
 	token = p_strtok (test_string_4, "\t\n ", &next_token);
 	BOOST_CHECK (token == NULL);
 
-	p_lib_shutdown ();
+	p_libsys_shutdown ();
 }
 
 BOOST_AUTO_TEST_CASE (pstring_strtod_test)
 {
-	p_lib_init ();
+	p_libsys_init ();
 
 	/* Incorrect input */
 	BOOST_CHECK_CLOSE (p_strtod (NULL), 0.0, 0.0001);
@@ -280,7 +280,7 @@ BOOST_AUTO_TEST_CASE (pstring_strtod_test)
 	BOOST_CHECK_CLOSE (p_strtod ("2.14e-10"), 2.14e-10, 0.0001);
 	BOOST_CHECK_CLOSE (p_strtod ("1.10e310"), 1.10e308, 0.0001);
 
-	p_lib_shutdown ();
+	p_libsys_shutdown ();
 }
 
 BOOST_AUTO_TEST_SUITE_END()

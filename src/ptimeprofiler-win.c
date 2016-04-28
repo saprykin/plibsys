@@ -43,7 +43,7 @@ __p_time_profiler_current_ticks (const PTimeProfiler *profiler)
 
 		return (puint64) tcounter.QuadPart;
 	} else {
-#ifdef PLIB_HAS_GETTICKCOUNT_64
+#ifdef PLIBSYS_HAS_GETTICKCOUNT_64
 	return (puint64) GetTickCount64 ();
 #else
 	return (puint64) GetTickCount ();
@@ -83,7 +83,7 @@ P_LIB_API puint64
 p_time_profiler_elapsed_usecs (const PTimeProfiler *profiler)
 {
 	LARGE_INTEGER	frequency;
-#ifndef PLIB_HAS_GETTICKCOUNT_64
+#ifndef PLIBSYS_HAS_GETTICKCOUNT_64
 	puint64		val;
 	puint64		high_bit;
 #endif
@@ -100,7 +100,7 @@ p_time_profiler_elapsed_usecs (const PTimeProfiler *profiler)
 		return (puint64) ((double)(__p_time_profiler_current_ticks (profiler) - profiler->counter) /
 				  (frequency.QuadPart / 1000000.0F));
 	} else {
-#ifdef PLIB_HAS_GETTICKCOUNT_64
+#ifdef PLIBSYS_HAS_GETTICKCOUNT_64
 	return (puint64) (GetTickCount64 () - profiler->counter) * 1000;
 #else
 	high_bit = 0;

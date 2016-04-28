@@ -16,17 +16,17 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA.
  */
 
-#ifndef PLIB_TESTS_STATIC
+#ifndef PLIBSYS_TESTS_STATIC
 #  define BOOST_TEST_DYN_LINK
 #endif
 
 #define BOOST_TEST_MODULE psocketaddress_test
 
-#include "plib.h"
+#include "plibsys.h"
 
 #include <string.h>
 
-#ifdef PLIB_TESTS_STATIC
+#ifdef PLIBSYS_TESTS_STATIC
 #  include <boost/test/included/unit_test.hpp>
 #else
 #  include <boost/test/unit_test.hpp>
@@ -54,7 +54,7 @@ BOOST_AUTO_TEST_SUITE (BOOST_TEST_MODULE)
 
 BOOST_AUTO_TEST_CASE (psocketaddress_nomem_test)
 {
-	p_lib_init ();
+	p_libsys_init ();
 
 	PSocketAddress *sock_addr = p_socket_address_new ("192.168.0.1", 1058);
 	BOOST_CHECK (sock_addr != NULL);
@@ -116,12 +116,12 @@ BOOST_AUTO_TEST_CASE (psocketaddress_nomem_test)
 	p_free (addr_buf6);
 #endif
 
-	p_lib_shutdown ();
+	p_libsys_shutdown ();
 }
 
 BOOST_AUTO_TEST_CASE (psocketaddress_bad_input_test)
 {
-	p_lib_init ();
+	p_libsys_init ();
 
 	BOOST_CHECK (p_socket_address_new_from_native (NULL, 0) == NULL);
 	BOOST_CHECK (p_socket_address_new (NULL, 0) == NULL);
@@ -138,12 +138,12 @@ BOOST_AUTO_TEST_CASE (psocketaddress_bad_input_test)
 
 	p_socket_address_free (NULL);
 
-	p_lib_shutdown ();
+	p_libsys_shutdown ();
 }
 
 BOOST_AUTO_TEST_CASE (psocketaddress_general_test)
 {
-	p_lib_init ();
+	p_libsys_init ();
 
 	/* Test IPv4 LAN address */
 	PSocketAddress *addr = p_socket_address_new ("192.168.0.1", 2345);
@@ -293,7 +293,7 @@ BOOST_AUTO_TEST_CASE (psocketaddress_general_test)
 	p_socket_address_free (addr);
 #endif
 
-	p_lib_shutdown ();
+	p_libsys_shutdown ();
 }
 
 BOOST_AUTO_TEST_SUITE_END()

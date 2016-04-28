@@ -19,7 +19,7 @@
 #include "pmem.h"
 #include "pstring.h"
 #include "pdir.h"
-#include "plib-private.h"
+#include "plibsys-private.h"
 
 #include <stdlib.h>
 #include <string.h>

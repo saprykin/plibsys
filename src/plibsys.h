@@ -16,12 +16,12 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA.
  */
 
-#ifndef __PLIB_H__
-#define __PLIB_H__
+#ifndef __PLIBSYS_H__
+#define __PLIBSYS_H__
 
-#define __PLIB_H_INSIDE__
+#define __PLIBSYS_H_INSIDE__
 
-#include "plibconfig.h"
+#include "plibsysconfig.h"
 #include "patomic.h"
 #include "pcondvariable.h"
 #include "pcryptohash.h"
@@ -49,4 +49,4 @@
 #include "ptypes.h"
 #include "puthread.h"
 
-#endif /* __PLIB_H__ */
+#endif /* __PLIBSYS_H__ */

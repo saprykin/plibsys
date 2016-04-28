@@ -89,7 +89,7 @@ p_atomic_int_xor (volatile puint	*atomic,
 P_LIB_API ppointer
 p_atomic_pointer_get (const volatile void *atomic)
 {
-#if (PLIB_SIZEOF_VOID_P == 8)
+#if (PLIBSYS_SIZEOF_VOID_P == 8)
 	return (ppointer) __atomic_load_8 ((const volatile psize *) atomic, __ATOMIC_SEQ_CST);
 #else
 	return (ppointer) __atomic_load_4 ((const volatile psize *) atomic, __ATOMIC_SEQ_CST);
@@ -100,7 +100,7 @@ P_LIB_API void
 p_atomic_pointer_set (volatile void	*atomic,
 		      ppointer		val)
 {
-#if (PLIB_SIZEOF_VOID_P == 8)
+#if (PLIBSYS_SIZEOF_VOID_P == 8)
 	__atomic_store_8 (atomic, (psize) val, __ATOMIC_SEQ_CST);
 #else
 	__atomic_store_4 (atomic, (psize) val, __ATOMIC_SEQ_CST);

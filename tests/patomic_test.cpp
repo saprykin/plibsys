@@ -16,15 +16,15 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA.
  */
 
-#ifndef PLIB_TESTS_STATIC
+#ifndef PLIBSYS_TESTS_STATIC
 #  define BOOST_TEST_DYN_LINK
 #endif
 
 #define BOOST_TEST_MODULE patomic_test
 
-#include "plib.h"
+#include "plibsys.h"
 
-#ifdef PLIB_TESTS_STATIC
+#ifdef PLIBSYS_TESTS_STATIC
 #  include <boost/test/included/unit_test.hpp>
 #else
 #  include <boost/test/unit_test.hpp>
@@ -37,7 +37,7 @@ BOOST_AUTO_TEST_SUITE (BOOST_TEST_MODULE)
 
 BOOST_AUTO_TEST_CASE (patomic_general_test)
 {
-	p_lib_init ();
+	p_libsys_init ();
 
 	(void) p_atomic_is_lock_free ();
 
@@ -111,7 +111,7 @@ BOOST_AUTO_TEST_CASE (patomic_general_test)
 	BOOST_CHECK (p_atomic_pointer_compare_and_exchange (&atomic_pointer, PUINT_TO_POINTER (1), NULL) == TRUE);
 	BOOST_CHECK (p_atomic_pointer_get (&atomic_pointer) == NULL);
 
-	p_lib_shutdown ();
+	p_libsys_shutdown ();
 }
 
 BOOST_AUTO_TEST_SUITE_END()

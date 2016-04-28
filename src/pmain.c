@@ -26,15 +26,15 @@ extern void __p_socket_close_once	(void);
 extern void __p_uthread_init		(void);
 extern void __p_uthread_shutdown	(void);
 
-static pboolean plib_inited = FALSE;
+static pboolean plibsys_inited = FALSE;
 
 P_LIB_API void
-p_lib_init (void)
+p_libsys_init (void)
 {
-	if (plib_inited)
+	if (plibsys_inited)
 		return;
 
-	plib_inited = TRUE;
+	plibsys_inited = TRUE;
 
 	__p_atomic_thread_init ();
 	__p_socket_init_once ();
@@ -42,12 +42,12 @@ p_lib_init (void)
 }
 
 P_LIB_API void
-p_lib_shutdown (void)
+p_libsys_shutdown (void)
 {
-	if (!plib_inited)
+	if (!plibsys_inited)
 		return;
 
-	plib_inited = FALSE;
+	plibsys_inited = FALSE;
 
 	__p_atomic_thread_shutdown ();
 	__p_socket_close_once ();

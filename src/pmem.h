@@ -21,17 +21,17 @@
  * @brief Memory management
  * @author Alexander Saprykin
  *
- * While using PLib you should use corresponding memory allocation/free functions.
+ * While using PLibSYS you should use corresponding memory allocation/free functions.
  * For now, all these functions are wrappers around system memory related functions
  * (like malloc(), free(), etc). But this approach gives you much more power to
  * control memory allocation inside an application. If you want to use your own allocator
  * consider using #PMemVTable structure and p_mem_set_vtable() method. This way
- * you can easily change memory management in the whole PLib. Do not forget to set
- * default memory management functions before calling p_lib_shutdown().
+ * you can easily change memory management in the whole PLibSYS. Do not forget to set
+ * default memory management functions before calling p_libsys_shutdown().
  */
 
-#if !defined (__PLIB_H_INSIDE__) && !defined (PLIB_COMPILATION)
-#  error "Header files shouldn't be included directly, consider using <plib.h> instead."
+#if !defined (__PLIBSYS_H_INSIDE__) && !defined (PLIBSYS_COMPILATION)
+#  error "Header files shouldn't be included directly, consider using <plibsys.h> instead."
 #endif
 
 #ifndef __PMEM_H__
@@ -97,7 +97,7 @@ P_LIB_API void		p_free			(ppointer	mem);
  * @return TRUE if table was accepted, FALSE otherwise.
  * @note All members of @a table must be non-NULL.
  * @warning Do not forget to set default memory management functions
- * before calling p_lib_shutdown() because p_lib_init() always uses
+ * before calling p_libsys_shutdown() because p_libsys_init() always uses
  * system allocator.
  * @since 0.0.1
  *

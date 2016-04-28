@@ -24,14 +24,14 @@
  * Types and swap routines definitions.
  */
 
-#if !defined (__PLIB_H_INSIDE__) && !defined (PLIB_COMPILATION)
-#  error "Header files shouldn't be included directly, consider using <plib.h> instead."
+#if !defined (__PLIBSYS_H_INSIDE__) && !defined (PLIBSYS_COMPILATION)
+#  error "Header files shouldn't be included directly, consider using <plibsys.h> instead."
 #endif
 
 #ifndef __PTYPES_H__
 #define __PTYPES_H__
 
-#include <plibconfig.h>
+#include <plibsysconfig.h>
 #include <pmacros.h>
 
 P_BEGIN_DECLS
@@ -63,7 +63,7 @@ typedef unsigned int		puint32;
   typedef signed __int64	pint64;
   typedef unsigned __int64	puint64;
 #else
-#  if PLIB_SIZEOF_LONG == 8
+#  if PLIBSYS_SIZEOF_LONG == 8
      typedef signed long	pint64;
      typedef unsigned long	puint64;
 #  else
@@ -155,7 +155,7 @@ typedef double		pdouble;
   * @brief Maximum value of #pssize type
   */
 
-#if PLIB_SIZEOF_SIZE_T == 8
+#if PLIBSYS_SIZEOF_SIZE_T == 8
 #  if defined (P_OS_WIN) && (defined (P_CC_MSVC) || defined (P_CC_BORLAND))
      typedef signed __int64	pssize;
      typedef unsigned __int64	psize;
@@ -166,7 +166,7 @@ typedef double		pdouble;
      #define P_MINSSIZE		P_MININT64
      #define P_MAXSSIZE		P_MAXINT64
 #  else
-#    if PLIB_SIZEOF_LONG == 8
+#    if PLIBSYS_SIZEOF_LONG == 8
        typedef long			pssize;
        typedef unsigned long		psize;
        #define PSIZE_MODIFIER		"l"
@@ -227,7 +227,7 @@ typedef double		pdouble;
   * for printing and scanning values.
   */
 
-#if PLIB_SIZEOF_VOID_P == 8
+#if PLIBSYS_SIZEOF_VOID_P == 8
 #  if defined (P_OS_WIN) && (defined (P_CC_MSVC) || defined (P_CC_BORLAND))
      typedef signed __int64	pintptr;
      typedef unsigned __int64	puintptr;
@@ -235,7 +235,7 @@ typedef double		pdouble;
      #define PINTPTR_FORMAT	"I64i"
      #define PUINTPTR_FORMAT	"I64u"
 #  else
-#    if PLIB_SIZEOF_LONG == 8
+#    if PLIBSYS_SIZEOF_LONG == 8
        typedef long			pintptr;
        typedef unsigned long		puintptr;
        #define PINTPTR_MODIFIER		"l"
@@ -260,7 +260,7 @@ typedef double		pdouble;
 /** Platform independent offset_t definition */
 typedef pint64 poffset;
 
-#if PLIB_SIZEOF_VOID_P == 8
+#if PLIBSYS_SIZEOF_VOID_P == 8
 #  define P_INT_TO_POINTER(i)	((void *)	(long long) (i))
 #  define P_POINTER_TO_INT(p)	((int)		(long long) (p))
 #  define PPOINTER_TO_INT(p)	((pint)		((pint64) (p)))
@@ -449,7 +449,7 @@ typedef pint64 poffset;
   #define PINT64_FORMAT		"I64i"
   #define PUINT64_FORMAT	"I64u"
 #else
-#  if PLIB_SIZEOF_LONG == 8
+#  if PLIBSYS_SIZEOF_LONG == 8
      #define PINT64_MODIFIER	"l"
      #define PINT64_FORMAT	"li"
      #define PUINT64_FORMAT	"lu"
@@ -463,7 +463,7 @@ typedef pint64 poffset;
 #define POFFSET_MODIFIER	PINT64_MODIFIER
 #define POFFSET_FORMAT		PINT64_FORMAT
 
-/* Endian checks, see P_BYTE_ORDER in plibconfig.h */
+/* Endian checks, see P_BYTE_ORDER in plibsysconfig.h */
 
 /** Little endian mark */
 #define P_LITTLE_ENDIAN	1234
@@ -675,7 +675,7 @@ typedef pint64 poffset;
   #define PUINT64_TO_LE(val)	((puint64) (val))
   #define PINT64_TO_BE(val)	((pint64) PUINT64_SWAP_BYTES (val))
   #define PUINT64_TO_BE(val)	(PUINT64_SWAP_BYTES (val))
-#  if PLIB_SIZEOF_LONG == 8
+#  if PLIBSYS_SIZEOF_LONG == 8
      #define PLONG_TO_LE(val)	((plong) PINT64_TO_LE (val))
      #define PULONG_TO_LE(val)	((pulong) PUINT64_TO_LE (val))
      #define PLONG_TO_BE(val)	((plong) PINT64_TO_BE (val))
@@ -686,7 +686,7 @@ typedef pint64 poffset;
      #define PLONG_TO_BE(val)	((plong) PINT32_TO_BE (val))
      #define PULONG_TO_BE(val)	((pulong) PUINT32_TO_BE (val))
 #  endif
-#  if PLIB_SIZEOF_SIZE_T == 8
+#  if PLIBSYS_SIZEOF_SIZE_T == 8
      #define PSIZE_TO_LE(val)	((psize) PUINT64_TO_LE (val))
      #define PSSIZE_TO_LE(val)	((pssize) PINT64_TO_LE (val))
      #define PSIZE_TO_BE(val)	((psize) PUINT64_TO_BE (val))
@@ -715,7 +715,7 @@ typedef pint64 poffset;
   #define PUINT64_TO_LE(val)	(PUINT64_SWAP_BYTES (val))
   #define PINT64_TO_BE(val)	((pint64) (val))
   #define PUINT64_TO_BE(val)	((puint64) (val))
-#  if PLIB_SIZEOF_LONG == 8
+#  if PLIBSYS_SIZEOF_LONG == 8
      #define PLONG_TO_LE(val)	((plong) PINT64_TO_LE (val))
      #define PULONG_TO_LE(val)	((pulong) PUINT64_TO_LE (val))
      #define PLONG_TO_BE(val)	((plong) PINT64_TO_BE (val))
@@ -726,7 +726,7 @@ typedef pint64 poffset;
      #define PLONG_TO_BE(val)	((plong) PINT32_TO_BE (val))
      #define PULONG_TO_BE(val)	((pulong) PUINT32_TO_BE (val))
 #  endif
-#  if PLIB_SIZEOF_SIZE_T == 8
+#  if PLIBSYS_SIZEOF_SIZE_T == 8
      #define PSIZE_TO_LE(val)	((psize) PUINT64_TO_LE (val))
      #define PSSIZE_TO_LE(val)	((pssize) PINT64_TO_LE (val))
      #define PSIZE_TO_BE(val)	((psize) PUINT64_TO_BE (val))

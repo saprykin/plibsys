@@ -16,17 +16,17 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA.
  */
 
-#ifndef PLIB_TESTS_STATIC
+#ifndef PLIBSYS_TESTS_STATIC
 #  define BOOST_TEST_DYN_LINK
 #endif
 
 #define BOOST_TEST_MODULE plibraryloader_test
 
-#include "plib.h"
+#include "plibsys.h"
 
 #include <stdio.h>
 
-#ifdef PLIB_TESTS_STATIC
+#ifdef PLIBSYS_TESTS_STATIC
 #  include <boost/test/included/unit_test.hpp>
 #else
 #  include <boost/test/unit_test.hpp>
@@ -54,7 +54,7 @@ BOOST_AUTO_TEST_SUITE (BOOST_TEST_MODULE)
 
 BOOST_AUTO_TEST_CASE (plibraryloader_nomem_test)
 {
-	p_lib_init ();
+	p_libsys_init ();
 
 	/* We assume that 2nd argument is a PLib library path */
 	BOOST_REQUIRE (boost::unit_test::framework::master_test_suite().argc == 2);
@@ -85,7 +85,7 @@ BOOST_AUTO_TEST_CASE (plibraryloader_nomem_test)
 
 	BOOST_CHECK (p_file_remove ("." P_DIR_SEPARATOR "p_empty_file.txt", NULL) == TRUE);
 
-	p_lib_shutdown ();
+	p_libsys_shutdown ();
 }
 
 BOOST_AUTO_TEST_CASE (plibraryloader_general_test)
@@ -94,7 +94,7 @@ BOOST_AUTO_TEST_CASE (plibraryloader_general_test)
 	pchar		*err_msg;
 	void		(*shutdown_func) (void);
 
-	p_lib_init ();
+	p_libsys_init ();
 
 	/* We assume that 2nd argument is a PLib library path */
 	BOOST_REQUIRE (boost::unit_test::framework::master_test_suite().argc == 2);
@@ -120,10 +120,10 @@ BOOST_AUTO_TEST_CASE (plibraryloader_general_test)
 	BOOST_CHECK (err_msg != NULL);
 	p_free (err_msg);
 
-	shutdown_func = (void (*) (void)) p_library_loader_get_symbol (loader, "p_lib_shutdown");
+	shutdown_func = (void (*) (void)) p_library_loader_get_symbol (loader, "p_libsys_shutdown");
 
 	if (shutdown_func == NULL)
-		shutdown_func = (void (*) (void)) p_library_loader_get_symbol (loader, "_p_lib_shutdown");
+		shutdown_func = (void (*) (void)) p_library_loader_get_symbol (loader, "_p_libsys_shutdown");
 
 	BOOST_REQUIRE (shutdown_func != NULL);
 

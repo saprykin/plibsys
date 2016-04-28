@@ -16,18 +16,18 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA.
  */
 
-#ifndef PLIB_TESTS_STATIC
+#ifndef PLIBSYS_TESTS_STATIC
 #  define BOOST_TEST_DYN_LINK
 #endif
 
 #define BOOST_TEST_MODULE pshm_test
 
-#include "plib.h"
+#include "plibsys.h"
 
 #include <stdlib.h>
 #include <time.h>
 
-#ifdef PLIB_TESTS_STATIC
+#ifdef PLIBSYS_TESTS_STATIC
 #  include <boost/test/included/unit_test.hpp>
 #else
 #  include <boost/test/unit_test.hpp>
@@ -87,7 +87,7 @@ BOOST_AUTO_TEST_SUITE (BOOST_TEST_MODULE)
 
 BOOST_AUTO_TEST_CASE (pshm_nomem_test)
 {
-	p_lib_init ();
+	p_libsys_init ();
 
 	PMemVTable vtable;
 
@@ -105,13 +105,13 @@ BOOST_AUTO_TEST_CASE (pshm_nomem_test)
 
 	BOOST_CHECK (p_mem_set_vtable (&vtable) == TRUE);
 
-	p_lib_shutdown ();
+	p_libsys_shutdown ();
 }
 
 BOOST_AUTO_TEST_CASE (pshm_invalid_test)
 {
 #ifndef P_OS_MSYS
-	p_lib_init ();
+	p_libsys_init ();
 
 	BOOST_CHECK (p_shm_new (NULL, 0, P_SHM_ACCESS_READWRITE, NULL) == NULL);
 	BOOST_CHECK (p_shm_lock (NULL, NULL) == FALSE);
@@ -128,7 +128,7 @@ BOOST_AUTO_TEST_CASE (pshm_invalid_test)
 	p_shm_take_ownership (shm);
 	p_shm_free (shm);
 
-	p_lib_shutdown ();
+	p_libsys_shutdown ();
 #endif
 }
 
@@ -142,7 +142,7 @@ BOOST_AUTO_TEST_CASE (pshm_general_test)
 	ppointer	addr, addr2;
 	pint		i;
 
-	p_lib_init ();
+	p_libsys_init ();
 
 	shm = p_shm_new ("p_shm_test_memory_block", 1024, P_SHM_ACCESS_READWRITE, NULL);
 	BOOST_REQUIRE (shm != NULL);
@@ -244,7 +244,7 @@ BOOST_AUTO_TEST_CASE (pshm_general_test)
 	p_shm_free (shm2);
 #  endif
 
-	p_lib_shutdown ();
+	p_libsys_shutdown ();
 #endif /* !P_OS_MSYS */
 }
 
@@ -257,7 +257,7 @@ BOOST_AUTO_TEST_CASE (pshm_thread_test)
 	pint		i, val;
 	pboolean	test_ok;
 
-	p_lib_init ();
+	p_libsys_init ();
 
 	srand ((puint) time (NULL));
 
@@ -309,7 +309,7 @@ BOOST_AUTO_TEST_CASE (pshm_thread_test)
 	p_uthread_free (thr3);
 	p_shm_free (shm);
 
-	p_lib_shutdown ();
+	p_libsys_shutdown ();
 #endif /* !P_OS_MSYS */
 }
 

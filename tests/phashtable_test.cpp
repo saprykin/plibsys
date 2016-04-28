@@ -16,18 +16,18 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA.
  */
 
-#ifndef PLIB_TESTS_STATIC
+#ifndef PLIBSYS_TESTS_STATIC
 #  define BOOST_TEST_DYN_LINK
 #endif
 
 #define BOOST_TEST_MODULE phashtable_test
 
-#include "plib.h"
+#include "plibsys.h"
 
 #include <stdlib.h>
 #include <time.h>
 
-#ifdef PLIB_TESTS_STATIC
+#ifdef PLIBSYS_TESTS_STATIC
 #  include <boost/test/included/unit_test.hpp>
 #else
 #  include <boost/test/unit_test.hpp>
@@ -62,7 +62,7 @@ BOOST_AUTO_TEST_SUITE (BOOST_TEST_MODULE)
 
 BOOST_AUTO_TEST_CASE (phashtable_nomem_test)
 {
-	p_lib_init ();
+	p_libsys_init ();
 
 	PHashTable *table = p_hash_table_new ();
 	BOOST_CHECK (table != NULL);
@@ -88,12 +88,12 @@ BOOST_AUTO_TEST_CASE (phashtable_nomem_test)
 
 	p_hash_table_free (table);
 
-	p_lib_shutdown ();
+	p_libsys_shutdown ();
 }
 
 BOOST_AUTO_TEST_CASE (phashtable_invalid_test)
 {
-	p_lib_init ();
+	p_libsys_init ();
 
 	BOOST_CHECK (p_hash_table_keys (NULL) == NULL);
 	BOOST_CHECK (p_hash_table_values (NULL) == NULL);
@@ -103,7 +103,7 @@ BOOST_AUTO_TEST_CASE (phashtable_invalid_test)
 	p_hash_table_remove (NULL, NULL);
 	p_hash_table_free (NULL);
 
-	p_lib_shutdown ();
+	p_libsys_shutdown ();
 }
 
 BOOST_AUTO_TEST_CASE (phashtable_general_test)
@@ -111,7 +111,7 @@ BOOST_AUTO_TEST_CASE (phashtable_general_test)
 	PHashTable	*table = NULL;
 	PList		*list = NULL;
 
-	p_lib_init ();
+	p_libsys_init ();
 
 	table = p_hash_table_new ();
 	BOOST_REQUIRE (table != NULL);
@@ -241,12 +241,12 @@ BOOST_AUTO_TEST_CASE (phashtable_general_test)
 
 	p_hash_table_free (table);
 
-	p_lib_shutdown ();
+	p_libsys_shutdown ();
 }
 
 BOOST_AUTO_TEST_CASE (phashtable_stress_test)
 {
-	p_lib_init ();
+	p_libsys_init ();
 
 	PHashTable *table = p_hash_table_new ();
 	BOOST_REQUIRE (table != NULL);
@@ -311,7 +311,7 @@ BOOST_AUTO_TEST_CASE (phashtable_stress_test)
 
 	p_hash_table_free (table);
 
-	p_lib_shutdown ();
+	p_libsys_shutdown ();
 }
 
 BOOST_AUTO_TEST_SUITE_END()

@@ -56,12 +56,12 @@
  * p_list_remove() will remove only the first matching node.
  */
 
-#if !defined (__PLIB_H_INSIDE__) && !defined (PLIB_COMPILATION)
-#  error "Header files shouldn't be included directly, consider using <plib.h> instead."
+#if !defined (__PLIBSYS_H_INSIDE__) && !defined (PLIBSYS_COMPILATION)
+#  error "Header files shouldn't be included directly, consider using <plibsys.h> instead."
 #endif
 
-#ifndef __PLIBLIST_H__
-#define __PLIBLIST_H__
+#ifndef __PLIST_H__
+#define __PLIST_H__
 
 #include <pmacros.h>
 #include <ptypes.h>
@@ -172,4 +172,4 @@ P_LIB_API PList *	p_list_reverse	(PList *list) P_GNUC_WARN_UNUSED_RESULT;
 
 P_END_DECLS
 
-#endif /* __PLIBLIST_H__ */
+#endif /* __PLIST_H__ */

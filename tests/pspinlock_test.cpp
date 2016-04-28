@@ -16,15 +16,15 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA.
  */
 
-#ifndef PLIB_TESTS_STATIC
+#ifndef PLIBSYS_TESTS_STATIC
 #  define BOOST_TEST_DYN_LINK
 #endif
 
 #define BOOST_TEST_MODULE pspinlock_test
 
-#include "plib.h"
+#include "plibsys.h"
 
-#ifdef PLIB_TESTS_STATIC
+#ifdef PLIBSYS_TESTS_STATIC
 #  include <boost/test/included/unit_test.hpp>
 #else
 #  include <boost/test/unit_test.hpp>
@@ -79,7 +79,7 @@ BOOST_AUTO_TEST_SUITE (BOOST_TEST_MODULE)
 
 BOOST_AUTO_TEST_CASE (pspinlock_nomem_test)
 {
-	p_lib_init ();
+	p_libsys_init ();
 
 	PMemVTable vtable;
 
@@ -96,14 +96,14 @@ BOOST_AUTO_TEST_CASE (pspinlock_nomem_test)
 
 	BOOST_CHECK (p_mem_set_vtable (&vtable) == TRUE);
 
-	p_lib_shutdown ();
+	p_libsys_shutdown ();
 }
 
 BOOST_AUTO_TEST_CASE (pspinlock_general_test)
 {
 	PUThread	*thr1, *thr2;
 
-	p_lib_init ();
+	p_libsys_init ();
 
 	BOOST_REQUIRE (p_spinlock_lock (global_spinlock) == FALSE);
 	BOOST_REQUIRE (p_spinlock_unlock (global_spinlock) == FALSE);
@@ -129,7 +129,7 @@ BOOST_AUTO_TEST_CASE (pspinlock_general_test)
 	p_uthread_free (thr2);
 	p_spinlock_free (global_spinlock);
 
-	p_lib_shutdown ();
+	p_libsys_shutdown ();
 }
 
 BOOST_AUTO_TEST_SUITE_END()

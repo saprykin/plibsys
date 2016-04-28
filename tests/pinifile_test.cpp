@@ -16,18 +16,18 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA.
  */
 
-#ifndef PLIB_TESTS_STATIC
+#ifndef PLIBSYS_TESTS_STATIC
 #  define BOOST_TEST_DYN_LINK
 #endif
 
 #define BOOST_TEST_MODULE pinifile_test
 
-#include "plib.h"
+#include "plibsys.h"
 
 #include <stdio.h>
 #include <float.h>
 
-#ifdef PLIB_TESTS_STATIC
+#ifdef PLIBSYS_TESTS_STATIC
 #  include <boost/test/included/unit_test.hpp>
 #else
 #  include <boost/test/unit_test.hpp>
@@ -120,7 +120,7 @@ BOOST_AUTO_TEST_SUITE (BOOST_TEST_MODULE)
 
 BOOST_AUTO_TEST_CASE (pinifile_nomem_test)
 {
-	p_lib_init ();
+	p_libsys_init ();
 
 	BOOST_REQUIRE (create_test_ini_file (false));
 
@@ -161,14 +161,14 @@ BOOST_AUTO_TEST_CASE (pinifile_nomem_test)
 
 	BOOST_CHECK (p_file_remove ("." P_DIR_SEPARATOR "p_ini_test_file.ini", NULL) == TRUE);
 
-	p_lib_shutdown ();
+	p_libsys_shutdown ();
 }
 
 BOOST_AUTO_TEST_CASE (pinifile_bad_input_test)
 {
 	PIniFile *ini = NULL;
 
-	p_lib_init ();
+	p_libsys_init ();
 
 	p_ini_file_free (ini);
 	BOOST_CHECK (p_ini_file_new (NULL) == NULL);
@@ -190,12 +190,12 @@ BOOST_AUTO_TEST_CASE (pinifile_bad_input_test)
 
 	BOOST_REQUIRE (create_test_ini_file (true));
 
-	p_lib_shutdown ();
+	p_libsys_shutdown ();
 }
 
 BOOST_AUTO_TEST_CASE (pinifile_read_test)
 {
-	p_lib_init ();
+	p_libsys_init ();
 
 	PIniFile *ini = p_ini_file_new ("." P_DIR_SEPARATOR "p_ini_test_file.ini");
 	BOOST_REQUIRE (ini != NULL);
@@ -350,7 +350,7 @@ BOOST_AUTO_TEST_CASE (pinifile_read_test)
 
 	BOOST_CHECK (p_file_remove ("." P_DIR_SEPARATOR "p_ini_test_file.ini", NULL) == TRUE);
 
-	p_lib_shutdown ();
+	p_libsys_shutdown ();
 }
 
 BOOST_AUTO_TEST_SUITE_END()

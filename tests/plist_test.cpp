@@ -16,17 +16,17 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA.
  */
 
-#ifndef PLIB_TESTS_STATIC
+#ifndef PLIBSYS_TESTS_STATIC
 #  define BOOST_TEST_DYN_LINK
 #endif
 
 #define BOOST_TEST_MODULE plist_test
 
-#include "plib.h"
+#include "plibsys.h"
 
 #include <string.h>
 
-#ifdef PLIB_TESTS_STATIC
+#ifdef PLIBSYS_TESTS_STATIC
 #  include <boost/test/included/unit_test.hpp>
 #else
 #  include <boost/test/unit_test.hpp>
@@ -73,7 +73,7 @@ BOOST_AUTO_TEST_SUITE (BOOST_TEST_MODULE)
 
 BOOST_AUTO_TEST_CASE (plist_nomem_test)
 {
-	p_lib_init ();
+	p_libsys_init ();
 
 	PMemVTable vtable;
 
@@ -92,12 +92,12 @@ BOOST_AUTO_TEST_CASE (plist_nomem_test)
 
 	BOOST_CHECK (p_mem_set_vtable (&vtable) == TRUE);
 
-	p_lib_shutdown ();
+	p_libsys_shutdown ();
 }
 
 BOOST_AUTO_TEST_CASE (plist_invalid_test)
 {
-	p_lib_init ();
+	p_libsys_init ();
 
 	BOOST_CHECK (p_list_remove (NULL, NULL) == NULL);
 	BOOST_CHECK (p_list_last (NULL) == NULL);
@@ -107,7 +107,7 @@ BOOST_AUTO_TEST_CASE (plist_invalid_test)
 	p_list_free (NULL);
 	p_list_foreach (NULL, NULL, NULL);
 
-	p_lib_shutdown ();
+	p_libsys_shutdown ();
 }
 
 BOOST_AUTO_TEST_CASE (plist_general_test)
@@ -115,7 +115,7 @@ BOOST_AUTO_TEST_CASE (plist_general_test)
 	PList		*list = NULL;
 	TestData	test_data;
 
-	p_lib_init ();
+	p_libsys_init ();
 
 	/* Testing append */
 	list = p_list_append (list, P_INT_TO_POINTER (32));
@@ -193,7 +193,7 @@ BOOST_AUTO_TEST_CASE (plist_general_test)
 
 	p_list_free (list);
 
-	p_lib_shutdown ();
+	p_libsys_shutdown ();
 }
 
 BOOST_AUTO_TEST_SUITE_END()

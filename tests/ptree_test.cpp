@@ -16,19 +16,19 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA.
  */
 
-#ifndef PLIB_TESTS_STATIC
+#ifndef PLIBSYS_TESTS_STATIC
 #  define BOOST_TEST_DYN_LINK
 #endif
 
 #define BOOST_TEST_MODULE ptree_test
 
-#include "plib.h"
+#include "plibsys.h"
 
 #include <stdlib.h>
 #include <time.h>
 #include <math.h>
 
-#ifdef PLIB_TESTS_STATIC
+#ifdef PLIBSYS_TESTS_STATIC
 #  include <boost/test/included/unit_test.hpp>
 #else
 #  include <boost/test/unit_test.hpp>
@@ -485,7 +485,7 @@ stress_tree_test (PTree *tree, int node_count)
 
 BOOST_AUTO_TEST_CASE (ptree_nomem_test)
 {
-	p_lib_init ();
+	p_libsys_init ();
 
 	PMemVTable vtable;
 
@@ -512,12 +512,12 @@ BOOST_AUTO_TEST_CASE (ptree_nomem_test)
 		p_tree_free (tree);
 	}
 
-	p_lib_shutdown ();
+	p_libsys_shutdown ();
 }
 
 BOOST_AUTO_TEST_CASE (ptree_invalid_test)
 {
-	p_lib_init ();
+	p_libsys_init ();
 
 	for (int i = (int) P_TREE_TYPE_BINARY; i <= (int) P_TREE_TYPE_AVL; ++i) {
 		/* Invalid usage */
@@ -556,14 +556,14 @@ BOOST_AUTO_TEST_CASE (ptree_invalid_test)
 		p_tree_free (NULL);
 	}
 
-	p_lib_shutdown ();
+	p_libsys_shutdown ();
 }
 
 BOOST_AUTO_TEST_CASE (ptree_general_test)
 {
 	PTree *tree;
 
-	p_lib_init ();
+	p_libsys_init ();
 
 	for (int i = (int) P_TREE_TYPE_BINARY; i <= (int) P_TREE_TYPE_AVL; ++i) {
 		/* Test 1 */
@@ -602,14 +602,14 @@ BOOST_AUTO_TEST_CASE (ptree_general_test)
 		BOOST_CHECK (check_tree_data_is_zero () == true);
 	}
 
-	p_lib_shutdown ();
+	p_libsys_shutdown ();
 }
 
 BOOST_AUTO_TEST_CASE (ptree_stress_test)
 {
 	PTree *tree;
 
-	p_lib_init ();
+	p_libsys_init ();
 
 	for (int i = (int) P_TREE_TYPE_BINARY; i <= (int) P_TREE_TYPE_AVL; ++i) {
 		tree = p_tree_new_full ((PTreeType) i,
@@ -624,7 +624,7 @@ BOOST_AUTO_TEST_CASE (ptree_stress_test)
 		p_tree_free (tree);
 	}
 
-	p_lib_shutdown ();
+	p_libsys_shutdown ();
 }
 
 BOOST_AUTO_TEST_SUITE_END()

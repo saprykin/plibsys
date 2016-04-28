@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Alexander Saprykin <xelfium@gmail.com>
+ * Copyright (C) 2015-2016 Alexander Saprykin <xelfium@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,8 +16,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA.
  */
 
-#if !defined (__PLIB_H_INSIDE__) && !defined (PLIB_COMPILATION)
-#  error "Header files shouldn't be included directly, consider using <plib.h> instead."
+#if !defined (__PLIBSYS_H_INSIDE__) && !defined (PLIBSYS_COMPILATION)
+#  error "Header files shouldn't be included directly, consider using <plibsys.h> instead."
 #endif
 
 #ifndef __PTREEBST_H__
@@ -25,7 +25,7 @@
 
 #include "pmacros.h"
 #include "ptypes.h"
-#include "plib-private.h"
+#include "plibsys-private.h"
 
 P_BEGIN_DECLS
 

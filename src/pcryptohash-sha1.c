@@ -94,7 +94,7 @@ static void
 __p_sha1_swap_bytes (puint32	*data,
 		     puint	words)
 {
-#ifdef PLIB_IS_BIGENDIAN
+#ifdef PLIBSYS_IS_BIGENDIAN
 	P_UNUSED (data);
 	P_UNUSED (words);
 #else

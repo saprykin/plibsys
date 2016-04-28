@@ -20,7 +20,7 @@
 #include <stdlib.h>
 
 #include "pmem.h"
-#include "plib-private.h"
+#include "plibsys-private.h"
 
 #ifdef P_OS_WIN
 #include <windows.h>
@@ -174,7 +174,7 @@ p_mem_mmap (psize	n_bytes,
 		return NULL;
 	}
 #else
-#  if !defined (PLIB_MMAP_HAS_MAP_ANONYMOUS) && !defined (PLIB_MMAP_HAS_MAP_ANON)
+#  if !defined (PLIBSYS_MMAP_HAS_MAP_ANONYMOUS) && !defined (PLIBSYS_MMAP_HAS_MAP_ANON)
 	if ((fd = open ("/dev/zero", O_RDWR | O_EXCL, 0754)) == -1) {
 		p_error_set_error_p (error,
 				     (pint) __p_error_get_last_io (),
@@ -186,9 +186,9 @@ p_mem_mmap (psize	n_bytes,
 	fd = -1;
 #  endif
 
-#  ifdef PLIB_MMAP_HAS_MAP_ANONYMOUS
+#  ifdef PLIBSYS_MMAP_HAS_MAP_ANONYMOUS
 	map_flags |= MAP_ANONYMOUS;
-#  elif defined (PLIB_MMAP_HAS_MAP_ANON)
+#  elif defined (PLIBSYS_MMAP_HAS_MAP_ANON)
 	map_flags |= MAP_ANON;
 #  endif
 
@@ -197,13 +197,13 @@ p_mem_mmap (psize	n_bytes,
 				     (pint) __p_error_get_last_io (),
 				     __p_error_get_last_error (),
 				     "Failed to call mmap() to create file mapping");
-#  if !defined (PLIB_MMAP_HAS_MAP_ANONYMOUS) && !defined (PLIB_MMAP_HAS_MAP_ANON)
+#  if !defined (PLIBSYS_MMAP_HAS_MAP_ANONYMOUS) && !defined (PLIBSYS_MMAP_HAS_MAP_ANON)
 		close (fd);
 #  endif
 		return NULL;
 	}
 
-#  if !defined (PLIB_MMAP_HAS_MAP_ANONYMOUS) && !defined (PLIB_MMAP_HAS_MAP_ANON)
+#  if !defined (PLIBSYS_MMAP_HAS_MAP_ANONYMOUS) && !defined (PLIBSYS_MMAP_HAS_MAP_ANON)
 	if (close (fd) == -1) {
 		p_error_set_error_p (error,
 				     (pint) __p_error_get_last_io (),

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2015 Alexander Saprykin <xelfium@gmail.com>
+ * Copyright (C) 2010-2016 Alexander Saprykin <xelfium@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,8 +29,8 @@
  * using #P_POINTER_TO_INT and #P_INT_TO_POINTER macros.
  */
 
-#if !defined (__PLIB_H_INSIDE__) && !defined (PLIB_COMPILATION)
-#  error "Header files shouldn't be included directly, consider using <plib.h> instead."
+#if !defined (__PLIBSYS_H_INSIDE__) && !defined (PLIBSYS_COMPILATION)
+#  error "Header files shouldn't be included directly, consider using <plibsys.h> instead."
 #endif
 
 #ifndef __PHASHTABLE_H__

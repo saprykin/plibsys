@@ -1,5 +1,5 @@
-/* 
- * Copyright (C) 2010 Alexander Saprykin <xelfium@gmail.com>
+/*
+ * Copyright (C) 2010-2016 Alexander Saprykin <xelfium@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,22 +16,19 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA.
  */
 
-/* Hash table organized like this: table[hash key]->[list with values]
- * Note: this implementation is not intended to use on huge loads */
-
 /**
  * @file pmain.h
- * @brief PLib initialization/shutdown
+ * @brief PLibSYS initialization/shutdown
  * @author Alexander Saprykin
  *
- * In order to use PLib correctly you must initialize it once per
- * application using p_lib_init() routine. It will initialize required
+ * In order to use PLibSYS correctly you must initialize it once per
+ * application using p_libsys_init() routine. It will initialize required
  * resources, mutexes and other stuff. On exit you should free used
- * resources by calling p_lib_shutdown() routine.
+ * resources by calling p_libsys_shutdown() routine.
  */
 
-#if !defined (__PLIB_H_INSIDE__) && !defined (PLIB_COMPILATION)
-#  error "Header files shouldn't be included directly, consider using <plib.h> instead."
+#if !defined (__PLIBSYS_H_INSIDE__) && !defined (PLIBSYS_COMPILATION)
+#  error "Header files shouldn't be included directly, consider using <plibsys.h> instead."
 #endif
 
 #ifndef __PMAIN_H__
@@ -42,17 +39,17 @@
 P_BEGIN_DECLS
 
 /**
- * @brief Initializes PLib resources.
+ * @brief Initializes PLibSYS resources.
  * @since 0.0.1
  */
-P_LIB_API void	p_lib_init	(void);
+P_LIB_API void	p_libsys_init		(void);
 
 /**
- * @brief Frees PLib resources. You shouldn't use PLib routines
+ * @brief Frees PLibSYS resources. You shouldn't use PLibSYS routines
  * after calling this one.
  * @since 0.0.1
  */
-P_LIB_API void	p_lib_shutdown	(void);
+P_LIB_API void	p_libsys_shutdown	(void);
 
 P_END_DECLS
 

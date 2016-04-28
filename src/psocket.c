@@ -21,7 +21,7 @@
 
 #include "pmem.h"
 #include "psocket.h"
-#include "plib-private.h"
+#include "plibsys-private.h"
 
 #include <stdlib.h>
 #include <string.h>

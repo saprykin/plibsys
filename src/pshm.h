@@ -22,8 +22,8 @@
  * @author Alexander Saprykin
  *
  * Shared memory is an interprocess communication primitive. It can be used to transfer data
- * between several processes. PLib supports different shared memory implementations: System V,
- * POSIX and Windows. PLib is compiled using one of them (depend which of implementations
+ * between several processes. PLibSYS supports different shared memory implementations: System V,
+ * POSIX and Windows. PLibSYS is compiled using one of them (depend which of implementations
  * are available on target system).
  *
  * Please note the following platform specific differences:
@@ -48,8 +48,8 @@
  * using p_shm_lock() and p_shm_unlock() routines.
  */
 
-#if !defined (__PLIB_H_INSIDE__) && !defined (PLIB_COMPILATION)
-#  error "Header files shouldn't be included directly, consider using <plib.h> instead."
+#if !defined (__PLIBSYS_H_INSIDE__) && !defined (PLIBSYS_COMPILATION)
+#  error "Header files shouldn't be included directly, consider using <plibsys.h> instead."
 #endif
 
 #ifndef __PSHM_H__

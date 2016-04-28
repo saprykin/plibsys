@@ -5,14 +5,13 @@
 [![](https://codecov.io/gh/saprykin/plib/branch/master/graph/badge.svg)](https://codecov.io/gh/saprykin/plib)
 [![](http://img.shields.io/:license-gpl2-blue.svg?style=flat)](http://www.gnu.org/licenses/gpl-2.0.html)
 
-======= About PLib =======
+======= About PLibSYS =======
 
-PLib is a cross-platform system C library with some helpful routines.
-Do not confuse with PLIB which is using for game and 3D development.
+PLibSYS is a cross-platform system C library with some helpful routines.
 
 ======= Features =======
 
-PLib gives you:
+PLibSYS gives you:
 
 * Platform independent data types
 * Threads: POSIX, Solaris and Win32
@@ -34,7 +33,7 @@ PLib gives you:
 
 ======= Platforms =======
 
-PLib is a cross-platform, highly portable library, it was tested on
+PLibSYS is a cross-platform, highly portable library, it was tested on
 the following platforms:
 
 * GNU/Linux
@@ -56,7 +55,7 @@ efforts.
 
 ======= Compilers =======
 
-PLib was tested with the following compilers:
+PLibSYS was tested with the following compilers:
 
 * MSVC (x86, x64) 2003 and above
 * MinGW (x86, x64)
@@ -71,8 +70,8 @@ PLib was tested with the following compilers:
 
 ======= Building =======
 
-Use CMake to build PLib for any target platform.
+Use CMake to build PLibSYS for any target platform.
 
 ======= License =======
 
-PLib is distributed under the terms of GNU GPLv2 license.
+PLibSYS is distributed under the terms of GNU GPLv2 license.

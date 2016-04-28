@@ -82,9 +82,9 @@
  *
  * #PSocket ignores SIGPIPE signal if can. Take it into account if you want to handle this signal.
  *
- * Note that before using #PSocket API you must call p_lib_init() in order to initialize system
+ * Note that before using #PSocket API you must call p_libsys_init() in order to initialize system
  * resources (on UNIX this will do nothing, but on Windows this routine is required),
- * and p_lib_shutdown() after #PSocket API usage is over. Commonly first routine called on
+ * and p_libsys_shutdown() after #PSocket API usage is over. Commonly first routine called on
  * the program's start, and the second one before application termination.
  *
  * Here is an example of #PSocket usage:
@@ -92,7 +92,7 @@
  * PSocketAddress *addr;
  * PSocket	  *sock;
  *
- * p_lib_init ();
+ * p_libsys_init ();
  * ...
  * if ((addr = p_socket_address_new ("127.0.0.1", 5432)) == NULL) {
  *	...
@@ -113,14 +113,14 @@
  * p_socket_address_free (addr);
  * p_socket_close (sock);
  * p_socket_free (sock);
- * p_lib_shutdown ();
+ * p_libsys_shutdown ();
  * @endcode
  * Here UDP socket was created, binded to localhost address and port 5432. Do not forget to close
  * socket and free memory after its usage.
  */
 
-#if !defined (__PLIB_H_INSIDE__) && !defined (PLIB_COMPILATION)
-#  error "Header files shouldn't be included directly, consider using <plib.h> instead."
+#if !defined (__PLIBSYS_H_INSIDE__) && !defined (PLIBSYS_COMPILATION)
+#  error "Header files shouldn't be included directly, consider using <plibsys.h> instead."
 #endif
 
 #ifndef __PSOCKET_H__

@@ -16,15 +16,15 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA.
  */
 
-#ifndef PLIB_TESTS_STATIC
+#ifndef PLIBSYS_TESTS_STATIC
 #  define BOOST_TEST_DYN_LINK
 #endif
 
 #define BOOST_TEST_MODULE pprocess_test
 
-#include "plib.h"
+#include "plibsys.h"
 
-#ifdef PLIB_TESTS_STATIC
+#ifdef PLIBSYS_TESTS_STATIC
 #  include <boost/test/included/unit_test.hpp>
 #else
 #  include <boost/test/unit_test.hpp>
@@ -36,13 +36,13 @@ BOOST_AUTO_TEST_CASE (pprocess_general_test)
 {
 	puint32	pid;
 
-	p_lib_init ();
+	p_libsys_init ();
 
 	pid = p_process_get_current_pid ();
 	BOOST_CHECK (pid > 0);
 	BOOST_REQUIRE (p_process_is_running (pid) == TRUE);
 
-	p_lib_shutdown ();
+	p_libsys_shutdown ();
 }
 
 BOOST_AUTO_TEST_SUITE_END()

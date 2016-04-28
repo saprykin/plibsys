@@ -16,17 +16,17 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA.
  */
 
-#ifndef PLIB_TESTS_STATIC
+#ifndef PLIBSYS_TESTS_STATIC
 #  define BOOST_TEST_DYN_LINK
 #endif
 
 #define BOOST_TEST_MODULE pshmbuffer_test
 
-#include "plib.h"
+#include "plibsys.h"
 
 #include <string.h>
 
-#ifdef PLIB_TESTS_STATIC
+#ifdef PLIBSYS_TESTS_STATIC
 #  include <boost/test/included/unit_test.hpp>
 #else
 #  include <boost/test/unit_test.hpp>
@@ -176,7 +176,7 @@ BOOST_AUTO_TEST_SUITE (BOOST_TEST_MODULE)
 
 BOOST_AUTO_TEST_CASE (pshmbuffer_nomem_test)
 {
-	p_lib_init ();
+	p_libsys_init ();
 
 	PMemVTable vtable;
 
@@ -194,13 +194,13 @@ BOOST_AUTO_TEST_CASE (pshmbuffer_nomem_test)
 
 	BOOST_CHECK (p_mem_set_vtable (&vtable) == TRUE);
 
-	p_lib_shutdown ();
+	p_libsys_shutdown ();
 }
 
 BOOST_AUTO_TEST_CASE (pshmbuffer_bad_input_test)
 {
 #ifndef P_OS_MSYS
-	p_lib_init ();
+	p_libsys_init ();
 
 	BOOST_CHECK (p_shm_buffer_new (NULL, 0, NULL) == NULL);
 	BOOST_CHECK (p_shm_buffer_read (NULL, NULL, 0, NULL) == -1);
@@ -215,14 +215,14 @@ BOOST_AUTO_TEST_CASE (pshmbuffer_bad_input_test)
 	p_shm_buffer_clear (NULL);
 	p_shm_buffer_free (NULL);
 
-	p_lib_shutdown ();
+	p_libsys_shutdown ();
 #endif /* !P_OS_MSYS */
 }
 
 BOOST_AUTO_TEST_CASE (pshmbuffer_general_test)
 {
 #ifndef P_OS_MSYS
-	p_lib_init ();
+	p_libsys_init ();
 
 	pchar		test_buf[sizeof (test_str)];
 	pchar		*large_buf;
@@ -263,14 +263,14 @@ BOOST_AUTO_TEST_CASE (pshmbuffer_general_test)
 	p_free (large_buf);
 	p_shm_buffer_free (buffer);
 
-	p_lib_shutdown ();
+	p_libsys_shutdown ();
 #endif
 }
 
 #if !defined (P_OS_HPUX) && !defined (P_OS_MSYS)
 BOOST_AUTO_TEST_CASE (pshmbuffer_thread_test)
 {
-	p_lib_init ();
+	p_libsys_init ();
 
 	PShmBuffer *	buffer = NULL;
 	PUThread	*thr1, *thr2;
@@ -304,7 +304,7 @@ BOOST_AUTO_TEST_CASE (pshmbuffer_thread_test)
 	p_uthread_free (thr1);
 	p_uthread_free (thr2);
 
-	p_lib_shutdown ();
+	p_libsys_shutdown ();
 }
 #endif /* !P_OS_HPUX && !P_OS_MSYS */
 

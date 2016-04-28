@@ -20,7 +20,7 @@
 #include "pfile.h"
 #include "pmem.h"
 #include "pstring.h"
-#include "plib-private.h"
+#include "plibsys-private.h"
 
 #ifdef P_OS_WIN
 #include <windows.h>

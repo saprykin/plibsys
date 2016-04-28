@@ -16,17 +16,17 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA.
  */
 
-#ifndef PLIB_TESTS_STATIC
+#ifndef PLIBSYS_TESTS_STATIC
 #  define BOOST_TEST_DYN_LINK
 #endif
 
 #define BOOST_TEST_MODULE psocket_test
 
-#include "plib.h"
+#include "plibsys.h"
 
 #include <string.h>
 
-#ifdef PLIB_TESTS_STATIC
+#ifdef PLIBSYS_TESTS_STATIC
 #  include <boost/test/included/unit_test.hpp>
 #else
 #  include <boost/test/unit_test.hpp>
@@ -562,7 +562,7 @@ BOOST_AUTO_TEST_SUITE (BOOST_TEST_MODULE)
 
 BOOST_AUTO_TEST_CASE (psocket_nomem_test)
 {
-	p_lib_init ();
+	p_libsys_init ();
 
 	PSocket *socket = p_socket_new (P_SOCKET_FAMILY_INET,
 					P_SOCKET_TYPE_DATAGRAM,
@@ -609,12 +609,12 @@ BOOST_AUTO_TEST_CASE (psocket_nomem_test)
 	p_socket_close (socket, NULL);
 	p_socket_free (socket);
 
-	p_lib_shutdown ();
+	p_libsys_shutdown ();
 }
 
 BOOST_AUTO_TEST_CASE (psocket_bad_input_test)
 {
-	p_lib_init ();
+	p_libsys_init ();
 
 	PError *error = NULL;
 
@@ -718,12 +718,12 @@ BOOST_AUTO_TEST_CASE (psocket_bad_input_test)
 
 	p_socket_free (NULL);
 
-	p_lib_shutdown ();
+	p_libsys_shutdown ();
 }
 
 BOOST_AUTO_TEST_CASE (psocket_general_udp_test)
 {
-	p_lib_init ();
+	p_libsys_init ();
 
 	/* Test UDP socket */
 	PSocket *socket = p_socket_new (P_SOCKET_FAMILY_INET,
@@ -831,12 +831,12 @@ BOOST_AUTO_TEST_CASE (psocket_general_udp_test)
 	p_socket_free (socket);
 	p_socket_free (fd_socket);
 
-	p_lib_shutdown ();
+	p_libsys_shutdown ();
 }
 
 BOOST_AUTO_TEST_CASE (psocket_general_tcp_test)
 {
-	p_lib_init ();
+	p_libsys_init ();
 
 	/* Test TCP socket */
 	PSocket *socket = p_socket_new (P_SOCKET_FAMILY_INET,
@@ -911,12 +911,12 @@ BOOST_AUTO_TEST_CASE (psocket_general_tcp_test)
 
 	p_socket_free (socket);
 
-	p_lib_shutdown ();
+	p_libsys_shutdown ();
 }
 
 BOOST_AUTO_TEST_CASE (psocket_udp_test)
 {
-	p_lib_init ();
+	p_libsys_init ();
 
 	is_sender_working = TRUE;
 	is_receiver_working = TRUE;
@@ -949,12 +949,12 @@ BOOST_AUTO_TEST_CASE (psocket_udp_test)
 	p_uthread_free (sender_thr);
 	p_uthread_free (receiver_thr);
 
-	p_lib_shutdown ();
+	p_libsys_shutdown ();
 }
 
 BOOST_AUTO_TEST_CASE (psocket_tcp_test)
 {
-	p_lib_init ();
+	p_libsys_init ();
 
 	is_sender_working = TRUE;
 	is_receiver_working = TRUE;
@@ -987,12 +987,12 @@ BOOST_AUTO_TEST_CASE (psocket_tcp_test)
 	p_uthread_free (sender_thr);
 	p_uthread_free (receiver_thr);
 
-	p_lib_shutdown ();
+	p_libsys_shutdown ();
 }
 
 BOOST_AUTO_TEST_CASE (psocket_shutdown_test)
 {
-	p_lib_init ();
+	p_libsys_init ();
 
 	is_sender_working = TRUE;
 	is_receiver_working = TRUE;
@@ -1024,7 +1024,7 @@ BOOST_AUTO_TEST_CASE (psocket_shutdown_test)
 	p_uthread_free (sender_thr);
 	p_uthread_free (receiver_thr);
 
-	p_lib_shutdown ();
+	p_libsys_shutdown ();
 }
 
 BOOST_AUTO_TEST_SUITE_END()

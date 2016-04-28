@@ -169,7 +169,7 @@ static void
 __p_gost3411_swap_bytes (puint32	*data,
 			 puint		words)
 {
-#ifndef PLIB_IS_BIGENDIAN
+#ifndef PLIBSYS_IS_BIGENDIAN
 	P_UNUSED (data);
 	P_UNUSED (words);
 #else

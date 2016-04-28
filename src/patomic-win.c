@@ -211,7 +211,7 @@ P_LIB_API pssize
 p_atomic_pointer_add (volatile void	*atomic,
 		      pssize		val)
 {
-#if PLIB_SIZEOF_VOID_P == 8
+#if PLIBSYS_SIZEOF_VOID_P == 8
 	return (pssize) InterlockedExchangeAdd64 ((LONGLONG volatile *) atomic, (LONGLONG) val);
 #else
 	return (pssize) InterlockedExchangeAdd ((LONG volatile *) atomic, (LONG) val);
@@ -222,7 +222,7 @@ P_LIB_API psize
 p_atomic_pointer_and (volatile void	*atomic,
 		      psize		val)
 {
-#if PLIB_SIZEOF_VOID_P == 8
+#if PLIBSYS_SIZEOF_VOID_P == 8
 	return (psize) InterlockedAnd64 ((LONGLONG volatile *) atomic, (LONGLONG) val);
 #else
 	return (psize) InterlockedAnd ((LONG volatile *) atomic, (LONG) val);
@@ -233,7 +233,7 @@ P_LIB_API psize
 p_atomic_pointer_or (volatile void	*atomic,
 		     psize		val)
 {
-#if PLIB_SIZEOF_VOID_P == 8
+#if PLIBSYS_SIZEOF_VOID_P == 8
 	return (psize) InterlockedOr64 ((LONGLONG volatile *) atomic, (LONGLONG) val);
 #else
 	return (psize) InterlockedOr ((LONG volatile *) atomic, (LONG) val);
@@ -244,7 +244,7 @@ P_LIB_API psize
 p_atomic_pointer_xor (volatile void	*atomic,
 		      psize		val)
 {
-#if PLIB_SIZEOF_VOID_P == 8
+#if PLIBSYS_SIZEOF_VOID_P == 8
 	return (psize) InterlockedXor64 ((LONGLONG volatile *) atomic, (LONGLONG) val);
 #else
 	return (psize) InterlockedXor ((LONG volatile *) atomic, (LONG) val);

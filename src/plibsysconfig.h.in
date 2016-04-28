@@ -1,0 +1,57 @@
+#ifndef __PLIBSYSCONFIG_H__
+#define __PLIBSYSCONFIG_H__
+
+#cmakedefine PLIBSYS_NEED_WINDOWS_H
+#cmakedefine PLIBSYS_NEED_FLOAT_H
+#cmakedefine PLIBSYS_NEED_LIMITS_H
+#cmakedefine PLIBSYS_NEED_VALUES_H
+#cmakedefine PLIBSYS_IS_BIGENDIAN
+
+#ifdef PLIBSYS_NEED_WINDOWS_H
+#include <winsock2.h>
+#include <windows.h>
+#endif
+
+#include <pmacros.h>
+
+#ifdef PLIBSYS_NEED_FLOAT_H
+#include <float.h>
+#endif
+
+#ifdef PLIBSYS_NEED_LIMITS_H
+#include <limits.h>
+#endif
+
+#ifdef PLIBSYS_NEED_VALUES_H
+#include <values.h>
+#endif
+
+P_BEGIN_DECLS
+
+#define P_MINFLOAT    @PLIBSYS_FLOAT_MIN@
+#define P_MAXFLOAT    @PLIBSYS_FLOAT_MAX@
+#define P_MINDOUBLE   @PLIBSYS_DOUBLE_MIN@
+#define P_MAXDOUBLE   @PLIBSYS_DOUBLE_MAX@
+#define P_MINSHORT    @PLIBSYS_SHORT_MIN@
+#define P_MAXSHORT    @PLIBSYS_SHORT_MAX@
+#define P_MAXUSHORT   @PLIBSYS_USHORT_MAX@
+#define P_MININT      @PLIBSYS_INT_MIN@
+#define P_MAXINT      @PLIBSYS_INT_MAX@
+#define P_MAXUINT     @PLIBSYS_UINT_MAX@
+#define P_MINLONG     @PLIBSYS_LONG_MIN@
+#define P_MAXLONG     @PLIBSYS_LONG_MAX@
+#define P_MAXULONG    @PLIBSYS_ULONG_MAX@
+
+#define PLIBSYS_SIZEOF_VOID_P @CMAKE_SIZEOF_VOID_P@
+#define PLIBSYS_SIZEOF_SIZE_T @PLIBSYS_SIZEOF_SIZE_T@
+#define PLIBSYS_SIZEOF_LONG @PLIBSYS_SIZEOF_LONG@
+
+#ifdef PLIBSYS_IS_BIGENDIAN
+#define P_BYTE_ORDER P_BIG_ENDIAN
+#else
+#define P_BYTE_ORDER P_LITTLE_ENDIAN
+#endif
+
+P_END_DECLS
+
+#endif /* __PLIBSYSCONFIG_H__ */

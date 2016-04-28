@@ -16,15 +16,15 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA.
  */
 
-#ifndef PLIB_TESTS_STATIC
+#ifndef PLIBSYS_TESTS_STATIC
 #  define BOOST_TEST_DYN_LINK
 #endif
 
 #define BOOST_TEST_MODULE pdir_test
 
-#include "plib.h"
+#include "plibsys.h"
 
-#ifdef PLIB_TESTS_STATIC
+#ifdef PLIBSYS_TESTS_STATIC
 #  include <boost/test/included/unit_test.hpp>
 #else
 #  include <boost/test/unit_test.hpp>
@@ -58,7 +58,7 @@ BOOST_AUTO_TEST_SUITE (BOOST_TEST_MODULE)
 
 BOOST_AUTO_TEST_CASE (pdir_nomem_test)
 {
-	p_lib_init ();
+	p_libsys_init ();
 
 	PMemVTable vtable;
 
@@ -107,12 +107,12 @@ BOOST_AUTO_TEST_CASE (pdir_nomem_test)
 	BOOST_CHECK (p_dir_remove (PDIR_TEST_DIR_IN, NULL) == TRUE);
 	BOOST_CHECK (p_dir_remove (PDIR_TEST_DIR, NULL) == TRUE);
 
-	p_lib_shutdown ();
+	p_libsys_shutdown ();
 }
 
 BOOST_AUTO_TEST_CASE (pdir_general_test)
 {
-	p_lib_init ();
+	p_libsys_init ();
 
 	BOOST_CHECK (p_dir_new (NULL, NULL) == NULL);
 	BOOST_CHECK (p_dir_new ("."P_DIR_SEPARATOR"pdir_test_dir_new", NULL) == NULL);
@@ -241,7 +241,7 @@ BOOST_AUTO_TEST_CASE (pdir_general_test)
 
 	p_dir_free (dir);
 
-	p_lib_shutdown ();
+	p_libsys_shutdown ();
 }
 
 BOOST_AUTO_TEST_SUITE_END()

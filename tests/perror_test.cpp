@@ -16,17 +16,17 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA.
  */
 
-#ifndef PLIB_TESTS_STATIC
+#ifndef PLIBSYS_TESTS_STATIC
 #  define BOOST_TEST_DYN_LINK
 #endif
 
 #define BOOST_TEST_MODULE perror_test
 
-#include "plib.h"
+#include "plibsys.h"
 
 #include <string.h>
 
-#ifdef PLIB_TESTS_STATIC
+#ifdef PLIBSYS_TESTS_STATIC
 #  include <boost/test/included/unit_test.hpp>
 #else
 #  include <boost/test/unit_test.hpp>
@@ -57,7 +57,7 @@ BOOST_AUTO_TEST_SUITE (BOOST_TEST_MODULE)
 
 BOOST_AUTO_TEST_CASE (perror_nomem_test)
 {
-	p_lib_init ();
+	p_libsys_init ();
 
 	PError *error = p_error_new_literal (0, 0, NULL);
 	BOOST_CHECK (error != NULL);
@@ -82,12 +82,12 @@ BOOST_AUTO_TEST_CASE (perror_nomem_test)
 
 	p_error_free (error);
 
-	p_lib_shutdown ();
+	p_libsys_shutdown ();
 }
 
 BOOST_AUTO_TEST_CASE (perror_invalid_test)
 {
-	p_lib_init ();
+	p_libsys_init ();
 
 	BOOST_CHECK (p_error_get_message (NULL) == NULL);
 	BOOST_CHECK (p_error_get_code (NULL) == 0);
@@ -110,12 +110,12 @@ BOOST_AUTO_TEST_CASE (perror_invalid_test)
 	p_error_clear (NULL);
 	p_error_free (NULL);
 
-	p_lib_shutdown ();
+	p_libsys_shutdown ();
 }
 
 BOOST_AUTO_TEST_CASE (perror_general_test)
 {
-	p_lib_init ();
+	p_libsys_init ();
 
 	/* Empty initialization test */
 	PError *error = p_error_new ();
@@ -216,7 +216,7 @@ BOOST_AUTO_TEST_CASE (perror_general_test)
 
 	p_error_free (error);
 
-	p_lib_shutdown ();
+	p_libsys_shutdown ();
 }
 
 BOOST_AUTO_TEST_SUITE_END()

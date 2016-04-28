@@ -17,7 +17,7 @@
  */
 
 #include "pfile.h"
-#include "plib-private.h"
+#include "plibsys-private.h"
 
 #ifdef P_OS_WIN
 #include <windows.h>

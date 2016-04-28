@@ -30,7 +30,7 @@
 #include <windows.h>
 
 struct _PCondVariable {
-#ifdef PLIB_HAS_VISTA_CV
+#ifdef PLIBSYS_HAS_VISTA_CV
 	CONDITION_VARIABLE	cv;
 #else
 	HANDLE			waiters_sema;
@@ -48,7 +48,7 @@ p_cond_variable_new (void)
 		return NULL;
 	}
 
-#ifdef PLIB_HAS_VISTA_CV
+#ifdef PLIBSYS_HAS_VISTA_CV
 	InitializeConditionVariable (&ret->cv);
 #else
 	ret->waiters_count	= 0;
@@ -70,7 +70,7 @@ p_cond_variable_free (PCondVariable *cond)
 	if (cond == NULL)
 		return;
 
-#ifndef PLIB_HAS_VISTA_CV
+#ifndef PLIBSYS_HAS_VISTA_CV
 	CloseHandle (cond->waiters_sema);
 #endif
 
@@ -81,14 +81,14 @@ P_LIB_API pboolean
 p_cond_variable_wait (PCondVariable	*cond,
 		      PMutex		*mutex)
 {
-#ifndef PLIB_HAS_VISTA_CV
+#ifndef PLIBSYS_HAS_VISTA_CV
 	DWORD wait;
 #endif
 
 	if (cond == NULL || mutex == NULL)
 		return FALSE;
 
-#ifdef PLIB_HAS_VISTA_CV
+#ifdef PLIBSYS_HAS_VISTA_CV
 	return SleepConditionVariableCS (&cond->cv, (PCRITICAL_SECTION) mutex, INFINITE) != 0 ? TRUE : FALSE;
 #else
 	cond->waiters_count++;
@@ -113,7 +113,7 @@ p_cond_variable_signal (PCondVariable *cond)
 	if (cond == NULL)
 		return FALSE;
 
-#ifdef PLIB_HAS_VISTA_CV
+#ifdef PLIBSYS_HAS_VISTA_CV
 	WakeConditionVariable (&cond->cv);
 #else
 	if (cond->waiters_count > 0) {
@@ -135,7 +135,7 @@ p_cond_variable_broadcast (PCondVariable *cond)
 	if (cond == NULL)
 		return FALSE;
 
-#ifdef PLIB_HAS_VISTA_CV
+#ifdef PLIBSYS_HAS_VISTA_CV
 	WakeAllConditionVariable (&cond->cv);
 #else
 	waiters = cond->waiters_count;

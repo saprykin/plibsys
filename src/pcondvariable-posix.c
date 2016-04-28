@@ -66,7 +66,7 @@ p_cond_variable_wait (PCondVariable	*cond,
 	if (cond == NULL || mutex == NULL)
 		return FALSE;
 
-	/* Cast is eligible since there is only one filed in PMutex structure */
+	/* Cast is eligible since there is only one field in the PMutex structure */
 	if (pthread_cond_wait (&cond->hdl, (pthread_mutex_t *) mutex) != 0) {
 		P_ERROR ("PCondVariable: failed to wait");
 		return FALSE;

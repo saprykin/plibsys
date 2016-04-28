@@ -16,15 +16,15 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA.
  */
 
-#ifndef PLIB_TESTS_STATIC
+#ifndef PLIBSYS_TESTS_STATIC
 #  define BOOST_TEST_DYN_LINK
 #endif
 
 #define BOOST_TEST_MODULE ptimeprofiler_test
 
-#include "plib.h"
+#include "plibsys.h"
 
-#ifdef PLIB_TESTS_STATIC
+#ifdef PLIBSYS_TESTS_STATIC
 #  include <boost/test/included/unit_test.hpp>
 #else
 #  include <boost/test/unit_test.hpp>
@@ -52,7 +52,7 @@ BOOST_AUTO_TEST_SUITE (BOOST_TEST_MODULE)
 
 BOOST_AUTO_TEST_CASE (ptimeprofiler_nomem_test)
 {
-	p_lib_init ();
+	p_libsys_init ();
 
 	PMemVTable vtable;
 
@@ -70,7 +70,7 @@ BOOST_AUTO_TEST_CASE (ptimeprofiler_nomem_test)
 
 	BOOST_CHECK (p_mem_set_vtable (&vtable) == TRUE);
 
-	p_lib_shutdown ();
+	p_libsys_shutdown ();
 }
 
 BOOST_AUTO_TEST_CASE (ptimeprofiler_general_test)
@@ -78,7 +78,7 @@ BOOST_AUTO_TEST_CASE (ptimeprofiler_general_test)
 	PTimeProfiler	*profiler = NULL;
 	pint64		prev_val, val;
 
-	p_lib_init ();
+	p_libsys_init ();
 
 	BOOST_CHECK (p_time_profiler_elapsed_usecs (profiler) == 0);
 	p_time_profiler_reset (profiler);
@@ -112,7 +112,7 @@ BOOST_AUTO_TEST_CASE (ptimeprofiler_general_test)
 
 	p_time_profiler_free (profiler);
 
-	p_lib_shutdown ();
+	p_libsys_shutdown ();
 }
 
 BOOST_AUTO_TEST_SUITE_END()

@@ -20,7 +20,7 @@
 #include "plist.h"
 #include "pmem.h"
 #include "pstring.h"
-#include "plib-private.h"
+#include "plibsys-private.h"
 
 #include <stdlib.h>
 #include <stdio.h>

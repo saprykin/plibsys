@@ -22,8 +22,8 @@
  * @author Alexander Saprykin
  *
  * Semaphore is a system-wide synchronization primitive. It can be used to synchronize different
- * processes within the system. PLib supports different semaphore implementations: System V,
- * POSIX and Windows. PLib is compiled using one of them (depend which of implementations
+ * processes within the system. PLibSYS supports different semaphore implementations: System V,
+ * POSIX and Windows. PLibSYS is compiled using one of them (depend which of implementations
  * are available on target system).
  *
  * Please note the following platform specific differences:
@@ -48,8 +48,8 @@
  * instead (if possible).
  */
 
-#if !defined (__PLIB_H_INSIDE__) && !defined (PLIB_COMPILATION)
-#  error "Header files shouldn't be included directly, consider using <plib.h> instead."
+#if !defined (__PLIBSYS_H_INSIDE__) && !defined (PLIBSYS_COMPILATION)
+#  error "Header files shouldn't be included directly, consider using <plibsys.h> instead."
 #endif
 
 #ifndef __PSEMAPHORE_H__

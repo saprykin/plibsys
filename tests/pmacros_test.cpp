@@ -16,15 +16,15 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA.
  */
 
-#ifndef PLIB_TESTS_STATIC
+#ifndef PLIBSYS_TESTS_STATIC
 #  define BOOST_TEST_DYN_LINK
 #endif
 
 #define BOOST_TEST_MODULE pmacros_test
 
-#include "plib.h"
+#include "plibsys.h"
 
-#ifdef PLIB_TESTS_STATIC
+#ifdef PLIBSYS_TESTS_STATIC
 #  include <boost/test/included/unit_test.hpp>
 #else
 #  include <boost/test/unit_test.hpp>
@@ -39,7 +39,7 @@ BOOST_AUTO_TEST_SUITE (BOOST_TEST_MODULE)
 
 BOOST_AUTO_TEST_CASE (pmacros_general_test)
 {
-	p_lib_init ();
+	p_libsys_init ();
 
 	/* Test OS detection macros */
 #if !defined (P_OS_DARWIN) && !defined (P_OS_MAC9)     && !defined (P_OS_BSD4)    && \
@@ -127,7 +127,7 @@ BOOST_AUTO_TEST_CASE (pmacros_general_test)
 	P_ERROR ("Test error output");
 	P_DEBUG ("Test debug output");
 
-	p_lib_shutdown ();
+	p_libsys_shutdown ();
 }
 
 BOOST_AUTO_TEST_SUITE_END()

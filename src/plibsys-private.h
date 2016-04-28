@@ -16,12 +16,12 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA.
  */
 
-#if !defined (__PLIB_H_INSIDE__) && !defined (PLIB_COMPILATION)
-#  error "Header files shouldn't be included directly, consider using <plib.h> instead."
+#if !defined (__PLIBSYS_H_INSIDE__) && !defined (PLIBSYS_COMPILATION)
+#  error "Header files shouldn't be included directly, consider using <plibsys.h> instead."
 #endif
 
-#ifndef __PLIBPRIVATE_H__
-#define __PLIBPRIVATE_H__
+#ifndef __PLIBSYSPRIVATE_H__
+#define __PLIBSYSPRIVATE_H__
 
 #include "pmacros.h"
 #include "ptypes.h"
@@ -37,31 +37,31 @@ typedef struct _PTreeBaseNode {
 	ppointer		value;	/**< Node value		*/
 } __PTreeBaseNode;
 
-#ifndef PLIB_HAS_SOCKLEN_T
+#ifndef PLIBSYS_HAS_SOCKLEN_T
 typedef int socklen_t;
 #endif
 
-#ifndef PLIB_HAS_SOCKADDR_STORAGE
+#ifndef PLIBSYS_HAS_SOCKADDR_STORAGE
 /* According to RFC 2553 */
-#  define _PLIB_SS_MAXSIZE	128
-#  define _PLIB_SS_ALIGNSIZE	(sizeof (pint64))
+#  define _PLIBSYS_SS_MAXSIZE	128
+#  define _PLIBSYS_SS_ALIGNSIZE	(sizeof (pint64))
 
-#  ifdef PLIB_SOCKADDR_HAS_SA_LEN
-#    define _PLIB_SS_PAD1SIZE	(_PLIB_SS_ALIGNSIZE - (sizeof (puchar) + sizeof (puchar)))
+#  ifdef PLIBSYS_SOCKADDR_HAS_SA_LEN
+#    define _PLIBSYS_SS_PAD1SIZE	(_PLIBSYS_SS_ALIGNSIZE - (sizeof (puchar) + sizeof (puchar)))
 #  else
-#    define _PLIB_SS_PAD1SIZE	(_PLIB_SS_ALIGNSIZE - sizeof (puchar))
+#    define _PLIBSYS_SS_PAD1SIZE	(_PLIBSYS_SS_ALIGNSIZE - sizeof (puchar))
 #  endif
 
-#  define _PLIB_SS_PAD2SIZE	(_PLIB_SS_MAXSIZE - (sizeof (puchar) + _PLIB_SS_PAD1SIZE + _PLIB_SS_ALIGNSIZE))
+#  define _PLIBSYS_SS_PAD2SIZE	(_PLIBSYS_SS_MAXSIZE - (sizeof (puchar) + _PLIBSYS_SS_PAD1SIZE + _PLIBSYS_SS_ALIGNSIZE))
 
 struct sockaddr_storage {
-#  ifdef PLIB_SOCKADDR_HAS_SA_LEN
+#  ifdef PLIBSYS_SOCKADDR_HAS_SA_LEN
 	puchar		ss_len;
 #  endif
 	puchar		ss_family;
-	pchar		__ss_pad1[_PLIB_SS_PAD1SIZE];
+	pchar		__ss_pad1[_PLIBSYS_SS_PAD1SIZE];
 	pint64		__ss_align;
-	pchar		__ss_pad2[_PLIB_SS_PAD2SIZE];
+	pchar		__ss_pad2[_PLIBSYS_SS_PAD2SIZE];
 };
 #endif
 
@@ -137,4 +137,4 @@ pint		__p_error_get_last_error		();
 
 P_END_DECLS
 
-#endif /* __PLIBPRIVATE_H__ */
+#endif /* __PLIBSYSPRIVATE_H__ */

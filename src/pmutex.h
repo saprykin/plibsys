@@ -22,15 +22,15 @@
  * @author Alexander Saprykin
  *
  * Mutex is a thread synchronization primitive. It's a binary semaphore in other
- * words. PLib supports different mutex implementations: System V, POSIX, Sun Solaris
- * and Windows. PLib is compiled using one of them (depends on which of implementations
+ * words. PLibSYS supports different mutex implementations: System V, POSIX, Sun Solaris
+ * and Windows. PLibSYS is compiled using one of them (depends on which of implementations
  * are available on a target system). Because of that some non-usual actions (double-lock,
  * unlock non-locked mutex) can lead to unpredictable behaviour. Do not rely on such
  * features when writing cross-platform applications.
  */
 
-#if !defined (__PLIB_H_INSIDE__) && !defined (PLIB_COMPILATION)
-#  error "Header files shouldn't be included directly, consider using <plib.h> instead."
+#if !defined (__PLIBSYS_H_INSIDE__) && !defined (PLIBSYS_COMPILATION)
+#  error "Header files shouldn't be included directly, consider using <plibsys.h> instead."
 #endif
 
 #ifndef __PMUTEX_H__

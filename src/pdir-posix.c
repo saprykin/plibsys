@@ -20,7 +20,7 @@
 #include "pstring.h"
 #include "pfile.h"
 #include "pdir.h"
-#include "plib-private.h"
+#include "plibsys-private.h"
 
 #include <stdlib.h>
 #include <string.h>

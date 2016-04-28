@@ -16,15 +16,15 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA.
  */
 
-#ifndef PLIB_TESTS_STATIC
+#ifndef PLIBSYS_TESTS_STATIC
 #  define BOOST_TEST_DYN_LINK
 #endif
 
 #define BOOST_TEST_MODULE ptypes_test
 
-#include "plib.h"
+#include "plibsys.h"
 
-#ifdef PLIB_TESTS_STATIC
+#ifdef PLIBSYS_TESTS_STATIC
 #  include <boost/test/included/unit_test.hpp>
 #else
 #  include <boost/test/unit_test.hpp>
@@ -34,7 +34,7 @@ BOOST_AUTO_TEST_SUITE (BOOST_TEST_MODULE)
 
 BOOST_AUTO_TEST_CASE (ptypes_general_test)
 {
-	p_lib_init ();
+	p_libsys_init ();
 
 	BOOST_CHECK (P_BYTE_ORDER == P_LITTLE_ENDIAN ||
 		     P_BYTE_ORDER == P_BIG_ENDIAN);
@@ -60,20 +60,20 @@ BOOST_AUTO_TEST_CASE (ptypes_general_test)
 	BOOST_CHECK (sizeof (unsigned long) == sizeof (pulong));
 	BOOST_CHECK (sizeof (float) == sizeof (pfloat));
 	BOOST_CHECK (sizeof (double) == sizeof (pdouble));
-	BOOST_CHECK (sizeof (pintptr) == PLIB_SIZEOF_VOID_P);
-	BOOST_CHECK (sizeof (puintptr) == PLIB_SIZEOF_VOID_P);
-	BOOST_CHECK (sizeof (psize) == PLIB_SIZEOF_SIZE_T);
-	BOOST_CHECK (sizeof (pssize) == PLIB_SIZEOF_SIZE_T);
-	BOOST_CHECK (sizeof (plong) == PLIB_SIZEOF_LONG);
-	BOOST_CHECK (sizeof (pulong) == PLIB_SIZEOF_LONG);
+	BOOST_CHECK (sizeof (pintptr) == PLIBSYS_SIZEOF_VOID_P);
+	BOOST_CHECK (sizeof (puintptr) == PLIBSYS_SIZEOF_VOID_P);
+	BOOST_CHECK (sizeof (psize) == PLIBSYS_SIZEOF_SIZE_T);
+	BOOST_CHECK (sizeof (pssize) == PLIBSYS_SIZEOF_SIZE_T);
+	BOOST_CHECK (sizeof (plong) == PLIBSYS_SIZEOF_LONG);
+	BOOST_CHECK (sizeof (pulong) == PLIBSYS_SIZEOF_LONG);
 	BOOST_CHECK (sizeof (poffset) == 8);
 
-	p_lib_shutdown ();
+	p_libsys_shutdown ();
 }
 
 BOOST_AUTO_TEST_CASE (ptypes_pointers_convert_test)
 {
-	p_lib_init ();
+	p_libsys_init ();
 
 	ppointer pointer = P_INT_TO_POINTER (128);
 	BOOST_CHECK (P_POINTER_TO_INT (pointer) == 128);
@@ -90,12 +90,12 @@ BOOST_AUTO_TEST_CASE (ptypes_pointers_convert_test)
 	pointer = PSIZE_TO_POINTER (psize_val);
 	BOOST_CHECK (PPOINTER_TO_PSIZE (psize_val) == 1024);
 
-	p_lib_shutdown ();
+	p_libsys_shutdown ();
 }
 
 BOOST_AUTO_TEST_CASE (ptypes_min_max_test)
 {
-	p_lib_init ();
+	p_libsys_init ();
 
 	BOOST_CHECK (P_MININT8 == (pint8) 0x80);
 	BOOST_CHECK (P_MAXINT8 == (pint8) 0x7F);
@@ -110,12 +110,12 @@ BOOST_AUTO_TEST_CASE (ptypes_min_max_test)
 	BOOST_CHECK (P_MAXINT64 == (pint64) 0x7FFFFFFFFFFFFFFFLL);
 	BOOST_CHECK (P_MAXUINT64 == (puint64) 0xFFFFFFFFFFFFFFFFULL);
 
-	if (PLIB_SIZEOF_SIZE_T == 8) {
+	if (PLIBSYS_SIZEOF_SIZE_T == 8) {
 		BOOST_CHECK (P_MINSSIZE == P_MININT64);
 		BOOST_CHECK (P_MAXSSIZE == P_MAXINT64);
 		BOOST_CHECK (P_MAXSIZE == P_MAXUINT64);
 
-		if (PLIB_SIZEOF_LONG == 8) {
+		if (PLIBSYS_SIZEOF_LONG == 8) {
 			BOOST_CHECK (P_MINSSIZE == P_MINLONG);
 			BOOST_CHECK (P_MAXSSIZE == P_MAXLONG);
 			BOOST_CHECK (P_MAXSIZE == P_MAXULONG);
@@ -125,19 +125,19 @@ BOOST_AUTO_TEST_CASE (ptypes_min_max_test)
 		BOOST_CHECK (P_MAXSSIZE == P_MAXINT32);
 		BOOST_CHECK (P_MAXSIZE == P_MAXUINT32);
 
-		if (PLIB_SIZEOF_LONG == 4) {
+		if (PLIBSYS_SIZEOF_LONG == 4) {
 			BOOST_CHECK (P_MINSSIZE == P_MINLONG);
 			BOOST_CHECK (P_MAXSSIZE == P_MAXLONG);
 			BOOST_CHECK (P_MAXSIZE == P_MAXULONG);
 		}
 	}
 
-	p_lib_shutdown ();
+	p_libsys_shutdown ();
 }
 
 BOOST_AUTO_TEST_CASE (ptypes_modifiers_test)
 {
-	p_lib_init ();
+	p_libsys_init ();
 
 	psize size_val = 256;
 	printf ("%#" PSIZE_MODIFIER "x\n", size_val);
@@ -167,12 +167,12 @@ BOOST_AUTO_TEST_CASE (ptypes_modifiers_test)
 	poffset poffset_val = 8192;
 	printf ("%#" POFFSET_MODIFIER "x\n", poffset_val);
 
-	p_lib_shutdown ();
+	p_libsys_shutdown ();
 }
 
 BOOST_AUTO_TEST_CASE (ptypes_formats_test)
 {
-	p_lib_init ();
+	p_libsys_init ();
 
 	pssize ssize_val = -256;
 	printf ("%" PSSIZE_FORMAT "\n", ssize_val);
@@ -202,12 +202,12 @@ BOOST_AUTO_TEST_CASE (ptypes_formats_test)
 	poffset poffset_val = 8192;
 	printf ("%" POFFSET_FORMAT "\n", poffset_val);
 
-	p_lib_shutdown ();
+	p_libsys_shutdown ();
 }
 
 BOOST_AUTO_TEST_CASE (ptypes_host_network_test)
 {
-	p_lib_init ();
+	p_libsys_init ();
 
 	if (P_BYTE_ORDER == P_LITTLE_ENDIAN) {
 		pint16 pint16_val = PINT16_TO_BE (0xFFE0);
@@ -258,7 +258,7 @@ BOOST_AUTO_TEST_CASE (ptypes_host_network_test)
 		BOOST_CHECK (PUINT_TO_LE (puint_val) == (puint) 0x00040000);
 		BOOST_CHECK (PUINT_FROM_LE (puint_val) == (puint) 0x00040000);
 
-		if (PLIB_SIZEOF_LONG == 8) {
+		if (PLIBSYS_SIZEOF_LONG == 8) {
 			plong plong_val = PLONG_TO_BE (0xFFFFFFFFFFFFF800LL);
 			BOOST_CHECK (plong_val == (plong) 0x00F8FFFFFFFFFFFFLL);
 			BOOST_CHECK (PLONG_FROM_BE (plong_val) == (plong) 0xFFFFFFFFFFFFF800LL);
@@ -284,7 +284,7 @@ BOOST_AUTO_TEST_CASE (ptypes_host_network_test)
 			BOOST_CHECK (PULONG_FROM_LE (pulong_val) == (pulong) 0x00080000);
 		}
 
-		if (PLIB_SIZEOF_SIZE_T == 8) {
+		if (PLIBSYS_SIZEOF_SIZE_T == 8) {
 			psize psize_val = PSIZE_TO_BE (0x0000000000001000ULL);
 			BOOST_CHECK (psize_val == (psize) 0x0010000000000000ULL);
 			BOOST_CHECK (PSIZE_FROM_BE (psize_val) == (psize) 0x0000000000001000ULL);
@@ -366,7 +366,7 @@ BOOST_AUTO_TEST_CASE (ptypes_host_network_test)
 		BOOST_CHECK (PUINT_TO_BE (puint_val) == (puint) 0x00040000);
 		BOOST_CHECK (PUINT_FROM_BE (puint_val) == (puint) 0x00040000);
 
-		if (PLIB_SIZEOF_LONG == 8) {
+		if (PLIBSYS_SIZEOF_LONG == 8) {
 			plong plong_val = PLONG_TO_LE (0xFFFFFFFFFFFFF800LL);
 			BOOST_CHECK (plong_val == (plong) 0x00F8FFFFFFFFFFFFLL);
 			BOOST_CHECK (PLONG_FROM_LE (plong_val) == (plong) 0xFFFFFFFFFFFFF800LL);
@@ -392,7 +392,7 @@ BOOST_AUTO_TEST_CASE (ptypes_host_network_test)
 			BOOST_CHECK (PULONG_FROM_BE (pulong_val) == (pulong) 0x00080000);
 		}
 
-		if (PLIB_SIZEOF_SIZE_T == 8) {
+		if (PLIBSYS_SIZEOF_SIZE_T == 8) {
 			psize psize_val = PSIZE_TO_LE (0x0000000000001000ULL);
 			BOOST_CHECK (psize_val == (psize) 0x0010000000000000ULL);
 			BOOST_CHECK (PSIZE_FROM_LE (psize_val) == (psize) 0x0000000000001000ULL);
@@ -439,7 +439,7 @@ BOOST_AUTO_TEST_CASE (ptypes_host_network_test)
 	BOOST_CHECK (puint64_val == (puint64) 0x8000000000000000ULL);
 	BOOST_CHECK (PUINT64_SWAP_BYTES (puint64_val) == (puint64) 0x0000000000000080ULL);
 
-	p_lib_shutdown ();
+	p_libsys_shutdown ();
 }
 
 BOOST_AUTO_TEST_SUITE_END()

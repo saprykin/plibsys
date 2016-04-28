@@ -3,7 +3,7 @@
 #---------------------------------------------------------------------------
 # General configuration options
 #---------------------------------------------------------------------------
-PROJECT_NAME           = PLib
+PROJECT_NAME           = PLibSYS
 PROJECT_NUMBER         = @VERSION@
 OUTPUT_DIRECTORY       = doc
 OUTPUT_LANGUAGE        = English
@@ -60,8 +60,8 @@ RECURSIVE              = YES
 EXCLUDE_PATTERNS       = Makefile.*             \
                          pcryptohash-*.*        \
                          ptree-*.*              \
-                         plib.h                 \
-                         plib-private.h         \
+                         plibsys.h              \
+                         plibsys-private.h      \
                          CMakeLists.txt
 
 EXCLUDE_SYMBOLS        = __has_attribute
@@ -131,7 +131,7 @@ RTF_EXTENSIONS_FILE    =
 #---------------------------------------------------------------------------
 GENERATE_MAN           = NO
 MAN_OUTPUT             = man
-MAN_EXTENSION          = .3plib
+MAN_EXTENSION          = .3plibsys
 MAN_LINKS              = YES
 #---------------------------------------------------------------------------
 # configuration options related to the XML output

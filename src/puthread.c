@@ -17,7 +17,7 @@
  */
 
 #include "puthread.h"
-#include "plib-private.h"
+#include "plibsys-private.h"
 
 #include <stdlib.h>
 #include <time.h>
@@ -27,7 +27,7 @@
 #  include <windows.h>
 #else
 #  include <errno.h>
-#  if !defined (PLIB_HAS_NANOSLEEP)
+#  if !defined (PLIBSYS_HAS_NANOSLEEP)
 #    include <sys/select.h>
 #    include <sys/time.h>
 static int __p_uthread_nanosleep (puint32 msec)
@@ -71,7 +71,7 @@ p_uthread_sleep (puint32 msec)
 #ifdef P_OS_WIN
 	Sleep (msec);
 	return 0;
-#elif defined (PLIB_HAS_NANOSLEEP)
+#elif defined (PLIBSYS_HAS_NANOSLEEP)
 	pint result;
 	struct timespec time_req;
 	struct timespec time_rem;

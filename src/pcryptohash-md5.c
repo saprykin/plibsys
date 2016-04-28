@@ -68,7 +68,7 @@ static void __p_md5_process (PHashMD5 *ctx, const puint32 data[16]);
 static void
 __p_md5_swap_bytes (puint32 *data, puint words)
 {
-#ifndef PLIB_IS_BIGENDIAN
+#ifndef PLIBSYS_IS_BIGENDIAN
 	P_UNUSED (data);
 	P_UNUSED (words);
 #else

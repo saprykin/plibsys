@@ -1,0 +1,26 @@
+# Configure PLibSYS
+message (STATUS "Reading ${CMAKE_CURRENT_LIST_FILE}")
+set (PLibSYS_VERSION @PLIBSYS_VERSION@)
+message (STATUS "PLibSYS configuration, version " ${PLibSYS_VERSION})
+
+# Tell the user project where to find our headers and libraries.
+get_filename_component (_DIR ${CMAKE_CURRENT_LIST_FILE} PATH)
+if (IS_ABSOLUTE @PLIBSYS_ROOT_DIR@)
+        # This is an uninstalled package (still in the build tree)
+        set (PLIBSYS_ROOT_DIR @PLIBSYS_ROOT_DIR@)
+        set (PLibSYS_INCLUDE_DIRS @PLibSYS_INCLUDE_DIRS@)
+        set (PLibSYS_LIBRARY_DIRS ${PLIBSYS_ROOT_DIR})
+else()
+        # This is an installed package; figure out the paths relative to the
+        # current directory.
+        get_filename_component (PLIBSYS_ROOT_DIR ${_DIR}/@PLIBSYS_ROOT_DIR@ ABSOLUTE)
+        set (PLibSYS_INCLUDE_DIRS ${PLIBSYS_ROOT_DIR}/include)
+        set (PLibSYS_LIBRARY_DIRS ${PLIBSYS_ROOT_DIR}/lib)
+endif()
+
+# Read in the exported definition of the library.
+include ("${_DIR}/plibsys-targets.cmake")
+set (PLibSYS_LIBRARIES plibsys)
+
+# PLibSYS_FOUND is set to 1 automatically.
+set (PLibSYS_FOUND 1) # for backwards compatibility
