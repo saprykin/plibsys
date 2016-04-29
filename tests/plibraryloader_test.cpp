@@ -74,8 +74,16 @@ BOOST_AUTO_TEST_CASE (plibraryloader_nomem_test)
 
 	BOOST_CHECK (p_mem_set_vtable (&vtable) == TRUE);
 
+#ifdef P_OS_WIN
+	SetErrorMode (SEM_FAILCRITICALERRORS);
+#endif
+
 	BOOST_CHECK (p_library_loader_new ("." P_DIR_SEPARATOR "p_empty_file.txt") == NULL);
 	BOOST_CHECK (p_library_loader_new (boost::unit_test::framework::master_test_suite().argv[1]) == NULL);
+
+#ifdef P_OS_WIN
+	SetErrorMode (0);
+#endif
 
 	vtable.malloc	= (ppointer (*)(psize)) malloc;
 	vtable.realloc	= (ppointer (*)(ppointer, psize)) realloc;
