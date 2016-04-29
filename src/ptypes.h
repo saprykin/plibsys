@@ -1027,6 +1027,11 @@ typedef pint64 poffset;
 #endif
 
 /**
+ * @brief Platform-independent system handle.
+ */
+typedef void * P_HANDLE;
+
+/**
  * @brief Function to traverse through a key-value container.
  * @param key The key of the item.
  * @param value The value of the item.
