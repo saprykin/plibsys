@@ -146,11 +146,22 @@ P_LIB_API pint			p_uthread_set_priority	(PUThread		*thread,
 
 /**
  * @brief Tells scheduler to skip the current (caller) thread in the current
- * planning stage. In other words, scheduler shouldn't give time ticks for the
- * current thread during the current period.
+ * planning stage.
  * @since 0.0.1
+ *
+ * Scheduler shouldn't give time ticks for the current thread during the current
+ * period, but it may ignore this call.
  */
 P_LIB_API void			p_uthread_yield		(void);
+
+/**
+ * @brief Gets an ID of the current (caller) thread.
+ * @since 0.0.1
+ *
+ * This is a platform-dependent type. You shouldn't treat it as a number, it
+ * only gives you a uniquer ID of the thread accross the system.
+ */
+P_LIB_API P_HANDLE		p_uthread_current_id	(void);
 
 P_END_DECLS
 

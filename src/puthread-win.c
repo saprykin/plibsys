@@ -153,3 +153,9 @@ p_uthread_set_priority (PUThread		*thread,
 
 	return 0;
 }
+
+P_LIB_API P_HANDLE
+p_uthread_current_id (void)
+{
+	return (P_HANDLE) GetCurrentThreadId ();
+}
