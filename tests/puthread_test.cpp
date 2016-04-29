@@ -60,7 +60,7 @@ static void * test_thread_func (void *data)
 {
 	pint *counter =  static_cast < pint * > (data);
 
-	if (*counter == 1)
+	if ((*counter) == 1)
 		thread1_id = p_uthread_current_id ();
 	else
 		thread2_id = p_uthread_current_id ();
@@ -159,14 +159,14 @@ BOOST_AUTO_TEST_CASE (puthread_general_test)
 	BOOST_REQUIRE (thr1 != NULL);
 	BOOST_REQUIRE (thr2 != NULL);
 
-	BOOST_REQUIRE (thread1_id != thread2_id);
-
 	p_uthread_sleep (5000);
 
 	is_threads_working = FALSE;
 
 	BOOST_CHECK (p_uthread_join (thr1) == thread_wakes_1);
 	BOOST_CHECK (p_uthread_join (thr2) == thread_wakes_2);
+
+	BOOST_REQUIRE (thread1_id != thread2_id);
 
 	p_libsys_shutdown ();
 }
