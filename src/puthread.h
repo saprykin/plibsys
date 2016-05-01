@@ -47,6 +47,21 @@
  * the threads are in the idle state so you do not want to waste a CPU time.
  * This only tells to a scheduler to skip current scheduling cycle for the
  * calling thread, though the scheduler can ingnore it.
+ *
+ * Thread local storage (TLS) is provided. A TLS key's value can be accessed
+ * through a reference key defined as #PUThreadKey. TLS reference key is a some
+ * sort of a token which has an associated value. But every thread has its own
+ * token value though using the same token object.
+ *
+ * After creating a TLS reference key every thread can use it to access a
+ * local-specific value. Use p_uthread_local_new() call to create a TLS
+ * reference key and pass it to every thread which needs local-specific values.
+ * You can also provide a destroy notification function which would be called
+ * upon a TLS key removal which is usually performed on a thread exit.
+ *
+ * There are two calls to set a TLS key's value: p_uthread_set_local() and
+ * p_uthread_replace_local(). The only difference is that former one calls
+ * provided destroy notification function before replacing the old value.
  */
 
 #if !defined (__PLIBSYS_H_INSIDE__) && !defined (PLIBSYS_COMPILATION)
@@ -66,6 +81,9 @@ typedef ppointer (*PUThreadFunc) (ppointer arg);
 
 /** #PUThread opaque data type */
 typedef struct _PUThread PUThread;
+
+/** #PUThreadKey opaque data type */
+typedef struct _PUThreadKey PUThreadKey;
 
 /** Thread priority */
 typedef enum _PUThreadPriority {
@@ -162,6 +180,59 @@ P_LIB_API void			p_uthread_yield		(void);
  * only gives you a uniquer ID of the thread accross the system.
  */
 P_LIB_API P_HANDLE		p_uthread_current_id	(void);
+
+/**
+ * @brief Create a new TLS reference key.
+ * @param free_func TLS key destroy notification call, leave NULL if not need.
+ * @return New TLS reference key in case of success, NULL otherwise.
+ * @since 0.0.1
+ */
+P_LIB_API PUThreadKey *		p_uthread_local_new	(PDestroyFunc		free_func);
+
+/**
+ * @brief Frees TLS reference key.
+ * @param key TLS reference key to free.
+ * @since 0.0.1
+ *
+ * It doesn't remove a TLS key itself but only removes a reference used to
+ * access a TLS slot.
+ */
+P_LIB_API void			p_uthread_local_free	(PUThreadKey		*key);
+
+/**
+ * @brief Gets a TLS value.
+ * @param key TLS reference key to get value for.
+ * @return TLS value for the given key.
+ * @since 0.0.1
+ * @note This call may fail only in case of abnormal usage or program behavior,
+ * NULL value will be returned to tolerance the failure.
+ */
+P_LIB_API ppointer		p_uthread_get_local	(PUThreadKey		*key);
+
+/**
+ * @brief Sets a TLS value.
+ * @param key TLS reference key to set value for.
+ * @param value TLS value to set.
+ * @since 0.0.1
+ * @note This call may fail only in case of abnormal usage or program behavior.
+ *
+ * It doesn't call a destructor notification function provided with p_uthread_local_new().
+ */
+P_LIB_API void			p_uthread_set_local	(PUThreadKey		*key,
+							 ppointer		value);
+
+/**
+ * @brief Replaces a TLS value.
+ * @param key TLS reference key to replace value for.
+ * @param value TLS value to setvbuf().
+ * @since 0.0.1
+ * @note This call may fail only in case of abnormal usage or program behavior.
+ *
+ * This call does perform a notification function provided with p_uthread_local_new() on
+ * an old TLS value. This is the only difference with p_uthread_set_local().
+ */
+P_LIB_API void			p_uthread_replace_local	(PUThreadKey		*key,
+							 ppointer		value);
 
 P_END_DECLS
 

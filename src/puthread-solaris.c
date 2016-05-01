@@ -16,10 +16,12 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA.
  */
 
-/* Threads for Sun Solaris */
-
 #include "pmem.h"
 #include "puthread.h"
+
+#ifndef P_OS_UNIXWARE
+#  include "pmutex.h"
+#endif
 
 #include <thread.h>
 #include <unistd.h>
@@ -35,14 +37,93 @@ struct _PUThread {
 	PUThreadPriority	prio;
 };
 
+struct _PUThreadKey {
+	thread_key_t		*key;
+	PDestroyFunc		free_func;
+};
+
+#ifndef P_OS_UNIXWARE
+static PMutex *__tls_mutex = NULL;
+#endif
+
 void
 __p_uthread_init (void)
 {
+#ifndef P_OS_UNIXWARE
+	if (__tls_mutex == NULL)
+		__tls_mutex = p_mutex_new ();
+#endif
 }
 
 void
 __p_uthread_shutdown (void)
 {
+#ifndef P_OS_UNIXWARE
+	if (__tls_mutex != NULL) {
+		p_mutex_free (__tls_mutex);
+		__tls_mutex = NULL;
+	}
+#endif
+}
+
+void
+__p_uthread_win32_thread_detach (void)
+{
+}
+
+static thread_key_t *
+__p_uthread_get_tls_key (PUThreadKey *key)
+{
+	thread_key_t *thread_key;
+
+	thread_key = (thread_key_t *) p_atomic_pointer_get ((ppointer) &key->key);
+
+	if (thread_key != NULL)
+		return thread_key;
+
+#ifndef P_OS_UNIXWARE
+	p_mutex_lock (__tls_mutex);
+
+	if (thread_key == NULL) {
+#endif
+		if ((thread_key = p_malloc0 (sizeof (thread_key_t))) == NULL) {
+			P_ERROR ("PUThread: failed to allocate memory for a TLS key");
+#ifndef P_OS_UNIXWARE
+			p_mutex_unlock (__tls_mutex);
+#endif
+			return NULL;
+		}
+
+		if (thr_keycreate (thread_key, key->free_func) != 0) {
+			P_ERROR ("PUThread: failed to call thr_keycreate()");
+			p_free (thread_key);
+#ifndef P_OS_UNIXWARE
+			p_mutex_unlock (__tls_mutex);
+#endif
+			return NULL;
+		}
+#ifdef P_OS_UNIXWARE
+		if (!p_atomic_pointer_compare_and_exchange ((ppointer) &key->key,
+							    NULL,
+							    (ppointer) thread_key)) {
+			if (thr_keydelete (*thread_key) != 0) {
+				P_ERROR ("PUThread: failed to call thr_keydelete()");
+				p_free (thread_key);
+				return NULL;
+			}
+
+			p_free (thread_key);
+
+			thread_key = key->key;
+		}
+#else
+		key->key = thread_key;
+	}
+
+	p_mutex_unlock (__tls_mutex);
+#endif
+
+	return thread_key;
 }
 
 P_LIB_API PUThread *
@@ -69,7 +150,7 @@ p_uthread_create_full (PUThreadFunc	func,
 	flags |= joinable ? 0 : THR_DETACHED;
 
 	if (thr_create (NULL, 0, func, data, flags, &ret->hdl) != 0) {
-		P_ERROR ("PUThread: failed to create Solaris thread");
+		P_ERROR ("PUThread: failed to call thr_create()");
 		p_uthread_free (ret);
 		return NULL;
 	}
@@ -109,7 +190,7 @@ p_uthread_join (PUThread *thread)
 		return -1;
 
 	if (thr_join (thread->hdl, NULL, &ret) != 0) {
-		P_ERROR ("PUThread: failed to join Solaris thread");
+		P_ERROR ("PUThread: failed to call thr_join()");
 		p_uthread_free (ret);
 		return -1;
 	}
@@ -136,7 +217,7 @@ P_LIB_API pint
 p_uthread_set_priority (PUThread		*thread,
 			PUThreadPriority	prio)
 {
-	P_WARNING ("PUThread: priorities for bound threads are not implemented in Solaris");
+	P_WARNING ("PUThread: priorities for bound threads are not implemented");
 
 	if (thread == NULL)
 		return -1;
@@ -150,4 +231,91 @@ P_LIB_API P_HANDLE
 p_uthread_current_id (void)
 {
 	return (P_HANDLE) thr_self ();
+}
+
+P_LIB_API PUThreadKey *
+p_uthread_local_new (PDestroyFunc free_func)
+{
+	PUThreadKey *ret;
+
+	if ((ret = p_malloc0 (sizeof (PUThreadKey))) == NULL) {
+		P_ERROR ("PUThread: failed to allocate memory for PUThreadKey");
+		return NULL;
+	}
+
+	ret->free_func = free_func;
+
+	return ret;
+}
+
+P_LIB_API void
+p_uthread_local_free (PUThreadKey *key)
+{
+	if (key == NULL)
+		return;
+
+	p_free (key);
+}
+
+P_LIB_API ppointer
+p_uthread_get_local (PUThreadKey *key)
+{
+	thread_key_t	*tls_key;
+	ppointer	ret = NULL;
+
+	if (key == NULL)
+		return ret;
+
+	tls_key = __p_uthread_get_tls_key (key);
+
+	if (tls_key != NULL) {
+		if (thr_getspecific (*tls_key, &ret) != 0)
+			P_ERROR ("PUThread: failed to call thr_getspecific()");
+	}
+
+	return ret;
+}
+
+P_LIB_API void
+p_uthread_set_local (PUThreadKey	*key,
+		     ppointer		value)
+{
+	thread_key_t *tls_key;
+
+	if (key == NULL)
+		return;
+
+	tls_key = __p_uthread_get_tls_key (key);
+
+	if (tls_key != NULL) {
+		if (thr_setspecific (*tls_key, value) != 0)
+			P_ERROR ("PUThread: failed to call thr_setspecific()");
+	}
+}
+
+P_LIB_API void
+p_uthread_replace_local	(PUThreadKey	*key,
+			 ppointer	value)
+{
+	thread_key_t	*tls_key;
+	ppointer	old_value = NULL;
+
+	if (key == NULL)
+		return;
+
+	tls_key = __p_uthread_get_tls_key (key);
+
+	if (tls_key == NULL)
+		return;
+
+	if (thr_getspecific (*tls_key, &old_value) != 0) {
+		P_ERROR ("PUThread: failed to call(2) thr_getspecific()");
+		return;
+	}
+
+	if (old_value != NULL && key->free_func != NULL)
+		key->free_func (old_value);
+
+	if (thr_setspecific (*tls_key, value) != 0)
+		P_ERROR ("PUThread: failed to call(2) thr_setspecific()");
 }

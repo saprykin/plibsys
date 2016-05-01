@@ -37,6 +37,11 @@ __p_uthread_shutdown (void)
 {
 }
 
+void
+__p_uthread_win32_thread_detach (void)
+{
+}
+
 P_LIB_API PUThread *
 p_uthread_create_full (PUThreadFunc	func,
 		       ppointer		data,
@@ -118,4 +123,39 @@ P_LIB_API P_HANDLE
 p_uthread_current_id (void)
 {
 	return (P_HANDLE) 0;
+}
+
+P_LIB_API PUThreadKey *
+p_uthread_local_new (PDestroyFunc free_func)
+{
+	P_UNUSED (free_func);
+	return NULL;
+}
+
+P_LIB_API void
+p_uthread_local_free (PUThreadKey *key)
+{
+	P_UNUSED (key);
+}
+
+P_LIB_API ppointer
+p_uthread_get_local (PUThreadKey *key)
+{
+	P_UNUSED (key);
+}
+
+P_LIB_API void
+p_uthread_set_local (PUThreadKey	*key,
+		     ppointer		value)
+{
+	P_UNUSED (key);
+	P_UNUSED (value);
+}
+
+P_LIB_API void
+p_uthread_replace_local	(PUThreadKey	*key,
+			 ppointer	value)
+{
+	P_UNUSED (key);
+	P_UNUSED (value);
 }

@@ -53,3 +53,39 @@ p_libsys_shutdown (void)
 	__p_socket_close_once ();
 	__p_uthread_shutdown ();
 }
+
+#ifdef P_OS_WIN32
+extern void __p_uthread_win32_thread_detach (void);
+
+BOOL WINAPI DllMain (HINSTANCE	hinstDLL,
+		     DWORD	fdwReason,
+		     LPVOID	lpvReserved);
+
+HMODULE __p_libsys_dll;
+
+BOOL WINAPI
+DllMain (HINSTANCE	hinstDLL,
+	 DWORD		fdwReason,
+	 LPVOID		lpvReserved)
+{
+	switch (fdwReason) {
+	case DLL_PROCESS_ATTACH:
+		__p_libsys_dll = hinstDLL;
+		p_libsys_init ();
+		break;
+
+	case DLL_THREAD_DETACH:
+		__p_uthread_win32_thread_detach ();
+		break;
+
+	case DLL_PROCESS_DETACH:
+		p_libsys_shutdown ();
+		break;
+
+	default:
+		;
+	}
+
+	return TRUE;
+}
+#endif

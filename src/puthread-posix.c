@@ -17,6 +17,7 @@
  */
 
 #include "pmem.h"
+#include "patomic.h"
 #include "puthread.h"
 
 #include <stdlib.h>
@@ -46,6 +47,11 @@ struct _PUThread {
 	puthread_hdl		hdl;
 	pboolean		joinable;
 	PUThreadPriority	prio;
+};
+
+struct _PUThreadKey {
+	pthread_key_t		*key;
+	PDestroyFunc		free_func;
 };
 
 #if defined (POSIX_MIN_PRIORITY) && defined (POSIX_MAX_PRIORITY)
@@ -96,6 +102,48 @@ __p_uthread_shutdown (void)
 {
 }
 
+void
+__p_uthread_win32_thread_detach (void)
+{
+}
+
+static pthread_key_t *
+__p_uthread_get_tls_key (PUThreadKey *key)
+{
+	pthread_key_t *thread_key;
+
+	thread_key = (pthread_key_t *) p_atomic_pointer_get ((ppointer) &key->key);
+
+	if (thread_key == NULL) {
+		if ((thread_key = p_malloc0 (sizeof (pthread_key_t))) == NULL) {
+			P_ERROR ("PUThread: failed to allocate memory for a TLS key");
+			return NULL;
+		}
+
+		if (pthread_key_create (thread_key, key->free_func) != 0) {
+			P_ERROR ("PUThread: failed to call pthread_key_create()");
+			p_free (thread_key);
+			return NULL;
+		}
+
+		if (!p_atomic_pointer_compare_and_exchange ((ppointer) &key->key,
+							    NULL,
+							    (ppointer) thread_key)) {
+			if (pthread_key_delete (*thread_key) != 0) {
+				P_ERROR ("PUThread: failed to call pthread_key_delete()");
+				p_free (thread_key);
+				return NULL;
+			}
+
+			p_free (thread_key);
+
+			thread_key = key->key;
+		}
+	}
+
+	return thread_key;
+}
+
 P_LIB_API PUThread *
 p_uthread_create_full (PUThreadFunc	func,
 		       ppointer		data,
@@ -119,23 +167,23 @@ p_uthread_create_full (PUThreadFunc	func,
 	ret->joinable = joinable;
 
 	if (pthread_attr_init (&attr) != 0) {
-		P_ERROR ("PUThread: failed to init thread attributes");
+		P_ERROR ("PUThread: failed to call pthread_attr_init()");
 		p_free (ret);
 		return NULL;
 	}
 
 	if (pthread_attr_setdetachstate (&attr, joinable ? PTHREAD_CREATE_JOINABLE : PTHREAD_CREATE_DETACHED) != 0) {
-		P_ERROR ("PUTread: failed to set joinable/detached attribute");
+		P_ERROR ("PUThread: failed to call pthread_attr_setdetachstate()");
 		pthread_attr_destroy (&attr);
 		p_free (ret);
 		return NULL;
 	}
 
 	/* We need this for some old systems where non-bound threads are not timesliced,
-	 * see puthread-sun.c for more explanation */
+	 * see puthread-solaris.c for more explanation */
 	if (pthread_attr_setscope (&attr, PTHREAD_SCOPE_SYSTEM) != 0) {
 		/* Some systems may fail here due to lack of implementation */
-		P_WARNING ("PUTread: failed to set contention attribute");
+		P_WARNING ("PUThread: failed to call pthread_attr_setscope()");
 	}
 
 #ifdef P_HAVE_PRIORITIES
@@ -146,13 +194,14 @@ p_uthread_create_full (PUThreadFunc	func,
 		sched.sched_priority = p_uthread_priority_map[prio];
 
 		if (pthread_attr_setschedparam (&attr, &sched) != 0)
-			P_WARNING ("PUThread: failed to set priority, maybe you don't have enough rights");
+			P_WARNING ("PUThread: failed to call pthread_attr_setschedparam(), "
+				   "maybe you don't have enough rights");
 	} else
-		P_WARNING ("PUThread: failed to get priority");
+		P_WARNING ("PUThread: failed to call pthread_attr_getschedparam()");
 #endif
 
 	if (pthread_create (&ret->hdl, &attr, func, data) != 0) {
-		P_ERROR ("PUThread: failed to create thread");
+		P_ERROR ("PUThread: failed to call pthread_create()");
 		pthread_attr_destroy (&attr);
 		p_free (ret);
 		return NULL;
@@ -191,7 +240,7 @@ p_uthread_join (PUThread *thread)
 		return -1;
 
 	if (pthread_join (thread->hdl, &ret) != 0) {
-		P_ERROR ("PUThread: failed to join thread");
+		P_ERROR ("PUThread: failed to call pthread_join()");
 		return -1;
 	}
 
@@ -232,14 +281,15 @@ p_uthread_set_priority (PUThread		*thread,
 	}
 
 	if (pthread_getschedparam (thread->hdl, &policy, &sched) != 0) {
-		P_ERROR ("PUThread: failed to get current priority");
+		P_ERROR ("PUThread: failed to call(2) pthread_getschedparam()");
 		return -1;
 	}
 
 	sched.sched_priority = p_uthread_priority_map [prio];
 
 	if (pthread_setschedparam (thread->hdl, policy, &sched) != 0) {
-		P_ERROR ("PUThread: failed to set priority, maybe you don't have enough rights");
+		P_ERROR ("PUThread: failed to call(2) pthread_setschedparam(), "
+			 "maybe you don't have enough rights");
 		return -1;
 	}
 #endif
@@ -252,4 +302,82 @@ P_LIB_API P_HANDLE
 p_uthread_current_id (void)
 {
 	return (P_HANDLE) pthread_self ();
+}
+
+P_LIB_API PUThreadKey *
+p_uthread_local_new (PDestroyFunc free_func)
+{
+	PUThreadKey *ret;
+
+	if ((ret = p_malloc0 (sizeof (PUThreadKey))) == NULL) {
+		P_ERROR ("PUThread: failed to allocate memory for PUThreadKey");
+		return NULL;
+	}
+
+	ret->free_func = free_func;
+
+	return ret;
+}
+
+P_LIB_API void
+p_uthread_local_free (PUThreadKey *key)
+{
+	if (key == NULL)
+		return;
+
+	p_free (key);
+}
+
+P_LIB_API ppointer
+p_uthread_get_local (PUThreadKey *key)
+{
+	pthread_key_t *tls_key;
+
+	if (key == NULL)
+		return NULL;
+
+	tls_key = __p_uthread_get_tls_key (key);
+
+	return tls_key == NULL ? NULL : pthread_getspecific (*tls_key);
+}
+
+P_LIB_API void
+p_uthread_set_local (PUThreadKey	*key,
+		     ppointer		value)
+{
+	pthread_key_t *tls_key;
+
+	if (key == NULL)
+		return;
+
+	tls_key = __p_uthread_get_tls_key (key);
+
+	if (tls_key != NULL) {
+		if (pthread_setspecific (*tls_key, value) != 0)
+			P_ERROR ("PUThread: failed to call pthread_setspecific()");
+	}
+}
+
+P_LIB_API void
+p_uthread_replace_local	(PUThreadKey	*key,
+			 ppointer	value)
+{
+	pthread_key_t	*tls_key;
+	ppointer	old_value;
+
+	if (key == NULL)
+		return;
+
+	tls_key = __p_uthread_get_tls_key (key);
+
+	if (tls_key == NULL)
+		return;
+
+	old_value = pthread_getspecific (*tls_key);
+
+	if (old_value != NULL && key->free_func != NULL)
+		key->free_func (old_value);
+
+	if (pthread_setspecific (*tls_key, value) != 0)
+		P_ERROR ("PUThread: failed to call(2) pthread_setspecific()");
 }
