@@ -313,7 +313,7 @@ P_LIB_API void
 p_uthread_set_local (PUThreadKey	*key,
 		     ppointer		value)
 {
-	DWORD *tls_idx;
+	DWORD tls_idx;
 
 	if (key == NULL)
 		return;
@@ -330,7 +330,7 @@ P_LIB_API void
 p_uthread_replace_local	(PUThreadKey	*key,
 			 ppointer	value)
 {
-	DWORD		*tls_idx;
+	DWORD		tls_idx;
 	ppointer	old_value;
 
 	if (key == NULL)
@@ -338,7 +338,7 @@ p_uthread_replace_local	(PUThreadKey	*key,
 
 	tls_idx = __p_uthread_get_tls_key (key);
 
-	if (tls_key == TLS_OUT_OF_INDEXES)
+	if (tls_idx == TLS_OUT_OF_INDEXES)
 		return;
 
 	old_value = TlsGetValue (tls_idx);
