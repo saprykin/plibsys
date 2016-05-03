@@ -54,20 +54,21 @@ p_libsys_shutdown (void)
 	__p_uthread_shutdown ();
 }
 
-#ifdef P_OS_WIN32
+#ifdef P_OS_WIN
 extern void __p_uthread_win32_thread_detach (void);
 
 BOOL WINAPI DllMain (HINSTANCE	hinstDLL,
 		     DWORD	fdwReason,
 		     LPVOID	lpvReserved);
 
-HMODULE __p_libsys_dll;
-
 BOOL WINAPI
 DllMain (HINSTANCE	hinstDLL,
 	 DWORD		fdwReason,
 	 LPVOID		lpvReserved)
 {
+	P_UNUSED (hinstDLL);
+	P_UNUSED (lpvReserved);
+
 	switch (fdwReason) {
 	case DLL_PROCESS_ATTACH:
 		__p_libsys_dll = hinstDLL;
