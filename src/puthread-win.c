@@ -68,9 +68,24 @@ __p_uthread_init (void)
 void
 __p_uthread_shutdown (void)
 {
+	_PUThreadDestructor *destr;
+
 	if (__tls_mutex != NULL) {
 		p_mutex_free (__tls_mutex);
 		__tls_mutex = NULL;
+	}
+
+	__p_uthread_win32_thread_detach ();
+
+	destr = __tls_destructors;
+
+	while (destr != NULL) {
+		_PUThreadDestructor *next_destr = destr->next;
+
+		TlsFree (destr->key_idx);
+		p_free (destr);
+
+		destr = next_destr;
 	}
 }
 
