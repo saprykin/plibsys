@@ -141,6 +141,17 @@ static void * test_thread_tls_func (void *data)
 		p_uthread_yield ();
 	}
 
+	if (self_thread_free) {
+		pint *last_tls = (pint *) p_uthread_get_local (tls_key);
+
+		if ((*last_tls) != prev_tls)
+			p_uthread_exit (-1);
+
+		p_free (last_tls);
+
+		p_uthread_replace_local (tls_key, (ppointer) NULL);
+	}
+
 	p_uthread_exit (counter);
 }
 
@@ -239,6 +250,8 @@ BOOST_AUTO_TEST_CASE (puthread_general_test)
 		     thread2_id != p_uthread_current_id ());
 
 	p_uthread_local_free (tls_key);
+	p_uthread_free (thr1);
+	p_uthread_free (thr2);
 
 	p_libsys_shutdown ();
 }
@@ -263,6 +276,8 @@ BOOST_AUTO_TEST_CASE (puthread_nonjoinable_test)
 		p_uthread_sleep (10);
 
 	BOOST_CHECK (thread_wakes_1 == thread_to_wakes);
+
+	p_uthread_free (thr1);
 
 	p_libsys_shutdown ();
 }
@@ -301,6 +316,8 @@ BOOST_AUTO_TEST_CASE (puthread_tls_test)
 	BOOST_CHECK (total_counter == free_counter);
 
 	p_uthread_local_free (tls_key);
+	p_uthread_free (thr1);
+	p_uthread_free (thr2);
 
 	/* Without destroy notification */
 	tls_key = p_uthread_local_new (NULL);
@@ -333,6 +350,8 @@ BOOST_AUTO_TEST_CASE (puthread_tls_test)
 	BOOST_CHECK (free_counter == 0);
 
 	p_uthread_local_free (tls_key);
+	p_uthread_free (thr1);
+	p_uthread_free (thr2);
 
 	p_libsys_shutdown ();
 }
