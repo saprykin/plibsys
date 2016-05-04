@@ -23,7 +23,7 @@
  * Traditional filesystem can be presented as a combination of directories and
  * files within a defined hierarchy. Directory contains the so called entries:
  * files and other directories. #PDir allows to iterate through these entries
- * without reading their content, thus building a filesystem hierarchy tree.
+ * without reading their contents, thus building a filesystem hierarchy tree.
  *
  * Think of this module as an interface to the well-known `dirent` API.
  *
