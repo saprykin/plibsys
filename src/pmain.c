@@ -71,7 +71,6 @@ DllMain (HINSTANCE	hinstDLL,
 
 	switch (fdwReason) {
 	case DLL_PROCESS_ATTACH:
-		__p_libsys_dll = hinstDLL;
 		p_libsys_init ();
 		break;
 
