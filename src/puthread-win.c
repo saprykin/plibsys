@@ -18,6 +18,7 @@
 
 #include "pmem.h"
 #include "pmutex.h"
+#include "patomic.h"
 #include "puthread.h"
 
 #include <stdlib.h>
@@ -62,7 +63,9 @@ __p_uthread_win32_thread_detach (void)
 
 		was_called = FALSE;
 
-		for (destr = __tls_destructors; destr; destr = destr->next) {
+		destr = (_PUThreadDestructor *) p_atomic_pointer_get ((const PVOID volatile *) &__tls_destructors);
+
+		while (destr != NULL) {
 			ppointer value;
 
 			value = TlsGetValue (destr->key_idx);
@@ -72,6 +75,8 @@ __p_uthread_win32_thread_detach (void)
 				destr->free_func (value);
 				was_called = TRUE;
 			}
+
+			destr = destr->next;
 		}
 	} while (was_called);
 }
@@ -153,9 +158,9 @@ __p_uthread_get_tls_key (PUThreadKey *key)
 
 			/* At the same time thread exit could be performed at there is no
 			 * lock for the global destructor list */
-			if (InterlockedCompareExchangePointer ((PVOID volatile *) &__tls_destructors,
-							       (PVOID) destr,
-							       (PVOID) destr->next) != (PVOID) destr->next) {
+			if (p_atomic_pointer_compare_and_exchange ((PVOID volatile *) &__tls_destructors,
+								   (PVOID) destr->next,
+								   (PVOID) destr) == FALSE) {
 				P_ERROR ("PUThread: failed to setup a TLS key destructor");
 
 				if (TlsFree (tls_key) == 0)
