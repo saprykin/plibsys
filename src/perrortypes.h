@@ -20,6 +20,14 @@
  * @file perrortypes.h
  * @brief Error data types
  * @author Alexander Saprykin
+ *
+ * All error codes are splitted into the several domains. Every error should
+ * belong to one of the domains described in #PErrorDomain. Think of an error
+ * domain as a logical subsystem.
+ *
+ * Every error domain has its own enumeration with the list of possible
+ * error codes. System error codes are converted to specified domains using
+ * internal routines.
  */
 
 #if !defined (__PLIBSYS_H_INSIDE__) && !defined (PLIBSYS_COMPILATION)
@@ -43,7 +51,7 @@ typedef enum _PErrorDomain {
 /** Enum with IO errors */
 typedef enum _PErrorIO {
 	P_ERROR_IO_NONE			= 500,	/**< No error.						*/
-	P_ERROR_IO_NO_RESOURCES		= 501,	/**< OS hasn't enough resources.			*/
+	P_ERROR_IO_NO_RESOURCES		= 501,	/**< Operating system hasn't enough resources.		*/
 	P_ERROR_IO_NOT_AVAILABLE	= 502,	/**< Resource isn't available.				*/
 	P_ERROR_IO_ACCESS_DENIED	= 503,	/**< Access denied.					*/
 	P_ERROR_IO_CONNECTED		= 504,	/**< Already connected.					*/
@@ -60,7 +68,7 @@ typedef enum _PErrorIO {
 	P_ERROR_IO_IS_DIRECTORY		= 515,  /**< Trying to open directory for writting.		*/
 	P_ERROR_IO_NOT_DIRECTORY	= 516,  /**< Component of the path prefix is not a directory.	*/
 	P_ERROR_IO_NAMETOOLONG		= 517,  /**< Specified name is too long.			*/
-	P_ERROR_IO_EXISTS		= 518,  /**< Specified already exists.				*/
+	P_ERROR_IO_EXISTS		= 518,  /**< Specified entry already exists.			*/
 	P_ERROR_IO_NOT_EXISTS		= 519,  /**< Specified entry doesn't exist.			*/
 	P_ERROR_IO_NO_MORE		= 520,  /**< No more data left.					*/
 	P_ERROR_IO_NOT_IMPLEMENTED	= 521,	/**< Operation is not implemented.			*/
@@ -80,8 +88,8 @@ typedef enum _PErrorIPC {
 	P_ERROR_IPC_OVERFLOW		= 605,	/**< Semaphore value overflow.				*/
 	P_ERROR_IPC_NAMETOOLONG		= 606,	/**< Object name is too long.				*/
 	P_ERROR_IPC_INVALID_ARGUMENT	= 607,	/**< Invalid argument (parameter) specified.		*/
-	P_ERROR_IPC_NOT_IMPLEMENTED	= 608,	/**< Operation not implemented (for example when using
-						     some file systems).				*/
+	P_ERROR_IPC_NOT_IMPLEMENTED	= 608,	/**< Operation is not implemented (for example when
+						     using some filesystems).				*/
 	P_ERROR_IPC_DEADLOCK		= 609,	/**< Deadlock detected.					*/
 	P_ERROR_IPC_FAILED		= 610	/**< General error.					*/
 } PErrorIPC;

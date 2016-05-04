@@ -141,7 +141,7 @@ P_LIB_API void		p_error_set_error	(PError		*error,
  * @since 0.0.1
  *
  * If @a error is NULL it does nothing. If @a error is not NULL then
- * @a *error should be NULL, otherwise it does nothing. It creates
+ * @a *error should be NULL, otherwise it does nothing. It creates a
  * #PError object, sets error data and assigns it to @a *error. The caller
  * is responsible to free memory of the created object after the usage.
  */
