@@ -53,6 +53,30 @@ static PMutex *__tls_mutex = NULL;
 static int p_uthread_priority_map[P_UTHREAD_PRIORITY_HIGHEST + 1];
 
 void
+__p_uthread_win32_thread_detach (void)
+{
+	pboolean was_called;
+
+	do {
+		_PUThreadDestructor *destr;
+
+		was_called = FALSE;
+
+		for (destr = __tls_destructors; destr; destr = destr->next) {
+			ppointer value;
+
+			value = TlsGetValue (destr->key_idx);
+
+			if (value != NULL && destr->free_func != NULL) {
+				TlsSetValue (destr->key_idx, NULL);
+				destr->free_func (value);
+				was_called = TRUE;
+			}
+		}
+	} while (was_called);
+}
+
+void
 __p_uthread_init (void)
 {
 	if (__tls_mutex == NULL)
@@ -87,30 +111,6 @@ __p_uthread_shutdown (void)
 
 		destr = next_destr;
 	}
-}
-
-void
-__p_uthread_win32_thread_detach (void)
-{
-	pboolean was_called;
-
-	do {
-		_PUThreadDestructor *destr;
-
-		was_called = FALSE;
-
-		for (destr = __tls_destructors; destr; destr = destr->next) {
-			ppointer value;
-
-			value = TlsGetValue (destr->key_idx);
-
-			if (value != NULL && destr->free_func != NULL) {
-				TlsSetValue (destr->key_idx, NULL);
-				destr->free_func (value);
-				was_called = TRUE;
-			}
-		}
-	} while (was_called);
 }
 
 static DWORD
