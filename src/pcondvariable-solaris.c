@@ -1,4 +1,4 @@
-/* 
+/*
  * Copyright (C) 2010-2013 Alexander Saprykin <xelfium@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -12,8 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA.
+ * along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "pmem.h"
@@ -53,7 +52,7 @@ p_cond_variable_free (PCondVariable *cond)
 {
 	if (cond == NULL)
 		return;
-	
+
 	if (cond_destroy (&cond->hdl) != 0)
 		P_WARNING ("PCondVariable: failed to destroy handler");
 
@@ -66,7 +65,7 @@ p_cond_variable_wait (PCondVariable	*cond,
 {
 	if (cond == NULL || mutex == NULL)
 		return FALSE;
-	
+
 	/* Cast is eligible since there is only one field in the PMutex structure */
 	if (cond_wait (&cond->hdl, (mutex_t *) mutex) != 0) {
 		P_ERROR ("PCondVariable: failed to wait");
