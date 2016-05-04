@@ -185,6 +185,8 @@ BOOST_AUTO_TEST_CASE (puthread_nomem_test)
 
 	p_uthread_set_local (thread_key, PINT_TO_POINTER (10));
 	BOOST_CHECK (p_uthread_get_local (thread_key) == NULL);
+	p_uthread_replace_local (thread_key, PINT_TO_POINTER (10));
+	BOOST_CHECK (p_uthread_get_local (thread_key) == NULL);
 
 	vtable.malloc	= (ppointer (*)(psize)) malloc;
 	vtable.realloc	= (ppointer (*)(ppointer, psize)) realloc;
