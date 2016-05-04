@@ -71,7 +71,6 @@ DllMain (HINSTANCE	hinstDLL,
 
 	switch (fdwReason) {
 	case DLL_PROCESS_ATTACH:
-		p_libsys_init ();
 		break;
 
 	case DLL_THREAD_DETACH:
@@ -79,7 +78,6 @@ DllMain (HINSTANCE	hinstDLL,
 		break;
 
 	case DLL_PROCESS_DETACH:
-		p_libsys_shutdown ();
 		break;
 
 	default:
