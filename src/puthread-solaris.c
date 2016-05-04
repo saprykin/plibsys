@@ -230,7 +230,7 @@ p_uthread_set_priority (PUThread		*thread,
 P_LIB_API P_HANDLE
 p_uthread_current_id (void)
 {
-	return (P_HANDLE) thr_self ();
+	return (P_HANDLE) ((psize) thr_self ());
 }
 
 P_LIB_API PUThreadKey *
