@@ -295,8 +295,8 @@ BOOST_AUTO_TEST_CASE (puthread_tls_test)
 
 	pint total_counter = 0;
 
-	total_counter += p_uthread_join (thr1);
-	total_counter += p_uthread_join (thr2);
+	total_counter += (p_uthread_join (thr1) + 1);
+	total_counter += (p_uthread_join (thr2) + 1);
 
 	BOOST_CHECK (total_counter == free_counter);
 
@@ -326,8 +326,8 @@ BOOST_AUTO_TEST_CASE (puthread_tls_test)
 
 	total_counter = 0;
 
-	total_counter += p_uthread_join (thr1);
-	total_counter += p_uthread_join (thr2);
+	total_counter += (p_uthread_join (thr1) + 1);
+	total_counter += (p_uthread_join (thr2) + 1);
 
 	BOOST_CHECK (total_counter > 0);
 	BOOST_CHECK (free_counter == 0);
