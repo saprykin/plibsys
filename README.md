@@ -19,6 +19,7 @@ PLibSYS gives you:
 * Conditional variables: POSIX, Solaris and Win32
 * System-wide semaphores: POSIX, System V and Win32
 * System-wide shared memory: POSIX, System V and Win32
+* Optimized spinlock
 * Atomic operations
 * Sockets support (UDP, TCP, SCTP)
 * Hash functions: MD5, SHA-1, GOST (R 34.11-94)
