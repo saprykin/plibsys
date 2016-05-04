@@ -17,15 +17,33 @@
 
 /**
  * @file phashtable.h
- * @brief Simple hash-table implememtation
+ * @brief Hash table
  * @author Alexander Saprykin
  *
- * Hash-table is using to store key-value pairs. You can perform
- * fast lookup for value associated with the given key. Note, that
- * #PHashTable stores keys and values only as pointers, so you need
- * to free used memory manually, p_hash_table_free() will not do it
- * in any way. Integers (up to 32 bits) can be stored in pointers
- * using #P_POINTER_TO_INT and #P_INT_TO_POINTER macros.
+ * Hash table is a data structure used to map keys to values. Hash table
+ * consists of several internal slots which holds a list of values. Hash
+ * function is used to compute an index in array of the slots from a given key.
+ * Hash function itself is fast and it takes a constant time to compute internal
+ * slot index.
+ *
+ * When the number of pairs in a hash table is small the lookup and insert
+ * (remove) operations are very fast and have an average complexity O(1),
+ * because every slot holds almost the only one pair. As the number of internal
+ * slots is fixed, the increasing number of pairs will lead to degraded
+ * performance and an average complexity of the operations can drop to O(N) in
+ * the worst case. This is because the more pairs are inserted the more longer
+ * list of values is placed in every slot.
+ *
+ * This is a simple hash table implementation which is not intended for heavy
+ * usage (several thousands), see #PTree if you need best performance on large
+ * data sets. This implementation doesn't support multi-inserts when several
+ * values belong to the same key.
+ *
+ * Note that #PHashTable stores keys and values only as pointers, so you need
+ * to free used memory manually, p_hash_table_free() will not do it in any way.
+ *
+ * Integers (up to 32 bits) can be stored in pointers using #P_POINTER_TO_INT
+ * and #P_INT_TO_POINTER macros.
  */
 
 #if !defined (__PLIBSYS_H_INSIDE__) && !defined (PLIBSYS_COMPILATION)
@@ -41,86 +59,93 @@
 
 P_BEGIN_DECLS
 
-/** Opaque data structure for hash-table. */
+/** Opaque data structure for a hash table. */
 typedef struct _PHashTable PHashTable;
 
 /**
- * @brief Initializes new hash-table. Free with p_hash_table_free() after using.
- * @return Pointer to newly initialized #PHashTable structure in case of success,
- * NULL otherwise.
+ * @brief Initializes a new hash table.
+ * @return Pointer to a newly initialized #PHashTable structure in case of
+ * success, NULL otherwise.
  * @since 0.0.1
+ * @note Free with p_hash_table_free() after using.
  */
 P_LIB_API PHashTable *	p_hash_table_new		(void);
 
 /**
- * @brief Inserts new key-value pair into the hash-table.
- * @param table Initialized hash-table.
- * @param key Key value to insert.
+ * @brief Inserts new key-value pair into the hash table.
+ * @param table Initialized hash table.
+ * @param key Key to insert.
  * @param value Value to insert.
  * @since 0.0.1
  *
  * This function only stores pointers, so you need to manually free pointed
- * data after using it.
+ * data after using the hash table.
  */
-P_LIB_API void		p_hash_table_insert		(PHashTable	*table,
-							 ppointer	key,
-							 ppointer	value);
+P_LIB_API void		p_hash_table_insert		(PHashTable		*table,
+							 ppointer		key,
+							 ppointer		value);
 
 /**
- * @brief Searches for specifed key in the hash-table.
- * @param table Hash-table to lookup in.
+ * @brief Searches for a specifed key in the hash table.
+ * @param table Hash table to lookup in.
  * @param key Key to lookup for.
- * @return Value related to its key pair (can be NULL),
- * (ppointer) -1 if no value was found.
+ * @return Value related to its key pair (can be NULL), (#ppointer) -1 if no
+ * value was found.
  * @since 0.0.1
  */
-P_LIB_API ppointer	p_hash_table_lookup		(const PHashTable *table, pconstpointer key);
+P_LIB_API ppointer	p_hash_table_lookup		(const PHashTable	*table,
+							 pconstpointer		key);
 
 /**
- * @brief Gives the list of all stored keys in hash-table.
- * @param table Hash-table to collect keys from.
- * @return List of all stores keys, list can be empty if no keys were found.
- * You should manually free this list with p_list_free() after using it.
+ * @brief Gives the list of all stored keys in a hash table.
+ * @param table Hash table to collect keys from.
+ * @return List of all the stored keys, list can be empty if no keys were found.
  * @since 0.0.1
+ * @note You should manually free returned list with p_list_free() after using
+ * it.
  */
-P_LIB_API PList *	p_hash_table_keys		(const PHashTable *table);
+P_LIB_API PList *	p_hash_table_keys		(const PHashTable	*table);
 
 /**
- * @brief Gives the list of all stored values in hash-table.
- * @param table Hash-table to collect values from.
- * @return List of all stores values, list can be empty if no keys were found.
- * You should manually free this list with p_list_free() after using.
+ * @brief Gives the list of all stored values in a hash table.
+ * @param table Hash table to collect values from.
+ * @return List of all the stored values, list can be empty if no keys were
+ * found.
  * @since 0.0.1
+ * @note You should manually free returned list with p_list_free() after using
+ * it.
  */
-P_LIB_API PList *	p_hash_table_values		(const PHashTable *table);
+P_LIB_API PList *	p_hash_table_values		(const PHashTable	*table);
 
 /**
  * @brief Frees previously initialized #PHashTable.
- * @param table Hash-table to free.
+ * @param table Hash table to free.
  * @since 0.0.1
  */
-P_LIB_API void		p_hash_table_free		(PHashTable *table);
+P_LIB_API void		p_hash_table_free		(PHashTable		*table);
 
 /**
- * @brief Removes @a key from hash table.
- * @param table Hash-table to remove key from.
+ * @brief Removes @a key from a hash table.
+ * @param table Hash table to remove key from.
  * @param key Key to remove (if exists).
  * @since 0.0.1
  */
-P_LIB_API void		p_hash_table_remove		(PHashTable *table, pconstpointer key);
+P_LIB_API void		p_hash_table_remove		(PHashTable		*table,
+							 pconstpointer		key);
 
 /**
- * @brief Searches for specifed key in the hash-table by its value.
- * @param table Hash-table to lookup in.
+ * @brief Searches for a specifed key in the hash table by its value.
+ * @param table Hash table to lookup in.
  * @param val Value to lookup keys for.
  * @param func Function to compare table's values with @a val, if NULL then
  * values will be compared as pointers.
  * @return List of keys with @a val (can be NULL), NULL if no keys were found.
- * Caller is responsible to call p_list_free() on returned list after usage.
  * @since 0.0.1
+ * @note Caller is responsible to call p_list_free() on returned list after
+ * the usage.
  *
- * Compare function should return 0 if value from hash table (first parameter)
- * is accepted related to the given lookup value (second parameter),
+ * Compare function should return 0 if a value from the hash table (first
+ * parameter) is accepted related to the given lookup value (second parameter),
  * and -1 or 1 otherwise.
  */
 P_LIB_API PList *	p_hash_table_lookup_by_value	(const PHashTable	*table,
