@@ -20,12 +20,24 @@
  * @brief Shared library loader
  * @author Alexander Saprykin
  *
- * #PLibraryLoader gives ability to load shared libraries and executables as
- * third party objects. After loading you can use its symbols (functions and
- * variables) as locally defined.
- * Use p_library_loader_new() to load library and p_library_loader_get_symbol()
- * to retrieve the pointer to a symbol within it. Close library after usage with
- * p_library_loader_free().
+ * All modern operating systems support dynamic loadable objects. Such objects
+ * compiled with special flags and can be loaded by other programs and libraries
+ * later at the runtime. These loadable objects often called as the shared
+ * libraries, though some platforms even allow to treat the program binary as a
+ * loadable object, too.
+ *
+ * When the program is linked with a shared library its dependency would be
+ * resolved by operating system automatically before starting the program. But
+ * in some circumstances you may need to load a shared library object explicitly
+ * (i.e. implementing a plugin subsystem, checking for API availability).
+ *
+ * All functions and variables which a shared library is exporting are called
+ * symbols. Usually only exported symbols are available from outside the shared
+ * library. Actually all those symbols represent a library API.
+ *
+ * Use p_library_loader_new() to load a shared library and
+ * p_library_loader_get_symbol() to retrieve a pointer to a symbol within it.
+ * Close library after usage with p_library_loader_free().
  */
 
 #if !defined (__PLIBSYS_H_INSIDE__) && !defined (PLIBSYS_COMPILATION)
@@ -40,55 +52,56 @@
 
 P_BEGIN_DECLS
 
-/** PLibraryLoader opaque data struct */
+/** Opaque data structure to handle a shared library */
 typedef struct _PLibraryLoader PLibraryLoader;
 
 /** Pointer to function address */
 typedef void (*PFuncAddr) (void);
 
 /**
- * @brief Loads dynamic library.
- * @param path Path to the library file.
+ * @brief Loads a shared library.
+ * @param path Path to the shared library file.
  * @return Pointer to #PLibraryLoader in case of success, NULL otherwise.
  * @since 0.0.1
  *
- * If you are loading already loaded library, operating system increments
- * corresponding reference count and decrements it when freeing #PLibraryLoader,
- * so operating system unloads library from address space only when counter
- * becomes zero.
+ * If you are loading an already loaded shared library, operating system
+ * increments corresponding reference count and decrements it after freeing
+ * #PLibraryLoader, thus shared library would be unloaded from the address space
+ * only when counter becomes zero.
  */
-P_LIB_API PLibraryLoader *	p_library_loader_new		(const pchar *path);
+P_LIB_API PLibraryLoader *	p_library_loader_new		(const pchar	*path);
 
 /**
- * @brief Gets pointer to a symbol in loaded library.
- * @param loader Pointer to loaded library handle.
+ * @brief Gets a pointer to a symbol in the loaded shared library.
+ * @param loader Pointer to loaded shared library handle.
  * @param sym Name of the symbol.
  * @return Pointer to the symbol in case of success, NULL otherwise.
  * @since 0.0.1
  *
- * Since symbol may have a NULL value, NULL returned value from this call
+ * Since symbol may have a NULL value, returned NULL value from this call
  * actually doesn't mean the failed result. You can additionally check error
  * result using p_library_loader_get_last_error().
  */
-P_LIB_API PFuncAddr		p_library_loader_get_symbol	(PLibraryLoader *loader, const pchar *sym);
+P_LIB_API PFuncAddr		p_library_loader_get_symbol	(PLibraryLoader	*loader,
+								 const pchar	*sym);
 
 /**
  * @brief Frees memory and allocated resources of #PLibraryLoader.
  * @param loader #PLibraryLoader object to free.
  * @since 0.0.1
  */
-P_LIB_API void			p_library_loader_free		(PLibraryLoader *loader);
+P_LIB_API void			p_library_loader_free		(PLibraryLoader	*loader);
 
 /**
  * @brief Gets last occurred error.
  * @return Human readable error string in case of success, NULL otherwise.
- * Caller takes ownership for the returned string.
  * @since 0.0.1
+ * @note Caller takes ownership for the returned string.
  *
- * A NULL result may indicate that no error was occurred since last call.
+ * A NULL result may indicate that no error was occurred since the last call.
  *
- * Different operating systems have different behaviour on error indicating.
- * Some systems reset error status before the call, some are not. Some
+ * Different operating systems have different behavior on error indicating.
+ * Some systems reset error status before the call, some do not. Some
  * systems write successful call result (usually zero) to error status,
  * thus resetting the error from the previous call.
  */
