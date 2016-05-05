@@ -454,9 +454,10 @@
 
 /**
  * @def P_GNUC_WARN_UNUSED_RESULT
- * @brief Gives warning if returned from function result is not used
+ * @brief Gives warning if returned from a function result is not used
  */
-#if __GNUC__ > 3 || (__GNUC__ == 3 && __GNUC_MINOR__ >= 4)
+#if (__GNUC__ > 3 || (__GNUC__ == 3 && __GNUC_MINOR__ >= 4)) || \
+    __has_attribute(warn_unused_result)
 #  define P_GNUC_WARN_UNUSED_RESULT __attribute__((warn_unused_result))
 #else
 #  define P_GNUC_WARN_UNUSED_RESULT
