@@ -64,7 +64,8 @@ EXCLUDE_PATTERNS       = Makefile.*             \
                          plibsys-private.h      \
                          CMakeLists.txt
 
-EXCLUDE_SYMBOLS        = __has_attribute
+EXCLUDE_SYMBOLS        = __has_attribute \
+                         __has_builtin
 
 # The EXAMPLE_PATH tag can be used to specify one or more files or 
 # directories that contain example code fragments that are included (see 
