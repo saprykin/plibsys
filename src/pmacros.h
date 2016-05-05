@@ -448,6 +448,10 @@
 #  define __has_attribute(x) 0
 #endif
 
+#ifndef __has_builtin
+#  define __has_builtin(x) 0
+#endif
+
 /**
  * @def P_GNUC_WARN_UNUSED_RESULT
  * @brief Gives warning if returned from function result is not used
@@ -480,11 +484,35 @@
 #  define P_NO_RETURN __declspec(noreturn)
 #elif __has_attribute(noreturn) || \
       defined(P_CC_GNU) || \
-     (defined(__SUNPRO_C) && __SUNPRO_C >= 0x5110) || \
-     (defined(__SUNPRO_CC) && __SUNPRO_CC >= 0x5110)
+     (defined(P_CC_SUN) && __SUNPRO_C >= 0x5110) || \
+     (defined(P_CC_SUN) && __SUNPRO_CC >= 0x5110)
 #  define P_NO_RETURN __attribute__((noreturn))
 #else
 #  define P_NO_RETURN
+#endif
+
+/**
+ * @def P_LIKELY
+ * @brief Hints a compiler that condition is likely to be true so it can perform
+ * code optimizations.
+ */
+
+/**
+ * @def P_UNLIKELY
+ * @brief Hints a compiler that condition is likely to be false so it can
+ * perform code optimizations.
+ */
+
+#if (defined(P_CC_GNU) && (__GNUC__ > 2 && __GNUC_MINOR__ > 0)) || \
+    (defined(P_CC_INTEL) && __INTEL_COMPILER >= 800) || \
+    (defined(P_CC_XLC) && __IBMC__ >= 900) || \
+    (defined(P_CC_XLC) && __IBMCPP__ >= 900) || \
+    __has_builtin(__builtin_expect)
+#  define P_LIKELY(x) __builtin_expect(!!(x), 1)
+#  define P_UNLIKELY(x) __builtin_expect(!!(x), 0)
+#else
+#  define P_LIKELY(x) (x)
+#  define P_UNLIKELY(x) (x)
 #endif
 
 /**
