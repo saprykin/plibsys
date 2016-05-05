@@ -23,6 +23,9 @@
 
 #include "plibsys.h"
 
+#include <stdlib.h>
+#include <time.h>
+
 #ifdef PLIBSYS_TESTS_STATIC
 #  include <boost/test/included/unit_test.hpp>
 #else
@@ -125,6 +128,16 @@ BOOST_AUTO_TEST_CASE (pmacros_general_test)
 	P_WARNING ("Test warning output");
 	P_ERROR ("Test error output");
 	P_DEBUG ("Test debug output");
+
+	srand ((unsigned int) time (NULL));
+
+	pint rand_number = rand ();
+
+	if (P_LIKELY (rand_number > 0))
+		P_DEBUG ("Likely condition triggered");
+
+	if (P_UNLIKELY (rand_number == 0))
+		P_DEBUG ("Unlikely condition triggered");
 
 	p_libsys_shutdown ();
 }
