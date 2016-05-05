@@ -22,21 +22,20 @@ PLibSYS gives you:
 * System-wide shared memory: POSIX, System V and Win32
 * Optimized spinlock
 * Atomic operations
-* Sockets support (UDP, TCP, SCTP)
+* Socket support (UDP, TCP, SCTP)
 * Hash functions: MD5, SHA-1, GOST (R 34.11-94)
 * Binary trees: BST, red-black, AVL
-* INI files parser
+* INI file parser
 * High resolution time profiler
 * Files and directories
-* Dynamic library loading
+* Shared library loading
 * Useful routines for linked lists, strings, hash tables
 * Macros for OS and compiler detection
-* Fully covered with unit tests
 
 ======= Platforms =======
 
-PLibSYS is a cross-platform, highly portable library, it was tested on
-the following platforms:
+PLibSYS is a cross-platform, highly portable library, it is fully covered
+with unit tests and was tested on the following platforms:
 
 * GNU/Linux
 * OS X
@@ -76,4 +75,4 @@ Use CMake to build PLibSYS for any target platform.
 
 ======= License =======
 
-PLibSYS is distributed under the terms of GNU GPLv2 license.
+PLibSYS is distributed under the terms of GNU GPLv2 or higher license.
