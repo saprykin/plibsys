@@ -28,6 +28,10 @@
  * - operating system detection (P_OS_x);
  * - compiler detection (P_CC_x);
  * - other general macros (compiler hints, attributes, etc.).
+ *
+ * Macros from the first two groups are defined only for the particularly
+ * detected operating systems and compilers. Macros from the latter group are
+ * always defined.
  */
 
 #if !defined (__PLIBSYS_H_INSIDE__) && !defined (PLIBSYS_COMPILATION)
@@ -264,7 +268,6 @@
 #  define P_OS_WIN64
 #endif
 
-/* Darwin and BSD4 */
 #if defined(__APPLE__) && (defined(__GNUC__) || defined(__xlC__) || defined(__xlc__))
 #  define P_OS_DARWIN
 #  define P_OS_BSD4
@@ -273,66 +276,48 @@
 #  else
 #    define P_OS_DARWIN32
 #  endif
-/* Mac OS 9 */
 # elif defined(Macintosh) || defined(macintosh)
 #  define P_OS_MAC9
-/* MSYS */
 #elif defined(__MSYS__)
 #  define P_OS_MSYS
-/* Cygwin */
 #elif defined(__CYGWIN__)
 #  define P_OS_CYGWIN
-/* Microsoft Windows */
 #elif defined(_WIN64) || defined(_M_X64) || defined(_M_AMD64)
 #  define P_OS_WIN64
 #elif defined(__WIN32__) || defined(_WIN32) || defined(WIN32)
 #  define P_OS_WIN
-/* Linux */
 #elif defined(__linux) || defined(__linux__)
 #  define P_OS_LINUX
-/* FreeBSD */
 #elif defined(__FreeBSD__)
 #  define P_OS_FREEBSD
 #  define P_OS_BSD4
-/* DragonFlyBSD */
 #elif defined(__DragonFly__)
 #  define P_OS_DRAGONFLY
 #  define P_OS_BSD4
-/* NetBSD */
 #elif defined(__NetBSD__)
 #  define P_OS_NETBSD
 #  define P_OS_BSD4
-/* OpenBSD */
 #elif defined(__OpenBSD__)
 #  define P_OS_OPENBSD
 #  define P_OS_BSD4
-/* IBM AIX */
 #elif defined(_AIX)
 #  define P_OS_AIX
 #elif defined(hpux) || defined(__hpux)
 #  define P_OS_HPUX
-/* Sun Solaris */
 #elif defined(__sun) || defined(sun)
 #  define P_OS_SOLARIS
-/* QNX6 */
 #elif defined(__QNXNTO__)
 #  define P_OS_QNX6
-/* QNX */
 #elif defined(__QNX__)
 #  define P_OS_QNX
 #elif defined(_SCO_DS)
-/* SCO OpenServer */
 #  define P_OS_SCO
-/* SCO UnixWare + OpenServer (UDK + OUDK) */
 #elif defined(__USLC__) || defined(__UNIXWARE__)
 #  define P_OS_UNIXWARE
-/* SCO UnixWare + GCC */
 #elif defined(__svr4__) && defined(i386)
 #  define P_OS_UNIXWARE
-/* SGI's IRIX */
 #elif defined(__sgi) || defined(sgi)
 #  define P_OS_IRIX
-/* VMS */
 #elif defined(VMS) || defined(__VMS)
 #  define P_OS_VMS
 #endif
@@ -460,13 +445,11 @@
 #  define P_CC_BORLAND
 #endif
 
-/* Microsoft Visual C/C++ */
 #if defined(_MSC_VER)
 #  define P_CC_MSVC
 #  if defined(__INTEL_COMPILER)
 #    define P_CC_INTEL
 #  endif
-/* GNU C/C++ */
 #elif defined(__GNUC__)
 #  define P_CC_GNU
 #  if defined(__MINGW32__)
@@ -478,29 +461,21 @@
 #  if defined(__clang__)
 #    define P_CC_CLANG
 #  endif
-/* Sun (Oracle) WorkShop/Studio C/C++ */
 #elif defined(__SUNPRO_C) || defined(__SUNPRO_CC)
 #  define P_CC_SUN
-/* IBM XL C/C++ */
 #elif defined(__xlc__) || defined(__xlC__)
 #  define P_CC_XLC
-/* HP C/aC++ */
 #elif defined(__HP_cc) || defined(__HP_aCC)
 #  define P_CC_HP
-/* MIPSpro C/C++ */
 #elif (defined(__sgi) || defined(sgi)) && \
       (defined(_COMPILER_VERSION) || defined(_SGI_COMPILER_VERSION))
 #  define P_CC_MIPS
-/* SCO OUDK and UDK C/C++ */
 #elif defined(__USLC__) && defined(__SCO_VERSION__)
 #  define P_CC_USLC
-/* Watcom C/C++ */
 #elif defined(__WATCOMC__)
 #  define P_CC_WATCOM
-/* Borland C/C++ */
 #elif defined(__BORLANDC__)
 #  define P_CC_BORLAND
-/* Intel C/C++ */
 #elif defined(__INTEL_COMPILER)
 #  define P_CC_INTEL
 #endif
