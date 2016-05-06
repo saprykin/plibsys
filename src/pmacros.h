@@ -25,8 +25,8 @@
  * in the same way as they are used within the library.
  *
  * Provided macros can be divided into the three groups:
- * - operating system detection (P_OS_*);
- * - compiler detection (P_CC_*);
+ * - operating system detection (P_OS_x);
+ * - compiler detection (P_CC_x);
  * - other general macros (compiler hints, attributes, etc.).
  */
 
@@ -39,7 +39,37 @@
 
 #include <stdio.h>
 
-/* Operating systems */
+/*
+ * List of supported operating systems (P_OS_x):
+ *
+ * DARWIN            - Any Darwin based system
+ * DARWIN32          - Any 32-bit Darwin based system
+ * DARWIN64          - Any 64-bit Darwin based system
+ * BSD4              - Any BSD 4.x based system
+ * FREEBSD           - FreeBSD
+ * DRAGONFLY         - DragonFlyBSD
+ * NETBSD            - NetBSD
+ * OPENBSD           - OpenBSD
+ * AIX               - IBM AIX
+ * HPUX              - HP-UX
+ * SOLARIS           - Sun (Oracle) Solaris
+ * QNX               - QNX 4.x
+ * QNX6              - QNX Neutrino 6.x
+ * SCO               - SCO OpenServer 5/6
+ * UNIXWARE          - Any UnixWare
+ * UNIXWARE7         - UnixWare 7
+ * IRIX              - SGI IRIX
+ * VMS               - VMS
+ * UNIX              - Any UNIX BSD/SYSV based system
+ * LINUX             - Linux
+ * MAC9              - Mac OS 9 (Classic)
+ * MAC               - Any Mac OS X
+ * MAC32             - 32-bit Mac OS X
+ * MAC64             - 64-bit Mac OS X
+ * CYGWIN            - Cygwin
+ * WIN               - 32-bit Windows
+ * WIN64             - 64-bit Windows
+ */
 
 /**
  * @def P_OS_DARWIN
@@ -336,7 +366,22 @@
 #  define P_OS_UNIX
 #endif
 
-/* Compilers */
+/*
+ * List of supported compilers (P_CC_x):
+ *
+ * MSVC            - Microsoft Visual C/C++
+ * GNU             - GNU C/C++
+ * MINGW           - MinGW C/C++
+ * INTEL           - Intel C/C++
+ * CLANG           - LLVM Clang C/C++
+ * SUN             - Sun WorkShop/Studio C/C++
+ * XLC             - IBM XL C/C++
+ * HP              - HP C/aC++
+ * MIPS            - MIPSpro C/C++
+ * USLC            - SCO OUDK and UDK C/C++
+ * WATCOM          - Watcom C/C++
+ * BORLAND         - Borland C/C++
+ */
 
 /**
  * @def P_CC_MSVC
