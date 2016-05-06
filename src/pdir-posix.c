@@ -32,7 +32,7 @@
 #include <sys/types.h>
 
 #if defined(P_OS_SOLARIS) || defined(P_OS_QNX6) || defined(P_OS_UNIXWARE) || defined(P_OS_SCO) || \
-    defined(P_OS_IRIX)
+    defined(P_OS_IRIX) || defined(P_OS_HAIKU)
 #  define P_DIR_NEED_BUF_ALLOC 1
 #endif
 
@@ -211,7 +211,7 @@ p_dir_get_next_entry (PDir	*dir,
 			return NULL;
 		}
 	}
-#elif defined(P_OS_QNX6) || defined(P_OS_UNIXWARE)
+#elif defined(P_OS_QNX6) || defined(P_OS_UNIXWARE) || defined(P_OS_HAIKU)
 	name_max = (pint) (NAME_MAX);
 #endif
 

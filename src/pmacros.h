@@ -62,6 +62,7 @@
  * SCO               - SCO OpenServer 5/6
  * UNIXWARE          - UnixWare 7
  * IRIX              - SGI IRIX
+ * HAIKU             - Haiku
  * VMS               - VMS
  * UNIX              - Any UNIX BSD/SYSV based system
  * LINUX             - Linux
@@ -171,6 +172,12 @@
  */
 
 /**
+ * @def P_OS_HAIKU
+ * @brief Haiku operating system.
+ * @since 0.0.1
+ */
+
+/**
  * @def P_OS_VMS
  * @brief VMS operating system.
  * @since 0.0.1
@@ -255,6 +262,7 @@
 #  define P_OS_SCO
 #  define P_OS_UNIXWARE
 #  define P_OS_IRIX
+#  define P_OS_HAIKU
 #  define P_OS_VMS
 #  define P_OS_UNIX
 #  define P_OS_LINUX
@@ -318,6 +326,8 @@
 #  define P_OS_UNIXWARE
 #elif defined(__sgi) || defined(sgi)
 #  define P_OS_IRIX
+#elif defined(__HAIKU__)
+#  define P_OS_HAIKU
 #elif defined(VMS) || defined(__VMS)
 #  define P_OS_VMS
 #endif
