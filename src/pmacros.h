@@ -382,6 +382,12 @@
  */
 
 /**
+ * @def P_CC_USLC
+ * @brief SCO OUDK and UDK C/C++ compiler.
+ * @since 0.0.1
+ */
+
+/**
  * @def P_CC_WATCOM
  * @brief Watcom C/C++ compiler.
  * @since 0.0.1
@@ -403,6 +409,7 @@
 #  define P_CC_XLC
 #  define P_CC_HP
 #  define P_CC_MIPS
+#  define P_CC_USLC
 #  define P_CC_WATCOM
 #  define P_CC_BORLAND
 #endif
@@ -438,6 +445,9 @@
 #elif (defined(__sgi) || defined(sgi)) && \
       (defined(_COMPILER_VERSION) || defined(_SGI_COMPILER_VERSION))
 #  define P_CC_MIPS
+/* SCO OUDK and UDK C/C++ */
+#elif defined(__USLC__) && defined(__SCO_VERSION__)
+#  define P_CC_USLC
 /* Watcom C/C++ */
 #elif defined(__WATCOMC__)
 #  define P_CC_WATCOM
