@@ -67,7 +67,13 @@
 
 /**
  * @def P_OS_FREEBSD
- * @brief FreeBSD based operating system.
+ * @brief FreeBSD operating system.
+ * @since 0.0.1
+ */
+
+/**
+ * @def P_OS_DRAGONFLY
+ * @brief DragonFlyBSD operating system.
  * @since 0.0.1
  */
 
@@ -211,6 +217,7 @@
 #  define P_OS_DARWIN64
 #  define P_OS_BSD4
 #  define P_OS_FREEBSD
+#  define P_OS_DRAGONFLY
 #  define P_OS_NETBSD
 #  define P_OS_OPENBSD
 #  define P_OS_AIX
@@ -262,8 +269,12 @@
 #elif defined(__linux) || defined(__linux__)
 #  define P_OS_LINUX
 /* FreeBSD */
-#elif defined(__FreeBSD__) || defined(__DragonFly__)
+#elif defined(__FreeBSD__)
 #  define P_OS_FREEBSD
+#  define P_OS_BSD4
+/* DragonFlyBSD */
+#elif defined(__DragonFly__)
+#  define P_OS_DRAGONFLY
 #  define P_OS_BSD4
 /* NetBSD */
 #elif defined(__NetBSD__)
