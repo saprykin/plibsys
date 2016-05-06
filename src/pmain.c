@@ -41,6 +41,13 @@ p_libsys_init (void)
 }
 
 P_LIB_API void
+p_libsys_init_full (const PMemVTable *vtable)
+{
+	p_mem_set_vtable (vtable);
+	p_libsys_init ();
+}
+
+P_LIB_API void
 p_libsys_shutdown (void)
 {
 	if (!plibsys_inited)

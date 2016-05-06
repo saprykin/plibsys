@@ -103,7 +103,7 @@ P_LIB_API void		p_free			(ppointer	mem);
  * In most cases you do not need to use this function. Use it only
  * when you know what are you doing!
  */
-P_LIB_API pboolean	p_mem_set_vtable	(PMemVTable	*table);
+P_LIB_API pboolean	p_mem_set_vtable	(const PMemVTable	*table);
 
 /**
  * @brief Gets memory from the system using mmap() call.

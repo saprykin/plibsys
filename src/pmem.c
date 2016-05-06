@@ -109,7 +109,7 @@ p_free (ppointer mem)
 }
 
 P_LIB_API pboolean
-p_mem_set_vtable (PMemVTable *table)
+p_mem_set_vtable (const PMemVTable *table)
 {
 	if (table == NULL)
 		return FALSE;

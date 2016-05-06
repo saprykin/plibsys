@@ -44,8 +44,15 @@ P_BEGIN_DECLS
 P_LIB_API void	p_libsys_init		(void);
 
 /**
- * @brief Frees PLibSYS resources. You shouldn't use PLibSYS routines
- * after calling this one.
+ * @brief Initializes library resources along with the memory table.
+ * @param vtable Memory management table.
+ * @since 0.0.1
+ */
+P_LIB_API void	p_libsys_init_full	(const PMemVTable *vtable);
+
+/**
+ * @brief Frees library resources. You should stop using any of the library
+ * routines after calling this one.
  * @since 0.0.1
  */
 P_LIB_API void	p_libsys_shutdown	(void);
