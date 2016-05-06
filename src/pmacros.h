@@ -527,8 +527,7 @@
 
 #if (defined(P_CC_GNU) && (__GNUC__ > 2 && __GNUC_MINOR__ > 0)) || \
     (defined(P_CC_INTEL) && __INTEL_COMPILER >= 800) || \
-    (defined(P_CC_XLC) && __IBMC__ >= 900) || \
-    (defined(P_CC_XLC) && __IBMCPP__ >= 900) || \
+    (defined(P_CC_XLC) && __xlC__ >= 0x0900) || \
     __has_builtin(__builtin_expect)
 #  define P_LIKELY(x) __builtin_expect(!!(x), 1)
 #  define P_UNLIKELY(x) __builtin_expect(!!(x), 0)
