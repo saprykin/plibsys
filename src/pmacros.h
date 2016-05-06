@@ -20,9 +20,15 @@
  * @brief Miscellaneous macros
  * @author Alexander Saprykin
  *
- * Contains useful macros for detecting host OS, compiler, etc.
+ * All the macros are completely independent of any other platform-specific
+ * headers, thus gurantee to work with any compiler under any operating system
+ * in the same way as they are used within the library.
+ *
+ * Provided macros can be divided into the three groups:
+ * - operating system detection (P_OS_*);
+ * - compiler detection (P_CC_*);
+ * - other general macros (compiler hints, attributes, etc.).
  */
-
 
 #if !defined (__PLIBSYS_H_INSIDE__) && !defined (PLIBSYS_COMPILATION)
 #  error "Header files shouldn't be included directly, consider using <plibsys.h> instead."
@@ -37,163 +43,163 @@
 
 /**
  * @def P_OS_DARWIN
- * @brief Darwin based operating system (i.e. Mac OS X)
+ * @brief Darwin based operating system (i.e. Mac OS X).
  * @since 0.0.1
  */
 
 /**
  * @def P_OS_DARWIN32
- * @brief Darwin based 32-bit operating system
+ * @brief Darwin based 32-bit operating system.
  * @since 0.0.1
  */
 
 /**
  * @def P_OS_DARWIN64
- * @brief Darwin based 64-bit operating system
+ * @brief Darwin based 64-bit operating system.
  * @since 0.0.1
  */
 
 /**
  * @def P_OS_BSD4
- * @brief BSD 4.x based operating system
+ * @brief BSD 4.x based operating system.
  * @since 0.0.1
  */
 
 /**
  * @def P_OS_FREEBSD
- * @brief FreeBSD based operating system
+ * @brief FreeBSD based operating system.
  * @since 0.0.1
  */
 
 /**
  * @def P_OS_NETBSD
- * @brief NetBSD operating system
+ * @brief NetBSD operating system.
  * @since 0.0.1
  */
 
 /**
  * @def P_OS_OPENBSD
- * @brief OpenBSD operating system
+ * @brief OpenBSD operating system.
  * @since 0.0.1
  */
 
 /**
  * @def P_OS_AIX
- * @brief IBM AIX operating system
+ * @brief IBM AIX operating system.
  * @since 0.0.1
  */
 
 /**
  * @def P_OS_HPUX
- * @brief HP-UX operating system
+ * @brief HP-UX operating system.
  * @since 0.0.1
  */
 
 /**
  * @def P_OS_SOLARIS
- * @brief Sun (Oracle) Solaris operating system
+ * @brief Sun (Oracle) Solaris operating system.
  * @since 0.0.1
  */
 
 /**
  * @def P_OS_QNX
- * @brief QNX 4.x operating system
+ * @brief QNX 4.x operating system.
  * @since 0.0.1
  */
 
 /**
  * @def P_OS_QNX6
- * @brief QNX Neutrino 6.x operating system
+ * @brief QNX Neutrino 6.x operating system.
  * @since 0.0.1
  */
 
 /**
  * @def P_OS_SCO
- * @brief SCO OpenServer operating system
+ * @brief SCO OpenServer operating system.
  * @since 0.0.1
  */
 
 /**
  * @def P_OS_UNIXWARE
- * @brief UnixWare operating system
+ * @brief UnixWare operating system.
  * @since 0.0.1
  */
 
 /**
  * @def P_OS_UNIXWARE7
- * @brief UnixWare 7 operating system
+ * @brief UnixWare 7 operating system.
  * @since 0.0.1
  */
 
 /**
  * @def P_OS_IRIX
- * @brief SGI IRIX operating system
+ * @brief SGI's IRIX operating system.
  * @since 0.0.1
  */
 
 /**
  * @def P_OS_VMS
- * @brief VMS operating system
+ * @brief VMS operating system.
  * @since 0.0.1
  */
 
 /**
  * @def P_OS_UNIX
- * @brief UNIX based operating system
+ * @brief UNIX based operating system.
  * @since 0.0.1
  */
 
 /**
  * @def P_OS_LINUX
- * @brief Linux based operating system
+ * @brief Linux based operating system.
  * @since 0.0.1
  */
 
 /**
  * @def P_OS_MAC9
- * @brief Apple's Mac OS 9 operating system
+ * @brief Apple's Mac OS 9 operating system.
  * @since 0.0.1
  */
 
 /**
  * @def P_OS_MAC
- * @brief Apple's Mac OS X operating system
+ * @brief Apple's Mac OS X operating system.
  * @since 0.0.1
  */
 
 /**
  * @def P_OS_MAC32
- * @brief Apple's Mac OS X 32-bit operating system
+ * @brief Apple's Mac OS X 32-bit operating system.
  * @since 0.0.1
  */
 
 /**
  * @def P_OS_MAC64
- * @brief Apple's Mac OS X 64-bit operating system
+ * @brief Apple's Mac OS X 64-bit operating system.
  * @since 0.0.1
  */
 
 /**
  * @def P_OS_CYGWIN
- * @brief Microsoft's Windows POSIX runtime environment
+ * @brief Microsoft Windows POSIX runtime environment.
  * @since 0.0.1
  */
 
 /**
  * @def P_OS_MSYS
- * @brief Microsoft's Windows POSIX development environment
+ * @brief Microsoft Windows POSIX development environment.
  * @since 0.0.1
  */
 
 /**
  * @def P_OS_WIN
- * @brief Microsoft's Windows 32-bit operating system
+ * @brief Microsoft Windows 32-bit operating system.
  * @since 0.0.1
  */
 
 /**
  * @def P_OS_WIN64
- * @brief Microsoft's Windows 64-bit operating system
+ * @brief Microsoft Windows 64-bit operating system.
  * @since 0.0.1
  */
 
@@ -292,7 +298,7 @@
 #elif defined(__svr4__) && defined(i386)
 #  define P_OS_UNIXWARE
 #  define P_OS_UNIXWARE7
-/* SGI IRIX */
+/* SGI's IRIX */
 #elif defined(__sgi) || defined(sgi)
 #  define P_OS_IRIX
 /* VMS */
@@ -323,67 +329,67 @@
 
 /**
  * @def P_CC_MSVC
- * @brief Microsoft Visual Studio compiler
+ * @brief Microsoft Visual C/C++ compiler.
  * @since 0.0.1
  */
 
 /**
  * @def P_CC_GNU
- * @brief GNU C compiler
+ * @brief GNU C/C++ compiler.
  * @since 0.0.1
  */
 
 /**
  * @def P_CC_MINGW
- * @brief MinGW compiler
+ * @brief MinGW C/C++ compiler.
  * @since 0.0.1
  */
 
 /**
  * @def P_CC_INTEL
- * @brief Intel C compiler
+ * @brief Intel C/C++ compiler.
  * @since 0.0.1
  */
 
 /**
  * @def P_CC_CLANG
- * @brief LLVM Clang compiler
+ * @brief LLVM Clang C/C++ compiler.
  * @since 0.0.1
  */
 
 /**
  * @def P_CC_SUN
- * @brief Sun WorkShop/Studio C compiler
+ * @brief Sun WorkShop/Studio C/C++ compiler.
  * @since 0.0.1
  */
 
 /**
  * @def P_CC_XLC
- * @brief IBM XL C compiler
+ * @brief IBM XL C/C++ compiler.
  * @since 0.0.1
  */
 
 /**
  * @def P_CC_HP
- * @brief HP C/aC++ compiler
+ * @brief HP C/aC++ compiler.
  * @since 0.0.1
  */
 
 /**
  * @def P_CC_MIPS
- * @brief MIPSpro C/C++ compiler
+ * @brief MIPSpro C/C++ compiler.
  * @since 0.0.1
  */
 
 /**
  * @def P_CC_WATCOM
- * @brief Watcom C compiler
+ * @brief Watcom C/C++ compiler.
  * @since 0.0.1
  */
 
 /**
  * @def P_CC_BORLAND
- * @brief Borland C/C++ compiler
+ * @brief Borland C/C++ compiler.
  * @since 0.0.1
  */
 
@@ -407,7 +413,7 @@
 #  if defined(__INTEL_COMPILER)
 #    define P_CC_INTEL
 #  endif
-/* GNU C */
+/* GNU C/C++ */
 #elif defined(__GNUC__)
 #  define P_CC_GNU
 #  if defined(__MINGW32__)
@@ -419,10 +425,10 @@
 #  if defined(__clang__)
 #    define P_CC_CLANG
 #  endif
-/* Sun (Oracle) WorkShop/Studio */
+/* Sun (Oracle) WorkShop/Studio C/C++ */
 #elif defined(__SUNPRO_C) || defined(__SUNPRO_CC)
 #  define P_CC_SUN
-/* IBM XL C */
+/* IBM XL C/C++ */
 #elif defined(__xlc__) || defined(__xlC__)
 #  define P_CC_XLC
 /* HP C/aC++ */
@@ -432,7 +438,7 @@
 #elif (defined(__sgi) || defined(sgi)) && \
       (defined(_COMPILER_VERSION) || defined(_SGI_COMPILER_VERSION))
 #  define P_CC_MIPS
-/* Watcom C++ */
+/* Watcom C/C++ */
 #elif defined(__WATCOMC__)
 #  define P_CC_WATCOM
 /* Borland C/C++ */
@@ -454,8 +460,10 @@
 
 /**
  * @def P_GNUC_WARN_UNUSED_RESULT
- * @brief Gives warning if returned from a function result is not used
+ * @brief Gives a warning if a result returned from the function is not being
+ * used.
  */
+
 #if (__GNUC__ > 3 || (__GNUC__ == 3 && __GNUC_MINOR__ >= 4)) || \
     __has_attribute(warn_unused_result)
 #  define P_GNUC_WARN_UNUSED_RESULT __attribute__((warn_unused_result))
@@ -465,8 +473,9 @@
 
 /**
  * @def P_LIB_API
- * @brief Export symbols macro
+ * @brief Exports a symbol from a shared library.
  */
+
 #if defined(P_CC_MSVC) || defined(P_CC_BORLAND)
 #  define P_LIB_API __declspec(dllexport)
 #else
@@ -477,8 +486,10 @@
 
 /**
  * @def P_NO_RETURN
- * @brief Notifies compiler that function will never return a value (e.g. abort ())
+ * @brief Notifies a compiler that function will never return a value (i.e.
+ * due to abort () call).
  */
+
 #if defined (__STDC_VERSION__) && (__STDC_VERSION__ >= 201112L)
 #  define P_NO_RETURN _Noreturn
 #elif defined(P_CC_MSVC) || (defined(P_CC_BORLAND) && __BORLANDC__ >= 0x0550)
@@ -518,40 +529,42 @@
 
 /**
  * @def P_UNUSED
- * @brief Macro to by-pass compiler warning on unused variables
+ * @brief Macro to by-pass compiler warning on unused variables.
  */
 #define P_UNUSED(a) ((void) a)
 
 /**
  * @def P_WARNING
- * @brief Prints warning message
+ * @brief Prints a warning message.
  * @param msg Message to print.
  */
 #define P_WARNING(msg) printf ("** Warning: %s **\n", msg)
 
 /**
  * @def P_ERROR
- * @brief Prints error message
+ * @brief Prints an error message.
  * @param msg Message to print.
  */
 #define P_ERROR(msg) printf ("** Error: %s **\n", msg)
 
 /**
  * @def P_DEBUG
- * @brief Prints debug message
+ * @brief Prints a debug message.
  * @param msg Message to print.
  */
 #define P_DEBUG(msg) printf ("** Debug: %s **\n", msg)
 
 /**
-  * @def P_BEGIN_DECLS
-  * @brief Starts .h file declarations to be exported as C functions
-  */
+ * @def P_BEGIN_DECLS
+ * @brief Starts .h file declarations to be exported as C functions.
+ */
+
 /**
-  * @def P_END_DECLS
-  * @brief Closes .h file declarations to be exported as C functions,
-  * should be always used after #P_END_DECLS
-  */
+ * @def P_END_DECLS
+ * @brief Closes .h file declarations to be exported as C functions,
+ * should be always used after #P_BEGIN_DECLS.
+ */
+
 #ifdef __cplusplus
 #  define P_BEGIN_DECLS extern "C" {
 #  define P_END_DECLS }
