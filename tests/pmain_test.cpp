@@ -29,6 +29,28 @@
 #  include <boost/test/unit_test.hpp>
 #endif
 
+static pint alloc_counter   = 0;
+static pint realloc_counter = 0;
+static pint free_counter   = 0;
+
+extern "C" ppointer pmem_alloc (psize nbytes)
+{
+	++alloc_counter;
+	return (ppointer) malloc (nbytes);
+}
+
+extern "C" ppointer pmem_realloc (ppointer block, psize nbytes)
+{
+	++realloc_counter;
+	return (ppointer) realloc (block, nbytes);
+}
+
+extern "C" void pmem_free (ppointer block)
+{
+	++free_counter;
+	free (block);
+}
+
 BOOST_AUTO_TEST_SUITE (BOOST_TEST_MODULE)
 
 BOOST_AUTO_TEST_CASE (pmain_general_test)
@@ -42,6 +64,36 @@ BOOST_AUTO_TEST_CASE (pmain_double_test)
 	p_libsys_init ();
 	p_libsys_init ();
 	p_libsys_shutdown ();
+	p_libsys_shutdown ();
+}
+
+BOOST_AUTO_TEST_CASE (pmain_vtable_test)
+{
+	PMemVTable	vtable;
+
+	vtable.free    = pmem_free;
+	vtable.malloc  = pmem_alloc;
+	vtable.realloc = pmem_realloc;
+
+	p_libsys_init_full (&vtable);
+
+	alloc_counter   = 0;
+	realloc_counter = 0;
+	free_counter    = 0;
+
+	pchar *buf = (pchar *) p_malloc0 (10);
+	pchar *new_buf = (pchar *) p_realloc ((ppointer) buf, 20);
+
+	BOOST_REQUIRE (new_buf != NULL);
+
+	buf = new_buf;
+
+	p_free (buf);
+
+	BOOST_CHECK (alloc_counter > 0);
+	BOOST_CHECK (realloc_counter > 0);
+	BOOST_CHECK (free_counter > 0);
+
 	p_libsys_shutdown ();
 }
 
