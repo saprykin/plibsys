@@ -56,8 +56,7 @@
  * QNX               - QNX 4.x
  * QNX6              - QNX Neutrino 6.x
  * SCO               - SCO OpenServer 5/6
- * UNIXWARE          - Any UnixWare
- * UNIXWARE7         - UnixWare 7
+ * UNIXWARE          - UnixWare 7
  * IRIX              - SGI IRIX
  * VMS               - VMS
  * UNIX              - Any UNIX BSD/SYSV based system
@@ -157,12 +156,6 @@
 
 /**
  * @def P_OS_UNIXWARE
- * @brief UnixWare operating system.
- * @since 0.0.1
- */
-
-/**
- * @def P_OS_UNIXWARE7
  * @brief UnixWare 7 operating system.
  * @since 0.0.1
  */
@@ -257,7 +250,6 @@
 #  define P_OS_QNX6
 #  define P_OS_SCO
 #  define P_OS_UNIXWARE
-#  define P_OS_UNIXWARE7
 #  define P_OS_IRIX
 #  define P_OS_VMS
 #  define P_OS_UNIX
@@ -334,11 +326,9 @@
 /* SCO UnixWare + OpenServer (UDK + OUDK) */
 #elif defined(__USLC__) || defined(__UNIXWARE__)
 #  define P_OS_UNIXWARE
-#  define P_OS_UNIXWARE7
 /* SCO UnixWare + GCC */
 #elif defined(__svr4__) && defined(i386)
 #  define P_OS_UNIXWARE
-#  define P_OS_UNIXWARE7
 /* SGI's IRIX */
 #elif defined(__sgi) || defined(sgi)
 #  define P_OS_IRIX

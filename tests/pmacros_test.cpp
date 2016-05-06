@@ -111,11 +111,6 @@ BOOST_AUTO_TEST_CASE (pmacros_general_test)
 	BOOST_CHECK (false);
 #endif
 
-	/* Test for UnixWare */
-#if defined (P_OS_UNIXWARE7) && !defined (P_OS_UNIXWARE)
-	BOOST_CHECK (false);
-#endif
-
 	/* Test for compiler detection macros */
 #if !defined (P_CC_MSVC)    && !defined (P_CC_GNU)   && !defined (P_CC_MINGW)  && \
     !defined (P_CC_INTEL)   && !defined (P_CC_CLANG) && !defined (P_CC_SUN)    && \
