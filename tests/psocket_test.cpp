@@ -802,7 +802,6 @@ BOOST_AUTO_TEST_CASE (psocket_general_udp_test)
 
 	BOOST_CHECK (p_socket_is_connected (socket) == TRUE);
 	BOOST_CHECK (p_socket_check_connect_result (socket, NULL) == TRUE);
-	BOOST_CHECK (p_socket_shutdown (socket, TRUE, TRUE, NULL) == TRUE);
 	BOOST_CHECK (p_socket_close (socket, NULL) == TRUE);
 
 	pchar sock_buf[10];
