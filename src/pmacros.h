@@ -517,7 +517,7 @@
  * @brief Exports a symbol from a shared library.
  */
 
-#if defined(P_CC_MSVC) || defined(P_CC_BORLAND)
+#if defined(P_CC_MSVC) || defined(P_CC_BORLAND) || defined(P_CC_WATCOM)
 #  define P_LIB_API __declspec(dllexport)
 #else
 #  define P_LIB_API
