@@ -20,12 +20,31 @@
  * @brief Mutex routines
  * @author Alexander Saprykin
  *
- * Mutex is a thread synchronization primitive. It's a binary semaphore in other
- * words. PLibSYS supports different mutex implementations: System V, POSIX, Sun Solaris
- * and Windows. PLibSYS is compiled using one of them (depends on which of implementations
- * are available on a target system). Because of that some non-usual actions (double-lock,
- * unlock non-locked mutex) can lead to unpredictable behaviour. Do not rely on such
- * features when writing cross-platform applications.
+ * Mutex is a mutual exclusive (hence mutex) synchronization primitive which
+ * allows access to critical section only to one of the concurrently running
+ * threads. It is used to protected shared data structures from concurrent
+ * modifications which could lead to unpredictable behavior.
+ *
+ * When entering a critical section thread must call p_mutex_lock() to get a
+ * lock. If another thread is already holding the lock all other threads will
+ * be suspended until the lock is released with p_mutex_unlock(). After
+ * releasing the lock one of the waiting threads is resumed to continue
+ * execution. On most systems it is not specified whether a mutex waiting queue
+ * is fair (FIFO) on not.
+ *
+ * The typical mutex usage:
+ * @code
+ * p_mutex_lock (mutex);
+ *
+ * ... code in critical section ...
+ *
+ * p_mutex_unlock (mutex);
+ * @endcode
+ * You can also think of a mutex as a binary semaphore.
+ *
+ * It is implementation dependent whether recursive locking or non-locked mutex
+ * unlocking is allowed, but such actions can lead to unpredictable behavior.
+ * Do not rely on such behavior in cross-platform applications.
  */
 
 #if !defined (__PLIBSYS_H_INSIDE__) && !defined (PLIBSYS_COMPILATION)
@@ -40,48 +59,53 @@
 
 P_BEGIN_DECLS
 
-/** PMutex opaque data structure */
+/** Mutex opaque data structure */
 typedef struct _PMutex PMutex;
 
 /**
- * @brief Creates new #PMutex object.
- * @return Pointer to newly created #PMutex object.
+ * @brief Creates a new #PMutex object.
+ * @return Pointer to a newly created #PMutex object.
  * @since 0.0.1
  */
 P_LIB_API PMutex *	p_mutex_new	(void);
 
 /**
- * @brief Locks mutex.
+ * @brief Locks a mutex.
  * @param mutex #PMutex to lock.
  * @return TRUE in case of success, FALSE otherwise.
  * @since 0.0.1
+ * @warning Do not lock the mutex recursively - it may lead to application
+ * deadlock (implementation dependent).
  *
- * Force calling thread to sleep until @a mutex becomes available for locking.
+ * Forces calling thread to sleep until @a mutex becomes available for locking.
  */
 P_LIB_API pboolean	p_mutex_lock	(PMutex *mutex);
 
 /**
- * @brief Tries to lock mutex immediately.
+ * @brief Tries to lock a mutex immediately.
  * @param mutex #PMutex to lock.
  * @return TRUE in case of success, FALSE otherwise.
  * @since 0.0.1
+ * @warning Do not lock the mutex recursively - it may lead to application
+ * deadlock (implementation dependent).
  *
  * Tries to lock @a mutex and returns immediately if it is not available for
- * locking. Do not lock mutex recursively - this may lead to application
- * deadlock (implementation dependent).
+ * locking.
  */
 P_LIB_API pboolean	p_mutex_trylock	(PMutex *mutex);
 
 /**
- * @brief Releases locked mutex.
+ * @brief Releases a locked mutex.
  * @param mutex #PMutex to release.
  * @return TRUE in case of success, FALSE otherwise.
  * @since 0.0.1
+ * @warning Do not use this function on non-locked mutexes - behavior may be
+ * unpredictable.
  *
- * If @a mutex was previously locked then it becomes unlocked. Do not use
- * this function on non-locked mutexes - behavior may be unpredictable.
+ * If @a mutex was previously locked then it becomes unlocked.
+ *
  * It's implementation dependent whether only the same thread can lock and
- * unlock mutex.
+ * unlock the same mutex.
  */
 P_LIB_API pboolean	p_mutex_unlock	(PMutex *mutex);
 
@@ -89,9 +113,8 @@ P_LIB_API pboolean	p_mutex_unlock	(PMutex *mutex);
  * @brief Frees #PMutex object.
  * @param mutex #PMutex to free.
  * @since 0.0.1
- *
- * It doesn't unlock @a mutex before freeing memory, so you should do it
- * manually.
+ * @warning It doesn't unlock @a mutex before freeing memory, so you should do
+ * it manually.
  */
 P_LIB_API void		p_mutex_free	(PMutex *mutex);
 
