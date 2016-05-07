@@ -45,6 +45,10 @@
  * It is implementation dependent whether recursive locking or non-locked mutex
  * unlocking is allowed, but such actions can lead to unpredictable behavior.
  * Do not rely on such behavior in cross-platform applications.
+ *
+ * This is a thread scoped mutex implementation. You could not share this mutex
+ * outside process adress space, but you can share it between the threads of the
+ * same process.
  */
 
 #if !defined (__PLIBSYS_H_INSIDE__) && !defined (PLIBSYS_COMPILATION)
