@@ -56,7 +56,7 @@ BOOST_AUTO_TEST_CASE (plibraryloader_nomem_test)
 	p_libsys_init ();
 
 	/* We assume that 3rd argument is ourself library path */
-	BOOST_REQUIRE (boost::unit_test::framework::master_test_suite().argc == 3);
+	BOOST_REQUIRE (boost::unit_test::framework::master_test_suite().argc > 1);
 
 	/* Cleanup from previous run */
 	p_file_remove ("." P_DIR_SEPARATOR "p_empty_file.txt", NULL);
@@ -77,8 +77,10 @@ BOOST_AUTO_TEST_CASE (plibraryloader_nomem_test)
 	SetErrorMode (SEM_FAILCRITICALERRORS);
 #endif
 
+	int argCount = boost::unit_test::framework::master_test_suite().argc;
+
 	BOOST_CHECK (p_library_loader_new ("." P_DIR_SEPARATOR "p_empty_file.txt") == NULL);
-	BOOST_CHECK (p_library_loader_new (boost::unit_test::framework::master_test_suite().argv[2]) == NULL);
+	BOOST_CHECK (p_library_loader_new (boost::unit_test::framework::master_test_suite().argv[argCount - 1]) == NULL);
 
 #ifdef P_OS_WIN
 	SetErrorMode (0);
@@ -104,7 +106,7 @@ BOOST_AUTO_TEST_CASE (plibraryloader_general_test)
 	p_libsys_init ();
 
 	/* We assume that 3rd argument is ourself library path */
-	BOOST_REQUIRE (boost::unit_test::framework::master_test_suite().argc == 3);
+	BOOST_REQUIRE (boost::unit_test::framework::master_test_suite().argc > 1);
 
 	/* Invalid usage */
 	BOOST_CHECK (p_library_loader_new (NULL) == NULL);
@@ -118,7 +120,9 @@ BOOST_AUTO_TEST_CASE (plibraryloader_general_test)
 	err_msg = p_library_loader_get_last_error ();
 	p_free (err_msg);
 
-	loader = p_library_loader_new (boost::unit_test::framework::master_test_suite().argv[2]);
+	int argCount = boost::unit_test::framework::master_test_suite().argc;
+
+	loader = p_library_loader_new (boost::unit_test::framework::master_test_suite().argv[argCount - 1]);
 	BOOST_REQUIRE (loader != NULL);
 
 	BOOST_CHECK (p_library_loader_get_symbol (loader, "there_is_no_such_a_symbol") == (PFuncAddr) NULL);
