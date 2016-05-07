@@ -38,12 +38,12 @@
  * counter value you can control how much concurrent threads can work with a
  * shared resource.
  *
- * This semaphore implementation is process wide so you can synchronize not only
+ * This semaphore implementation is process-wide so you can synchronize not only
  * the threads. But it makes this IPC primitive (actually like any other IPC
  * primitive, as well) relatively heavy. Consider using mutex or spinlock
  * instead if you do not need to cross process boundary.
  *
- * Process wide semaphore is identified by its name across the system, thus it
+ * Process-wide semaphore is identified by its name across the system, thus it
  * is also called named semaphore. Use p_semaphore_new() to open a named
  * semaphore and p_semaphore_free() to close it.
  *
@@ -105,7 +105,7 @@ typedef struct _PSemaphore PSemaphore;
  * @a init_val used only in one of following cases: semaphore with the such name
  * doesn't exist, or semaphore with the such name exists but @a mode specified
  * as #P_SEM_ACCESS_CREATE (non-Windows platforms only). In other cases
- * @a init_val is ignored. @a name is system wide, so any other process can open
+ * @a init_val is ignored. @a name is system-wide, so any other process can open
  * that semaphore passing the same name.
  */
 P_LIB_API PSemaphore *	p_semaphore_new			(const pchar		*name,
