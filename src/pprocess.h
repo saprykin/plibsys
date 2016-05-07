@@ -17,8 +17,14 @@
 
 /**
  * @file pprocess.h
- * @brief Process related routines
+ * @brief Process information
  * @author Alexander Saprykin
+ *
+ * Process is an executing unit in operating system with its own address space.
+ * Every process can be identified with a unique identifier called PID. To get
+ * a PID of the currently running process call p_process_get_current_pid(). To
+ * check whether a process with a given PID is running up use
+ * p_process_is_running().
  */
 
 #if !defined (__PLIBSYS_H_INSIDE__) && !defined (PLIBSYS_COMPILATION)
@@ -34,16 +40,17 @@
 P_BEGIN_DECLS
 
 /**
- * @brief Gets PID of calling process.
+ * @brief Gets PID of the calling process.
  * @return PID of the currently calling process.
  * @since 0.0.1
  */
 P_LIB_API puint32	p_process_get_current_pid	(void);
 
 /**
- * @brief Checks wheather process with given PID is running or not.
+ * @brief Checks whether process with given PID is running or not.
  * @param pid PID to check for.
- * @return TRUE if process with given PID exists and is running, FALSE otherwise.
+ * @return TRUE if process with the given PID exists and is running up, FALSE
+ * otherwise.
  * @since 0.0.1
  */
 P_LIB_API pboolean	p_process_is_running		(puint32 pid);
