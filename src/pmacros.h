@@ -601,8 +601,8 @@
 
 /**
  * @def P_END_DECLS
- * @brief Closes .h file declarations to be exported as C functions,
- * should be always used after #P_BEGIN_DECLS.
+ * @brief Closes .h file declarations to be exported as C functions, should be
+ * always used after #P_BEGIN_DECLS.
  */
 
 #ifdef __cplusplus
