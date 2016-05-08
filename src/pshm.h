@@ -20,31 +20,49 @@
  * @brief Shared memory routines
  * @author Alexander Saprykin
  *
- * Shared memory is an interprocess communication primitive. It can be used to transfer data
- * between several processes. PLibSYS supports different shared memory implementations: System V,
- * POSIX and Windows. PLibSYS is compiled using one of them (depend which of implementations
- * are available on target system).
+ * Shared memory is a memory segment which can be accessed from several threads
+ * or processes. It provides an efficient way to transfer large blocks of data
+ * between processes. It can be used as any other regular memory segment in an
+ * application.
+ *
+ * Shared memory acts like an inter-process communication method. This memory
+ * exchange implementation is process-wide so you can transfer data not only
+ * between the threads. But it makes this IPC method (actually like any other
+ * IPC method, as well) relatively heavy. Consider using other approaches
+ * instead if you do not need to cross process boundary.
+ *
+ * Shared memory segment doesn't provide any synchronization primitives itself
+ * which means that several processes or threads can concurrently write and read
+ * from it. This can lead to data consistency problems. To avoid such situations
+ * a locking mechanism is provided: use p_shm_lock() before entering a critical
+ * section on memory segment and p_shm_unlock() when leaving this section. The
+ * locking mechanism is working across process boundary.
+ *
+ * Process-wide shared memory segment is identified by its name across the
+ * system, thus it is also called named memory segment. Use p_shm_new() to open
+ * a named shared memory segment and p_shm_free() to close it.
  *
  * Please note the following platform specific differences:
  *
- * - Windows doesn't own IPC objects (processes own them), which means that shared memory
- * segment will be removed after the last process or thread detaches (or after terminating
- * all the processes and threads attached to the segment).
+ * - Windows doesn't own IPC objects (processes own them), which means that
+ * shared memory segment will be removed after the last process or thread
+ * detaches (or after terminating all the processes and threads attached to the
+ * segment) it.
  *
- * - UNIX systems own IPC objects. Because of that UNIX IPC objects can survive application
- * crash: attached shared memory segment can contain data from the previous working session.
- * This could happen if you have not detached from all the shared memory segments explicitly
- * before terminating the application.
+ * - UNIX systems own IPC objects. Because of that UNIX IPC objects can survive
+ * application crash: attached shared memory segment can contain data from the
+ * previous working session. This could happen if you have not detached from all
+ * the shared memory segments explicitly before terminating the application.
  *
- * - HP-UX has limitations due to its MPAS/MGAS features, so you couldn't attach to the same
- * memory segment twice from the same process.
+ * - HP-UX has limitations due to its MPAS/MGAS features, so you couldn't attach
+ * to the same memory segment twice from the same process.
  *
- * - IRIX allows to open several instances of the same buffer within the single process, but
- * it will close the object after the first close call from the any of the process thread.
+ * - IRIX allows to open several instances of the same buffer within the single
+ * process, but it will close the object after the first close call from any of
+ * the threads within the process.
  *
- * Keep these facts in mind while developing cross-platform applications. Also note that
- * you must synchronize multi-thread access to shared memory by youself or
- * using p_shm_lock() and p_shm_unlock() routines.
+ * You can take ownership of a shared memory segment with p_shm_take_ownership()
+ * to explicitly remove it from the system after closing.
  */
 
 #if !defined (__PLIBSYS_H_INSIDE__) && !defined (PLIBSYS_COMPILATION)
@@ -58,24 +76,25 @@
 #include <ptypes.h>
 #include <perror.h>
 
-/** Enum with #PShm access permitions */
+/** Enum with shared memory access permission */
 typedef enum _PShmAccessPerms {
-	P_SHM_ACCESS_READONLY	= 0,	/**< Read-only access */
-	P_SHM_ACCESS_READWRITE	= 1	/**< Read/write access */
+	P_SHM_ACCESS_READONLY	= 0,	/**< Read-only access.	*/
+	P_SHM_ACCESS_READWRITE	= 1	/**< Read/write access.	*/
 } PShmAccessPerms;
 
-/** #PShm opaque data structure */
+/** Shared memory opaque data structure */
 typedef struct _PShm PShm;
 
 P_BEGIN_DECLS
 
 /**
- * @brief Creates new #PShm object.
+ * @brief Creates a new #PShm object.
  * @param name Shared memory name.
  * @param size Size of the memory segment in bytes, can't be changed later.
  * @param perms Memory segment permissions, see #PShmAccessPerms.
  * @param[out] error Error report object, NULL to ignore.
- * @return Pointer to newly created #PShm object in case of success, NULL otherwise.
+ * @return Pointer to a newly created #PShm object in case of success, NULL
+ * otherwise.
  * @since 0.0.1
  */
 P_LIB_API PShm *	p_shm_new		(const pchar		*name,
@@ -88,33 +107,32 @@ P_LIB_API PShm *	p_shm_new		(const pchar		*name,
  * @param shm Shared memory segment.
  * @since 0.0.1
  *
- * If you take ownership of the shared memory object, p_shm_free()
- * will try to completely unlink it and remove from the system.
- * This is useful on UNIX systems with POSIX and System V IPC implementations,
- * where shared memory can survive an application crash. On Windows platform this
- * call has no effect.
+ * If you take ownership of the shared memory object, p_shm_free() will try to
+ * completely unlink it and remove from the system. This is useful on UNIX
+ * systems where shared memory can survive an application crash. On Windows
+ * platform this call has no effect.
  *
  * The common usage of this call is upon application startup to ensure that
- * memory segment from the previous crash can be unlinked from the system. To
- * do that, call p_shm_new(), and check if its condition is OK (segment size,
+ * memory segment from the previous crash will be unlinked from the system. To
+ * do that, call p_shm_new() and check if its condition is normal (segment size,
  * data). If not, take ownership of the shared memory object and remove it with
  * p_shm_free() call. After that, create it again.
  */
 P_LIB_API void		p_shm_take_ownership	(PShm			*shm);
 
 /**
- * @brief Frees shared memory object.
+ * @brief Frees #PShm object.
  * @param shm #PShm to free.
  * @since 0.0.1
  *
- * It doesn't unlock given shared memory, be careful to not to make deadlock
- * or segfault while freeing memory segment which are under using.
+ * It doesn't unlock given shared memory, be careful to not to make a deadlock
+ * or segfault while freeing memory segment which is under the usage.
  */
 P_LIB_API void		p_shm_free		(PShm			*shm);
 
 /**
- * @brief Locks #PShm object for usage. If object is already locked then
- * thread will be slept until object becomes unocked.
+ * @brief Locks #PShm object for usage. If object is already locked then thread
+ * will be suspended until object becomes unlocked.
  * @param shm #PShm to lock.
  * @param[out] error Error report object, NULL to ignore.
  * @return TRUE in case of success, FALSE otherwise.
@@ -147,8 +165,8 @@ P_LIB_API ppointer	p_shm_get_address	(const PShm		*shm);
  * @return Size of the given memory segment in case of success, 0 otherwise.
  * @since 0.0.1
  *
- * Note that returned size would be a slight bigger then specified during
- * p_shm_new() call due to service information stored there.
+ * Note that returned size would be a slightly larger than specified during
+ * p_shm_new() call due to service information stored inside.
  */
 P_LIB_API psize		p_shm_get_size		(const PShm		*shm);
 
