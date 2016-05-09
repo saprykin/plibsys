@@ -20,10 +20,43 @@
  * @brief Shared memory buffer
  * @author Alexander Saprykin
  *
- * #PShmBuffer implements cyclic non-override buffer based on a shared memory segment.
- * This allows different processes to exchange data without using sockets as often
- * is done. Thus you'll get a bit smaller overheads than using sockets. Please read
- * documentation for #PShm for known issues with UNIX and Windows IPC systems.
+ * Shared memory buffer works like any other buffer but it is built upon a
+ * shared memory region instead of the process-only address space. Thus it
+ * inherits all the advantages and disadvantages of shared memory behavior. You
+ * should read about #PShm before using this buffer implementation to understand
+ * underlying restrictions.
+ *
+ * Shared memory buffer is process-wide and identified by its name across the
+ * system, thus it can be opened by any process if it knows its name.
+ * Use p_shm_buffer_new() to open a shared memory buffer and p_shm_buffer_free()
+ * to close it.
+ *
+ * All read/write operations are completely thread- and process-safe, which
+ * means that no other synchronization primitive is required, even for inter-
+ * process access. #PShm locking mechanism is used for access synchronization.
+ *
+ * The buffer is cyclic and non-overridable which means that you wouldn't get
+ * buffer overflow and wouldn't override previously written data until reading
+ * it.
+ *
+ * Read operation checks whether there is any data available and reads it in
+ * case of successful check. After reading the data used space in the buffer is
+ * marked as free and any subsequent write operation may overwrite it. Thus you
+ * couldn't read the same data twice. Read operation is performed with
+ * p_shm_buffer_read() call.
+ *
+ * Write operation checks whether there is enough free space available and
+ * writes a given memory block only if the buffer has enough free space.
+ * Otherwise no data is written. Write operation is performed with
+ * p_shm_buffer_write() call.
+ *
+ * Data can be read and written into a buffer only sequentially. There is no
+ * way to access arbitrary address inside the buffer.
+ *
+ * You can take ownership of a shared memory buffer with
+ * p_shm_buffer_take_ownership() to explicitly remove it from the system after
+ * closing. Please refer to #PShm description to understand the intention of
+ * this action.
  */
 
 #if !defined (__PLIBSYS_H_INSIDE__) && !defined (PLIBSYS_COMPILATION)
@@ -39,58 +72,62 @@
 
 #include <stdlib.h>
 
-/** #PShmBuffer opaque data structure */
+/** Shared memory buffer opaque data structure */
 typedef struct _PShmBuffer PShmBuffer;
 
 P_BEGIN_DECLS
 
 /**
- * @brief Creates new #PShmBuffer structure. If buffer with the same name
- * is already exists then size will be ignored and existing buffer will be returned.
+ * @brief Creates a new #PShmBuffer structure.
  * @param name Unique buffer name.
  * @param size Buffer size in bytes, can't be changed later.
  * @param[out] error Error report object, NULL to ignore.
  * @return Pointer to #PShmBuffer structure in case of success, NULL otherwise.
  * @since 0.0.1
+ *
+ * If a buffer with the same name already exists then @a size will be ignored
+ * and existing buffer will be returned.
  */
 P_LIB_API PShmBuffer *	p_shm_buffer_new		(const pchar	*name,
 							 psize		size,
 							 PError		**error);
 
 /**
- * @brief Frees #PShmBuffer structure. Note that buffer will be fully removed
- * from the system only after the last instance of the buffer with the same name
- * is closed.
+ * @brief Frees #PShmBuffer structure.
  * @param buf #PShmBuffer to free.
  * @since 0.0.1
+ *
+ * Note that a buffer will be completely removed from the system only after the
+ * last instance of the buffer with the same name is closed.
  */
 P_LIB_API void		p_shm_buffer_free		(PShmBuffer	*buf);
 
 /**
- * @brief Takes ownership of the shared memory buffer.
+ * @brief Takes ownership of a shared memory buffer.
  * @param buf Shared memory buffer.
  * @since 0.0.1
  *
- * If you take ownership of the shared memory buffer, p_shm_buffer_free()
- * will try to completely unlink it and remove from the system.
- * This is useful on UNIX systems with POSIX and System V IPC implementations, where shared
- * memory can survive an application crash. On Windows platform this call has no effect.
+ * If you take ownership of a shared memory buffer, p_shm_buffer_free() will try
+ * to completely unlink it and remove from the system. This is useful on UNIX
+ * systems, where shared memory can survive an application crash. On Windows
+ * platform this call has no effect.
  *
  * The common usage of this call is upon application startup to ensure that
- * memory segment from the previous crash can be unlinked from the system. To
- * do that, call p_shm_buffer_new(), and check if its condition is OK (used space,
- * free space). If not, take ownership of the shared memory buffer object and remove it with
- * p_shm_buffer_free() call. After that, create it again.
+ * memory segment from the previous crash can be removed from the system. To do
+ * that, call p_shm_buffer_new() and check if its condition is normal (used
+ * space, free space). If not, take ownership of the shared memory buffer object
+ * and remove it with p_shm_buffer_free() call. After that, create it again.
  */
 P_LIB_API void		p_shm_buffer_take_ownership	(PShmBuffer	*buf);
 
 /**
- * @brief Tries to read data from shared memory buffer.
+ * @brief Tries to read data from a shared memory buffer.
  * @param buf #PShmBuffer to read data from.
  * @param[out] storage Output buffer to put data in.
- * @param len @a storage size in bytes.
+ * @param len Storage size in bytes.
  * @param[out] error Error report object, NULL to ignore.
- * @return Number of read bytes (can be 0 if buffer is empty), or -1 if error occured.
+ * @return Number of read bytes (can be 0 if buffer is empty), or -1 if error
+ * occured.
  * @since 0.0.1
  */
 P_LIB_API pint		p_shm_buffer_read		(PShmBuffer	*buf,
@@ -99,13 +136,16 @@ P_LIB_API pint		p_shm_buffer_read		(PShmBuffer	*buf,
 							 PError		**error);
 
 /**
- * @brief Tries to write data into shared memory buffer.
+ * @brief Tries to write data into a shared memory buffer.
  * @param buf #PShmBuffer to write data into.
  * @param data Data to write.
- * @param len @a data size in bytes.
+ * @param len Data size in bytes.
  * @param[out] error Error report object, NULL to ignore.
- * @return Number of written bytes (can be 0 if buffer is full), or -1 if error occured.
+ * @return Number of written bytes (can be 0 if buffer is full), or -1 if error
+ * occured.
  * @since 0.0.1
+ * @note Write operation is performed only if buffer has enough space for the
+ * given data size.
  */
 P_LIB_API pssize	p_shm_buffer_write		(PShmBuffer	*buf,
 							 ppointer	data,
@@ -113,7 +153,7 @@ P_LIB_API pssize	p_shm_buffer_write		(PShmBuffer	*buf,
 							 PError		**error);
 
 /**
- * @brief Gets free space in shared memory buffer.
+ * @brief Gets free space in a shared memory buffer.
  * @param buf #PShmBuffer to check space in.
  * @param[out] error Error report object, NULL to ignore.
  * @return Free space in bytes in case of success, -1 otherwise.
@@ -123,7 +163,7 @@ P_LIB_API pssize	p_shm_buffer_get_free_space	(PShmBuffer	*buf,
 							 PError		**error);
 
 /**
- * @brief Gets used space in shared memory buffer.
+ * @brief Gets used space in a shared memory buffer.
  * @param buf #PShmBuffer to check space in.
  * @param[out] error Error report object, NULL to ignore.
  * @return Used space in bytes in case of success, -1 otherwise.
@@ -133,7 +173,7 @@ P_LIB_API pssize	p_shm_buffer_get_used_space	(PShmBuffer	*buf,
 							 PError		**error);
 
 /**
- * @brief Clears all data in buffer and fills it with zeros.
+ * @brief Clears all data in a buffer and fills it with zeros.
  * @param buf #PShmBuffer to clear.
  * @since 0.0.1
  */
