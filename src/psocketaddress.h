@@ -145,7 +145,7 @@ P_LIB_API PSocketFamily		p_socket_address_get_family		(const PSocketAddress *add
  * @brief Gets socket address in string representation, eg. 172.146.45.5.
  * @param addr #PSocketAddress to get address string for.
  * @return Pointer to string representation of the socket address in case of
- * success, NULL otherwise. Caller takes ownership for the returned pointer.
+ * success, NULL otherwise. Caller takes ownership of the returned pointer.
  * @since 0.0.1
  */
 P_LIB_API pchar *		p_socket_address_get_address		(const PSocketAddress *addr);

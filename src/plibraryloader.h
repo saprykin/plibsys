@@ -96,7 +96,7 @@ P_LIB_API void			p_library_loader_free		(PLibraryLoader	*loader);
  * @brief Gets last occurred error.
  * @return Human readable error string in case of success, NULL otherwise.
  * @since 0.0.1
- * @note Caller takes ownership for the returned string.
+ * @note Caller takes ownership of the returned string.
  *
  * A NULL result may indicate that no error was occurred since the last call.
  *
