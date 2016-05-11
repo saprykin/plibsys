@@ -99,7 +99,7 @@ P_LIB_API pchar *	p_strtok	(pchar		*str,
  * @since 0.0.1
  *
  * Since the atof() system call is locale dependent, you can use this call to
- * convert string variables to @a double values. The decimal point is '.' as i
+ * convert string variables to @a double values. The decimal point is '.' as in
  * the 'C' locale.
  */
 P_LIB_API double	p_strtod	(const pchar	*str);
