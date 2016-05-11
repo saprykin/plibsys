@@ -17,11 +17,20 @@
 
 /**
  * @file ptimeprofiler.h
- * @brief Calculates elapsed time since fixed moment of time
+ * @brief Time profiler
  * @author Alexander Saprykin
  *
- * Use #PTimeProfiler to calculate elapsed time for time consuming
- * operations. This can help to leverage bottle-necks code parts.
+ * #PTimeProfiler acts like a time cronometer: in any moment of time you can
+ * make a time slice to see how much time elapsed since the last slice or timer
+ * start.
+ *
+ * This profiler is useful to gather information about execution time for calls
+ * or parts of the code. It can help to leverage bottle-necks in your code.
+ *
+ * To start using a profiler create a new one with p_time_profiler_new() call
+ * and p_time_profiler_elapsed_usecs() to get elapsed time since the creation.
+ * If you need to reset a profiler use p_time_profiler_reset(). Remove a
+ * profiler with p_time_profiler_free().
  */
 
 #if !defined (__PLIBSYS_H_INSIDE__) && !defined (PLIBSYS_COMPILATION)
@@ -40,26 +49,26 @@ typedef struct _PTimeProfiler PTimeProfiler;
 P_BEGIN_DECLS
 
 /**
- * @brief Creates new #PTimeProfiler object.
- * @return Pointer to newly created #PTimeProfiler object.
+ * @brief Creates a new #PTimeProfiler object.
+ * @return Pointer to a newly created #PTimeProfiler object.
  * @since 0.0.1
  */
 P_LIB_API PTimeProfiler *	p_time_profiler_new		(void);
 
 /**
- * @brief Resets #PTimeProfiler internal counter to zero.
+ * @brief Resets the #PTimeProfiler's internal counter to zero.
  * @param profiler Time profiler to reset.
  * @since 0.0.1
  *
- * After reset time profiler begins to count elapsed time from
- * that moment of time.
+ * After a reset the time profiler begins to count elapsed time from that moment
+ * of time.
  */
 P_LIB_API void			p_time_profiler_reset		(PTimeProfiler *	profiler);
 
 /**
- * @brief Calculates elapsed time since last reset or creation.
- * @param profiler Time profiler to calculate elapsed time from.
- * @return Microseconds elapsed since last reset or creation.
+ * @brief Calculates elapsed time since the last reset or creation.
+ * @param profiler Time profiler to calculate elapsed time for.
+ * @return Microseconds elapsed since the last reset or creation.
  * @since 0.0.1
  */
 P_LIB_API puint64		p_time_profiler_elapsed_usecs	(const PTimeProfiler *	profiler);
