@@ -36,7 +36,7 @@
  *
  * To check data type limits use P_MIN* and P_MAX* macros.
  *
- * If you need to check system endianness compare #P_BYTE_ORDER definition with
+ * If you need to check system endianness compare P_BYTE_ORDER definition with
  * #P_LITTLE_ENDIAN or #P_BIG_ENDIAN macros.
  *
  * To convert between the little and big endian byte orders use Px_TO_LE,
