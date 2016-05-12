@@ -41,6 +41,101 @@
  * kernel32.dll.
  */
 
+/**
+ * @mainpage
+ * Basic
+ * - @link
+ * pmain.h Library initialization
+ * @endlink
+ * - @link
+ * ptypes.h Data types
+ * @endlink
+ * - @link
+ * pmacros.h Macros
+ * @endlink
+ * - @link
+ * pstring.h Strings
+ * @endlink
+ *
+ * System
+ * - @link
+ * pmem.h Memory management
+ * @endlink
+ * - @link
+ * pprocess.h Process
+ * @endlink
+ * - @link
+ * plibraryloader.h Shared library loader
+ * @endlink
+ * - @link
+ * ptimeprofiler.h Time profiler
+ * @endlink
+ * - @link
+ * perror.h Errors
+ * @endlink
+ *
+ * Data structures
+ * - @link
+ * plist.h Singly linked list
+ * @endlink
+ * - @link
+ * phashtable.h Hash table
+ * @endlink
+ * - @link
+ * ptree.h Cryptographic hash
+ * @endlink
+ * - @link
+ * ptree.h Binary search tree
+ * @endlink
+ *
+ * Multithreading
+ * - @link
+ * puthread.h Thread
+ * @endlink
+ * - @link
+ * pmutex.h Mutex
+ * @endlink
+ * - @link
+ * pcondvariable.h Conditional variable
+ * @endlink
+ * - @link
+ * pspinlock.h Spinlock
+ * @endlink
+ * - @link
+ * patomic.h Atomic operations
+ * @endlink
+ *
+ * Interprocess communication
+ * - @link
+ * psemaphore.h Semaphore
+ * @endlink
+ * - @link
+ * pshm.h Shared memory
+ * @endlink
+ * - @link
+ * pshmbuffer.h Shared memory buffer
+ * @endlink
+ *
+ * Networking
+ * - @link
+ * psocketaddress.h Socket address
+ * @endlink
+ * - @link
+ * psocket.h Socket
+ * @endlink
+ *
+ * File and directories
+ * - @link
+ * pfile.h Files
+ * @endlink
+ * - @link
+ * pdir.h Directories
+ * @endlink
+ * - @link
+ * pinifile.h INI file parser
+ * @endlink
+ */
+
 #if !defined (__PLIBSYS_H_INSIDE__) && !defined (PLIBSYS_COMPILATION)
 #  error "Header files shouldn't be included directly, consider using <plibsys.h> instead."
 #endif
