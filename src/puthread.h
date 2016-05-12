@@ -75,16 +75,16 @@
 
 P_BEGIN_DECLS
 
-/** Typedef for #PUThread running method */
+/** Typedef for #PUThread running method. */
 typedef ppointer (*PUThreadFunc) (ppointer arg);
 
-/** #PUThread opaque data type */
+/** Thread opaque data type. */
 typedef struct _PUThread PUThread;
 
-/** #PUThreadKey opaque data type */
+/** TLS key opaque data type. */
 typedef struct _PUThreadKey PUThreadKey;
 
-/** Thread priority */
+/** Thread priority. */
 typedef enum _PUThreadPriority {
 	P_UTHREAD_PRIORITY_LOWEST	= 0,	/**< Lowest possible priority.					*/
 	P_UTHREAD_PRIORITY_LOW		= 1,	/**< Low priority (min_prio * 6 + normal_prio * 4) / 10.	*/
@@ -108,7 +108,8 @@ P_LIB_API PUThread *		p_uthread_create_full	(PUThreadFunc		func,
 							 PUThreadPriority	prio);
 
 /**
- * @brief Creates a #PUThread and starts it. Short version of p_uthread_create_full().
+ * @brief Creates a #PUThread and starts it. Short version of
+ * p_uthread_create_full().
  * @param func Main thread function to run.
  * @param data Pointer to pass into the thread main function, may be NULL.
  * @param joinable Whether to create joinable thread or not.
@@ -215,7 +216,8 @@ P_LIB_API ppointer		p_uthread_get_local	(PUThreadKey		*key);
  * @since 0.0.1
  * @note This call may fail only in case of abnormal usage or program behavior.
  *
- * It doesn't call a destructor notification function provided with p_uthread_local_new().
+ * It doesn't call a destructor notification function provided with
+ * p_uthread_local_new().
  */
 P_LIB_API void			p_uthread_set_local	(PUThreadKey		*key,
 							 ppointer		value);
@@ -227,8 +229,9 @@ P_LIB_API void			p_uthread_set_local	(PUThreadKey		*key,
  * @since 0.0.1
  * @note This call may fail only in case of abnormal usage or program behavior.
  *
- * This call does perform a notification function provided with p_uthread_local_new() on
- * an old TLS value. This is the only difference with p_uthread_set_local().
+ * This call does perform a notification function provided with
+ * p_uthread_local_new() on an old TLS value. This is the only difference with
+ * p_uthread_set_local().
  */
 P_LIB_API void			p_uthread_replace_local	(PUThreadKey		*key,
 							 ppointer		value);
