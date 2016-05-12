@@ -43,7 +43,7 @@
 #include <pmacros.h>
 #include <ptypes.h>
 
-/** Time profiler opaque data structure */
+/** Time profiler opaque data structure. */
 typedef struct _PTimeProfiler PTimeProfiler;
 
 P_BEGIN_DECLS

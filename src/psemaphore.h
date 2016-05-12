@@ -83,13 +83,13 @@
 
 P_BEGIN_DECLS
 
-/** Enum with semaphore creation modes */
+/** Enum with semaphore creation modes. */
 typedef enum _PSemaphoreAccessMode {
 	P_SEM_ACCESS_OPEN	= 0,	/**< Open existing semaphore or create one with a given value.	*/
 	P_SEM_ACCESS_CREATE	= 1	/**< Create semaphore, reset to a given value if exists.	*/
 } PSemaphoreAccessMode;
 
-/** Semaphore opaque data structure */
+/** Semaphore opaque data structure. */
 typedef struct _PSemaphore PSemaphore;
 
 /**

@@ -55,7 +55,7 @@
 
 P_BEGIN_DECLS
 
-/** PSpinLock opaque data structure */
+/** Spinlock opaque data structure. */
 typedef struct _PSpinLock PSpinLock;
 
 /**

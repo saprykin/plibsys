@@ -81,7 +81,7 @@
 
 P_BEGIN_DECLS
 
-/** Typedef for list node */
+/** Typedef for a list node. */
 typedef struct _PList PList;
 
 /**

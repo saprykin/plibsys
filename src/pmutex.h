@@ -63,7 +63,7 @@
 
 P_BEGIN_DECLS
 
-/** Mutex opaque data structure */
+/** Mutex opaque data structure. */
 typedef struct _PMutex PMutex;
 
 /**

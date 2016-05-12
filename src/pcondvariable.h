@@ -69,7 +69,7 @@
 
 P_BEGIN_DECLS
 
-/** PCondVariable opaque data structure */
+/** Conditional variable opaque data structure. */
 typedef struct _PCondVariable PCondVariable;
 
 /**

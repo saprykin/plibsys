@@ -52,10 +52,10 @@
 
 P_BEGIN_DECLS
 
-/** Opaque data structure to handle a shared library */
+/** Opaque data structure to handle a shared library. */
 typedef struct _PLibraryLoader PLibraryLoader;
 
-/** Pointer to function address */
+/** Pointer to a function address. */
 typedef void (*PFuncAddr) (void);
 
 /**

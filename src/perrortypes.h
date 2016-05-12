@@ -40,14 +40,14 @@
 
 P_BEGIN_DECLS
 
-/** Enum with error domains */
+/** Enum with error domains. */
 typedef enum _PErrorDomain {
 	P_ERROR_DOMAIN_NONE		= 0,	/**< No domain was specified.				*/
 	P_ERROR_DOMAIN_IO		= 500,	/**< Input/output domain.				*/
 	P_ERROR_DOMAIN_IPC		= 600	/**< Interprocess communication domain.			*/
 } PErrorDomain;
 
-/** Enum with IO errors */
+/** Enum with IO errors. */
 typedef enum _PErrorIO {
 	P_ERROR_IO_NONE			= 500,	/**< No error.						*/
 	P_ERROR_IO_NO_RESOURCES		= 501,	/**< Operating system hasn't enough resources.		*/

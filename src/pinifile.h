@@ -28,8 +28,8 @@
  * Each section has a list of key-value pairs. Empty sections are not permitted
  * (they will be skipped). Every key-value pair is represented with a line in
  * a `key = value` format. If section has several values with the same key the
- * last one will be used. Value is parsed by the first in-order '=' symbol.
- * All the following '=' occurrences belong to the value.
+ * last one will be used. Value is parsed by the first in-order '=' symbol. All
+ * the following '=' occurrences belong to the value.
  *
  * All symbols after '#' and ';' (even at the line ending) are the comments and
  * wouldn't be read. If you want to use them in values take the value inside ""
@@ -43,8 +43,8 @@
  * decimal point symbol is a '.'. There is no locale dependency on a decimal
  * point.
  *
- * Boolean values can be written in a form of 'true/false' or 'TRUE/FALSE',
- * or simply '0/1'.
+ * Boolean values can be written in a form of 'true/false' or 'TRUE/FALSE', or
+ * simply '0/1'.
  *
  * Any value can be interpreted as a string at any moment. Actually all the
  * values are stored internally as strings.
@@ -96,7 +96,7 @@
 
 P_BEGIN_DECLS
 
-/** PIniFile opaque data struct */
+/** INI file opaque data structure. */
 typedef struct _PIniFile PIniFile;
 
 /**

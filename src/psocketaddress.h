@@ -65,7 +65,7 @@
 
 P_BEGIN_DECLS
 
-/** Socket address family */
+/** Socket address family. */
 typedef enum _PSocketFamily {
 	P_SOCKET_FAMILY_UNKNOWN = 0,		/**< Unknown family.	*/
 #ifdef AF_INET6
@@ -76,7 +76,7 @@ typedef enum _PSocketFamily {
 #endif
 } PSocketFamily;
 
-/** Socket address opaque structure */
+/** Socket address opaque structure. */
 typedef struct _PSocketAddress PSocketAddress;
 
 /**

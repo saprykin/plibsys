@@ -28,12 +28,12 @@
 
 P_BEGIN_DECLS
 
-/** Base tree leaf structure */
+/** Base tree leaf structure. */
 typedef struct _PTreeBaseNode {
-	struct _PTreeBaseNode	*left;	/**< Left child		*/
-	struct _PTreeBaseNode	*right;	/**< Right child	*/
-	ppointer		key;	/**< Node key		*/
-	ppointer		value;	/**< Node value		*/
+	struct _PTreeBaseNode	*left;	/**< Left child.	*/
+	struct _PTreeBaseNode	*right;	/**< Right child.	*/
+	ppointer		key;	/**< Node key.		*/
+	ppointer		value;	/**< Node value.	*/
 } __PTreeBaseNode;
 
 #ifndef PLIBSYS_HAS_SOCKLEN_T
@@ -66,7 +66,7 @@ struct sockaddr_storage {
 
 #ifndef P_OS_WIN
 /**
- * @brief Gets temporary directory on UNIX systems.
+ * @brief Gets a temporary directory on UNIX systems.
  * @return Temporary directory.
  * @since 0.0.1
  */
@@ -75,61 +75,63 @@ pchar *		__p_ipc_unix_get_temp_dir		(void);
 /* Create file for System V IPC, if needed
  * Returns: -1 = error, 0 = file successfully created, 1 = file already exists */
 /**
- * @brief Creates file for System V IPC usage.
+ * @brief Creates a file for System V IPC usage.
  * @param file_name File name to create.
- * @return -1 in case of error, 0 if all was OK, and 1 if file already exists.
+ * @return -1 in case of error, 0 if all was OK, and 1 if the file already
+ * exists.
  * @since 0.0.1
  */
-pint		__p_ipc_unix_create_key_file		(const pchar *file_name);
+pint		__p_ipc_unix_create_key_file		(const pchar	*file_name);
 
 /**
- * @brief Wrapps ftok() UNIX call for uniquer IPC key.
+ * @brief Wrapps ftok() UNIX call for a uniquer IPC key.
  * @param file_name File name for ftok() call.
  * @return Key in case of success, -1 otherwise.
  * @since 0.0.1
  */
-pint		__p_ipc_unix_get_ftok_key		(const pchar *file_name);
+pint		__p_ipc_unix_get_ftok_key		(const pchar	*file_name);
 #endif /* !P_OS_WIN */
 
 /**
- * @brief Generates platform-independent key for IPC usage, object name for Windows and
- * file name to use with ftok () for UNIX-like systems.
+ * @brief Generates a platform independent key for IPC usage, an object name for
+ * Windows and a file name to use with ftok () for UNIX-like systems.
  * @param name Object name.
- * @param posix TRUE if key will be used for POSIX IPC calls, otherwise FALSE. This
- * parameter is not used on Windows platform.
- * @return Platform-independent key for IPC usage.
+ * @param posix TRUE if the key will be used for the POSIX IPC calls,
+ * otherwise FALSE. This parameter is not used on Windows platform.
+ * @return Platform independent key for IPC usage.
  * @since 0.0.1
  */
-pchar *		__p_ipc_get_platform_key		(const pchar *name, pboolean posix);
+pchar *		__p_ipc_get_platform_key		(const pchar	*name,
+							 pboolean	posix);
 
 /**
- * @brief Gets IO error code from the system error code
+ * @brief Gets an IO error code from a system error code.
  * @param err_code System error code.
  * @return IO error code.
  */
-PErrorIO	__p_error_get_io_from_system		(pint err_code);
+PErrorIO	__p_error_get_io_from_system		(pint		err_code);
 
 /**
- * @brief Gets IO error code from the last call result
+ * @brief Gets an IO error code from the last call result.
  * @return IO error code.
  */
 PErrorIO	__p_error_get_last_io			();
 
 /**
- * @brief Gets IPC error code from the system error code
+ * @brief Gets an IPC error code from a system error code
  * @param err_code System error code.
  * @return IPC error code.
  */
-PErrorIPC	__p_error_get_ipc_from_system		(pint err_code);
+PErrorIPC	__p_error_get_ipc_from_system		(pint		err_code);
 
 /**
- * @brief Gets IPC error code from the last call result
+ * @brief Gets an IPC error code from the last call result.
  * @return IPC error code.
  */
 PErrorIPC	__p_error_get_last_ipc			();
 
 /**
- * @brief Gets last native error code
+ * @brief Gets the last native error code.
  * @return Last native error code.
  */
 pint		__p_error_get_last_error		();

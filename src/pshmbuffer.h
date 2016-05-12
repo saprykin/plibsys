@@ -72,7 +72,7 @@
 
 #include <stdlib.h>
 
-/** Shared memory buffer opaque data structure */
+/** Shared memory buffer opaque data structure. */
 typedef struct _PShmBuffer PShmBuffer;
 
 P_BEGIN_DECLS

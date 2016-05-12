@@ -47,10 +47,10 @@ P_BEGIN_DECLS
 P_LIB_API puint32	p_process_get_current_pid	(void);
 
 /**
- * @brief Checks whether process with given PID is running or not.
+ * @brief Checks whether a process with a given PID is running or not.
  * @param pid PID to check for.
- * @return TRUE if process with the given PID exists and is running up, FALSE
- * otherwise.
+ * @return TRUE if the process with the given PID exists and is running up,
+ * FALSE otherwise.
  * @since 0.0.1
  */
 P_LIB_API pboolean	p_process_is_running		(puint32 pid);
