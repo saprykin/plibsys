@@ -20,7 +20,31 @@
  * @brief Types definitions
  * @author Alexander Saprykin
  *
- * Types and swap routines definitions.
+ * Every operating system in pair with a compiler has its own set of data types.
+ * Here you can find unified platform independent data types which guarantee the
+ * same bit-size on every supported platform: #pint8, #pint16, #pint32, #pint64
+ * and their unsigned variants. Also other types are defined for convinience:
+ * #ppointer, #pboolean, #pint, #plong, #pdouble and others.
+ *
+ * Along with the types, length and format modifiers are defined. They can be
+ * used to print and scan data from/to a variable.
+ *
+ * Sometimes it is useful to use an integer variable as a pointer, i.e. to
+ * prevent memory allocation when using hash tables, trees. Use special macros
+ * for that case: #PINT_TO_POINTER, #PPOINTER_TO_INT and ther variants. Note
+ * that it will not work with 64-bit data types.
+ *
+ * If you need to check system endianess compare #P_BYTE_ORDER definition with
+ * #P_LITTLE_ENDIAN or #P_BIG_ENDIAN macros.
+ *
+ * To convert between the little and big endian byte orders use Px_TO_LE,
+ * Px_TO_BE, Px_FROM_LE and Px_FROM_BE macros. Macros for the network<->host
+ * byte order conversion are also provided: #p_ntohl, #p_ntohs, #p_ntohs and
+ * #p_ntohl. All the described above macros depend on the target system
+ * endianess. Use PUINTx_SWAP_BYTES to manually swap data types independtly from
+ * the endianess.
+ *
+ * You can also find some of the function definitions used within the library.
  */
 
 #if !defined (__PLIBSYS_H_INSIDE__) && !defined (PLIBSYS_COMPILATION)
