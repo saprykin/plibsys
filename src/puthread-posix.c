@@ -225,6 +225,7 @@ p_uthread_create_full (PUThreadFunc	func,
 	} else {
 		if (pthread_attr_getschedpolicy (&attr, &sched_policy) == 0) {
 			if (__puthread_get_unix_priority (prio, &sched_policy, &native_prio) == TRUE) {
+				memset (&sched, 0, sizeof (sched));
 				sched.sched_priority = native_prio;
 
 				if (pthread_attr_setinheritsched (&attr, PTHREAD_EXPLICIT_SCHED) != 0 ||
@@ -335,6 +336,7 @@ p_uthread_set_priority (PUThread		*thread,
 		return FALSE;
 	}
 
+	memset (&sched, 0, sizeof (sched));
 	sched.sched_priority = native_prio;
 
 	if (pthread_setschedparam (thread->hdl, policy, &sched) != 0) {
