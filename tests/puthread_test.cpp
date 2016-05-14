@@ -205,7 +205,7 @@ BOOST_AUTO_TEST_CASE (puthread_bad_input_test)
 	BOOST_CHECK (p_uthread_create (NULL, NULL, false) == NULL);
 	BOOST_CHECK (p_uthread_create_full (NULL, NULL, false, P_UTHREAD_PRIORITY_NORMAL) == NULL);
 	BOOST_CHECK (p_uthread_join (NULL) == -1);
-	BOOST_CHECK (p_uthread_set_priority (NULL, P_UTHREAD_PRIORITY_NORMAL));
+	BOOST_CHECK (p_uthread_set_priority (NULL, P_UTHREAD_PRIORITY_NORMAL) == FALSE);
 	BOOST_CHECK (p_uthread_get_local (NULL) == NULL);
 	p_uthread_set_local (NULL, NULL);
 	p_uthread_replace_local (NULL, NULL);
@@ -234,7 +234,7 @@ BOOST_AUTO_TEST_CASE (puthread_general_test)
 						TRUE,
 						P_UTHREAD_PRIORITY_NORMAL);
 
-	BOOST_CHECK (p_uthread_set_priority (thr1, P_UTHREAD_PRIORITY_NORMAL) == 0);
+	BOOST_CHECK (p_uthread_set_priority (thr1, P_UTHREAD_PRIORITY_NORMAL) == TRUE);
 
 	BOOST_REQUIRE (thr1 != NULL);
 	BOOST_REQUIRE (thr2 != NULL);
