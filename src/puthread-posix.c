@@ -26,6 +26,10 @@
 #include <unistd.h>
 #include <errno.h>
 
+#ifdef PLIBSYS_HAS_SCHEDULING
+#  include <sched.h>
+#endif
+
 /* Some systems without native pthreads may lack some of the constants,
  * leave them zero as we are not going to use them anyway */
 
