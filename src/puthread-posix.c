@@ -88,7 +88,7 @@ __puthread_get_unix_priority (PUThreadPriority prio, int *sched_policy, int *sch
 		return TRUE;
 	}
 
-	lowBound = ((pint) P_UTHREAD_PRIORITY_LOWEST;
+	lowBound = (pint) P_UTHREAD_PRIORITY_LOWEST;
 #else
 	lowBound = (pint) P_UTHREAD_PRIORITY_IDLE;
 #endif
