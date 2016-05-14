@@ -380,6 +380,26 @@ if (NOT PLIBSYS_TARGET_OS STREQUAL windows OR PLIBSYS_TARGET_OS STREQUAL cygwin
 		message (STATUS "Checking whether nanosleep() presents - no")
 	endif()
 
+	# Check for thread scheduling
+	message (STATUS "Checking whether thread scheduling presents")
+
+	check_c_source_compiles (
+				 "#include <sched.h>
+				 int main () {
+					sched_get_priority_min (0);
+					sched_get_priority_max (0);
+					return 0;
+				 }"
+				 PLIBSYS_HAS_SCHEDULING
+				)
+
+	if (PLIBSYS_HAS_SCHEDULING)
+		message (STATUS "Checking whether thread scheduling presents - yes")
+		add_definitions (-DPLIBSYS_HAS_SCHEDULING)
+	else()
+		message (STATUS "Checking whether thread scheduling presents - no")
+	endif()
+
 	set (CMAKE_REQUIRED_LIBRARIES ${OLD_CMAKE_REQUIRED_LIBRARIES})
 endif()
 

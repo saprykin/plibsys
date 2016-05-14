@@ -72,7 +72,7 @@ p_uthread_create (PUThreadFunc		func,
 		  pboolean		joinable)
 {
 	/* All checks will be inside */
-	return p_uthread_create_full (func, data, joinable, P_UTHREAD_PRIORITY_NORMAL);
+	return p_uthread_create_full (func, data, joinable, P_UTHREAD_PRIORITY_INHERIT);
 }
 
 P_LIB_API void
@@ -106,16 +106,16 @@ p_uthread_yield (void)
 {
 }
 
-P_LIB_API pint
+P_LIB_API pboolean
 p_uthread_set_priority (PUThread		*thread,
 			PUThreadPriority	prio)
 {
 	if (thread == NULL)
-		return -1;
+		return FALSE;
 
 	thread->prio = prio;
 
-	return -1;
+	return FALSE;
 }
 
 P_LIB_API P_HANDLE

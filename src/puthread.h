@@ -33,10 +33,15 @@
  * main thread.
  *
  * Priorities (if supported) allow to tune scheduler behavior: threads with
- * higher priority will be executed more frequenlty. Be careful that improper
+ * higher priority will be executed more frequently. Be careful that improper
  * priorities may lead to negative effects when some threads may receive almost
- * zero execution time. Not all operating systems respect thread priorities in
- * favour of process ones.
+ * zero execution time.
+ *
+ * Thread priorities are unreliable: not all operating systems respect thread
+ * priorities in favour of process ones. Priorities may be ignored for bound
+ * threads (every thread bound to a kernel light-weight thread as 1:1), other
+ * systems may require administrative privileges to change a thread priority
+ * (i.e. Linux). Windows always respects thread priorities.
  *
  * To put a current thread (even if it was not created using #PUThread routines)
  * in sleep state use p_uthread_sleep().
@@ -86,11 +91,14 @@ typedef struct _PUThreadKey PUThreadKey;
 
 /** Thread priority. */
 typedef enum _PUThreadPriority {
-	P_UTHREAD_PRIORITY_LOWEST	= 0,	/**< Lowest possible priority.					*/
-	P_UTHREAD_PRIORITY_LOW		= 1,	/**< Low priority (min_prio * 6 + normal_prio * 4) / 10.	*/
-	P_UTHREAD_PRIORITY_NORMAL	= 2,	/**< Normal priority (scheduler's priority).			*/
-	P_UTHREAD_PRIORITY_HIGH		= 3,	/**< High priority ((normal_prio + max_prio * 2) / 3).		*/
-	P_UTHREAD_PRIORITY_HIGHEST	= 4	/**< Highest possible priority.					*/
+	P_UTHREAD_PRIORITY_INHERIT	= 0,	/**< Inherits the caller thread priority. Default priority.	*/
+	P_UTHREAD_PRIORITY_IDLE		= 1,	/**< Scheduled only when no other threads are running.		*/
+	P_UTHREAD_PRIORITY_LOWEST	= 2,	/**< Scheduled less often than #P_UTHREAD_PRIORITY_LOW.		*/
+	P_UTHREAD_PRIORITY_LOW		= 3,	/**< Scheduled less often than #P_UTHREAD_PRIORITY_NORMAL.	*/
+	P_UTHREAD_PRIORITY_NORMAL	= 4,	/**< Operating system's default priority.			*/
+	P_UTHREAD_PRIORITY_HIGH		= 5,	/**< Scheduled more often than #P_UTHREAD_PRIORITY_NORMAL.	*/
+	P_UTHREAD_PRIORITY_HIGHEST	= 6,	/**< Scheduled more often than #P_UTHREAD_PRIORITY_HIGH.	*/
+	P_UTHREAD_PRIORITY_TIMECRITICAL	= 7	/**< Scheduled as often as possible.				*/
 } PUThreadPriority;
 
 /**
@@ -156,10 +164,10 @@ P_LIB_API pint			p_uthread_sleep		(puint32		msec);
  * @brief Sets thread priority.
  * @param thread Thread to set priority for.
  * @param prio Priority to set.
- * @return 0 in case of success, -1 otherwise.
+ * @return TRUE in case of success, FALSE otherwise.
  * @since 0.0.1
  */
-P_LIB_API pint			p_uthread_set_priority	(PUThread		*thread,
+P_LIB_API pboolean		p_uthread_set_priority	(PUThread		*thread,
 							 PUThreadPriority	prio);
 
 /**
@@ -201,7 +209,7 @@ P_LIB_API void			p_uthread_local_free	(PUThreadKey		*key);
 
 /**
  * @brief Gets a TLS value.
- * @param key TLS reference key to get value for.
+ * @param key TLS reference key to get the value for.
  * @return TLS value for the given key.
  * @since 0.0.1
  * @note This call may fail only in case of abnormal usage or program behavior,
@@ -211,7 +219,7 @@ P_LIB_API ppointer		p_uthread_get_local	(PUThreadKey		*key);
 
 /**
  * @brief Sets a TLS value.
- * @param key TLS reference key to set value for.
+ * @param key TLS reference key to set the value for.
  * @param value TLS value to set.
  * @since 0.0.1
  * @note This call may fail only in case of abnormal usage or program behavior.
@@ -224,8 +232,8 @@ P_LIB_API void			p_uthread_set_local	(PUThreadKey		*key,
 
 /**
  * @brief Replaces a TLS value.
- * @param key TLS reference key to replace value for.
- * @param value TLS value to setvbuf().
+ * @param key TLS reference key to replace the value for.
+ * @param value TLS value to set.
  * @since 0.0.1
  * @note This call may fail only in case of abnormal usage or program behavior.
  *

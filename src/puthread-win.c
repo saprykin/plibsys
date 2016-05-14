@@ -50,8 +50,6 @@ struct __PUThreadDestructor {
 static _PUThreadDestructor * volatile __tls_destructors;
 static PMutex *__tls_mutex = NULL;
 
-static int p_uthread_priority_map[P_UTHREAD_PRIORITY_HIGHEST + 1];
-
 void
 __p_uthread_win32_thread_detach (void)
 {
@@ -85,12 +83,6 @@ __p_uthread_init (void)
 {
 	if (__tls_mutex == NULL)
 		__tls_mutex = p_mutex_new ();
-
-	p_uthread_priority_map[P_UTHREAD_PRIORITY_LOWEST]	= THREAD_PRIORITY_LOWEST;
-	p_uthread_priority_map[P_UTHREAD_PRIORITY_LOW]		= THREAD_PRIORITY_BELOW_NORMAL;
-	p_uthread_priority_map[P_UTHREAD_PRIORITY_NORMAL]	= THREAD_PRIORITY_NORMAL;
-	p_uthread_priority_map[P_UTHREAD_PRIORITY_HIGH]		= THREAD_PRIORITY_ABOVE_NORMAL;
-	p_uthread_priority_map[P_UTHREAD_PRIORITY_HIGHEST]	= THREAD_PRIORITY_HIGHEST;
 }
 
 void
@@ -196,7 +188,7 @@ p_uthread_create_full (PUThreadFunc	func,
 		return NULL;
 	}
 
-	if ((ret->hdl = CreateThread (NULL, 0, (LPTHREAD_START_ROUTINE) func, data, 0, NULL)) == NULL) {
+	if ((ret->hdl = CreateThread (NULL, 0, (LPTHREAD_START_ROUTINE) func, data, CREATE_SUSPENDED, NULL)) == NULL) {
 		P_ERROR ("PUThread: failed to call CreateThread()");
 		p_free (ret);
 		return NULL;
@@ -205,6 +197,12 @@ p_uthread_create_full (PUThreadFunc	func,
 	ret->joinable = joinable;
 
 	p_uthread_set_priority (ret, prio);
+
+	if (ResumeThread (ret->hdl) == (DWORD) -1) {
+		P_ERROR ("PUThread: failed to call ResumeThread()");
+		CloseHandle (ret->hdl);
+		p_free (ret);
+	}
 
 	return ret;
 }
@@ -215,7 +213,7 @@ p_uthread_create (PUThreadFunc		func,
 		  pboolean		joinable)
 {
 	/* All checks will be inside */
-	return p_uthread_create_full (func, data, joinable, P_UTHREAD_PRIORITY_NORMAL);
+	return p_uthread_create_full (func, data, joinable, P_UTHREAD_PRIORITY_INHERIT);
 }
 
 P_LIB_API void
@@ -262,26 +260,51 @@ p_uthread_yield (void)
 	Sleep (0);
 }
 
-P_LIB_API pint
+P_LIB_API pboolean
 p_uthread_set_priority (PUThread		*thread,
 			PUThreadPriority	prio)
 {
-	if (thread == NULL)
-		return -1;
+	pint native_prio;
 
-	if (prio > P_UTHREAD_PRIORITY_HIGHEST || prio < P_UTHREAD_PRIORITY_LOWEST) {
-		P_WARNING ("PUThread: trying to assign wrong thread priority");
-		prio = P_UTHREAD_PRIORITY_NORMAL;
+	if (thread == NULL)
+		return FALSE;
+
+	switch (prio) {
+	case P_UTHREAD_PRIORITY_IDLE:
+		native_prio = THREAD_PRIORITY_IDLE;
+		break;
+	case P_UTHREAD_PRIORITY_LOWEST:
+		native_prio = THREAD_PRIORITY_LOWEST;
+		break;
+	case P_UTHREAD_PRIORITY_LOW:
+		native_prio = THREAD_PRIORITY_BELOW_NORMAL;
+		break;
+	case P_UTHREAD_PRIORITY_NORMAL:
+		native_prio = THREAD_PRIORITY_NORMAL;
+		break;
+	case P_UTHREAD_PRIORITY_HIGH:
+		native_prio = THREAD_PRIORITY_ABOVE_NORMAL;
+		break;
+	case P_UTHREAD_PRIORITY_HIGHEST:
+		native_prio = THREAD_PRIORITY_HIGHEST;
+		break;
+	case P_UTHREAD_PRIORITY_TIMECRITICAL:
+		native_prio = THREAD_PRIORITY_TIME_CRITICAL;
+		break;
+	case P_UTHREAD_PRIORITY_INHERIT:
+	default:
+		native_prio = GetThreadPriority (GetCurrentThread ());
+		break;
 	}
 
-	if (!SetThreadPriority (thread->hdl, p_uthread_priority_map[prio])) {
+	if (!SetThreadPriority (thread->hdl, native_prio)) {
 		P_ERROR ("PUThread: failed to call SetThreadPriority()");
-		return -1;
+		return FALSE;
 	}
 
 	thread->prio = prio;
 
-	return 0;
+	return TRUE;
 }
 
 P_LIB_API P_HANDLE

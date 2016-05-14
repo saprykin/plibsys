@@ -24,20 +24,36 @@
 #include <string.h>
 #include <pthread.h>
 #include <unistd.h>
+#include <errno.h>
 
 /* Some systems without native pthreads may lack some of the constants,
  * leave them zero as we are not going to use them anyway */
 
 #ifndef PTHREAD_CREATE_JOINABLE
-#  define PTHREAD_CREATE_JOINABLE 0
+#  define PTHREAD_CREATE_JOINABLE	0
 #endif
 
 #ifndef PTHREAD_CREATE_DETACHED
-#  define PTHREAD_CREATE_DETACHED 0
+#  define PTHREAD_CREATE_DETACHED	0
 #endif
 
 #ifndef PTHREAD_SCOPE_SYSTEM
-#  define PTHREAD_SCOPE_SYSTEM 0
+#  define PTHREAD_SCOPE_SYSTEM		0
+#endif
+
+#ifdef PLIBSYS_HAS_SCHEDULING
+#  ifndef PTHREAD_INHERIT_SCHED
+#    define PTHREAD_INHERIT_SCHED	0
+#  endif
+
+#  ifndef PTHREAD_EXPLICIT_SCHED
+#    define PTHREAD_EXPLICIT_SCHED	0
+#  endif
+#endif
+
+/* Old Linux kernels may lack a definition */
+#if defined (P_OS_LINUX) && !defined (SCHED_IDLE)
+#define SCHED_IDLE 5
 #endif
 
 typedef pthread_t puthread_hdl;
@@ -53,47 +69,50 @@ struct _PUThreadKey {
 	PDestroyFunc		free_func;
 };
 
-#if defined (POSIX_MIN_PRIORITY) && defined (POSIX_MAX_PRIORITY)
-#  define P_HAVE_PRIORITIES
-#endif
+#ifdef PLIBSYS_HAS_SCHEDULING
+static pboolean
+__puthread_get_unix_priority (PUThreadPriority prio, int *sched_policy, int *sched_priority)
+{
+	pint	lowBound, upperBound;
+	pint	prio_min, prio_max;
+	pint	native_prio;
 
-#ifdef P_HAVE_PRIORITIES
-static int p_uthread_priority_map[P_UTHREAD_PRIORITY_HIGHEST + 1];
+#ifdef SCHED_IDLE
+	if (prio == P_UTHREAD_PRIORITY_IDLE) {
+		*sched_policy = SCHED_IDLE;
+		*sched_priority = 0;
+		return TRUE;
+	}
+
+	lowBound = ((pint) P_UTHREAD_PRIORITY_LOWEST;
+#else
+	lowBound = (pint) P_UTHREAD_PRIORITY_IDLE;
+#endif
+	upperBound = (pint) P_UTHREAD_PRIORITY_TIMECRITICAL;
+
+	prio_min = sched_get_priority_min (*sched_policy);
+	prio_max = sched_get_priority_max (*sched_policy);
+
+	if (prio_min == -1 || prio_max == -1)
+		return FALSE;
+
+	native_prio = ((pint) prio - lowBound) * (prio_max - prio_min) / upperBound + prio_min;
+
+	if (native_prio > prio_max)
+		native_prio = prio_max;
+
+	if (native_prio < prio_min)
+		native_prio = prio_min;
+
+	*sched_priority = native_prio;
+
+	return TRUE;
+}
 #endif
 
 void
 __p_uthread_init (void)
 {
-#ifdef P_HAVE_PRIORITIES
-	int			min_prio, max_prio, normal_prio;
-	int			policy;
-	struct sched_param	sched;
-
-	min_prio	= 0;
-	max_prio	= 0;
-	normal_prio	= 0;
-
-# ifdef P_OS_FREEBSD
-	/* FreeBSD threads use different priority values from the POSIX_
-	 * defines so we just set them here. The corresponding macros
-	 * PTHREAD_MIN_PRIORITY and PTHREAD_MAX_PRIORITY are implied to be
-	 * exported by the docs, but they aren't.
-	 */
-	min_prio = 0;
-	max_prio = 31;
-# else /* !P_OS_FREEBSD */
-	min_prio = POSIX_MIN_PRIORITY;
-	max_prio = POSIX_MAX_PRIORITY;
-# endif /* !P_OS_FREEBSD */
-	pthread_getschedparam (pthread_self (), &policy, &sched);
-	normal_prio = sched.sched_priority;
-
-	p_uthread_priority_map[P_UTHREAD_PRIORITY_LOWEST]	= min_prio;
-	p_uthread_priority_map[P_UTHREAD_PRIORITY_LOW]		= (min_prio * 6 + normal_prio * 4) / 10;
-	p_uthread_priority_map[P_UTHREAD_PRIORITY_NORMAL]	= normal_prio;
-	p_uthread_priority_map[P_UTHREAD_PRIORITY_HIGH]		= (normal_prio + max_prio * 2) / 3;
-	p_uthread_priority_map[P_UTHREAD_PRIORITY_HIGHEST]	= max_prio;
-#endif /* POSIX_MIN_PRIORITY && POSIX_MAX_PRIORITY */
 }
 
 void
@@ -151,8 +170,11 @@ p_uthread_create_full (PUThreadFunc	func,
 {
 	PUThread		*ret;
 	pthread_attr_t		attr;
-#ifdef P_HAVE_PRIORITIES
+#ifdef PLIBSYS_HAS_SCHEDULING
 	struct sched_param	sched;
+	pint			native_prio;
+	pint			sched_policy;
+	pint			create_code;
 #endif
 
 	if (!func)
@@ -185,21 +207,38 @@ p_uthread_create_full (PUThreadFunc	func,
 		P_WARNING ("PUThread: failed to call pthread_attr_setscope()");
 	}
 
-#ifdef P_HAVE_PRIORITIES
-	if (prio > P_UTHREAD_PRIORITY_HIGHEST || prio < P_UTHREAD_PRIORITY_LOWEST)
-		prio = P_UTHREAD_PRIORITY_NORMAL;
+#ifdef PLIBSYS_HAS_SCHEDULING
+	if (prio == P_UTHREAD_PRIORITY_INHERIT) {
+		if (pthread_attr_setinheritsched (&attr, PTHREAD_INHERIT_SCHED) != 0)
+			P_WARNING ("PUThread: failed to call pthread_attr_setinheritsched()");
+	} else {
+		if (pthread_attr_getschedpolicy (&attr, &sched_policy) == 0) {
+			if (__puthread_get_unix_priority (prio, &sched_policy, &native_prio) == TRUE) {
+				sched.sched_priority = native_prio;
 
-	if (pthread_attr_getschedparam (&attr, &sched) == 0) {
-		sched.sched_priority = p_uthread_priority_map[prio];
-
-		if (pthread_attr_setschedparam (&attr, &sched) != 0)
-			P_WARNING ("PUThread: failed to call pthread_attr_setschedparam(), "
-				   "maybe you don't have enough rights");
-	} else
-		P_WARNING ("PUThread: failed to call pthread_attr_getschedparam()");
+				if (pthread_attr_setinheritsched (&attr, PTHREAD_EXPLICIT_SCHED) != 0 ||
+				    pthread_attr_setschedpolicy (&attr, sched_policy) != 0 ||
+				    pthread_attr_setschedparam (&attr, &sched) != 0)
+					P_WARNING ("PUThread: failed to set thread priority");
+			} else
+				P_WARNING ("PUThread: failed to get native thread priority");
+		} else
+			P_WARNING ("PUThread: failed to call pthread_attr_getschedpolicy()");
+	}
 #endif
 
-	if (pthread_create (&ret->hdl, &attr, func, data) != 0) {
+	create_code = pthread_create (&ret->hdl, &attr, func, data);
+
+#ifdef EPERM
+	if (create_code == EPERM) {
+#  ifdef PLIBSYS_HAS_SCHEDULING
+		pthread_attr_setinheritsched (&attr, PTHREAD_INHERIT_SCHED);
+#  endif
+		create_code = pthread_create (&ret->hdl, &attr, func, data);
+	}
+#endif
+
+	if (create_code != 0) {
 		P_ERROR ("PUThread: failed to call pthread_create()");
 		pthread_attr_destroy (&attr);
 		p_free (ret);
@@ -218,7 +257,7 @@ p_uthread_create (PUThreadFunc		func,
 		  pboolean		joinable)
 {
 	/* All checks will be inside */
-	return p_uthread_create_full (func, data, joinable, P_UTHREAD_PRIORITY_NORMAL);
+	return p_uthread_create_full (func, data, joinable, P_UTHREAD_PRIORITY_INHERIT);
 }
 
 P_LIB_API void
@@ -261,40 +300,40 @@ p_uthread_yield (void)
 	sched_yield ();
 }
 
-P_LIB_API pint
+P_LIB_API pboolean
 p_uthread_set_priority (PUThread		*thread,
 			PUThreadPriority	prio)
 {
-#ifdef P_HAVE_PRIORITIES
+#ifdef PLIBSYS_HAS_SCHEDULING
 	struct sched_param	sched;
-	int			policy;
+	pint			policy;
+	pint			native_prio;
 #endif
 
 	if (thread == NULL)
-		return -1;
+		return FALSE;
 
-#ifdef P_HAVE_PRIORITIES
-	if (prio > P_UTHREAD_PRIORITY_HIGHEST || prio < P_UTHREAD_PRIORITY_LOWEST) {
-		P_WARNING ("PUThread: trying to assign wrong thread priority");
-		return -1;
-	}
-
+#ifdef PLIBSYS_HAS_SCHEDULING
 	if (pthread_getschedparam (thread->hdl, &policy, &sched) != 0) {
-		P_ERROR ("PUThread: failed to call(2) pthread_getschedparam()");
-		return -1;
+		P_ERROR ("PUThread: failed to call pthread_getschedparam()");
+		return FALSE;
 	}
 
-	sched.sched_priority = p_uthread_priority_map [prio];
+	if (__puthread_get_unix_priority (prio, &policy, &native_prio) == FALSE) {
+		P_ERROR ("PUThread: failed to get native thread priority (2)");
+		return FALSE;
+	}
+
+	sched.sched_priority = native_prio;
 
 	if (pthread_setschedparam (thread->hdl, policy, &sched) != 0) {
-		P_ERROR ("PUThread: failed to call(2) pthread_setschedparam(), "
-			 "maybe you don't have enough rights");
-		return -1;
+		P_ERROR ("PUThread: failed to call pthread_setschedparam()");
+		return FALSE;
 	}
 #endif
 
 	thread->prio = prio;
-	return 0;
+	return TRUE;
 }
 
 P_LIB_API P_HANDLE

@@ -166,7 +166,7 @@ p_uthread_create (PUThreadFunc		func,
 		  pboolean		joinable)
 {
 	/* All checks will be inside */
-	return p_uthread_create_full (func, data, joinable, P_UTHREAD_PRIORITY_NORMAL);
+	return p_uthread_create_full (func, data, joinable, P_UTHREAD_PRIORITY_INHERIT);
 }
 
 P_LIB_API void
@@ -212,18 +212,18 @@ p_uthread_yield (void)
 	thr_yield ();
 }
 
-P_LIB_API pint
+P_LIB_API pboolean
 p_uthread_set_priority (PUThread		*thread,
 			PUThreadPriority	prio)
 {
 	P_WARNING ("PUThread: priorities for bound threads are not implemented");
 
 	if (thread == NULL)
-		return -1;
+		return FALSE;
 
 	thread->prio = prio;
 
-	return 0;
+	return TRUE;
 }
 
 P_LIB_API P_HANDLE
