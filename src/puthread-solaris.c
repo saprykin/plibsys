@@ -17,6 +17,7 @@
 
 #include "pmem.h"
 #include "puthread.h"
+#include "patomic.h"
 
 #ifndef P_OS_UNIXWARE
 #  include "pmutex.h"
