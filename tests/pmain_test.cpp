@@ -31,7 +31,7 @@
 
 static pint alloc_counter   = 0;
 static pint realloc_counter = 0;
-static pint free_counter   = 0;
+static pint free_counter    = 0;
 
 extern "C" ppointer pmem_alloc (psize nbytes)
 {
