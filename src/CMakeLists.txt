@@ -391,12 +391,11 @@ if (PLIBSYS_THREAD_MODEL STREQUAL posix)
 					  #include <sched.h>
 
 					 int main () {
-					 	#if defined (_POSIX_THREAD_PRIORITY_SCHEDULING) && \
-					 	    (_POSIX_THREAD_PRIORITY_SCHEDULING - 0 >= 0)
+					 	#if defined (_POSIX_THREAD_PRIORITY_SCHEDULING) && (_POSIX_THREAD_PRIORITY_SCHEDULING - 0 >= 0)
 						  sched_get_priority_min (0);
 						  sched_get_priority_max (0);
 						#else
-						#  error \"No POSIX thread sceduling presents\"
+						  stop_compile_here
 						#endif
 						return 0;
 					 }"
