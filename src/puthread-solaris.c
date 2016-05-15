@@ -28,6 +28,14 @@
 #include <string.h>
 #include <errno.h>
 
+#ifdef P_OS_UNIXWARE
+#  define PLIBSYS_THREAD_MIN_PRIO 0
+#  define PLIBSYS_THREAD_MAX_PRIO 126
+#else
+#  define PLIBSYS_THREAD_MIN_PRIO 0
+#  define PLIBSYS_THREAD_MAX_PRIO 127 
+#endif
+
 typedef thread_t puthread_hdl;
 
 struct _PUThread {
@@ -44,6 +52,19 @@ struct _PUThreadKey {
 #ifndef P_OS_UNIXWARE
 static PMutex *__tls_mutex = NULL;
 #endif
+
+static pint
+__p_uthread_get_unix_priority (PUThreadPriority prio)
+{
+	pint lowBound, upperBound;
+
+	lowBound   = (pint) P_UTHREAD_PRIORITY_IDLE;
+	upperBound = (pint) P_UTHREAD_PRIORITY_TIMECRITICAL;
+
+	return ((pint) prio - lowBound) *
+	       (PLIBSYS_THREAD_MAX_PRIO - PLIBSYS_THREAD_MIN_PRIO) / upperBound +
+	       PLIBSYS_THREAD_MIN_PRIO;
+}
 
 void
 __p_uthread_init (void)
@@ -142,11 +163,21 @@ p_uthread_create_full (PUThreadFunc	func,
 		return NULL;
 	}
 
-	flags = 0 : THR_DETACHED;
+	flags = THR_SUSPENDED;
+	flags |= 0 : THR_DETACHED;
 
 	if (thr_create (NULL, 0, func, data, flags, &ret->hdl) != 0) {
 		P_ERROR ("PUThread: failed to call thr_create()");
-		p_uthread_free (ret);
+		p_free (ret);
+		return NULL;
+	}
+
+	if (thr_setprio (ret->hdl, __p_uthread_get_unix_priority (prio)) != 0)
+		P_WARNING ("PUThread: failed to call thr_setprio()");
+
+	if (thr_continue (ret->hdl) != 0) {
+		P_ERROR ("PUThread: failed to call thr_continue()");
+		p_free (ret);
 		return NULL;
 	}
 
@@ -212,10 +243,13 @@ P_LIB_API pboolean
 p_uthread_set_priority (PUThread		*thread,
 			PUThreadPriority	prio)
 {
-	P_WARNING ("PUThread: priorities for bound threads are not implemented");
-
 	if (thread == NULL)
 		return FALSE;
+
+	if (thr_setprio (thread, __p_uthread_get_unix_priority (prio)) != 0) {
+		P_WARNING ("PUThread: failed to call(2) thr_setprio()");
+		return FALSE;
+	}
 
 	thread->prio = prio;
 
