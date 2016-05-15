@@ -19,6 +19,7 @@
 #include "pmain.h"
 
 extern void __p_mem_init		(void);
+extern void __p_mem_shutdown		(void);
 extern void __p_atomic_thread_init	(void);
 extern void __p_atomic_thread_shutdown	(void);
 extern void __p_socket_init_once	(void);
@@ -60,6 +61,7 @@ p_libsys_shutdown (void)
 	__p_atomic_thread_shutdown ();
 	__p_socket_close_once ();
 	__p_uthread_shutdown ();
+	__p_mem_shutdown ();
 }
 
 #ifdef P_OS_WIN

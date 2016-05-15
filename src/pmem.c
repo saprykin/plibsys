@@ -43,6 +43,19 @@ __p_mem_init (void)
 	p_mem_restore_vtable ();
 }
 
+void
+__p_mem_shutdown (void)
+{
+	if (!p_mem_table_inited)
+		return;
+
+	p_mem_table.malloc  = NULL;
+	p_mem_table.realloc = NULL;
+	p_mem_table.free    = NULL;
+
+	p_mem_table_inited = FALSE;
+}
+
 P_LIB_API ppointer
 p_malloc (psize n_bytes)
 {
