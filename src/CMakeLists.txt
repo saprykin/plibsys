@@ -396,7 +396,7 @@ if (PLIBSYS_THREAD_MODEL STREQUAL posix)
 						  sched_get_priority_min (0);
 						  sched_get_priority_max (0);
 						#else
-						#  error "No POSIX thread sceduling presents"
+						#  error \"No POSIX thread sceduling presents\"
 						#endif
 						return 0;
 					 }"
