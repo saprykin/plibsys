@@ -98,11 +98,7 @@ BOOST_AUTO_TEST_CASE (pshm_nomem_test)
 
 	BOOST_CHECK (p_shm_new ("p_shm_test_memory_block", 1024, P_SHM_ACCESS_READWRITE, NULL) == NULL);
 
-	vtable.malloc	= (ppointer (*)(psize)) malloc;
-	vtable.realloc	= (ppointer (*)(ppointer, psize)) realloc;
-	vtable.free	= (void (*)(ppointer)) free;
-
-	BOOST_CHECK (p_mem_set_vtable (&vtable) == TRUE);
+	p_mem_restore_vtable ();
 
 	p_libsys_shutdown ();
 }

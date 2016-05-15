@@ -502,11 +502,7 @@ BOOST_AUTO_TEST_CASE (ptree_nomem_test)
 		p_tree_insert (tree, PINT_TO_POINTER (1), PINT_TO_POINTER (10));
 		BOOST_CHECK (p_tree_get_nnodes (tree) == 0);
 
-		vtable.malloc	= (ppointer (*)(psize)) malloc;
-		vtable.realloc	= (ppointer (*)(ppointer, psize)) realloc;
-		vtable.free	= (void (*)(ppointer)) free;
-
-		BOOST_CHECK (p_mem_set_vtable (&vtable) == TRUE);
+		p_mem_restore_vtable ();
 
 		p_tree_free (tree);
 	}

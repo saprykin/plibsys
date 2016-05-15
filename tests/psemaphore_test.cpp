@@ -121,11 +121,7 @@ BOOST_AUTO_TEST_CASE (psemaphore_nomem_test)
 
 	BOOST_CHECK (p_semaphore_new ("p_semaphore_test_object", 1, P_SEM_ACCESS_CREATE, NULL) == NULL);
 
-	vtable.malloc	= (ppointer (*)(psize)) malloc;
-	vtable.realloc	= (ppointer (*)(ppointer, psize)) realloc;
-	vtable.free	= (void (*)(ppointer)) free;
-
-	BOOST_CHECK (p_mem_set_vtable (&vtable) == TRUE);
+	p_mem_restore_vtable ();
 
 	p_libsys_shutdown ();
 }

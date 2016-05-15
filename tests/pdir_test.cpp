@@ -76,11 +76,7 @@ BOOST_AUTO_TEST_CASE (pdir_nomem_test)
 	BOOST_CHECK (p_dir_new (PDIR_TEST_DIR"/", NULL) == NULL);
 
 	/* Revert memory management back */
-	vtable.malloc	= (ppointer (*)(psize)) malloc;
-	vtable.realloc	= (ppointer (*)(ppointer, psize)) realloc;
-	vtable.free	= (void (*)(ppointer)) free;
-
-	BOOST_CHECK (p_mem_set_vtable (&vtable) == TRUE);
+	p_mem_restore_vtable ();
 
 	/* Try out of memory when iterating */
 	PDir *dir = p_dir_new (PDIR_TEST_DIR"/", NULL);
@@ -95,11 +91,7 @@ BOOST_AUTO_TEST_CASE (pdir_nomem_test)
 	BOOST_CHECK (p_dir_get_next_entry (dir, NULL) == NULL);
 
 	/* Cleanup */
-	vtable.malloc	= (ppointer (*)(psize)) malloc;
-	vtable.realloc	= (ppointer (*)(ppointer, psize)) realloc;
-	vtable.free	= (void (*)(ppointer)) free;
-
-	BOOST_CHECK (p_mem_set_vtable (&vtable) == TRUE);
+	p_mem_restore_vtable ();
 
 	p_dir_free (dir);
 

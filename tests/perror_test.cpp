@@ -73,11 +73,7 @@ BOOST_AUTO_TEST_CASE (perror_nomem_test)
 	BOOST_CHECK (p_error_new_literal (0, 0, NULL) == NULL);
 	BOOST_CHECK (p_error_copy (error) == NULL);
 
-	vtable.malloc	= (ppointer (*)(psize)) malloc;
-	vtable.realloc	= (ppointer (*)(ppointer, psize)) realloc;
-	vtable.free	= (void (*)(ppointer)) free;
-
-	BOOST_CHECK (p_mem_set_vtable (&vtable) == TRUE);
+	p_mem_restore_vtable ();
 
 	p_error_free (error);
 

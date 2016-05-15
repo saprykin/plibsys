@@ -99,11 +99,7 @@ BOOST_AUTO_TEST_CASE (psocketaddress_nomem_test)
 	BOOST_CHECK (p_socket_address_new_from_native (addr_buf6, native_size6) == NULL);
 #endif
 
-	vtable.malloc	= (ppointer (*)(psize)) malloc;
-	vtable.realloc	= (ppointer (*)(ppointer, psize)) realloc;
-	vtable.free	= (void (*)(ppointer)) free;
-
-	BOOST_CHECK (p_mem_set_vtable (&vtable) == TRUE);
+	p_mem_restore_vtable ();
 
 	BOOST_CHECK (p_socket_address_new_from_native (addr_buf, native_size - 1) == NULL);
 #ifdef AF_INET6

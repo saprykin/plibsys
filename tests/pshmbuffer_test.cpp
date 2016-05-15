@@ -187,11 +187,7 @@ BOOST_AUTO_TEST_CASE (pshmbuffer_nomem_test)
 
 	BOOST_CHECK (p_shm_buffer_new ("pshm_test_buffer", 1024, NULL) == NULL);
 
-	vtable.malloc	= (ppointer (*)(psize)) malloc;
-	vtable.realloc	= (ppointer (*)(ppointer, psize)) realloc;
-	vtable.free	= (void (*)(ppointer)) free;
-
-	BOOST_CHECK (p_mem_set_vtable (&vtable) == TRUE);
+	p_mem_restore_vtable ();
 
 	p_libsys_shutdown ();
 }

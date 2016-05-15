@@ -599,11 +599,7 @@ BOOST_AUTO_TEST_CASE (psocket_nomem_test)
 	BOOST_CHECK (p_socket_get_local_address (socket, NULL) == NULL);
 	BOOST_CHECK (p_socket_get_remote_address (socket, NULL) == NULL);
 
-	vtable.malloc	= (ppointer (*)(psize)) malloc;
-	vtable.realloc	= (ppointer (*)(ppointer, psize)) realloc;
-	vtable.free	= (void (*)(ppointer)) free;
-
-	BOOST_CHECK (p_mem_set_vtable (&vtable) == TRUE);
+	p_mem_restore_vtable ();
 
 	p_socket_close (socket, NULL);
 	p_socket_free (socket);

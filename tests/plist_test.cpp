@@ -85,11 +85,7 @@ BOOST_AUTO_TEST_CASE (plist_nomem_test)
 	BOOST_CHECK (p_list_append (NULL, PINT_TO_POINTER (10)) == NULL);
 	BOOST_CHECK (p_list_prepend (NULL, PINT_TO_POINTER (10)) == NULL);
 
-	vtable.malloc	= (ppointer (*)(psize)) malloc;
-	vtable.realloc	= (ppointer (*)(ppointer, psize)) realloc;
-	vtable.free	= (void (*)(ppointer)) free;
-
-	BOOST_CHECK (p_mem_set_vtable (&vtable) == TRUE);
+	p_mem_restore_vtable ();
 
 	p_libsys_shutdown ();
 }
