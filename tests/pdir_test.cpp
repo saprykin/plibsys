@@ -68,6 +68,7 @@ BOOST_AUTO_TEST_CASE (pdir_nomem_test)
 	BOOST_CHECK (p_mem_set_vtable (&vtable) == TRUE);
 
 	/* Cleanup previous run */
+	p_dir_remove (PDIR_TEST_DIR_IN, NULL);
 	p_dir_remove (PDIR_TEST_DIR, NULL);
 
 	BOOST_REQUIRE (p_dir_create (PDIR_TEST_DIR, 0777, NULL) == TRUE);
@@ -121,6 +122,7 @@ BOOST_AUTO_TEST_CASE (pdir_general_test)
 	p_dir_free (NULL);
 
 	/* Cleanup previous run */
+	p_dir_remove (PDIR_TEST_DIR_IN, NULL);
 	p_dir_remove (PDIR_TEST_DIR, NULL);
 
 	BOOST_REQUIRE (p_dir_create (PDIR_TEST_DIR, 0777, NULL) == TRUE);
