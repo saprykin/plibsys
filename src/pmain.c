@@ -18,6 +18,7 @@
 #include "pmem.h"
 #include "pmain.h"
 
+extern void __p_mem_init		(void);
 extern void __p_atomic_thread_init	(void);
 extern void __p_atomic_thread_shutdown	(void);
 extern void __p_socket_init_once	(void);
@@ -35,6 +36,7 @@ p_libsys_init (void)
 
 	plibsys_inited = TRUE;
 
+	__p_mem_init ();
 	__p_atomic_thread_init ();
 	__p_socket_init_once ();
 	__p_uthread_init ();
