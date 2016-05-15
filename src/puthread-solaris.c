@@ -164,7 +164,7 @@ p_uthread_create_full (PUThreadFunc	func,
 	}
 
 	flags = THR_SUSPENDED;
-	flags |= 0 : THR_DETACHED;
+	flags |= joinable ? 0 : THR_DETACHED;
 
 	if (thr_create (NULL, 0, func, data, flags, &ret->hdl) != 0) {
 		P_ERROR ("PUThread: failed to call thr_create()");
@@ -246,7 +246,7 @@ p_uthread_set_priority (PUThread		*thread,
 	if (thread == NULL)
 		return FALSE;
 
-	if (thr_setprio (thread, __p_uthread_get_unix_priority (prio)) != 0) {
+	if (thr_setprio (thread->hdl, __p_uthread_get_unix_priority (prio)) != 0) {
 		P_WARNING ("PUThread: failed to call(2) thr_setprio()");
 		return FALSE;
 	}
