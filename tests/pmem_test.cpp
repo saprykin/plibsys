@@ -33,18 +33,25 @@
 
 BOOST_AUTO_TEST_SUITE (BOOST_TEST_MODULE)
 
+static pint alloc_counter   = 0;
+static pint realloc_counter = 0;
+static pint free_counter    = 0;
+
 extern "C" ppointer pmem_alloc (psize nbytes)
 {
+	++alloc_counter;
 	return (ppointer) malloc (nbytes);
 }
 
 extern "C" ppointer pmem_realloc (ppointer block, psize nbytes)
 {
+	++realloc_counter;
 	return (ppointer) realloc (block, nbytes);
 }
 
 extern "C" void pmem_free (ppointer block)
 {
+	++free_counter;
 	free (block);
 }
 
@@ -118,11 +125,11 @@ BOOST_AUTO_TEST_CASE (pmem_general_test)
 
 	p_free (ptr);
 
-	vtable.malloc	= (ppointer (*)(psize)) malloc;
-	vtable.realloc	= (ppointer (*)(ppointer, psize)) realloc;
-	vtable.free	= (void (*)(ppointer)) free;
+	BOOST_CHECK (alloc_counter > 0);
+	BOOST_CHECK (realloc_counter > 0);
+	BOOST_CHECK (free_counter > 0);
 
-	BOOST_CHECK (p_mem_set_vtable (&vtable) == TRUE);
+	p_mem_restore_vtable ();
 
 	/* Test memory mapping */
 	ptr = p_mem_mmap (0, NULL);
