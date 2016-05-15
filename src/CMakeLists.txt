@@ -153,6 +153,7 @@ set (PLIBSYS_PLATFORM_SRCS
 )
 
 set (CMAKE_REQUIRED_DEFINITIONS "${CMAKE_REQUIRED_DEFINITIONS} ${PLIBSYS_PLATFORM_DEFINES}")
+set (CMAKE_REQUIRED_LIBRARIES ${CMAKE_REQUIRED_LIBRARIES} ${PLIBSYS_PLATFORM_LINK_LIBRARIES})
 
 if ((PLIBSYS_TARGET_OS STREQUAL windows) AND NOT (PLIBSYS_TARGET_OS STREQUAL cygwin)
 				      	 AND NOT (PLIBSYS_TARGET_OS STREQUAL msys))
@@ -357,9 +358,6 @@ if (NOT PLIBSYS_TARGET_OS STREQUAL windows OR PLIBSYS_TARGET_OS STREQUAL cygwin
 		add_definitions (-DPLIBSYS_MMAP_HAS_MAP_ANON)
 	endif()
 
-	set (OLD_CMAKE_REQUIRED_LIBRARIES ${CMAKE_REQUIRED_LIBRARIES})
-	set (CMAKE_REQUIRED_LIBRARIES ${CMAKE_REQUIRED_LIBRARIES} ${PLIBSYS_PLATFORM_LINK_LIBRARIES})
-
 	# Check for nanosleep() call
 	message (STATUS "Checking whether nanosleep() presents")
 
@@ -379,28 +377,39 @@ if (NOT PLIBSYS_TARGET_OS STREQUAL windows OR PLIBSYS_TARGET_OS STREQUAL cygwin
 	else()
 		message (STATUS "Checking whether nanosleep() presents - no")
 	endif()
+endif()
 
-	# Check for thread scheduling
-	message (STATUS "Checking whether thread scheduling presents")
-
-	check_c_source_compiles (
-				 "#include <sched.h>
-				 int main () {
-					sched_get_priority_min (0);
-					sched_get_priority_max (0);
-					return 0;
-				 }"
-				 PLIBSYS_HAS_SCHEDULING
-				)
-
-	if (PLIBSYS_HAS_SCHEDULING)
-		message (STATUS "Checking whether thread scheduling presents - yes")
-		add_definitions (-DPLIBSYS_HAS_SCHEDULING)
+if (PLIBSYS_THREAD_MODEL STREQUAL posix)
+	if (PLIBSYS_TARGET_OS STREQUAL darwin)
+		add_definitions (-DPLIBSYS_HAS_POSIX_SCHEDULING)
 	else()
-		message (STATUS "Checking whether thread scheduling presents - no")
-	endif()
+		# Check for thread scheduling
+		message (STATUS "Checking whether POSIX thread scheduling presents")
 
-	set (CMAKE_REQUIRED_LIBRARIES ${OLD_CMAKE_REQUIRED_LIBRARIES})
+		check_c_source_compiles (
+					 "#include <unistd.h>
+					  #include <sched.h>
+
+					 int main () {
+					 	#if defined (_POSIX_THREAD_PRIORITY_SCHEDULING) && \
+					 	    (_POSIX_THREAD_PRIORITY_SCHEDULING - 0 >= 0)
+						  sched_get_priority_min (0);
+						  sched_get_priority_max (0);
+						#else
+						#  error "No POSIX thread sceduling presents"
+						#endif
+						return 0;
+					 }"
+					 PLIBSYS_HAS_POSIX_SCHEDULING
+					)
+
+		if (PLIBSYS_HAS_POSIX_SCHEDULING)
+			message (STATUS "Checking whether POSIX thread scheduling presents - yes")
+			add_definitions (-DPLIBSYS_HAS_POSIX_SCHEDULING)
+		else()
+			message (STATUS "Checking whether POSIX thread scheduling presents - no")
+		endif()
+	endif()
 endif()
 
 if ((PLIBSYS_TARGET_OS STREQUAL windows) AND NOT (PLIBSYS_TARGET_OS STREQUAL cygwin)

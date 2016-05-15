@@ -26,14 +26,7 @@
 #include <unistd.h>
 #include <errno.h>
 
-#if defined (P_OS_DARWIN) || \
-   (defined (_POSIX_THREAD_PRIORITY_SCHEDULING) && (_POSIX_THREAD_PRIORITY_SCHEDULING - 0 >= 0))
-#  ifdef PLIBSYS_HAS_SCHEDULING
-#    define PLIBSYS_HAS_POSIX_PRIO
-#  endif
-#endif
-
-#ifdef PLIBSYS_HAS_POSIX_PRIO
+#ifdef PLIBSYS_HAS_POSIX_SCHEDULING
 #  include <sched.h>
 #endif
 
@@ -52,7 +45,7 @@
 #  define PTHREAD_SCOPE_SYSTEM		0
 #endif
 
-#ifdef PLIBSYS_HAS_POSIX_PRIO
+#ifdef PLIBSYS_HAS_POSIX_SCHEDULING
 #  ifndef PTHREAD_INHERIT_SCHED
 #    define PTHREAD_INHERIT_SCHED	0
 #  endif
@@ -80,7 +73,7 @@ struct _PUThreadKey {
 	PDestroyFunc		free_func;
 };
 
-#ifdef PLIBSYS_HAS_POSIX_PRIO
+#ifdef PLIBSYS_HAS_POSIX_SCHEDULING
 static pboolean
 __puthread_get_unix_priority (PUThreadPriority prio, int *sched_policy, int *sched_priority)
 {
@@ -181,11 +174,11 @@ p_uthread_create_full (PUThreadFunc	func,
 {
 	PUThread		*ret;
 	pthread_attr_t		attr;
-#ifdef PLIBSYS_HAS_POSIX_PRIO
+	pint			create_code;
+#ifdef PLIBSYS_HAS_POSIX_SCHEDULING
 	struct sched_param	sched;
 	pint			native_prio;
 	pint			sched_policy;
-	pint			create_code;
 #endif
 
 	if (!func)
@@ -218,7 +211,7 @@ p_uthread_create_full (PUThreadFunc	func,
 		P_WARNING ("PUThread: failed to call pthread_attr_setscope()");
 	}
 
-#ifdef PLIBSYS_HAS_POSIX_PRIO
+#ifdef PLIBSYS_HAS_POSIX_SCHEDULING
 	if (prio == P_UTHREAD_PRIORITY_INHERIT) {
 		if (pthread_attr_setinheritsched (&attr, PTHREAD_INHERIT_SCHED) != 0)
 			P_WARNING ("PUThread: failed to call pthread_attr_setinheritsched()");
@@ -243,7 +236,7 @@ p_uthread_create_full (PUThreadFunc	func,
 
 #ifdef EPERM
 	if (create_code == EPERM) {
-#  ifdef PLIBSYS_HAS_POSIX_PRIO
+#  ifdef PLIBSYS_HAS_POSIX_SCHEDULING
 		pthread_attr_setinheritsched (&attr, PTHREAD_INHERIT_SCHED);
 #  endif
 		create_code = pthread_create (&ret->hdl, &attr, func, data);
@@ -316,7 +309,7 @@ P_LIB_API pboolean
 p_uthread_set_priority (PUThread		*thread,
 			PUThreadPriority	prio)
 {
-#ifdef PLIBSYS_HAS_POSIX_PRIO
+#ifdef PLIBSYS_HAS_POSIX_SCHEDULING
 	struct sched_param	sched;
 	pint			policy;
 	pint			native_prio;
@@ -325,7 +318,7 @@ p_uthread_set_priority (PUThread		*thread,
 	if (thread == NULL)
 		return FALSE;
 
-#ifdef PLIBSYS_HAS_POSIX_PRIO
+#ifdef PLIBSYS_HAS_POSIX_SCHEDULING
 	if (pthread_getschedparam (thread->hdl, &policy, &sched) != 0) {
 		P_ERROR ("PUThread: failed to call pthread_getschedparam()");
 		return FALSE;
