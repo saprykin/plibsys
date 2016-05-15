@@ -71,7 +71,7 @@ struct _PUThreadKey {
 
 #ifdef PLIBSYS_HAS_POSIX_SCHEDULING
 static pboolean
-__puthread_get_unix_priority (PUThreadPriority prio, int *sched_policy, int *sched_priority)
+__p_uthread_get_unix_priority (PUThreadPriority prio, int *sched_policy, int *sched_priority)
 {
 	pint	lowBound, upperBound;
 	pint	prio_min, prio_max;
@@ -206,7 +206,7 @@ p_uthread_create_full (PUThreadFunc	func,
 			P_WARNING ("PUThread: failed to call pthread_attr_setinheritsched()");
 	} else {
 		if (pthread_attr_getschedpolicy (&attr, &sched_policy) == 0) {
-			if (__puthread_get_unix_priority (prio, &sched_policy, &native_prio) == TRUE) {
+			if (__p_uthread_get_unix_priority (prio, &sched_policy, &native_prio) == TRUE) {
 				memset (&sched, 0, sizeof (sched));
 				sched.sched_priority = native_prio;
 
@@ -313,7 +313,7 @@ p_uthread_set_priority (PUThread		*thread,
 		return FALSE;
 	}
 
-	if (__puthread_get_unix_priority (prio, &policy, &native_prio) == FALSE) {
+	if (__p_uthread_get_unix_priority (prio, &policy, &native_prio) == FALSE) {
 		P_ERROR ("PUThread: failed to get native thread priority (2)");
 		return FALSE;
 	}
