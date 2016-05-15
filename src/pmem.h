@@ -30,7 +30,8 @@
  *
  * By default p_* routines are mapped to system calls, thus only NULL-checking
  * is additionally performed. If you want to use custom memory allocator fill in
- * #PMemVTable structure and pass it to the p_mem_set_vtable().
+ * #PMemVTable structure and pass it to the p_mem_set_vtable(). To restore
+ * system calls back use p_mem_restore_vtable().
  *
  * Be careful when using custom memory allocator: all memory chunks allocated
  * with custom allocator must be freed with the same allocator. If a custom
@@ -110,6 +111,7 @@ P_LIB_API void		p_free			(ppointer		mem);
  * @param table Table of the memory routines to use.
  * @return TRUE if table was accepted, FALSE otherwise.
  * @note All members of @a table must be non-NULL.
+ * @note This call is not thread-safe.
  * @warning Do not forget to set original memory management routines before
  * calling p_libsys_shutdown() if you have used p_mem_set_vtable() after the
  * library initialization.
@@ -119,6 +121,15 @@ P_LIB_API void		p_free			(ppointer		mem);
  * what are you doing!
  */
 P_LIB_API pboolean	p_mem_set_vtable	(const PMemVTable	*table);
+
+/**
+ * @brief Restores system memory management routines.
+ * @note This call is not thread-safe.
+ * @since 0.0.1
+ *
+ * The following system routines are restored: malloc(), free(), realloc().
+ */
+P_LIB_API void		p_mem_restore_vtable	(void);
 
 /**
  * @brief Gets memory mapped block from the system.

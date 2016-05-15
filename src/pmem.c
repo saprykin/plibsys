@@ -34,21 +34,11 @@
 pboolean		p_mem_table_inited = FALSE;
 static PMemVTable	p_mem_table;
 
-static void		__p_mem_init_mem_table (void);
-
-static void
-__p_mem_init_mem_table (void)
-{
-	p_mem_table.malloc	= (ppointer (*)(psize)) malloc;
-	p_mem_table.realloc	= (ppointer (*)(ppointer, psize)) realloc;
-	p_mem_table.free	= (void (*)(ppointer)) free;
-}
-
 P_LIB_API ppointer
 p_malloc (psize n_bytes)
 {
 	if (!p_mem_table_inited) {
-		__p_mem_init_mem_table ();
+		p_mem_restore_vtable ();
 		p_mem_table_inited = TRUE;
 	}
 
@@ -64,7 +54,7 @@ p_malloc0 (psize n_bytes)
 	ppointer ret;
 
 	if (!p_mem_table_inited) {
-		__p_mem_init_mem_table ();
+		p_mem_restore_vtable ();
 		p_mem_table_inited = TRUE;
 	}
 
@@ -86,7 +76,7 @@ p_realloc (ppointer mem, psize n_bytes)
 		return NULL;
 
 	if (!p_mem_table_inited) {
-		__p_mem_init_mem_table ();
+		p_mem_restore_vtable ();
 		p_mem_table_inited = TRUE;
 	}
 
@@ -100,7 +90,7 @@ P_LIB_API void
 p_free (ppointer mem)
 {
 	if (!p_mem_table_inited) {
-		__p_mem_init_mem_table ();
+		p_mem_restore_vtable ();
 		p_mem_table_inited = TRUE;
 	}
 
@@ -117,13 +107,21 @@ p_mem_set_vtable (const PMemVTable *table)
 	if (table->free == NULL || table->malloc == NULL || table->realloc == NULL)
 		return FALSE;
 
-	p_mem_table.malloc	= table->malloc;
-	p_mem_table.realloc	= table->realloc;
-	p_mem_table.free	= table->free;
+	p_mem_table.malloc  = table->malloc;
+	p_mem_table.realloc = table->realloc;
+	p_mem_table.free    = table->free;
 
 	p_mem_table_inited = TRUE;
 
 	return TRUE;
+}
+
+P_LIB_API void
+p_mem_restore_vtable (void)
+{
+	p_mem_table.malloc  = (ppointer (*)(psize)) malloc;
+	p_mem_table.realloc = (ppointer (*)(ppointer, psize)) realloc;
+	p_mem_table.free    = (void (*)(ppointer)) free;
 }
 
 P_LIB_API ppointer
