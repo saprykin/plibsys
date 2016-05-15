@@ -41,10 +41,6 @@
 #  define PTHREAD_CREATE_DETACHED	0
 #endif
 
-#ifndef PTHREAD_SCOPE_SYSTEM
-#  define PTHREAD_SCOPE_SYSTEM		0
-#endif
-
 #ifdef PLIBSYS_HAS_POSIX_SCHEDULING
 #  ifndef PTHREAD_INHERIT_SCHED
 #    define PTHREAD_INHERIT_SCHED	0
@@ -202,13 +198,6 @@ p_uthread_create_full (PUThreadFunc	func,
 		pthread_attr_destroy (&attr);
 		p_free (ret);
 		return NULL;
-	}
-
-	/* We need this for some old systems where non-bound threads are not timesliced,
-	 * see puthread-solaris.c for more explanation */
-	if (pthread_attr_setscope (&attr, PTHREAD_SCOPE_SYSTEM) != 0) {
-		/* Some systems may fail here due to lack of implementation */
-		P_WARNING ("PUThread: failed to call pthread_attr_setscope()");
 	}
 
 #ifdef PLIBSYS_HAS_POSIX_SCHEDULING

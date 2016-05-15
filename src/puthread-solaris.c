@@ -142,11 +142,7 @@ p_uthread_create_full (PUThreadFunc	func,
 		return NULL;
 	}
 
-	/* On some old Solaris systems (e.g. 2.5.1) non-bound threads are not
-	 * timesliced by kernel, so we need to ensure that thread will be
-	 * scheduled by using THR_BOUND flag */
-	flags = THR_BOUND;
-	flags |= joinable ? 0 : THR_DETACHED;
+	flags = 0 : THR_DETACHED;
 
 	if (thr_create (NULL, 0, func, data, flags, &ret->hdl) != 0) {
 		P_ERROR ("PUThread: failed to call thr_create()");
@@ -161,9 +157,9 @@ p_uthread_create_full (PUThreadFunc	func,
 }
 
 P_LIB_API PUThread *
-p_uthread_create (PUThreadFunc		func,
-		  ppointer		data,
-		  pboolean		joinable)
+p_uthread_create (PUThreadFunc	func,
+		  ppointer	data,
+		  pboolean	joinable)
 {
 	/* All checks will be inside */
 	return p_uthread_create_full (func, data, joinable, P_UTHREAD_PRIORITY_INHERIT);
