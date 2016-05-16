@@ -42,7 +42,7 @@ p_cond_variable_new (void)
 {
 	PCondVariable *ret;
 
-	if ((ret = p_malloc0 (sizeof (PCondVariable))) == NULL) {
+	if (P_UNLIKELY ((ret = p_malloc0 (sizeof (PCondVariable))) == NULL)) {
 		P_ERROR ("PCondVariable: failed to allocate memory");
 		return NULL;
 	}
@@ -53,7 +53,7 @@ p_cond_variable_new (void)
 	ret->waiters_count	= 0;
 	ret->waiters_sema	= CreateSemaphoreA (NULL, 0, MAXLONG, NULL);
 
-	if (ret->waiters_sema == NULL) {
+	if (P_UNLIKELY (ret->waiters_sema == NULL)) {
 		P_ERROR ("PCondVariable: failed to initialize semaphore");
 		p_free (ret);
 		return NULL;
@@ -66,7 +66,7 @@ p_cond_variable_new (void)
 P_LIB_API void
 p_cond_variable_free (PCondVariable *cond)
 {
-	if (cond == NULL)
+	if (P_UNLIKELY (cond == NULL))
 		return;
 
 #ifndef PLIBSYS_HAS_VISTA_CV
@@ -84,7 +84,7 @@ p_cond_variable_wait (PCondVariable	*cond,
 	DWORD wait;
 #endif
 
-	if (cond == NULL || mutex == NULL)
+	if (P_UNLIKELY (cond == NULL || mutex == NULL))
 		return FALSE;
 
 #ifdef PLIBSYS_HAS_VISTA_CV
@@ -109,7 +109,7 @@ p_cond_variable_wait (PCondVariable	*cond,
 P_LIB_API pboolean
 p_cond_variable_signal (PCondVariable *cond)
 {
-	if (cond == NULL)
+	if (P_UNLIKELY (cond == NULL))
 		return FALSE;
 
 #ifdef PLIBSYS_HAS_VISTA_CV
@@ -131,7 +131,7 @@ p_cond_variable_broadcast (PCondVariable *cond)
 	pint waiters;
 #endif
 
-	if (cond == NULL)
+	if (P_UNLIKELY (cond == NULL))
 		return FALSE;
 
 #ifdef PLIBSYS_HAS_VISTA_CV
