@@ -40,7 +40,7 @@ p_dir_new (const pchar	*path,
 	PDir	*ret;
 	pchar	*pathp;
 
-	if (path == NULL) {
+	if (P_UNLIKELY (path == NULL)) {
 		p_error_set_error_p (error,
 				     (pint) P_ERROR_IO_INVALID_ARGUMENT,
 				     0,
@@ -48,7 +48,7 @@ p_dir_new (const pchar	*path,
 		return NULL;
 	}
 
-	if ((ret = p_malloc0 (sizeof (PDir))) == NULL) {
+	if (P_UNLIKELY ((ret = p_malloc0 (sizeof (PDir))) == NULL)) {
 		p_error_set_error_p (error,
 				     (pint) P_ERROR_IO_NO_RESOURCES,
 				     0,
@@ -56,7 +56,7 @@ p_dir_new (const pchar	*path,
 		return NULL;
 	}
 
-	if (!GetFullPathNameA (path, MAX_PATH, ret->path, NULL)) {
+	if (P_UNLIKELY (!GetFullPathNameA (path, MAX_PATH, ret->path, NULL))) {
 		p_error_set_error_p (error,
 				     (pint) __p_error_get_last_io (),
 				     __p_error_get_last_error (),
@@ -77,7 +77,7 @@ p_dir_new (const pchar	*path,
 	/* Open directory stream and retrieve the first entry */
 	ret->search_handle = FindFirstFileA (ret->path, &ret->find_data);
 
-	if (ret->search_handle == INVALID_HANDLE_VALUE) {
+	if (P_UNLIKELY (ret->search_handle == INVALID_HANDLE_VALUE)) {
 		p_error_set_error_p (error,
 				     (pint) __p_error_get_last_io (),
 				     __p_error_get_last_error (),
@@ -99,7 +99,7 @@ p_dir_create (const pchar	*path,
 {
 	P_UNUSED (mode);
 
-	if (path == NULL) {
+	if (P_UNLIKELY (path == NULL)) {
 		p_error_set_error_p (error,
 				     (pint) P_ERROR_IO_INVALID_ARGUMENT,
 				     0,
@@ -110,7 +110,7 @@ p_dir_create (const pchar	*path,
 	if (p_dir_is_exists (path))
 		return TRUE;
 
-	if (CreateDirectoryA (path, NULL) == 0) {
+	if (P_UNLIKELY (CreateDirectoryA (path, NULL) == 0)) {
 		p_error_set_error_p (error,
 				     (pint) __p_error_get_last_io (),
 				     __p_error_get_last_error (),
@@ -124,7 +124,7 @@ P_LIB_API pboolean
 p_dir_remove (const pchar	*path,
 	      PError		**error)
 {
-	if (path == NULL) {
+	if (P_UNLIKELY (path == NULL)) {
 		p_error_set_error_p (error,
 				     (pint) P_ERROR_IO_INVALID_ARGUMENT,
 				     0,
@@ -140,7 +140,7 @@ p_dir_remove (const pchar	*path,
 		return FALSE;
 	}
 
-	if (RemoveDirectoryA (path) == 0) {
+	if (P_UNLIKELY (RemoveDirectoryA (path) == 0)) {
 		p_error_set_error_p (error,
 				     (pint) __p_error_get_last_io (),
 				     __p_error_get_last_error (),
@@ -155,7 +155,7 @@ p_dir_is_exists (const pchar *path)
 {
 	DWORD	dwAttrs;
 
-	if (path == NULL)
+	if (P_UNLIKELY (path == NULL))
 		return FALSE;
 
 	dwAttrs = GetFileAttributesA (path);
@@ -166,7 +166,7 @@ p_dir_is_exists (const pchar *path)
 P_LIB_API pchar *
 p_dir_get_path (const PDir *dir)
 {
-	if (dir == NULL)
+	if (P_UNLIKELY (dir == NULL))
 		return NULL;
 
 	return p_strdup (dir->orig_path);
@@ -179,7 +179,7 @@ p_dir_get_next_entry (PDir	*dir,
 	PDirEntry	*ret;
 	DWORD		dwAttrs;
 
-	if (dir == NULL) {
+	if (P_UNLIKELY (dir == NULL)) {
 		p_error_set_error_p (error,
 				     (pint) P_ERROR_IO_INVALID_ARGUMENT,
 				     0,
@@ -190,7 +190,7 @@ p_dir_get_next_entry (PDir	*dir,
 	if (dir->cached == TRUE)
 		dir->cached = FALSE;
 	else {
-		if (dir->search_handle == INVALID_HANDLE_VALUE) {
+		if (P_UNLIKELY (dir->search_handle == INVALID_HANDLE_VALUE)) {
 			p_error_set_error_p (error,
 					     (pint) P_ERROR_IO_INVALID_ARGUMENT,
 					     0,
@@ -198,7 +198,7 @@ p_dir_get_next_entry (PDir	*dir,
 			return NULL;
 		}
 
-		if (!FindNextFileA (dir->search_handle, &dir->find_data)) {
+		if (P_UNLIKELY (!FindNextFileA (dir->search_handle, &dir->find_data))) {
 			p_error_set_error_p (error,
 					     (pint) __p_error_get_last_io (),
 					     __p_error_get_last_error (),
@@ -209,7 +209,7 @@ p_dir_get_next_entry (PDir	*dir,
 		}
 	}
 
-	if ((ret = p_malloc0 (sizeof (PDirEntry))) == NULL) {
+	if (P_UNLIKELY ((ret = p_malloc0 (sizeof (PDirEntry))) == NULL)) {
 		p_error_set_error_p (error,
 				     (pint) P_ERROR_IO_NO_RESOURCES,
 				     0,
@@ -235,7 +235,7 @@ P_LIB_API pboolean
 p_dir_rewind (PDir	*dir,
 	      PError	**error)
 {
-	if (dir == NULL) {
+	if (P_UNLIKELY (dir == NULL)) {
 		p_error_set_error_p (error,
 				     (pint) P_ERROR_IO_INVALID_ARGUMENT,
 				     0,
@@ -244,7 +244,7 @@ p_dir_rewind (PDir	*dir,
 	}
 
 	if (dir->search_handle != INVALID_HANDLE_VALUE) {
-		if (FindClose (dir->search_handle) == 0) {
+		if (P_UNLIKELY (FindClose (dir->search_handle) == 0)) {
 			p_error_set_error_p (error,
 					     (pint) __p_error_get_last_io (),
 					     __p_error_get_last_error (),
@@ -255,7 +255,7 @@ p_dir_rewind (PDir	*dir,
 
 	dir->search_handle = FindFirstFileA (dir->path, &dir->find_data);
 
-	if (dir->search_handle == INVALID_HANDLE_VALUE) {
+	if (P_UNLIKELY (dir->search_handle == INVALID_HANDLE_VALUE)) {
 		p_error_set_error_p (error,
 				     (pint) __p_error_get_last_io (),
 				     __p_error_get_last_error (),
@@ -274,8 +274,8 @@ p_dir_free (PDir *dir)
 	if (dir == NULL)
 		return;
 
-	if (dir->search_handle != INVALID_HANDLE_VALUE) {
-		if (!FindClose (dir->search_handle))
+	if (P_LIKELY (dir->search_handle != INVALID_HANDLE_VALUE)) {
+		if (P_UNLIKELY (!FindClose (dir->search_handle)))
 			P_ERROR ("PDir: error while closing the directory");
 	}
 

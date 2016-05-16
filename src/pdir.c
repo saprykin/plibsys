@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Alexander Saprykin <xelfium@gmail.com>
+ * Copyright (C) 2015-2016 Alexander Saprykin <xelfium@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
 P_LIB_API void
 p_dir_entry_free (PDirEntry *entry)
 {
-	if (entry == NULL)
+	if (P_UNLIKELY (entry == NULL))
 		return;
 
 	p_free (entry->name);

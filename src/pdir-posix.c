@@ -57,7 +57,7 @@ p_dir_new (const pchar	*path,
 	DIR	*dir;
 	pchar	*pathp;
 
-	if (path == NULL) {
+	if (P_UNLIKELY (path == NULL)) {
 		p_error_set_error_p (error,
 				     (pint) P_ERROR_IO_INVALID_ARGUMENT,
 				     0,
@@ -65,7 +65,7 @@ p_dir_new (const pchar	*path,
 		return NULL;
 	}
 
-	if ((dir = opendir (path)) == NULL) {
+	if (P_UNLIKELY ((dir = opendir (path)) == NULL)) {
 		p_error_set_error_p (error,
 				     (pint) __p_error_get_last_io (),
 				     __p_error_get_last_error (),
@@ -73,7 +73,7 @@ p_dir_new (const pchar	*path,
 		return NULL;
 	}
 
-	if ((ret = p_malloc0 (sizeof (PDir))) == NULL) {
+	if (P_UNLIKELY ((ret = p_malloc0 (sizeof (PDir))) == NULL)) {
 		p_error_set_error_p (error,
 				     (pint) P_ERROR_IO_NO_RESOURCES,
 				     0,
@@ -99,7 +99,7 @@ p_dir_create (const pchar	*path,
 	      pint		mode,
 	      PError		**error)
 {
-	if (path == NULL) {
+	if (P_UNLIKELY (path == NULL)) {
 		p_error_set_error_p (error,
 				     (pint) P_ERROR_IO_INVALID_ARGUMENT,
 				     0,
@@ -110,7 +110,7 @@ p_dir_create (const pchar	*path,
 	if (p_dir_is_exists (path))
 		return TRUE;
 
-	if (mkdir (path, mode) != 0) {
+	if (P_UNLIKELY (mkdir (path, mode) != 0)) {
 		p_error_set_error_p (error,
 				     (pint) __p_error_get_last_io (),
 				     __p_error_get_last_error (),
@@ -124,7 +124,7 @@ P_LIB_API pboolean
 p_dir_remove (const pchar	*path,
 	      PError		**error)
 {
-	if (path == NULL) {
+	if (P_UNLIKELY (path == NULL)) {
 		p_error_set_error_p (error,
 				     (pint) P_ERROR_IO_INVALID_ARGUMENT,
 				     0,
@@ -140,7 +140,7 @@ p_dir_remove (const pchar	*path,
 		return FALSE;
 	}
 
-	if (rmdir (path) != 0) {
+	if (P_UNLIKELY (rmdir (path) != 0)) {
 		p_error_set_error_p (error,
 				     (pint) __p_error_get_last_io (),
 				     __p_error_get_last_error (),
@@ -155,7 +155,7 @@ p_dir_is_exists (const pchar *path)
 {
 	struct stat sb;
 
-	if (path == NULL)
+	if (P_UNLIKELY (path == NULL))
 		return FALSE;
 
 	return (stat (path, &sb) == 0 && S_ISDIR (sb.st_mode)) ? TRUE : FALSE;
@@ -164,7 +164,7 @@ p_dir_is_exists (const pchar *path)
 P_LIB_API pchar *
 p_dir_get_path (const PDir *dir)
 {
-	if (dir == NULL)
+	if (P_UNLIKELY (dir == NULL))
 		return NULL;
 
 	return p_strdup (dir->orig_path);
@@ -187,7 +187,7 @@ p_dir_get_next_entry (PDir	*dir,
 	pint		name_max;
 #endif
 
-	if (dir == NULL || dir->dir == NULL) {
+	if (P_UNLIKELY (dir == NULL || dir->dir == NULL)) {
 		p_error_set_error_p (error,
 				     (pint) P_ERROR_IO_INVALID_ARGUMENT,
 				     0,
@@ -216,7 +216,7 @@ p_dir_get_next_entry (PDir	*dir,
 #endif
 
 #ifdef P_DIR_NEED_BUF_ALLOC
-	if ((dirent_st = p_malloc0 (sizeof (struct dirent) + name_max + 1)) == NULL) {
+	if (P_UNLIKELY ((dirent_st = p_malloc0 (sizeof (struct dirent) + name_max + 1)) == NULL)) {
 		p_error_set_error_p (error,
 				     (pint) P_ERROR_IO_NO_RESOURCES,
 				     0,
@@ -226,7 +226,7 @@ p_dir_get_next_entry (PDir	*dir,
 
 #  ifdef P_DIR_NEED_SIMPLE_R
 	if ((dir->dir_result = readdir_r (dir->dir, dirent_st)) == NULL) {
-		if (__p_error_get_last_error () != 0) {
+		if (P_UNLIKELY (__p_error_get_last_error () != 0)) {
 			p_error_set_error_p (error,
 					     (pint) __p_error_get_last_io (),
 					     __p_error_get_last_error (),
@@ -236,7 +236,7 @@ p_dir_get_next_entry (PDir	*dir,
 		}
 	}
 #  else
-	if (readdir_r (dir->dir, dirent_st, &dir->dir_result) != 0) {
+	if (P_UNLIKELY (readdir_r (dir->dir, dirent_st, &dir->dir_result) != 0)) {
 		p_error_set_error_p (error,
 				     (pint) __p_error_get_last_io (),
 				     __p_error_get_last_error (),
@@ -246,7 +246,7 @@ p_dir_get_next_entry (PDir	*dir,
 	}
 #  endif
 #else
-	if (readdir_r (dir->dir, &dirent_st, &dir->dir_result) != 0) {
+	if (P_UNLIKELY (readdir_r (dir->dir, &dirent_st, &dir->dir_result) != 0)) {
 		p_error_set_error_p (error,
 				     (pint) __p_error_get_last_io (),
 				     __p_error_get_last_error (),
@@ -262,7 +262,7 @@ p_dir_get_next_entry (PDir	*dir,
 		return NULL;
 	}
 
-	if ((ret = p_malloc0 (sizeof (PDirEntry))) == NULL) {
+	if (P_UNLIKELY ((ret = p_malloc0 (sizeof (PDirEntry))) == NULL)) {
 		p_error_set_error_p (error,
 				     (pint) P_ERROR_IO_NO_RESOURCES,
 				     0,
@@ -282,7 +282,7 @@ p_dir_get_next_entry (PDir	*dir,
 
 	path_len = strlen (dir->path);
 
-	if ((entry_path = p_malloc0 (path_len + strlen (ret->name) + 2)) == NULL) {
+	if (P_UNLIKELY ((entry_path = p_malloc0 (path_len + strlen (ret->name) + 2)) == NULL)) {
 		P_WARNING ("PDir: failed to allocate memory for stat()");
 		ret->type = P_DIR_ENTRY_TYPE_OTHER;
 		return ret;
@@ -292,7 +292,7 @@ p_dir_get_next_entry (PDir	*dir,
 	*(entry_path + path_len) = '/';
 	strcat (entry_path + path_len + 1, ret->name);
 
-	if (stat (entry_path, &sb) != 0) {
+	if (P_UNLIKELY (stat (entry_path, &sb) != 0)) {
 		P_WARNING ("PDir: failed to call stat()");
 		ret->type = P_DIR_ENTRY_TYPE_OTHER;
 		p_free (entry_path);
@@ -315,7 +315,7 @@ P_LIB_API pboolean
 p_dir_rewind (PDir	*dir,
 	      PError	**error)
 {
-	if (dir == NULL || dir->dir == NULL) {
+	if (P_UNLIKELY (dir == NULL || dir->dir == NULL)) {
 		p_error_set_error_p (error,
 				     (pint) P_ERROR_IO_INVALID_ARGUMENT,
 				     0,
@@ -331,11 +331,11 @@ p_dir_rewind (PDir	*dir,
 P_LIB_API void
 p_dir_free (PDir *dir)
 {
-	if (dir == NULL)
+	if (P_UNLIKELY (dir == NULL))
 		return;
 
-	if (dir->dir != NULL) {
-		if (closedir (dir->dir) != 0)
+	if (P_LIKELY (dir->dir != NULL)) {
+		if (P_UNLIKELY (closedir (dir->dir) != 0))
 			P_ERROR ("PDir: error while closing the directory");
 	}
 
