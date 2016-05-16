@@ -31,7 +31,7 @@ p_file_is_exists (const pchar *file)
 	DWORD attrs;
 #endif
 
-	if (file == NULL)
+	if (P_UNLIKELY (file == NULL))
 		return FALSE;
 
 #ifdef P_OS_WIN
@@ -49,7 +49,7 @@ p_file_remove (const pchar	*file,
 {
 	pboolean result;
 
-	if (file == NULL) {
+	if (P_UNLIKELY (file == NULL)) {
 		p_error_set_error_p (error,
 				     (pint) P_ERROR_IO_INVALID_ARGUMENT,
 				     0,
@@ -63,7 +63,7 @@ p_file_remove (const pchar	*file,
 	result = (unlink (file) == 0);
 #endif
 
-	if (!result)
+	if (P_UNLIKELY (!result))
 		p_error_set_error_p (error,
 				     (pint) __p_error_get_last_io (),
 				     __p_error_get_last_error (),
