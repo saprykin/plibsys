@@ -549,7 +549,7 @@ p_error_new ()
 {
 	PError *ret;
 
-	if ((ret = p_malloc0 (sizeof (PError))) == NULL)
+	if (P_UNLIKELY ((ret = p_malloc0 (sizeof (PError))) == NULL))
 		return NULL;
 
 	return ret;
@@ -562,12 +562,12 @@ p_error_new_literal (pint		code,
 {
 	PError *ret;
 
-	if ((ret = p_error_new ()) == NULL)
+	if (P_UNLIKELY ((ret = p_error_new ()) == NULL))
 		return NULL;
 
-	ret->code = code;
+	ret->code        = code;
 	ret->native_code = native_code;
-	ret->message = p_strdup (message);
+	ret->message     = p_strdup (message);
 
 	return ret;
 }
@@ -575,7 +575,7 @@ p_error_new_literal (pint		code,
 P_LIB_API const pchar *
 p_error_get_message (PError *error)
 {
-	if (error == NULL)
+	if (P_UNLIKELY (error == NULL))
 		return NULL;
 
 	return error->message;
@@ -584,7 +584,7 @@ p_error_get_message (PError *error)
 P_LIB_API pint
 p_error_get_code (PError *error)
 {
-	if (error == NULL)
+	if (P_UNLIKELY (error == NULL))
 		return 0;
 
 	return error->code;
@@ -593,7 +593,7 @@ p_error_get_code (PError *error)
 P_LIB_API pint
 p_error_get_native_code	(PError	*error)
 {
-	if (error == NULL)
+	if (P_UNLIKELY (error == NULL))
 		return 0;
 
 	return error->native_code;
@@ -602,7 +602,7 @@ p_error_get_native_code	(PError	*error)
 P_LIB_API PErrorDomain
 p_error_get_domain (PError *error)
 {
-	if (error == NULL)
+	if (P_UNLIKELY (error == NULL))
 		return P_ERROR_DOMAIN_NONE;
 
 	if (error->code >= (pint) P_ERROR_DOMAIN_IPC)
@@ -618,12 +618,12 @@ p_error_copy (PError *error)
 {
 	PError *ret;
 
-	if (error == NULL)
+	if (P_UNLIKELY (error == NULL))
 		return NULL;
 
-	if ((ret = p_error_new_literal (error->code,
-					error->native_code,
-					error->message)) == NULL)
+	if (P_UNLIKELY ((ret = p_error_new_literal (error->code,
+						    error->native_code,
+						    error->message)) == NULL))
 		return NULL;
 
 	return ret;
@@ -635,15 +635,15 @@ p_error_set_error (PError	*error,
 		   pint		native_code,
 		   const pchar	*message)
 {
-	if (error == NULL)
+	if (P_UNLIKELY (error == NULL))
 		return;
 
 	if (error->message != NULL)
 		p_free (error->message);
 
-	error->code = code;
+	error->code        = code;
 	error->native_code = native_code;
-	error->message = p_strdup (message);
+	error->message     = p_strdup (message);
 }
 
 P_LIB_API void
@@ -652,7 +652,7 @@ p_error_set_error_p (PError		**error,
 		     pint		native_code,
 		     const pchar	*message)
 {
-	if (error == NULL || *error != NULL)
+	if (P_UNLIKELY (error == NULL || *error != NULL))
 		return;
 
 	*error = p_error_new_literal (code, native_code, message);
@@ -662,7 +662,7 @@ P_LIB_API void
 p_error_set_code (PError	*error,
 		  pint		code)
 {
-	if (error == NULL)
+	if (P_UNLIKELY (error == NULL))
 		return;
 
 	error->code = code;
@@ -672,7 +672,7 @@ P_LIB_API void
 p_error_set_native_code	(PError	*error,
 			 pint	native_code)
 {
-	if (error == NULL)
+	if (P_UNLIKELY (error == NULL))
 		return;
 
 	error->native_code = native_code;
@@ -682,7 +682,7 @@ P_LIB_API void
 p_error_set_message (PError		*error,
 		     const pchar	*message)
 {
-	if (error == NULL)
+	if (P_UNLIKELY (error == NULL))
 		return;
 
 	if (error->message != NULL)
@@ -694,21 +694,21 @@ p_error_set_message (PError		*error,
 P_LIB_API void
 p_error_clear (PError *error)
 {
-	if (error == NULL)
+	if (P_UNLIKELY (error == NULL))
 		return;
 
 	if (error->message != NULL)
 		p_free (error->message);
 
-	error->message = NULL;
-	error->code = 0;
+	error->message     = NULL;
+	error->code        = 0;
 	error->native_code = 0;
 }
 
 P_LIB_API void
 p_error_free (PError	*error)
 {
-	if (error == NULL)
+	if (P_UNLIKELY (error == NULL))
 		return;
 
 	if (error->message != NULL)
