@@ -57,7 +57,7 @@ p_crypto_hash_new (PCryptoHashType type)
 {
 	PCryptoHash *ret;
 
-	if ((ret = p_malloc0 (sizeof (PCryptoHash))) == NULL)
+	if (P_UNLIKELY ((ret = p_malloc0 (sizeof (PCryptoHash))) == NULL))
 		return NULL;
 
 	switch (type) {
@@ -82,7 +82,7 @@ p_crypto_hash_new (PCryptoHashType type)
 	ret->closed = FALSE;
 	ret->reseted = TRUE;
 
-	if ((ret->context = ret->create ()) == NULL) {
+	if (P_UNLIKELY ((ret->context = ret->create ()) == NULL)) {
 		p_free (ret);
 		return NULL;
 	}
@@ -93,10 +93,10 @@ p_crypto_hash_new (PCryptoHashType type)
 P_LIB_API void
 p_crypto_hash_update (PCryptoHash *hash, const puchar *data, psize len)
 {
-	if (hash == NULL || data == NULL || len == 0)
+	if (P_UNLIKELY (hash == NULL || data == NULL || len == 0))
 		return;
 
-	if (hash->closed)
+	if (P_UNLIKELY (hash->closed))
 		return;
 
 	hash->update (hash->context, data, len);
@@ -107,7 +107,7 @@ p_crypto_hash_update (PCryptoHash *hash, const puchar *data, psize len)
 P_LIB_API void
 p_crypto_hash_reset (PCryptoHash *hash)
 {
-	if (hash == NULL)
+	if (P_UNLIKELY (hash == NULL))
 		return;
 
 	hash->reset (hash->context);
@@ -122,7 +122,7 @@ p_crypto_hash_get_string (PCryptoHash *hash)
 	puint		i;
 	const puchar	*digest;
 
-	if (hash == NULL || hash->reseted)
+	if (P_UNLIKELY (hash == NULL || hash->reseted))
 		return NULL;
 
 	if (!hash->closed) {
@@ -130,10 +130,10 @@ p_crypto_hash_get_string (PCryptoHash *hash)
 		hash->closed = TRUE;
 	}
 
-	if ((digest = hash->digest (hash->context)) == NULL)
+	if (P_UNLIKELY ((digest = hash->digest (hash->context)) == NULL))
 		return NULL;
 
-	if ((ret = p_malloc0 (hash->hash_len * 2 + 1)) == NULL)
+	if (P_UNLIKELY ((ret = p_malloc0 (hash->hash_len * 2 + 1)) == NULL))
 		return NULL;
 
 	for (i = 0; i < hash->hash_len; ++i)
@@ -147,20 +147,20 @@ p_crypto_hash_get_digest (PCryptoHash *hash, puchar *buf, psize *len)
 {
 	const puchar *digest;
 
-	if (len == NULL)
+	if (P_UNLIKELY (len == NULL))
 		return;
 
-	if (hash == NULL || buf == NULL) {
+	if (P_UNLIKELY (hash == NULL || buf == NULL)) {
 		*len = 0;
 		return;
 	}
 
-	if (hash->reseted) {
+	if (P_UNLIKELY (hash->reseted)) {
 		*len = 0;
 		return;
 	}
 
-	if (hash->hash_len > *len) {
+	if (P_UNLIKELY (hash->hash_len > *len)) {
 		*len = 0;
 		return;
 	}
@@ -170,7 +170,7 @@ p_crypto_hash_get_digest (PCryptoHash *hash, puchar *buf, psize *len)
 		hash->closed = TRUE;
 	}
 
-	if ((digest = hash->digest (hash->context)) == NULL) {
+	if (P_UNLIKELY ((digest = hash->digest (hash->context)) == NULL)) {
 		*len = 0;
 		return;
 	}
@@ -182,7 +182,7 @@ p_crypto_hash_get_digest (PCryptoHash *hash, puchar *buf, psize *len)
 P_LIB_API pssize
 p_crypto_hash_get_length (const PCryptoHash *hash)
 {
-	if (hash == NULL)
+	if (P_UNLIKELY (hash == NULL))
 		return 0;
 
 	return hash->hash_len;
@@ -191,7 +191,7 @@ p_crypto_hash_get_length (const PCryptoHash *hash)
 P_LIB_API PCryptoHashType
 p_crypto_hash_get_type (const PCryptoHash *hash)
 {
-	if (hash == NULL)
+	if (P_UNLIKELY (hash == NULL))
 		return (PCryptoHashType) -1;
 
 	return hash->type;
@@ -200,7 +200,7 @@ p_crypto_hash_get_type (const PCryptoHash *hash)
 P_LIB_API void
 p_crypto_hash_free (PCryptoHash *hash)
 {
-	if (hash == NULL)
+	if (P_UNLIKELY (hash == NULL))
 		return;
 
 	hash->free (hash->context);

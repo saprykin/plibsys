@@ -383,7 +383,7 @@ __p_gost3411_new (void)
 {
 	PHashGOST3411 *ret;
 
-	if ((ret = p_malloc0 (sizeof (PHashGOST3411))) == NULL)
+	if (P_UNLIKELY ((ret = p_malloc0 (sizeof (PHashGOST3411))) == NULL))
 		return NULL;
 
 	__p_gost3411_reset (ret);
@@ -398,7 +398,7 @@ __p_gost3411_update (PHashGOST3411	*ctx,
 {
 	puint32	left, to_fill, len256[8];
 
-	if (ctx == NULL || len == 0)
+	if (P_UNLIKELY (ctx == NULL || len == 0))
 		return;
 
 	left = (ctx->len[0] & 0xFF) >> 3;
@@ -440,7 +440,7 @@ __p_gost3411_finish (PHashGOST3411 *ctx)
 {
 	puint32 left, last;
 
-	if (ctx == NULL)
+	if (P_UNLIKELY (ctx == NULL))
 		return;
 
 	left = ctx->len[0] & 0xFF;
@@ -462,7 +462,7 @@ __p_gost3411_finish (PHashGOST3411 *ctx)
 const puchar *
 __p_gost3411_digest (PHashGOST3411 *ctx)
 {
-	if (ctx == NULL)
+	if (P_UNLIKELY (ctx == NULL))
 		return NULL;
 
 	return (const puchar *) ctx->hash;
@@ -471,7 +471,7 @@ __p_gost3411_digest (PHashGOST3411 *ctx)
 void
 __p_gost3411_reset (PHashGOST3411 *ctx)
 {
-	if (ctx == NULL)
+	if (P_UNLIKELY (ctx == NULL))
 		return;
 
 	memset (ctx->buf, 0, 32);
@@ -483,7 +483,7 @@ __p_gost3411_reset (PHashGOST3411 *ctx)
 void
 __p_gost3411_free (PHashGOST3411 *ctx)
 {
-	if (ctx == NULL)
+	if (P_UNLIKELY (ctx == NULL))
 		return;
 
 	p_free (ctx);

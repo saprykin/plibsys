@@ -80,9 +80,9 @@ static void
 __p_md5_process (PHashMD5	*ctx,
 		 const puint32	data[16])
 {
-	puint32		A, B, C, D;
+	puint32	A, B, C, D;
 
-	if (ctx == NULL)
+	if (P_UNLIKELY (ctx == NULL))
 		return;
 
 	A = ctx->hash[0];
@@ -167,7 +167,7 @@ __p_md5_process (PHashMD5	*ctx,
 void
 __p_md5_reset (PHashMD5 *ctx)
 {
-	if (ctx == NULL)
+	if (P_UNLIKELY (ctx == NULL))
 		return;
 
 	memset (ctx->buf.buf, 0, 64);
@@ -186,7 +186,7 @@ __p_md5_new (void)
 {
 	PHashMD5 *ret;
 
-	if ((ret = p_malloc0 (sizeof (PHashMD5))) == NULL)
+	if (P_UNLIKELY ((ret = p_malloc0 (sizeof (PHashMD5))) == NULL))
 		return NULL;
 
 	__p_md5_reset (ret);
@@ -201,7 +201,7 @@ __p_md5_update (PHashMD5	*ctx,
 {
 	puint32	left, to_fill;
 
-	if (ctx == NULL || len == 0)
+	if (P_UNLIKELY (ctx == NULL || len == 0))
 		return;
 
 	left = ctx->len_low & 0x3F;
@@ -240,7 +240,7 @@ __p_md5_finish (PHashMD5 *ctx)
 	puint32	high, low;
 	pint	left, last;
 
-	if (ctx == NULL)
+	if (P_UNLIKELY (ctx == NULL))
 		return;
 
 	left = ctx->len_low & 0x3F;
@@ -265,7 +265,7 @@ __p_md5_finish (PHashMD5 *ctx)
 const puchar *
 __p_md5_digest (PHashMD5 *ctx)
 {
-	if (ctx == NULL)
+	if (P_UNLIKELY (ctx == NULL))
 		return NULL;
 
 	return (const puchar *) ctx->hash;
@@ -274,7 +274,7 @@ __p_md5_digest (PHashMD5 *ctx)
 void
 __p_md5_free (PHashMD5 *ctx)
 {
-	if (ctx == NULL)
+	if (P_UNLIKELY (ctx == NULL))
 		return;
 
 	p_free (ctx);

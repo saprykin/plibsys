@@ -107,9 +107,9 @@ static void
 __p_sha1_process (PHashSHA1	*ctx,
 		  const puint32	data[16])
 {
-	puint32		W[16], A, B, C, D, E;
+	puint32	W[16], A, B, C, D, E;
 
-	if (ctx == NULL)
+	if (P_UNLIKELY (ctx == NULL))
 		return;
 
 	memcpy (W, data, 64);
@@ -214,7 +214,7 @@ __p_sha1_process (PHashSHA1	*ctx,
 void
 __p_sha1_reset (PHashSHA1 *ctx)
 {
-	if (ctx == NULL)
+	if (P_UNLIKELY (ctx == NULL))
 		return;
 
 	memset (ctx->buf.buf, 0, 64);
@@ -234,7 +234,7 @@ __p_sha1_new (void)
 {
 	PHashSHA1 *ret;
 
-	if ((ret = p_malloc0 (sizeof (PHashSHA1))) == NULL)
+	if (P_UNLIKELY ((ret = p_malloc0 (sizeof (PHashSHA1))) == NULL))
 		return NULL;
 
 	__p_sha1_reset (ret);
@@ -249,7 +249,7 @@ __p_sha1_update (PHashSHA1	*ctx,
 {
 	puint32	left, to_fill;
 
-	if (ctx == NULL || len == 0)
+	if (P_UNLIKELY (ctx == NULL || len == 0))
 		return;
 
 	left = ctx->len_low & 0x3F;
@@ -288,7 +288,7 @@ __p_sha1_finish (PHashSHA1 *ctx)
 	puint32	high, low;
 	pint	left, last;
 
-	if (ctx == NULL)
+	if (P_UNLIKELY (ctx == NULL))
 		return;
 
 	left = ctx->len_low & 0x3F;
@@ -313,7 +313,7 @@ __p_sha1_finish (PHashSHA1 *ctx)
 const puchar *
 __p_sha1_digest (PHashSHA1 *ctx)
 {
-	if (ctx == NULL)
+	if (P_UNLIKELY (ctx == NULL))
 		return NULL;
 
 	return (const puchar *) ctx->hash;
@@ -322,7 +322,7 @@ __p_sha1_digest (PHashSHA1 *ctx)
 void
 __p_sha1_free (PHashSHA1 *ctx)
 {
-	if (ctx == NULL)
+	if (P_UNLIKELY (ctx == NULL))
 		return;
 
 	p_free (ctx);
