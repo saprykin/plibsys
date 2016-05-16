@@ -247,14 +247,14 @@ p_atomic_is_lock_free (void)
 void
 __p_atomic_thread_init (void)
 {
-	if (p_atomic_mutex == NULL)
+	if (P_LIKELY (p_atomic_mutex == NULL))
 		p_atomic_mutex = p_mutex_new ();
 }
 
 void
 __p_atomic_thread_shutdown (void)
 {
-	if (p_atomic_mutex != NULL) {
+	if (P_LIKELY (p_atomic_mutex != NULL)) {
 		p_mutex_free (p_atomic_mutex);
 		p_atomic_mutex = NULL;
 	}
