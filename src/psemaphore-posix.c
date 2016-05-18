@@ -57,7 +57,7 @@ static pboolean
 __p_semaphore_create_handle (PSemaphore *sem,
 			     PError	**error)
 {
-	if (sem == NULL || sem->platform_key == NULL) {
+	if (P_UNLIKELY (sem == NULL || sem->platform_key == NULL)) {
 		p_error_set_error_p (error,
 				     (pint) P_ERROR_IPC_INVALID_ARGUMENT,
 				     0,
@@ -82,7 +82,7 @@ __p_semaphore_create_handle (PSemaphore *sem,
 	} else
 		sem->sem_created = TRUE;
 
-	if (sem->sem_hdl == P_SEM_INVALID_HDL) {
+	if (P_UNLIKELY (sem->sem_hdl == P_SEM_INVALID_HDL)) {
 		p_error_set_error_p (error,
 				     (pint) __p_error_get_last_ipc (),
 				     __p_error_get_last_error (),
@@ -97,10 +97,13 @@ __p_semaphore_create_handle (PSemaphore *sem,
 static void
 __p_semaphore_clean_handle (PSemaphore *sem)
 {
-	if (sem->sem_hdl != P_SEM_INVALID_HDL && sem_close (sem->sem_hdl) == -1)
+	if (P_UNLIKELY (sem->sem_hdl != P_SEM_INVALID_HDL &&
+			sem_close (sem->sem_hdl) == -1))
 		P_ERROR ("PSemaphore: failed to perform sem_close()");
 
-	if (sem->sem_hdl != P_SEM_INVALID_HDL && sem->sem_created && sem_unlink (sem->platform_key) == -1)
+	if (sem->sem_hdl != P_SEM_INVALID_HDL &&
+	    sem->sem_created == TRUE &&
+	    sem_unlink (sem->platform_key) == -1))
 		P_ERROR ("PSemaphore: failed to perform sem_unlink()");
 
 	sem->sem_created = FALSE;
@@ -116,7 +119,7 @@ p_semaphore_new (const pchar		*name,
 	PSemaphore	*ret;
 	pchar		*new_name;
 
-	if (name == NULL || init_val < 0) {
+	if (P_UNLIKELY (name == NULL || init_val < 0)) {
 		p_error_set_error_p (error,
 				     (pint) P_ERROR_IPC_INVALID_ARGUMENT,
 				     0,
@@ -124,7 +127,7 @@ p_semaphore_new (const pchar		*name,
 		return NULL;
 	}
 
-	if ((ret = p_malloc0 (sizeof (PSemaphore))) == NULL) {
+	if (P_UNLIKELY ((ret = p_malloc0 (sizeof (PSemaphore))) == NULL)) {
 		p_error_set_error_p (error,
 				     (pint) P_ERROR_IPC_NO_RESOURCES,
 				     0,
@@ -132,7 +135,7 @@ p_semaphore_new (const pchar		*name,
 		return NULL;
 	}
 
-	if ((new_name = p_malloc0 (strlen (name) + strlen (P_SEM_SUFFIX) + 1)) == NULL) {
+	if (P_UNLIKELY ((new_name = p_malloc0 (strlen (name) + strlen (P_SEM_SUFFIX) + 1)) == NULL)) {
 		p_error_set_error_p (error,
 				     (pint) P_ERROR_IPC_NO_RESOURCES,
 				     0,
@@ -155,7 +158,7 @@ p_semaphore_new (const pchar		*name,
 
 	p_free (new_name);
 
-	if (!__p_semaphore_create_handle (ret, error)) {
+	if (P_UNLIKELY (__p_semaphore_create_handle (ret, error) == FALSE)) {
 		p_semaphore_free (ret);
 		return NULL;
 	}
@@ -166,7 +169,7 @@ p_semaphore_new (const pchar		*name,
 P_LIB_API void
 p_semaphore_take_ownership (PSemaphore *sem)
 {
-	if (sem == NULL)
+	if (P_UNLIKELY (sem == NULL))
 		return;
 
 	sem->sem_created = TRUE;
@@ -179,7 +182,7 @@ p_semaphore_acquire (PSemaphore *sem,
 	pboolean	ret;
 	pint		res;
 
-	if (sem == NULL) {
+	if (P_UNLIKELY (sem == NULL)) {
 		p_error_set_error_p (error,
 				     (pint) P_ERROR_IPC_INVALID_ARGUMENT,
 				     0,
@@ -192,7 +195,7 @@ p_semaphore_acquire (PSemaphore *sem,
 
 	ret = (res == 0);
 
-	if (!ret)
+	if (P_UNLIKELY (ret == FALSE))
 		p_error_set_error_p (error,
 				     (pint) __p_error_get_last_ipc (),
 				     __p_error_get_last_error (),
@@ -207,7 +210,7 @@ p_semaphore_release (PSemaphore *sem,
 {
 	pboolean ret;
 
-	if (sem == NULL) {
+	if (P_UNLIKELY (sem == NULL)) {
 		p_error_set_error_p (error,
 				     (pint) P_ERROR_IPC_INVALID_ARGUMENT,
 				     0,
@@ -217,7 +220,7 @@ p_semaphore_release (PSemaphore *sem,
 
 	ret = (sem_post (sem->sem_hdl) == 0);
 
-	if (!ret)
+	if (P_UNLIKELY (ret == FALSE))
 		p_error_set_error_p (error,
 				     (pint) __p_error_get_last_ipc (),
 				     __p_error_get_last_error (),
@@ -229,12 +232,12 @@ p_semaphore_release (PSemaphore *sem,
 P_LIB_API void
 p_semaphore_free (PSemaphore *sem)
 {
-	if (sem == NULL)
+	if (P_UNLIKELY (sem == NULL))
 		return;
 
 	__p_semaphore_clean_handle (sem);
 
-	if (sem->platform_key)
+	if (P_LIKELY (sem->platform_key != NULL))
 		p_free (sem->platform_key);
 
 	p_free (sem);
