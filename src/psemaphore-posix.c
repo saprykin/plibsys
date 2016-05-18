@@ -103,7 +103,7 @@ __p_semaphore_clean_handle (PSemaphore *sem)
 
 	if (sem->sem_hdl != P_SEM_INVALID_HDL &&
 	    sem->sem_created == TRUE &&
-	    sem_unlink (sem->platform_key) == -1))
+	    sem_unlink (sem->platform_key) == -1)
 		P_ERROR ("PSemaphore: failed to perform sem_unlink()");
 
 	sem->sem_created = FALSE;
