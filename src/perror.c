@@ -652,7 +652,7 @@ p_error_set_error_p (PError		**error,
 		     pint		native_code,
 		     const pchar	*message)
 {
-	if (P_UNLIKELY (error == NULL || *error != NULL))
+	if (error == NULL || *error != NULL)
 		return;
 
 	*error = p_error_new_literal (code, native_code, message);
