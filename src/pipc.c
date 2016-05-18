@@ -57,14 +57,14 @@ __p_ipc_unix_get_temp_dir (void)
 		return p_strdup ("/tmp/");
 #endif /* P_tmpdir */
 
-	/* Now we need to ensure that we have only one trailing slash */
+	/* Now we need to ensure that we have only the one trailing slash */
 	len = strlen (str);
 	while (*(str + --len) == '/')
 		;
 	*(str + ++len) = '\0';
 
 	/* len + / + zero symbol */
-	if ((ret = p_malloc0 (len + 2)) == NULL) {
+	if (P_UNLIKELY ((ret = p_malloc0 (len + 2)) == NULL)) {
 		p_free (str);
 		return NULL;
 	}
@@ -82,7 +82,7 @@ __p_ipc_unix_create_key_file (const pchar *file_name)
 {
 	pint fd;
 
-	if (file_name == NULL)
+	if (P_UNLIKELY (file_name == NULL))
 		return -1;
 
 	if ((fd = open (file_name, O_CREAT | O_EXCL | O_RDONLY, 0640)) == -1)
@@ -97,19 +97,18 @@ __p_ipc_unix_get_ftok_key (const pchar *file_name)
 {
 	struct stat st_info;
 
-	if (file_name == NULL)
+	if (P_UNLIKELY (file_name == NULL))
 		return -1;
 
-	if (stat (file_name, &st_info) == -1)
+	if (P_UNLIKELY (stat (file_name, &st_info) == -1))
 		return -1;
 
 	return ftok (file_name, 'P');
 }
-
 #endif /* !P_OS_WIN */
 
-/* Returns platform-independent key for IPC usage, object name for Windows and
- * file name to use with ftok () for UNIX-like systems */
+/* Returns a platform-independent key for IPC usage, object name for Windows and
+ * a file name to use with ftok () for UNIX-like systems */
 pchar *
 __p_ipc_get_platform_key (const pchar *name, pboolean posix)
 {
@@ -122,10 +121,10 @@ __p_ipc_get_platform_key (const pchar *name, pboolean posix)
 	pchar		*path_name, *tmp_path;
 #endif
 
-	if (name == NULL)
+	if (P_UNLIKELY (name == NULL))
 		return NULL;
 
-	if ((sha1 = p_crypto_hash_new (P_CRYPTO_HASH_TYPE_SHA1)) == NULL)
+	if (P_UNLIKELY ((sha1 = p_crypto_hash_new (P_CRYPTO_HASH_TYPE_SHA1)) == NULL))
 		return NULL;
 
 	p_crypto_hash_update (sha1, (const puchar *) name, strlen (name));
@@ -133,7 +132,7 @@ __p_ipc_get_platform_key (const pchar *name, pboolean posix)
 	hash_str = p_crypto_hash_get_string (sha1);
 	p_crypto_hash_free (sha1);
 
-	if (hash_str == NULL)
+	if (P_UNLIKELY (hash_str == NULL))
 		return NULL;
 
 #ifdef P_OS_WIN
@@ -144,9 +143,9 @@ __p_ipc_get_platform_key (const pchar *name, pboolean posix)
 #  ifdef P_OS_BSD4
 		/* BSD implementation of POSIX semaphores has restriction for the name - max 14
 		   characters */
-		if ((path_name = p_malloc0 (15)) == NULL) {
+		if (P_UNLIKELY ((path_name = p_malloc0 (15)) == NULL)) {
 #  else
-		if ((path_name = p_malloc0 (strlen (hash_str) + 2)) == NULL) {
+		if (P_UNLIKELY ((path_name = p_malloc0 (strlen (hash_str) + 2)) == NULL)) {
 #  endif
 			p_free (hash_str);
 			return NULL;
@@ -160,7 +159,7 @@ __p_ipc_get_platform_key (const pchar *name, pboolean posix)
 		/* tmp dir + filename + zero symbol */
 		path_name = p_malloc0 (strlen (tmp_path) + strlen (hash_str) + 1);
 
-		if ((path_name) == NULL) {
+		if (P_UNLIKELY ((path_name) == NULL)) {
 			p_free (tmp_path);
 			p_free (hash_str);
 			return NULL;
