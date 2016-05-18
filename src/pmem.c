@@ -37,7 +37,7 @@ static PMemVTable	p_mem_table;
 void
 __p_mem_init (void)
 {
-	if (p_mem_table_inited)
+	if (P_UNLIKELY (p_mem_table_inited == TRUE))
 		return;
 
 	p_mem_restore_vtable ();
@@ -46,7 +46,7 @@ __p_mem_init (void)
 void
 __p_mem_shutdown (void)
 {
-	if (!p_mem_table_inited)
+	if (P_UNLIKELY (!p_mem_table_inited))
 		return;
 
 	p_mem_table.malloc  = NULL;
@@ -59,7 +59,7 @@ __p_mem_shutdown (void)
 P_LIB_API ppointer
 p_malloc (psize n_bytes)
 {
-	if (n_bytes)
+	if (P_LIKELY (n_bytes > 0))
 		return p_mem_table.malloc (n_bytes);
 	else
 		return NULL;
@@ -70,24 +70,23 @@ p_malloc0 (psize n_bytes)
 {
 	ppointer ret;
 
-	if (n_bytes) {
-		if ((ret = p_mem_table.malloc (n_bytes)) == NULL)
+	if (P_LIKELY (n_bytes > 0)) {
+		if (P_UNLIKELY ((ret = p_mem_table.malloc (n_bytes)) == NULL))
 			return NULL;
 
 		memset (ret, 0, n_bytes);
 		return ret;
-	}
-	else
+	} else
 		return NULL;
 }
 
 P_LIB_API ppointer
 p_realloc (ppointer mem, psize n_bytes)
 {
-	if (!n_bytes)
+	if (P_UNLIKELY (n_bytes == 0))
 		return NULL;
 
-	if (mem == NULL)
+	if (P_UNLIKELY (mem == NULL))
 		return p_mem_table.malloc (n_bytes);
 	else
 		return p_mem_table.realloc (mem, n_bytes);
@@ -96,17 +95,17 @@ p_realloc (ppointer mem, psize n_bytes)
 P_LIB_API void
 p_free (ppointer mem)
 {
-	if (mem != NULL)
+	if (P_LIKELY (mem != NULL))
 		p_mem_table.free (mem);
 }
 
 P_LIB_API pboolean
 p_mem_set_vtable (const PMemVTable *table)
 {
-	if (table == NULL)
+	if (P_UNLIKELY (table == NULL))
 		return FALSE;
 
-	if (table->free == NULL || table->malloc == NULL || table->realloc == NULL)
+	if (P_UNLIKELY (table->free == NULL || table->malloc == NULL || table->realloc == NULL))
 		return FALSE;
 
 	p_mem_table.malloc  = table->malloc;
@@ -140,7 +139,7 @@ p_mem_mmap (psize	n_bytes,
 	int		map_flags = MAP_PRIVATE;
 #endif
 
-	if (n_bytes == 0) {
+	if (P_UNLIKELY (n_bytes == 0)) {
 		p_error_set_error_p (error,
 				     (pint) P_ERROR_IO_INVALID_ARGUMENT,
 				     0,
@@ -149,7 +148,12 @@ p_mem_mmap (psize	n_bytes,
 	}
 
 #ifdef P_OS_WIN
-	if ((hdl = CreateFileMappingA (INVALID_HANDLE_VALUE, NULL, PAGE_READWRITE, 0, (DWORD) n_bytes, NULL)) == NULL) {
+	if (P_UNLIKELY ((hdl = CreateFileMappingA (INVALID_HANDLE_VALUE,
+						   NULL,
+						   PAGE_READWRITE,
+						   0,
+						   (DWORD) n_bytes,
+						   NULL)) == NULL)) {
 		p_error_set_error_p (error,
 				     (pint) __p_error_get_last_io (),
 				     __p_error_get_last_error (),
@@ -157,7 +161,11 @@ p_mem_mmap (psize	n_bytes,
 		return NULL;
 	}
 
-	if ((addr = MapViewOfFile (hdl, FILE_MAP_READ | FILE_MAP_WRITE, 0, 0, n_bytes)) == NULL) {
+	if (P_UNLIKELY ((addr = MapViewOfFile (hdl,
+					       FILE_MAP_READ | FILE_MAP_WRITE,
+					       0,
+					       0,
+					       n_bytes)) == NULL)) {
 		p_error_set_error_p (error,
 				     (pint) __p_error_get_last_io (),
 				     __p_error_get_last_error (),
@@ -166,7 +174,7 @@ p_mem_mmap (psize	n_bytes,
 		return NULL;
 	}
 
-	if (!CloseHandle (hdl)) {
+	if (P_UNLIKELY (!CloseHandle (hdl))) {
 		p_error_set_error_p (error,
 				     (pint) __p_error_get_last_io (),
 				     __p_error_get_last_error (),
@@ -176,7 +184,7 @@ p_mem_mmap (psize	n_bytes,
 	}
 #else
 #  if !defined (PLIBSYS_MMAP_HAS_MAP_ANONYMOUS) && !defined (PLIBSYS_MMAP_HAS_MAP_ANON)
-	if ((fd = open ("/dev/zero", O_RDWR | O_EXCL, 0754)) == -1) {
+	if (P_UNLIKELY ((fd = open ("/dev/zero", O_RDWR | O_EXCL, 0754)) == -1)) {
 		p_error_set_error_p (error,
 				     (pint) __p_error_get_last_io (),
 				     __p_error_get_last_error (),
@@ -193,7 +201,12 @@ p_mem_mmap (psize	n_bytes,
 	map_flags |= MAP_ANON;
 #  endif
 
-	if ((addr = mmap (NULL, n_bytes, PROT_READ | PROT_WRITE, map_flags, fd, 0)) == (void *) -1) {
+	if (P_UNLIKELY ((addr = mmap (NULL,
+				      n_bytes,
+				      PROT_READ | PROT_WRITE,
+				      map_flags,
+				      fd,
+				      0)) == (void *) -1)) {
 		p_error_set_error_p (error,
 				     (pint) __p_error_get_last_io (),
 				     __p_error_get_last_error (),
@@ -205,7 +218,7 @@ p_mem_mmap (psize	n_bytes,
 	}
 
 #  if !defined (PLIBSYS_MMAP_HAS_MAP_ANONYMOUS) && !defined (PLIBSYS_MMAP_HAS_MAP_ANON)
-	if (close (fd) == -1) {
+	if (P_UNLIKELY (close (fd) == -1)) {
 		p_error_set_error_p (error,
 				     (pint) __p_error_get_last_io (),
 				     __p_error_get_last_error (),
@@ -224,7 +237,7 @@ p_mem_munmap (ppointer	mem,
 	      psize	n_bytes,
 	      PError	**error)
 {
-	if (mem == NULL || n_bytes == 0) {
+	if (P_UNLIKELY (mem == NULL || n_bytes == 0)) {
 		p_error_set_error_p (error,
 				     (pint) P_ERROR_IO_INVALID_ARGUMENT,
 				     0,
@@ -233,13 +246,13 @@ p_mem_munmap (ppointer	mem,
 	}
 
 #ifdef P_OS_WIN
-	if (UnmapViewOfFile (mem) == 0) {
+	if (P_UNLIKELY (UnmapViewOfFile (mem) == 0)) {
 		p_error_set_error_p (error,
 				     (pint) __p_error_get_last_io (),
 				     __p_error_get_last_error (),
 				     "Failed to call UnmapViewOfFile() to remove file mapping");
 #else
-	if (munmap (mem, n_bytes) != 0) {
+	if (P_UNLIKELY (munmap (mem, n_bytes) != 0)) {
 		p_error_set_error_p (error,
 				     (pint) __p_error_get_last_io (),
 				     __p_error_get_last_error (),
