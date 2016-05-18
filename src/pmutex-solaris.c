@@ -33,7 +33,7 @@ p_mutex_new (void)
 {
 	PMutex *ret;
 
-	if ((ret = p_malloc0 (sizeof (PMutex))) == NULL) {
+	if ((P_UNLIKELY (ret = p_malloc0 (sizeof (PMutex))) == NULL)) {
 		P_ERROR ("PLMutex: failed to allocate memory");
 		return NULL;
 	}
@@ -46,10 +46,10 @@ p_mutex_new (void)
 P_LIB_API pboolean
 p_mutex_lock (PMutex *mutex)
 {
-	if (!mutex)
+	if (P_UNLIKELY (mutex == NULL))
 		return FALSE;
 
-	if (mutex_lock (&mutex->hdl) == 0)
+	if (P_LIKELY (mutex_lock (&mutex->hdl) == 0))
 		return TRUE;
 	else {
 		P_ERROR ("PLMutex: failed to lock mutex object");
@@ -60,7 +60,7 @@ p_mutex_lock (PMutex *mutex)
 P_LIB_API pboolean
 p_mutex_trylock (PMutex *mutex)
 {
-	if (!mutex)
+	if (P_UNLIKELY (mutex == NULL))
 		return FALSE;
 
 	return (mutex_trylock (&mutex->hdl) == 0) ? TRUE : FALSE;
@@ -69,10 +69,10 @@ p_mutex_trylock (PMutex *mutex)
 P_LIB_API pboolean
 p_mutex_unlock (PMutex *mutex)
 {
-	if (!mutex)
+	if (P_UNLIKELY (mutex == NULL))
 		return FALSE;
 
-	if (mutex_unlock (&mutex->hdl) == 0)
+	if (P_LIKELY (mutex_unlock (&mutex->hdl) == 0))
 		return TRUE;
 	else {
 		P_ERROR ("PLMutex: failed to unlock mutex object");
@@ -83,7 +83,7 @@ p_mutex_unlock (PMutex *mutex)
 P_LIB_API void
 p_mutex_free (PMutex *mutex)
 {
-	if (!mutex)
+	if (P_UNLIKELY (mutex == NULL))
 		return;
 
 	mutex_destroy (&mutex->hdl);
