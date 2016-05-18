@@ -32,7 +32,7 @@ static pboolean plibsys_inited = FALSE;
 P_LIB_API void
 p_libsys_init (void)
 {
-	if (plibsys_inited)
+	if (P_UNLIKELY (plibsys_inited == TRUE))
 		return;
 
 	plibsys_inited = TRUE;
@@ -53,7 +53,7 @@ p_libsys_init_full (const PMemVTable *vtable)
 P_LIB_API void
 p_libsys_shutdown (void)
 {
-	if (!plibsys_inited)
+	if (P_UNLIKELY (plibsys_inited == FALSE))
 		return;
 
 	plibsys_inited = FALSE;
