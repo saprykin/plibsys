@@ -51,7 +51,7 @@ __p_shm_create_handle (PShm	*shm,
 	pint		fd, flags;
 	struct stat	stat_buf;
 
-	if (shm == NULL || shm->platform_key == NULL) {
+	if (P_UNLIKELY (shm == NULL || shm->platform_key == NULL)) {
 		p_error_set_error_p (error,
 				     (pint) P_ERROR_IPC_INVALID_ARGUMENT,
 				     0,
@@ -76,7 +76,7 @@ __p_shm_create_handle (PShm	*shm,
 	} else
 		shm->shm_created = TRUE;
 
-	if (fd == P_SHM_INVALID_HDL) {
+	if (P_UNLIKELY (fd == P_SHM_INVALID_HDL)) {
 		p_error_set_error_p (error,
 				     (pint) __p_error_get_last_ipc (),
 				     __p_error_get_last_error (),
@@ -87,7 +87,7 @@ __p_shm_create_handle (PShm	*shm,
 
 	/* Try to get size of the existing file descriptor */
 	if (is_exists) {
-		if (fstat (fd, &stat_buf) == -1) {
+		if (P_UNLIKELY (fstat (fd, &stat_buf) == -1)) {
 			p_error_set_error_p (error,
 					     (pint) __p_error_get_last_ipc (),
 					     __p_error_get_last_error (),
@@ -99,7 +99,7 @@ __p_shm_create_handle (PShm	*shm,
 
 		shm->size = stat_buf.st_size;
 	} else {
-		if ((ftruncate (fd, shm->size)) == -1) {
+		if (P_UNLIKELY ((ftruncate (fd, shm->size)) == -1)) {
 			p_error_set_error_p (error,
 					     (pint) __p_error_get_last_ipc (),
 					     __p_error_get_last_error (),
@@ -112,7 +112,7 @@ __p_shm_create_handle (PShm	*shm,
 
 	flags = (shm->perms == P_SHM_ACCESS_READONLY) ? PROT_READ : PROT_READ | PROT_WRITE;
 
-	if ((shm->addr = mmap (NULL, shm->size, flags, MAP_SHARED, fd, 0)) == (void *) -1) {
+	if (P_UNLIKELY ((shm->addr = mmap (NULL, shm->size, flags, MAP_SHARED, fd, 0)) == (void *) -1)) {
 		p_error_set_error_p (error,
 				     (pint) __p_error_get_last_ipc (),
 				     __p_error_get_last_error (),
@@ -123,12 +123,12 @@ __p_shm_create_handle (PShm	*shm,
 		return FALSE;
 	}
 
-	if (close (fd) == -1)
+	if (P_UNLIKELY (close (fd) == -1))
 		P_WARNING ("PShm: failed to close file descriptor");
 
-	if ((shm->sem = p_semaphore_new (shm->platform_key, 1,
-					 is_exists ? P_SEM_ACCESS_OPEN : P_SEM_ACCESS_CREATE,
-					 error)) == NULL) {
+	if (P_UNLIKELY ((shm->sem = p_semaphore_new (shm->platform_key, 1,
+						     is_exists ? P_SEM_ACCESS_OPEN : P_SEM_ACCESS_CREATE,
+						     error)) == NULL)) {
 		__p_shm_clean_handle (shm);
 		return FALSE;
 	}
@@ -139,21 +139,20 @@ __p_shm_create_handle (PShm	*shm,
 static void
 __p_shm_clean_handle (PShm *shm)
 {
-	if (shm->addr != NULL && munmap (shm->addr, shm->size) == -1)
+	if (P_UNLIKELY (shm->addr != NULL && munmap (shm->addr, shm->size) == -1))
 		P_ERROR ("PShm: failed to unmap shared memory with munmap()");
 
-	if (shm->shm_created && shm_unlink (shm->platform_key) == -1)
+	if (shm->shm_created == TRUE && shm_unlink (shm->platform_key) == -1)
 		P_ERROR ("PShm: failed to unlink shared memory with shm_unlink()");
 
-	shm->shm_created = FALSE;
-
-	if (shm->sem) {
+	if (P_LIKELY (shm->sem != NULL)) {
 		p_semaphore_free (shm->sem);
-		shm->sem = NULL;
+		shm->sem         = NULL;
 	}
 
-	shm->addr = NULL;
-	shm->size = 0;
+	shm->shm_created = FALSE;
+	shm->addr        = NULL;
+	shm->size        = 0;
 }
 
 P_LIB_API PShm *
@@ -162,10 +161,10 @@ p_shm_new (const pchar		*name,
 	   PShmAccessPerms	perms,
 	   PError		**error)
 {
-	PShm *ret;
-	pchar *new_name;
+	PShm	*ret;
+	pchar	*new_name;
 
-	if (name == NULL) {
+	if (P_UNLIKELY (name == NULL)) {
 		p_error_set_error_p (error,
 				     (pint) P_ERROR_IPC_INVALID_ARGUMENT,
 				     0,
@@ -173,7 +172,7 @@ p_shm_new (const pchar		*name,
 		return NULL;
 	}
 
-	if ((ret = p_malloc0 (sizeof (PShm))) == NULL) {
+	if (P_UNLIKELY ((ret = p_malloc0 (sizeof (PShm))) == NULL)) {
 		p_error_set_error_p (error,
 				     (pint) P_ERROR_IPC_NO_RESOURCES,
 				     0,
@@ -181,7 +180,7 @@ p_shm_new (const pchar		*name,
 		return NULL;
 	}
 
-	if ((new_name = p_malloc0 (strlen (name) + strlen (P_SHM_SUFFIX) + 1)) == NULL) {
+	if (P_UNLIKELY ((new_name = p_malloc0 (strlen (name) + strlen (P_SHM_SUFFIX) + 1)) == NULL)) {
 		p_error_set_error_p (error,
 				     (pint) P_ERROR_IPC_NO_RESOURCES,
 				     0,
@@ -200,16 +199,16 @@ p_shm_new (const pchar		*name,
 	ret->platform_key = __p_ipc_get_platform_key (new_name, TRUE);
 #endif
 	ret->perms = perms;
-	ret->size = size;
+	ret->size  = size;
 
 	p_free (new_name);
 
-	if (!__p_shm_create_handle (ret, error)) {
+	if (P_UNLIKELY (__p_shm_create_handle (ret, error) == FALSE)) {
 		p_shm_free (ret);
 		return NULL;
 	}
 
-	if (ret->size > size && size != 0)
+	if (P_LIKELY (ret->size > size && size != 0))
 		ret->size = size;
 
 	return ret;
@@ -218,7 +217,7 @@ p_shm_new (const pchar		*name,
 P_LIB_API void
 p_shm_take_ownership (PShm *shm)
 {
-	if (shm == NULL)
+	if (P_UNLIKELY (shm == NULL))
 		return;
 
 	shm->shm_created = TRUE;
@@ -228,12 +227,12 @@ p_shm_take_ownership (PShm *shm)
 P_LIB_API void
 p_shm_free (PShm *shm)
 {
-	if (shm == NULL)
+	if (P_UNLIKELY (shm == NULL))
 		return;
 
 	__p_shm_clean_handle (shm);
 
-	if (shm->platform_key)
+	if (P_LIKELY (shm->platform_key != NULL))
 		p_free (shm->platform_key);
 
 	p_free (shm);
@@ -243,7 +242,7 @@ P_LIB_API pboolean
 p_shm_lock (PShm	*shm,
 	    PError	**error)
 {
-	if (shm == NULL) {
+	if (P_UNLIKELY (shm == NULL)) {
 		p_error_set_error_p (error,
 				     (pint) P_ERROR_IPC_INVALID_ARGUMENT,
 				     0,
@@ -258,7 +257,7 @@ P_LIB_API pboolean
 p_shm_unlock (PShm	*shm,
 	      PError	**error)
 {
-	if (shm == NULL) {
+	if (P_UNLIKELY (shm == NULL)) {
 		p_error_set_error_p (error,
 				     (pint) P_ERROR_IPC_INVALID_ARGUMENT,
 				     0,
@@ -272,7 +271,7 @@ p_shm_unlock (PShm	*shm,
 P_LIB_API ppointer
 p_shm_get_address (const PShm *shm)
 {
-	if (shm == NULL)
+	if (P_UNLIKELY (shm == NULL))
 		return NULL;
 
 	return shm->addr;
@@ -281,7 +280,7 @@ p_shm_get_address (const PShm *shm)
 P_LIB_API psize
 p_shm_get_size (const PShm *shm)
 {
-	if (shm == NULL)
+	if (P_UNLIKELY (shm == NULL))
 		return 0;
 
 	return shm->size;

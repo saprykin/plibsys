@@ -31,9 +31,9 @@
 #include <sys/ipc.h>
 
 #define P_SHM_SUFFIX		"_p_shm_object"
+#define P_SHM_INVALID_HDL	-1
 
 typedef pint pshm_hdl;
-#define P_SHM_INVALID_HDL	-1
 
 struct _PShm {
 	pboolean	file_created;
@@ -57,7 +57,7 @@ __p_shm_create_handle (PShm	*shm,
 	pint		flags, built;
 	struct shmid_ds	shm_stat;
 
-	if (shm == NULL || shm->platform_key == NULL) {
+	if (P_UNLIKELY (shm == NULL || shm->platform_key == NULL)) {
 		p_error_set_error_p (error,
 				     (pint) P_ERROR_IPC_INVALID_ARGUMENT,
 				     0,
@@ -67,7 +67,7 @@ __p_shm_create_handle (PShm	*shm,
 
 	is_exists = FALSE;
 
-	if ((built = __p_ipc_unix_create_key_file (shm->platform_key)) == -1) {
+	if (P_UNLIKELY ((built = __p_ipc_unix_create_key_file (shm->platform_key)) == -1)) {
 		p_error_set_error_p (error,
 				     (pint) __p_error_get_last_ipc (),
 				     __p_error_get_last_error (),
@@ -77,7 +77,7 @@ __p_shm_create_handle (PShm	*shm,
 	} else if (built == 0)
 		shm->file_created = TRUE;
 
-	if ((shm->unix_key = __p_ipc_unix_get_ftok_key (shm->platform_key)) == -1) {
+	if (P_UNLIKELY ((shm->unix_key = __p_ipc_unix_get_ftok_key (shm->platform_key)) == -1)) {
 		p_error_set_error_p (error,
 				     (pint) __p_error_get_last_ipc (),
 				     __p_error_get_last_error (),
@@ -97,7 +97,7 @@ __p_shm_create_handle (PShm	*shm,
 	} else
 		shm->file_created = (built == 1);
 
-	if (shm->shm_hdl == P_SHM_INVALID_HDL) {
+	if (P_UNLIKELY (shm->shm_hdl == P_SHM_INVALID_HDL)) {
 		p_error_set_error_p (error,
 				     (pint) __p_error_get_last_ipc (),
 				     __p_error_get_last_error (),
@@ -106,7 +106,7 @@ __p_shm_create_handle (PShm	*shm,
 		return FALSE;
 	}
 
-	if (shmctl (shm->shm_hdl, IPC_STAT, &shm_stat) == -1) {
+	if (P_UNLIKELY (shmctl (shm->shm_hdl, IPC_STAT, &shm_stat) == -1)) {
 		p_error_set_error_p (error,
 				     (pint) __p_error_get_last_ipc (),
 				     __p_error_get_last_error (),
@@ -119,7 +119,7 @@ __p_shm_create_handle (PShm	*shm,
 
 	flags = (shm->perms == P_SHM_ACCESS_READONLY) ? SHM_RDONLY : 0;
 
-	if ((shm->addr = shmat (shm->shm_hdl, 0, flags)) == (void *) -1) {
+	if (P_UNLIKELY ((shm->addr = shmat (shm->shm_hdl, 0, flags)) == (void *) -1)) {
 		p_error_set_error_p (error,
 				     (pint) __p_error_get_last_ipc (),
 				     __p_error_get_last_error (),
@@ -128,9 +128,9 @@ __p_shm_create_handle (PShm	*shm,
 		return FALSE;
 	}
 
-	if ((shm->sem = p_semaphore_new (shm->platform_key, 1,
-					 is_exists ? P_SEM_ACCESS_OPEN : P_SEM_ACCESS_CREATE,
-					 error)) == NULL) {
+	if (P_UNLIKELY ((shm->sem = p_semaphore_new (shm->platform_key, 1,
+						     is_exists ? P_SEM_ACCESS_OPEN : P_SEM_ACCESS_CREATE,
+						     error)) == NULL)) {
 		__p_shm_clean_handle (shm);
 		return FALSE;
 	}
@@ -143,31 +143,30 @@ __p_shm_clean_handle (PShm *shm)
 {
 	struct shmid_ds shm_stat;
 
-	if (shm->addr != NULL) {
-		if (shmdt (shm->addr) == -1)
+	if (P_LIKELY (shm->addr != NULL)) {
+		if (P_UNLIKELY (shmdt (shm->addr) == -1))
 			P_ERROR ("PShm: shmdt() failed");
 
-		if (shmctl (shm->shm_hdl, IPC_STAT, &shm_stat) == -1)
+		if (P_UNLIKELY (shmctl (shm->shm_hdl, IPC_STAT, &shm_stat) == -1))
 			P_ERROR ("PShm: failed to call shmctl() with IPC_STAT");
 
-		if (shm_stat.shm_nattch == 0 && shmctl (shm->shm_hdl, IPC_RMID, 0) == -1)
+		if (P_UNLIKELY (shm_stat.shm_nattch == 0 && shmctl (shm->shm_hdl, IPC_RMID, 0) == -1))
 			P_ERROR ("PShm: failed to call shmctl() with IPC_RMID");
 	}
 
-	if (shm->file_created && unlink (shm->platform_key) == -1)
+	if (shm->file_created == TRUE && unlink (shm->platform_key) == -1)
 		P_ERROR ("PShm: failed to remove key file with unlink()");
 
-	shm->file_created = FALSE;
-	shm->unix_key = -1;
-
-	if (shm->sem) {
+	if (P_LIKELY (shm->sem != NULL)) {
 		p_semaphore_free (shm->sem);
 		shm->sem = NULL;
 	}
 
-	shm->shm_hdl = P_SHM_INVALID_HDL;
-	shm->addr = NULL;
-	shm->size = 0;
+	shm->file_created = FALSE;
+	shm->unix_key     = -1;
+	shm->shm_hdl      = P_SHM_INVALID_HDL;
+	shm->addr         = NULL;
+	shm->size         = 0;
 }
 
 P_LIB_API PShm *
@@ -179,7 +178,7 @@ p_shm_new (const pchar		*name,
 	PShm	*ret;
 	pchar	*new_name;
 
-	if (name == NULL) {
+	if (P_UNLIKELY (name == NULL)) {
 		p_error_set_error_p (error,
 				     (pint) P_ERROR_IPC_INVALID_ARGUMENT,
 				     0,
@@ -187,7 +186,7 @@ p_shm_new (const pchar		*name,
 		return NULL;
 	}
 
-	if ((ret = p_malloc0 (sizeof (PShm))) == NULL) {
+	if (P_UNLIKELY ((ret = p_malloc0 (sizeof (PShm))) == NULL)) {
 		p_error_set_error_p (error,
 				     (pint) P_ERROR_IPC_NO_RESOURCES,
 				     0,
@@ -195,7 +194,7 @@ p_shm_new (const pchar		*name,
 		return NULL;
 	}
 
-	if ((new_name = p_malloc0 (strlen (name) + strlen (P_SHM_SUFFIX) + 1)) == NULL) {
+	if (P_UNLIKELY ((new_name = p_malloc0 (strlen (name) + strlen (P_SHM_SUFFIX) + 1)) == NULL)) {
 		p_error_set_error_p (error,
 				     (pint) P_ERROR_IPC_NO_RESOURCES,
 				     0,
@@ -208,17 +207,17 @@ p_shm_new (const pchar		*name,
 	strcat (new_name, P_SHM_SUFFIX);
 
 	ret->platform_key = __p_ipc_get_platform_key (new_name, FALSE);
-	ret->perms = perms;
-	ret->size = size;
+	ret->perms        = perms;
+	ret->size         = size;
 
 	p_free (new_name);
 
-	if (!__p_shm_create_handle (ret, error)) {
+	if (P_UNLIKELY (__p_shm_create_handle (ret, error) == FALSE)) {
 		p_shm_free (ret);
 		return NULL;
 	}
 
-	if (ret->size > size && size != 0)
+	if (P_LIKELY (ret->size > size && size != 0))
 		ret->size = size;
 
 	return ret;
@@ -227,7 +226,7 @@ p_shm_new (const pchar		*name,
 P_LIB_API void
 p_shm_take_ownership (PShm *shm)
 {
-	if (shm == NULL)
+	if (P_UNLIKELY (shm == NULL))
 		return;
 
 	shm->file_created = TRUE;
@@ -237,12 +236,12 @@ p_shm_take_ownership (PShm *shm)
 P_LIB_API void
 p_shm_free (PShm *shm)
 {
-	if (shm == NULL)
+	if (P_UNLIKELY (shm == NULL))
 		return;
 
 	__p_shm_clean_handle (shm);
 
-	if (shm->platform_key)
+	if (P_LIKELY (shm->platform_key != NULL))
 		p_free (shm->platform_key);
 
 	p_free (shm);
@@ -252,7 +251,7 @@ P_LIB_API pboolean
 p_shm_lock (PShm	*shm,
 	    PError	**error)
 {
-	if (shm == NULL) {
+	if (P_UNLIKELY (shm == NULL)) {
 		p_error_set_error_p (error,
 				     (pint) P_ERROR_IPC_INVALID_ARGUMENT,
 				     0,
@@ -267,7 +266,7 @@ P_LIB_API pboolean
 p_shm_unlock (PShm	*shm,
 	      PError	**error)
 {
-	if (shm == NULL) {
+	if (P_UNLIKELY (shm == NULL)) {
 		p_error_set_error_p (error,
 				     (pint) P_ERROR_IPC_INVALID_ARGUMENT,
 				     0,
@@ -281,7 +280,7 @@ p_shm_unlock (PShm	*shm,
 P_LIB_API ppointer
 p_shm_get_address (const PShm *shm)
 {
-	if (shm == NULL)
+	if (P_UNLIKELY (shm == NULL))
 		return NULL;
 
 	return shm->addr;
@@ -290,7 +289,7 @@ p_shm_get_address (const PShm *shm)
 P_LIB_API psize
 p_shm_get_size (const PShm *shm)
 {
-	if (shm == NULL)
+	if (P_UNLIKELY (shm == NULL))
 		return 0;
 
 	return shm->size;
