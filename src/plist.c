@@ -25,7 +25,7 @@ p_list_append (PList *list, ppointer data)
 {
 	PList *item, *cur;
 
-	if ((item = p_malloc0 (sizeof (PList))) == NULL) {
+	if (P_UNLIKELY ((item = p_malloc0 (sizeof (PList))) == NULL)) {
 		P_ERROR ("PList: failed to allocate memory");
 		return list;
 	}
@@ -33,7 +33,7 @@ p_list_append (PList *list, ppointer data)
 	item->data = data;
 
 	/* List is empty */
-	if (list == NULL)
+	if (P_UNLIKELY (list == NULL))
 		return item;
 
 	for (cur = list; cur->next != NULL; cur = cur->next)
@@ -48,7 +48,7 @@ p_list_remove (PList *list, ppointer data)
 {
 	PList *cur, *prev, *head;
 
-	if (list == NULL)
+	if (P_UNLIKELY (list == NULL))
 		return NULL;
 
 	for (head = list, prev = NULL, cur = list; cur != NULL;  prev = cur, cur = cur->next) {
@@ -72,7 +72,7 @@ p_list_foreach (PList *list, PFunc func, ppointer user_data)
 {
 	PList *cur;
 
-	if (list == NULL || func == NULL)
+	if (P_UNLIKELY (list == NULL || func == NULL))
 		return;
 
 	for (cur = list; cur != NULL; cur = cur->next)
@@ -84,7 +84,7 @@ p_list_free (PList *list)
 {
 	PList *cur, *next;
 
-	if (list == NULL)
+	if (P_UNLIKELY (list == NULL))
 		return;
 
 	for (next = cur = list; cur != NULL && next != NULL; cur = next)  {
@@ -98,7 +98,7 @@ p_list_last (PList *list)
 {
 	PList *cur;
 
-	if (!list)
+	if (P_UNLIKELY (list == NULL))
 		return NULL;
 
 	for (cur = list; cur->next != NULL; cur = cur->next)
@@ -113,7 +113,7 @@ p_list_length (const PList *list)
 	const PList	*cur;
 	psize		ret;
 
-	if (!list)
+	if (P_UNLIKELY (list == NULL))
 		return 0;
 
 	for (cur = list, ret = 1; cur->next != NULL; cur = cur->next, ++ret)
@@ -127,7 +127,7 @@ p_list_prepend	(PList *list, ppointer data)
 {
 	PList *item;
 
-	if ((item = p_malloc0 (sizeof (PList))) == NULL) {
+	if (P_UNLIKELY ((item = p_malloc0 (sizeof (PList))) == NULL)) {
 		P_ERROR ("PList: failed to allocate memory");
 		return list;
 	}
@@ -135,7 +135,7 @@ p_list_prepend	(PList *list, ppointer data)
 	item->data = data;
 
 	/* List is empty */
-	if (list == NULL)
+	if (P_UNLIKELY (list == NULL))
 		return item;
 
 	item->next = list;
@@ -148,7 +148,7 @@ p_list_reverse	(PList *list)
 {
 	PList *prev, *cur, *tmp;
 
-	if (list == NULL)
+	if (P_UNLIKELY (list == NULL))
 		return NULL;
 
 	prev	   = list;
