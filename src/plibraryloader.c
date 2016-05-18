@@ -43,10 +43,10 @@ static void
 __p_library_loader_clean_handle (plibrary_handle handle)
 {
 #ifdef P_OS_WIN
-	if (!FreeLibrary (handle))
+	if (P_UNLIKELY (!FreeLibrary (handle)))
 		P_ERROR ("PLibraryLoader: failed to call FreeLibrary()");
 #else
-	if (dlclose (handle) != 0)
+	if (P_UNLIKELY (dlclose (handle) != 0))
 		P_ERROR ("PLibraryLoader: failed to call dlclose()");
 #endif
 }
@@ -63,18 +63,18 @@ p_library_loader_new (const pchar *path)
 		return NULL;
 
 #ifdef P_OS_WIN
-	if ((handle = LoadLibraryA (path)) == NULL) {
+	if (P_UNLIKELY ((handle = LoadLibraryA (path)) == NULL)) {
 		P_ERROR ("PLibraryLoader: failed to call LoadLibraryA()");
 		return NULL;
 	}
 #else
-	if ((handle = dlopen (path, RTLD_NOW)) == NULL) {
+	if (P_UNLIKELY ((handle = dlopen (path, RTLD_NOW)) == NULL)) {
 		P_ERROR ("PLibraryLoader: failed to call dlopen()");
 		return NULL;
 	}
 #endif
 
-	if ((loader = p_malloc0 (sizeof (PLibraryLoader))) == NULL) {
+	if (P_UNLIKELY ((loader = p_malloc0 (sizeof (PLibraryLoader))) == NULL)) {
 		P_ERROR ("PLibraryLoader: failed to allocate memory");
 		__p_library_loader_clean_handle (handle);
 		return NULL;
@@ -90,7 +90,7 @@ p_library_loader_get_symbol (PLibraryLoader *loader, const pchar *sym)
 {
 	PFuncAddr ret_sym = NULL;
 
-	if (loader == NULL || sym == NULL || loader->handle == NULL)
+	if (P_UNLIKELY (loader == NULL || sym == NULL || loader->handle == NULL))
 		return NULL;
 
 #ifdef P_OS_WIN
@@ -105,7 +105,7 @@ p_library_loader_get_symbol (PLibraryLoader *loader, const pchar *sym)
 P_LIB_API void
 p_library_loader_free (PLibraryLoader *loader)
 {
-	if (loader == NULL)
+	if (P_UNLIKELY (loader == NULL))
 		return;
 
 	__p_library_loader_clean_handle (loader->handle);
@@ -127,15 +127,15 @@ p_library_loader_get_last_error (void)
 	if (err_code == 0)
 		return NULL;
 
-	if (FormatMessageA (FORMAT_MESSAGE_ALLOCATE_BUFFER |
-			    FORMAT_MESSAGE_FROM_SYSTEM |
-			    FORMAT_MESSAGE_IGNORE_INSERTS,
-			    NULL,
-			    err_code,
-			    MAKELANGID (LANG_NEUTRAL, SUBLANG_DEFAULT),
-			    (LPSTR) &msg_buf,
-			    0,
-			    NULL) != 0) {
+	if (P_LIKELY (FormatMessageA (FORMAT_MESSAGE_ALLOCATE_BUFFER |
+				      FORMAT_MESSAGE_FROM_SYSTEM |
+				      FORMAT_MESSAGE_IGNORE_INSERTS,
+				      NULL,
+				      err_code,
+				      MAKELANGID (LANG_NEUTRAL, SUBLANG_DEFAULT),
+				      (LPSTR) &msg_buf,
+				      0,
+				      NULL) != 0)) {
 		res = p_strdup ((pchar *) msg_buf);
 		LocalFree (msg_buf);
 	}
