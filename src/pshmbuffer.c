@@ -81,7 +81,7 @@ p_shm_buffer_new (const pchar	*name,
 	PShmBuffer	*ret;
 	PShm		*shm;
 
-	if (name == NULL) {
+	if (P_UNLIKELY (name == NULL)) {
 		p_error_set_error_p (error,
 				     (pint) P_ERROR_IPC_INVALID_ARGUMENT,
 				     0,
@@ -89,13 +89,13 @@ p_shm_buffer_new (const pchar	*name,
 		return NULL;
 	}
 
-	if ((shm = p_shm_new (name,
-			      (size != 0) ? size + SHM_BUFFER_DATA_OFFSET + 1 : 0,
-			      P_SHM_ACCESS_READWRITE,
-			      error)) == NULL)
+	if (P_UNLIKELY ((shm = p_shm_new (name,
+					  (size != 0) ? size + SHM_BUFFER_DATA_OFFSET + 1 : 0,
+					  P_SHM_ACCESS_READWRITE,
+					  error)) == NULL))
 		return NULL;
 
-	if (p_shm_get_size (shm) <= SHM_BUFFER_DATA_OFFSET + 1) {
+	if (P_UNLIKELY (p_shm_get_size (shm) <= SHM_BUFFER_DATA_OFFSET + 1)) {
 		p_error_set_error_p (error,
 				     (pint) P_ERROR_IPC_INVALID_ARGUMENT,
 				     0,
@@ -104,7 +104,7 @@ p_shm_buffer_new (const pchar	*name,
 		return NULL;
 	}
 
-	if ((ret = p_malloc0 (sizeof (PShmBuffer))) == NULL) {
+	if (P_UNLIKELY ((ret = p_malloc0 (sizeof (PShmBuffer))) == NULL)) {
 		p_error_set_error_p (error,
 				     (pint) P_ERROR_IPC_NO_RESOURCES,
 				     0,
@@ -113,7 +113,7 @@ p_shm_buffer_new (const pchar	*name,
 		return NULL;
 	}
 
-	ret->shm = shm;
+	ret->shm  = shm;
 	ret->size = p_shm_get_size (shm) - SHM_BUFFER_DATA_OFFSET;
 
 	return ret;
@@ -122,7 +122,7 @@ p_shm_buffer_new (const pchar	*name,
 P_LIB_API void
 p_shm_buffer_free (PShmBuffer *buf)
 {
-	if (buf == NULL)
+	if (P_UNLIKELY (buf == NULL))
 		return;
 
 	p_shm_free (buf->shm);
@@ -132,7 +132,7 @@ p_shm_buffer_free (PShmBuffer *buf)
 P_LIB_API void
 p_shm_buffer_take_ownership (PShmBuffer *buf)
 {
-	if (buf == NULL)
+	if (P_UNLIKELY (buf == NULL))
 		return;
 
 	p_shm_take_ownership (buf->shm);
@@ -149,7 +149,7 @@ p_shm_buffer_read (PShmBuffer	*buf,
 	puint		i;
 	ppointer	addr;
 
-	if (buf == NULL || storage == NULL || len == 0) {
+	if (P_UNLIKELY (buf == NULL || storage == NULL || len == 0)) {
 		p_error_set_error_p (error,
 				     (pint) P_ERROR_IPC_INVALID_ARGUMENT,
 				     0,
@@ -157,7 +157,7 @@ p_shm_buffer_read (PShmBuffer	*buf,
 		return -1;
 	}
 
-	if ((addr = p_shm_get_address (buf->shm)) == NULL) {
+	if (P_UNLIKELY ((addr = p_shm_get_address (buf->shm)) == NULL)) {
 		p_error_set_error_p (error,
 				     (pint) P_ERROR_IPC_INVALID_ARGUMENT,
 				     0,
@@ -165,21 +165,21 @@ p_shm_buffer_read (PShmBuffer	*buf,
 		return -1;
 	}
 
-	if (!p_shm_lock (buf->shm, error))
+	if (P_UNLIKELY (p_shm_lock (buf->shm, error) == FALSE))
 		return -1;
 
 	memcpy (&read_pos, (pchar *) addr + SHM_BUFFER_READ_OFFSET, sizeof (read_pos));
 	memcpy (&write_pos, (pchar *) addr + SHM_BUFFER_WRITE_OFFSET, sizeof (write_pos));
 
 	if (read_pos == write_pos) {
-		if (!p_shm_unlock (buf->shm, error))
+		if (P_UNLIKELY (p_shm_unlock (buf->shm, error) == FALSE))
 			return -1;
 
 		return 0;
 	}
 
 	data_aval = __p_shm_buffer_get_used_space (buf);
-	to_copy = (data_aval <= len) ? data_aval : len;
+	to_copy   = (data_aval <= len) ? data_aval : len;
 
 	for (i = 0; i < to_copy; ++i)
 		memcpy ((pchar *) storage + i, (pchar *) addr + SHM_BUFFER_DATA_OFFSET + ((read_pos + i) % buf->size), 1);
@@ -187,7 +187,7 @@ p_shm_buffer_read (PShmBuffer	*buf,
 	read_pos = (read_pos + to_copy) % buf->size;
 	memcpy ((pchar *) addr + SHM_BUFFER_READ_OFFSET, &read_pos, sizeof (read_pos));
 
-	if (!p_shm_unlock (buf->shm, error))
+	if (P_UNLIKELY (p_shm_unlock (buf->shm, error) == FALSE))
 		return -1;
 
 	return (pint) to_copy;
@@ -203,7 +203,7 @@ p_shm_buffer_write (PShmBuffer	*buf,
 	puint		i;
 	ppointer	addr;
 
-	if (buf == NULL || data == NULL || len == 0) {
+	if (P_UNLIKELY (buf == NULL || data == NULL || len == 0)) {
 		p_error_set_error_p (error,
 				     (pint) P_ERROR_IPC_INVALID_ARGUMENT,
 				     0,
@@ -211,7 +211,7 @@ p_shm_buffer_write (PShmBuffer	*buf,
 		return -1;
 	}
 
-	if ((addr = p_shm_get_address (buf->shm)) == NULL) {
+	if (P_UNLIKELY ((addr = p_shm_get_address (buf->shm)) == NULL)) {
 		p_error_set_error_p (error,
 				     (pint) P_ERROR_IPC_INVALID_ARGUMENT,
 				     0,
@@ -219,14 +219,14 @@ p_shm_buffer_write (PShmBuffer	*buf,
 		return -1;
 	}
 
-	if (!p_shm_lock (buf->shm, error))
+	if (P_UNLIKELY (p_shm_lock (buf->shm, error) == FALSE))
 		return -1;
 
 	memcpy (&read_pos, (pchar *) addr + SHM_BUFFER_READ_OFFSET, sizeof (read_pos));
 	memcpy (&write_pos, (pchar *) addr + SHM_BUFFER_WRITE_OFFSET, sizeof (write_pos));
 
 	if (__p_shm_buffer_get_free_space (buf) < len) {
-		if (!p_shm_unlock (buf->shm, error))
+		if (P_UNLIKELY (p_shm_unlock (buf->shm, error) == FALSE))
 			return -1;
 
 		return 0;
@@ -238,7 +238,7 @@ p_shm_buffer_write (PShmBuffer	*buf,
 	write_pos = (write_pos + len) % buf->size;
 	memcpy ((pchar *) addr + SHM_BUFFER_WRITE_OFFSET, &write_pos, sizeof (write_pos));
 
-	if (!p_shm_unlock (buf->shm, error))
+	if (P_UNLIKELY (p_shm_unlock (buf->shm, error) == FALSE))
 		return -1;
 
 	return len;
@@ -250,7 +250,7 @@ p_shm_buffer_get_free_space (PShmBuffer	*buf,
 {
 	psize space;
 
-	if (buf == NULL) {
+	if (P_UNLIKELY (buf == NULL)) {
 		p_error_set_error_p (error,
 				     (pint) P_ERROR_IPC_INVALID_ARGUMENT,
 				     0,
@@ -258,12 +258,12 @@ p_shm_buffer_get_free_space (PShmBuffer	*buf,
 		return -1;
 	}
 
-	if (!p_shm_lock (buf->shm, error))
+	if (P_UNLIKELY (p_shm_lock (buf->shm, error) == FALSE))
 		return -1;
 
 	space = __p_shm_buffer_get_free_space (buf);
 
-	if (!p_shm_unlock (buf->shm, error))
+	if (P_UNLIKELY (p_shm_unlock (buf->shm, error) == FALSE))
 		return -1;
 
 	return (pssize) space;
@@ -275,7 +275,7 @@ p_shm_buffer_get_used_space (PShmBuffer	*buf,
 {
 	psize space;
 
-	if (buf == NULL) {
+	if (P_UNLIKELY (buf == NULL)) {
 		p_error_set_error_p (error,
 				     (pint) P_ERROR_IPC_INVALID_ARGUMENT,
 				     0,
@@ -283,12 +283,12 @@ p_shm_buffer_get_used_space (PShmBuffer	*buf,
 		return -1;
 	}
 
-	if (!p_shm_lock (buf->shm, error))
+	if (P_UNLIKELY (p_shm_lock (buf->shm, error) == FALSE))
 		return -1;
 
 	space = __p_shm_buffer_get_used_space (buf);
 
-	if (!p_shm_unlock (buf->shm, error))
+	if (P_UNLIKELY (p_shm_unlock (buf->shm, error) == FALSE))
 		return -1;
 
 	return (pssize) space;
@@ -300,23 +300,23 @@ p_shm_buffer_clear (PShmBuffer *buf)
 	ppointer	addr;
 	psize		size;
 
-	if (buf == NULL)
+	if (P_UNLIKELY (buf == NULL))
 		return;
 
-	if ((addr = p_shm_get_address (buf->shm)) == NULL) {
+	if (P_UNLIKELY ((addr = p_shm_get_address (buf->shm)) == NULL)) {
 		P_ERROR ("PShmBuffer: failed to get memory address");
 		return;
 	}
 
 	size = p_shm_get_size (buf->shm);
 
-	if (!p_shm_lock (buf->shm, NULL)) {
+	if (P_UNLIKELY (p_shm_lock (buf->shm, NULL) == FALSE)) {
 		P_ERROR ("PShmBuffer: failed to lock memory for clearance");
 		return;
 	}
 
 	memset (addr, 0, size);
 
-	if (!p_shm_unlock (buf->shm, NULL))
+	if (P_UNLIKELY (p_shm_unlock (buf->shm, NULL) == FALSE))
 		P_ERROR ("PShmBuffer: failed to unlock memory after clearance");
 }
