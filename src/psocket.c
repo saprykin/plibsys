@@ -26,11 +26,11 @@
 #include <string.h>
 
 #ifndef P_OS_WIN
-#include <fcntl.h>
-#include <errno.h>
-#include <unistd.h>
-#include <signal.h>
-#include <sys/poll.h>
+#  include <fcntl.h>
+#  include <errno.h>
+#  include <unistd.h>
+#  include <signal.h>
+#  include <sys/poll.h>
 #endif
 
 /* On old Solaris systems SOMAXCONN is set to 5 */
@@ -97,18 +97,18 @@ __p_socket_set_fd_blocking (pint	fd,
 #endif
 
 #ifndef P_OS_WIN
-	if ((arg = fcntl (fd, F_GETFL, NULL)) < 0) {
+	if (P_UNLIKELY ((arg = fcntl (fd, F_GETFL, NULL)) < 0)) {
 		P_WARNING ("PSocket: error getting socket flags");
 		arg = 0;
 	}
 
 	arg = (!blocking) ? (arg | O_NONBLOCK) : (arg & ~O_NONBLOCK);
 
-	if (fcntl (fd, F_SETFL, arg) < 0) {
+	if (P_UNLIKELY (fcntl (fd, F_SETFL, arg) < 0)) {
 #else
 	arg = !blocking;
 
-	if (ioctlsocket (fd, FIONBIO, &arg) == SOCKET_ERROR) {
+	if (P_UNLIKELY (ioctlsocket (fd, FIONBIO, &arg) == SOCKET_ERROR)) {
 #endif
 		p_error_set_error_p (error,
 				     (pint) __p_error_get_io_from_system (__p_socket_get_errno ()),
@@ -124,7 +124,7 @@ static pboolean
 __p_socket_check (const PSocket *socket,
 		  PError	**error)
 {
-	if (socket->closed)  {
+	if (P_UNLIKELY (socket->closed))  {
 		p_error_set_error_p (error,
 				     (pint) P_ERROR_IO_NOT_AVAILABLE,
 				     0,
@@ -155,7 +155,7 @@ __p_socket_set_details_from_fd (PSocket	*socket,
 	fd = socket->fd;
 	optlen = sizeof (value);
 
-	if (getsockopt (fd, SOL_SOCKET, SO_TYPE, (ppointer) &value, &optlen) != 0) {
+	if (P_UNLIKELY (getsockopt (fd, SOL_SOCKET, SO_TYPE, (ppointer) &value, &optlen) != 0)) {
 		p_error_set_error_p (error,
 				     (pint) __p_error_get_io_from_system (__p_socket_get_errno ()),
 				     (pint) __p_socket_get_errno (),
@@ -163,7 +163,7 @@ __p_socket_set_details_from_fd (PSocket	*socket,
 		return FALSE;
 	}
 
-	if (optlen != sizeof (value)) {
+	if (P_UNLIKELY (optlen != sizeof (value))) {
 		p_error_set_error_p (error,
 				     (pint) P_ERROR_IO_INVALID_ARGUMENT,
 				     0,
@@ -191,7 +191,7 @@ __p_socket_set_details_from_fd (PSocket	*socket,
 
 	addrlen = sizeof (address);
 
-	if (getsockname (fd, (struct sockaddr *) &address, &addrlen) != 0) {
+	if (P_UNLIKELY (getsockname (fd, (struct sockaddr *) &address, &addrlen) != 0)) {
 		p_error_set_error_p (error,
 				     (pint) __p_error_get_io_from_system (__p_socket_get_errno ()),
 				     (pint) __p_socket_get_errno (),
@@ -203,7 +203,7 @@ __p_socket_set_details_from_fd (PSocket	*socket,
 	if (!(addrlen > 0)) {
 		optlen = sizeof (family);
 
-		if (getsockopt (socket->fd, SOL_SOCKET, SO_DOMAIN, (ppointer) &family, &optlen) != 0) {
+		if (P_UNLIKELY (getsockopt (socket->fd, SOL_SOCKET, SO_DOMAIN, (ppointer) &family, &optlen) != 0)) {
 			p_error_set_error_p (error,
 					     (pint) __p_error_get_io_from_system (__p_socket_get_errno ()),
 					     (pint) __p_socket_get_errno (),
@@ -247,7 +247,7 @@ __p_socket_set_details_from_fd (PSocket	*socket,
 		}
 	}
 
-	if (socket->family != P_SOCKET_FAMILY_UNKNOWN) {
+	if (P_LIKELY (socket->family != P_SOCKET_FAMILY_UNKNOWN)) {
 		addrlen = sizeof (address);
 
 		if (getpeername (fd, (struct sockaddr *) &address, &addrlen) >= 0)
@@ -281,10 +281,10 @@ __p_socket_init_once (void)
 
 	ver_req = MAKEWORD (2, 2);
 
-	if (WSAStartup (ver_req, &wsa_data) != 0)
+	if (P_UNLIKELY (WSAStartup (ver_req, &wsa_data) != 0))
 		return FALSE;
 
-	if (LOBYTE (wsa_data.wVersion) != 2 || HIBYTE (wsa_data.wVersion ) != 2 ) {
+	if (P_UNLIKELY (LOBYTE (wsa_data.wVersion) != 2 || HIBYTE (wsa_data.wVersion) != 2)) {
 		WSACleanup ();
 		return FALSE;
 	}
@@ -310,7 +310,7 @@ p_socket_new_from_fd (pint	fd,
 {
 	PSocket *ret;
 
-	if (fd < 0) {
+	if (P_UNLIKELY (fd < 0)) {
 		p_error_set_error_p (error,
 				     (pint) P_ERROR_IO_INVALID_ARGUMENT,
 				     0,
@@ -318,7 +318,7 @@ p_socket_new_from_fd (pint	fd,
 		return NULL;
 	}
 
-	if ((ret = p_malloc0 (sizeof (PSocket))) == NULL) {
+	if (P_UNLIKELY ((ret = p_malloc0 (sizeof (PSocket))) == NULL)) {
 		p_error_set_error_p (error,
 				     (pint) P_ERROR_IO_NO_RESOURCES,
 				     0,
@@ -328,12 +328,12 @@ p_socket_new_from_fd (pint	fd,
 
 	ret->fd = fd;
 
-	if (__p_socket_set_details_from_fd (ret, error) == FALSE) {
+	if (P_UNLIKELY (__p_socket_set_details_from_fd (ret, error) == FALSE)) {
 		p_free (ret);
 		return NULL;
 	}
 
-	if (__p_socket_set_fd_blocking (ret->fd, FALSE, error) == FALSE) {
+	if (P_UNLIKELY (__p_socket_set_fd_blocking (ret->fd, FALSE, error) == FALSE)) {
 		p_free (ret);
 		return NULL;
 	}
@@ -344,7 +344,7 @@ p_socket_new_from_fd (pint	fd,
 	ret->blocking = TRUE;
 
 #ifdef P_OS_WIN
-	if ((ret->events = WSACreateEvent ()) == WSA_INVALID_EVENT) {
+	if (P_UNLIKELY ((ret->events = WSACreateEvent ()) == WSA_INVALID_EVENT)) {
 		p_error_set_error_p (error,
 				     (pint) P_ERROR_IO_FAILED,
 				     (pint) __p_socket_get_errno (),
@@ -369,9 +369,9 @@ p_socket_new (PSocketFamily	family,
 	pint	flags;
 #endif
 
-	if (family   == P_SOCKET_FAMILY_UNKNOWN ||
-	    type     == P_SOCKET_TYPE_UNKNOWN   ||
-	    protocol == P_SOCKET_PROTOCOL_UNKNOWN) {
+	if (P_UNLIKELY (family   == P_SOCKET_FAMILY_UNKNOWN ||
+			type     == P_SOCKET_TYPE_UNKNOWN   ||
+			protocol == P_SOCKET_PROTOCOL_UNKNOWN)) {
 		p_error_set_error_p (error,
 				     (pint) P_ERROR_IO_INVALID_ARGUMENT,
 				     0,
@@ -403,7 +403,7 @@ p_socket_new (PSocketFamily	family,
 #ifdef SOCK_CLOEXEC
 	native_type |= SOCK_CLOEXEC;
 #endif
-	if ((fd = (pint) socket (family, native_type, protocol)) < 0) {
+	if (P_UNLIKELY ((fd = (pint) socket (family, native_type, protocol)) < 0)) {
 		p_error_set_error_p (error,
 				     (pint) __p_error_get_io_from_system (__p_socket_get_errno ()),
 				     (pint) __p_socket_get_errno (),
@@ -414,15 +414,15 @@ p_socket_new (PSocketFamily	family,
 #ifndef P_OS_WIN
 	flags = fcntl (fd, F_GETFD, 0);
 
-	if (flags != -1 && (flags & FD_CLOEXEC) == 0) {
+	if (P_LIKELY (flags != -1 && (flags & FD_CLOEXEC) == 0)) {
 		flags |= FD_CLOEXEC;
 
-		if (fcntl (fd, F_SETFD, flags) < 0)
+		if (P_UNLIKELY (fcntl (fd, F_SETFD, flags) < 0))
 			P_WARNING ("PSocket: Failed to set FD_CLOEXEC flag on socket descriptor");
 	}
 #endif
 
-	if ((ret = p_malloc0 (sizeof (PSocket))) == NULL) {
+	if (P_UNLIKELY ((ret = p_malloc0 (sizeof (PSocket))) == NULL)) {
 		p_error_set_error_p (error,
 				     (pint) P_ERROR_IO_NO_RESOURCES,
 				     0,
@@ -437,7 +437,7 @@ p_socket_new (PSocketFamily	family,
 
 	ret->fd = fd;
 
-	if (__p_socket_set_fd_blocking (ret->fd, FALSE, error) == FALSE) {
+	if (P_UNLIKELY (__p_socket_set_fd_blocking (ret->fd, FALSE, error) == FALSE)) {
 #ifndef P_OS_WIN
 		close (fd);
 #else
@@ -456,7 +456,7 @@ p_socket_new (PSocketFamily	family,
 	p_socket_set_listen_backlog (ret, P_SOCKET_DEFAULT_BACKLOG);
 
 #ifdef P_OS_WIN
-	if ((ret->events = WSACreateEvent ()) == WSA_INVALID_EVENT) {
+	if (P_UNLIKELY ((ret->events = WSACreateEvent ()) == WSA_INVALID_EVENT)) {
 		p_error_set_error_p (error,
 				     (pint) P_ERROR_IO_FAILED,
 				     (pint) __p_socket_get_errno (),
@@ -472,7 +472,7 @@ p_socket_new (PSocketFamily	family,
 P_LIB_API pint
 p_socket_get_fd (const PSocket *socket)
 {
-	if (!socket)
+	if (P_UNLIKELY (socket == NULL))
 		return -1;
 
 	return socket->fd;
@@ -481,7 +481,7 @@ p_socket_get_fd (const PSocket *socket)
 P_LIB_API PSocketFamily
 p_socket_get_family (const PSocket *socket)
 {
-	if (!socket)
+	if (P_UNLIKELY (socket == NULL))
 		return P_SOCKET_FAMILY_UNKNOWN;
 
 	return socket->family;
@@ -490,7 +490,7 @@ p_socket_get_family (const PSocket *socket)
 P_LIB_API PSocketType
 p_socket_get_type (const PSocket *socket)
 {
-	if (!socket)
+	if (P_UNLIKELY (socket == NULL))
 		return P_SOCKET_TYPE_UNKNOWN;
 
 	return socket->type;
@@ -499,7 +499,7 @@ p_socket_get_type (const PSocket *socket)
 P_LIB_API PSocketProtocol
 p_socket_get_protocol (const PSocket *socket)
 {
-	if (!socket)
+	if (P_UNLIKELY (socket == NULL))
 		return P_SOCKET_PROTOCOL_UNKNOWN;
 
 	return socket->protocol;
@@ -508,7 +508,7 @@ p_socket_get_protocol (const PSocket *socket)
 P_LIB_API pboolean
 p_socket_get_keepalive (const PSocket *socket)
 {
-	if (!socket)
+	if (P_UNLIKELY (socket == NULL))
 		return FALSE;
 
 	return socket->keepalive;
@@ -517,7 +517,7 @@ p_socket_get_keepalive (const PSocket *socket)
 P_LIB_API pboolean
 p_socket_get_blocking (PSocket *socket)
 {
-	if (!socket)
+	if (P_UNLIKELY (socket == NULL))
 		return FALSE;
 
 	return socket->blocking;
@@ -526,7 +526,7 @@ p_socket_get_blocking (PSocket *socket)
 P_LIB_API int
 p_socket_get_listen_backlog (const PSocket *socket)
 {
-	if (!socket)
+	if (P_UNLIKELY (socket == NULL))
 		return -1;
 
 	return socket->listen_backlog;
@@ -535,7 +535,7 @@ p_socket_get_listen_backlog (const PSocket *socket)
 P_LIB_API pint
 p_socket_get_timeout (const PSocket *socket)
 {
-	if (!socket)
+	if (P_UNLIKELY (socket == NULL))
 		return -1;
 
 	return socket->timeout;
@@ -549,7 +549,7 @@ p_socket_get_local_address (const PSocket	*socket,
 	socklen_t		len;
 	PSocketAddress		*ret;
 
-	if (!socket) {
+	if (P_UNLIKELY (socket == NULL)) {
 		p_error_set_error_p (error,
 				     (pint) P_ERROR_IO_INVALID_ARGUMENT,
 				     0,
@@ -559,7 +559,7 @@ p_socket_get_local_address (const PSocket	*socket,
 
 	len = sizeof (buffer);
 
-	if (getsockname (socket->fd, (struct sockaddr *) &buffer, &len) < 0) {
+	if (P_UNLIKELY (getsockname (socket->fd, (struct sockaddr *) &buffer, &len) < 0)) {
 		p_error_set_error_p (error,
 				     (pint) __p_error_get_io_from_system (__p_socket_get_errno ()),
 				     (pint) __p_socket_get_errno (),
@@ -569,7 +569,7 @@ p_socket_get_local_address (const PSocket	*socket,
 
 	ret = p_socket_address_new_from_native (&buffer, (psize) len);
 
-	if (ret == NULL)
+	if (P_UNLIKELY (ret == NULL))
 		p_error_set_error_p (error,
 				     (pint) P_ERROR_IO_FAILED,
 				     0,
@@ -586,7 +586,7 @@ p_socket_get_remote_address (const PSocket	*socket,
 	socklen_t 		len;
 	PSocketAddress		*ret;
 
-	if (!socket) {
+	if (P_UNLIKELY (socket == NULL)) {
 		p_error_set_error_p (error,
 				     (pint) P_ERROR_IO_INVALID_ARGUMENT,
 				     0,
@@ -596,7 +596,7 @@ p_socket_get_remote_address (const PSocket	*socket,
 
 	len = sizeof (buffer);
 
-	if (getpeername (socket->fd, (struct sockaddr *) &buffer, &len) < 0) {
+	if (P_UNLIKELY (getpeername (socket->fd, (struct sockaddr *) &buffer, &len) < 0)) {
 		p_error_set_error_p (error,
 				     (pint) __p_error_get_io_from_system (__p_socket_get_errno ()),
 				     (pint) __p_socket_get_errno (),
@@ -606,7 +606,7 @@ p_socket_get_remote_address (const PSocket	*socket,
 
 	ret = p_socket_address_new_from_native (&buffer, (psize) len);
 
-	if (ret == NULL)
+	if (P_UNLIKELY (ret == NULL))
 		p_error_set_error_p (error,
 				     (pint) P_ERROR_IO_FAILED,
 				     0,
@@ -618,7 +618,7 @@ p_socket_get_remote_address (const PSocket	*socket,
 P_LIB_API pboolean
 p_socket_is_connected (const PSocket *socket)
 {
-	if (!socket)
+	if (P_UNLIKELY (socket == NULL))
 		return FALSE;
 
 	return socket->connected;
@@ -631,7 +631,7 @@ p_socket_check_connect_result (PSocket  *socket,
 	socklen_t	optlen;
 	pint		val;
 
-	if (!socket) {
+	if (P_UNLIKELY (socket == NULL)) {
 		p_error_set_error_p (error,
 				     (pint) P_ERROR_IO_INVALID_ARGUMENT,
 				     0,
@@ -641,7 +641,7 @@ p_socket_check_connect_result (PSocket  *socket,
 
 	optlen = sizeof (val);
 
-	if (getsockopt (socket->fd, SOL_SOCKET, SO_ERROR, (ppointer) &val, &optlen) < 0) {
+	if (P_UNLIKELY (getsockopt (socket->fd, SOL_SOCKET, SO_ERROR, (ppointer) &val, &optlen) < 0)) {
 		p_error_set_error_p (error,
 				     (pint) __p_error_get_io_from_system (__p_socket_get_errno ()),
 				     (pint) __p_socket_get_errno (),
@@ -649,7 +649,7 @@ p_socket_check_connect_result (PSocket  *socket,
 		return FALSE;
 	}
 
-	if (val != 0)
+	if (P_UNLIKELY (val != 0))
 		p_error_set_error_p (error,
 				     (pint) __p_error_get_io_from_system (val),
 				     val,
@@ -670,7 +670,7 @@ p_socket_set_keepalive (PSocket		*socket,
 	pint val;
 #endif
 
-	if (!socket)
+	if (P_UNLIKELY (socket == NULL))
 		return;
 
 	if (socket->keepalive == (puint) !!keepalive)
@@ -693,7 +693,7 @@ P_LIB_API void
 p_socket_set_blocking (PSocket	*socket,
 		       pboolean	blocking)
 {
-	if (!socket)
+	if (P_UNLIKELY (socket == NULL))
 		return;
 
 	socket->blocking = blocking;
@@ -703,7 +703,7 @@ P_LIB_API void
 p_socket_set_listen_backlog (PSocket	*socket,
 			     pint	backlog)
 {
-	if (!socket || socket->listening)
+	if (P_UNLIKELY (socket == NULL || socket->listening))
 		return;
 
 	socket->listen_backlog = backlog;
@@ -713,7 +713,7 @@ P_LIB_API void
 p_socket_set_timeout (PSocket	*socket,
 		      pint	timeout)
 {
-	if (!socket)
+	if (P_UNLIKELY (socket == NULL))
 		return;
 
 	if (timeout < 0)
@@ -737,7 +737,7 @@ p_socket_bind (const PSocket	*socket,
 	P_UNUSED (allow_reuse);
 #endif
 
-	if (!socket || !address) {
+	if (P_UNLIKELY (socket == NULL || address == NULL)) {
 		p_error_set_error_p (error,
 				     (pint) P_ERROR_IO_INVALID_ARGUMENT,
 				     0,
@@ -745,7 +745,7 @@ p_socket_bind (const PSocket	*socket,
 		return FALSE;
 	}
 
-	if (!__p_socket_check (socket, error))
+	if (P_UNLIKELY (__p_socket_check (socket, error) == FALSE))
 		return FALSE;
 
 	/* SO_REUSEADDR on Windows means something else and is not what we want.
@@ -758,7 +758,7 @@ p_socket_bind (const PSocket	*socket,
 		P_WARNING ("PSocket: Failed to set SO_REUSEADDR option for socket descriptor");
 #endif
 
-	if (!p_socket_address_to_native (address, &addr, sizeof (addr))) {
+	if (P_UNLIKELY (p_socket_address_to_native (address, &addr, sizeof (addr)) == FALSE)) {
 		p_error_set_error_p (error,
 				     (pint) P_ERROR_IO_FAILED,
 				     0,
@@ -766,7 +766,9 @@ p_socket_bind (const PSocket	*socket,
 		return FALSE;
 	}
 
-	if (bind (socket->fd, (struct sockaddr *) &addr, (pint) p_socket_address_get_native_size (address)) < 0) {
+	if (P_UNLIKELY (bind (socket->fd,
+			      (struct sockaddr *) &addr,
+			      (pint) p_socket_address_get_native_size (address)) < 0)) {
 		p_error_set_error_p (error,
 				     (pint) __p_error_get_io_from_system (__p_socket_get_errno ()),
 				     (pint) __p_socket_get_errno (),
@@ -787,7 +789,7 @@ p_socket_connect (PSocket		*socket,
 	pint			conn_result;
 	PErrorIO		sock_err;
 
-	if (!socket || !address) {
+	if (P_UNLIKELY (socket == NULL || address == NULL)) {
 		p_error_set_error_p (error,
 				     (pint) P_ERROR_IO_INVALID_ARGUMENT,
 				     0,
@@ -795,10 +797,10 @@ p_socket_connect (PSocket		*socket,
 		return FALSE;
 	}
 
-	if (!__p_socket_check (socket, error))
+	if (P_UNLIKELY (__p_socket_check (socket, error) == FALSE))
 		return FALSE;
 
-	if (!p_socket_address_to_native (address, &buffer, sizeof buffer)) {
+	if (P_UNLIKELY (p_socket_address_to_native (address, &buffer, sizeof (buffer)) == FALSE)) {
 		p_error_set_error_p (error,
 				     (pint) P_ERROR_IO_FAILED,
 				     0,
@@ -811,7 +813,7 @@ p_socket_connect (PSocket		*socket,
 		conn_result = connect (socket->fd, (struct sockaddr *) &buffer,
 				       (pint) p_socket_address_get_native_size (address));
 
-		if (conn_result == 0)
+		if (P_LIKELY (conn_result == 0))
 			break;
 
 		err_code = __p_socket_get_errno ();
@@ -836,7 +838,7 @@ p_socket_connect (PSocket		*socket,
 
 	sock_err = __p_error_get_io_from_system (err_code);
 
-	if (sock_err == P_ERROR_IO_WOULD_BLOCK || sock_err == P_ERROR_IO_IN_PROGRESS) {
+	if (P_LIKELY (sock_err == P_ERROR_IO_WOULD_BLOCK || sock_err == P_ERROR_IO_IN_PROGRESS)) {
 		if (socket->blocking) {
 			if (p_socket_io_condition_wait (socket,
 							P_SOCKET_IO_CONDITION_POLLOUT,
@@ -850,7 +852,6 @@ p_socket_connect (PSocket		*socket,
 					     (pint) sock_err,
 					     err_code,
 					     "Couldn't block non-blocking socket");
-
 	} else
 		p_error_set_error_p (error,
 				     (pint) sock_err,
@@ -864,7 +865,7 @@ P_LIB_API pboolean
 p_socket_listen (PSocket	*socket,
 		 PError		**error)
 {
-	if (!socket) {
+	if (P_UNLIKELY (socket == NULL)) {
 		p_error_set_error_p (error,
 				     (pint) P_ERROR_IO_INVALID_ARGUMENT,
 				     0,
@@ -872,10 +873,10 @@ p_socket_listen (PSocket	*socket,
 		return FALSE;
 	}
 
-	if (!__p_socket_check (socket, error))
+	if (P_UNLIKELY (__p_socket_check (socket, error) == FALSE))
 		return FALSE;
 
-	if (listen (socket->fd, socket->listen_backlog) < 0) {
+	if (P_UNLIKELY (listen (socket->fd, socket->listen_backlog) < 0)) {
 		p_error_set_error_p (error,
 				     (pint) __p_error_get_io_from_system (__p_socket_get_errno ()),
 				     (pint) __p_socket_get_errno (),
@@ -899,7 +900,7 @@ p_socket_accept (const PSocket	*socket,
 	pint		flags;
 #endif
 
-	if (!socket) {
+	if (P_UNLIKELY (socket == NULL)) {
 		p_error_set_error_p (error,
 				     (pint) P_ERROR_IO_INVALID_ARGUMENT,
 				     0,
@@ -907,13 +908,14 @@ p_socket_accept (const PSocket	*socket,
 		return NULL;
 	}
 
-	if (!__p_socket_check (socket, error))
+	if (P_UNLIKELY (__p_socket_check (socket, error) == FALSE))
 		return NULL;
 
 	for (;;) {
-		if (socket->blocking && p_socket_io_condition_wait (socket,
-								    P_SOCKET_IO_CONDITION_POLLIN,
-								    error) == FALSE)
+		if (socket->blocking &&
+		    p_socket_io_condition_wait (socket,
+						P_SOCKET_IO_CONDITION_POLLIN,
+						error) == FALSE)
 			return NULL;
 
 		if ((res = (pint) accept (socket->fd, NULL, 0)) < 0) {
@@ -945,15 +947,15 @@ p_socket_accept (const PSocket	*socket,
 #else
 	flags = fcntl (res, F_GETFD, 0);
 
-	if (flags != -1 && (flags & FD_CLOEXEC) == 0) {
+	if (P_LIKELY (flags != -1 && (flags & FD_CLOEXEC) == 0)) {
 		flags |= FD_CLOEXEC;
 
-		if (fcntl (res, F_SETFD, flags) < 0)
+		if (P_UNLIKELY (fcntl (res, F_SETFD, flags) < 0))
 			P_WARNING ("PSocket: Failed to set FD_CLOEXEC flag on socket descriptor");
 	}
 #endif
 
-	if ((ret = p_socket_new_from_fd (res, error)) == NULL) {
+	if (P_UNLIKELY ((ret = p_socket_new_from_fd (res, error)) == NULL)) {
 #ifdef P_OS_WIN
 		closesocket (res);
 #else
@@ -975,7 +977,7 @@ p_socket_receive (const PSocket	*socket,
 	pssize		ret;
 	pint		err_code;
 
-	if (!socket || !buffer) {
+	if (P_UNLIKELY (socket == NULL || buffer == NULL)) {
 		p_error_set_error_p (error,
 				     (pint) P_ERROR_IO_INVALID_ARGUMENT,
 				     0,
@@ -983,13 +985,14 @@ p_socket_receive (const PSocket	*socket,
 		return -1;
 	}
 
-	if (!__p_socket_check (socket, error))
+	if (P_UNLIKELY (__p_socket_check (socket, error) == FALSE))
 		return -1;
 
 	for (;;) {
-		if (socket->blocking && p_socket_io_condition_wait (socket,
-								    P_SOCKET_IO_CONDITION_POLLIN,
-								    error) == FALSE)
+		if (socket->blocking &&
+		    p_socket_io_condition_wait (socket,
+						P_SOCKET_IO_CONDITION_POLLIN,
+						error) == FALSE)
 			return -1;
 
 		if ((ret = recv (socket->fd, buffer, (pint32) buflen, 0)) < 0) {
@@ -1031,7 +1034,7 @@ p_socket_receive_from (const PSocket	*socket,
 	pssize			ret;
 	pint			err_code;
 
-	if (!socket || !buffer || buflen == 0) {
+	if (P_UNLIKELY (socket == NULL || buffer == NULL || buflen == 0)) {
 		p_error_set_error_p (error,
 				     (pint) P_ERROR_IO_INVALID_ARGUMENT,
 				     0,
@@ -1039,14 +1042,16 @@ p_socket_receive_from (const PSocket	*socket,
 		return -1;
 	}
 
-	if (!__p_socket_check (socket, error))
+	if (P_UNLIKELY (__p_socket_check (socket, error) == FALSE))
 		return -1;
 
 	optlen = sizeof (sa);
 
 	for (;;) {
 		if (socket->blocking &&
-		    p_socket_io_condition_wait (socket, P_SOCKET_IO_CONDITION_POLLIN, error) == FALSE)
+		    p_socket_io_condition_wait (socket,
+						P_SOCKET_IO_CONDITION_POLLIN,
+						error) == FALSE)
 			return -1;
 
 		if ((ret = recvfrom (socket->fd, buffer, (pint32) buflen, 0, (struct sockaddr *) &sa, &optlen)) < 0) {
@@ -1088,7 +1093,7 @@ p_socket_send (const PSocket	*socket,
 	pssize		ret;
 	pint		err_code;
 
-	if (!socket || !buffer || buflen == 0) {
+	if (P_UNLIKELY (socket == NULL || buffer == NULL || buflen == 0)) {
 		p_error_set_error_p (error,
 				     (pint) P_ERROR_IO_INVALID_ARGUMENT,
 				     0,
@@ -1096,12 +1101,14 @@ p_socket_send (const PSocket	*socket,
 		return -1;
 	}
 
-	if (!__p_socket_check (socket, error))
+	if (P_UNLIKELY (__p_socket_check (socket, error) == FALSE))
 		return -1;
 
 	for (;;) {
 		if (socket->blocking &&
-		    p_socket_io_condition_wait (socket, P_SOCKET_IO_CONDITION_POLLOUT, error) == FALSE)
+		    p_socket_io_condition_wait (socket,
+						P_SOCKET_IO_CONDITION_POLLOUT,
+						error) == FALSE)
 			return -1;
 
 		if ((ret = send (socket->fd, buffer, (pint) buflen, P_SOCKET_DEFAULT_SEND_FLAGS)) < 0) {
@@ -1202,7 +1209,7 @@ p_socket_close (PSocket	*socket,
 	pint	res;
 	pint	err_code;
 
-	if (!socket) {
+	if (P_UNLIKELY (socket == NULL)) {
 		p_error_set_error_p (error,
 				     (pint) P_ERROR_IO_INVALID_ARGUMENT,
 				     0,
@@ -1217,7 +1224,7 @@ p_socket_close (PSocket	*socket,
 	for (;;) {
 		res = close (socket->fd);
 
-		if (res == 0)
+		if (P_LIKELY (res == 0))
 			break;
 
 		err_code = __p_socket_get_errno ();
@@ -1234,11 +1241,11 @@ p_socket_close (PSocket	*socket,
 	res = close (socket->fd);
 #  endif
 
-	if (res != 0)
+	if (P_UNLIKELY (res != 0))
 		err_code = __p_socket_get_errno ();
 #endif
 
-	if (res == 0) {
+	if (P_LIKELY (res == 0)) {
 		socket->connected = FALSE;
 		socket->closed = TRUE;
 		socket->listening = FALSE;
@@ -1262,7 +1269,7 @@ p_socket_shutdown (PSocket	*socket,
 {
 	pint how;
 
-	if (!socket) {
+	if (P_UNLIKELY (socket == NULL)) {
 		p_error_set_error_p (error,
 				     (pint) P_ERROR_IO_INVALID_ARGUMENT,
 				     0,
@@ -1270,29 +1277,29 @@ p_socket_shutdown (PSocket	*socket,
 		return FALSE;
 	}
 
-	if (!__p_socket_check (socket, error))
+	if (P_UNLIKELY (__p_socket_check (socket, error) == FALSE))
 		return FALSE;
 
-	if (!shutdown_read && !shutdown_write)
+	if (P_UNLIKELY (shutdown_read == FALSE && shutdown_write == FALSE))
 		return TRUE;
 
 #ifndef P_OS_WIN
-	if (shutdown_read && shutdown_write)
+	if (shutdown_read == TRUE && shutdown_write == TRUE)
 		how = SHUT_RDWR;
-	else if (shutdown_read)
+	else if (shutdown_read == TRUE)
 		how = SHUT_RD;
 	else
 		how = SHUT_WR;
 #else
-	if (shutdown_read && shutdown_write)
+	if (shutdown_read == TRUE && shutdown_write == TRUE)
 		how = SD_BOTH;
-	else if (shutdown_read)
+	else if (shutdown_read == TRUE)
 		how = SD_RECEIVE;
 	else
 		how = SD_SEND;
 #endif
 
-	if (shutdown (socket->fd, how) != 0) {
+	if (P_UNLIKELY (shutdown (socket->fd, how) != 0)) {
 		p_error_set_error_p (error,
 				     (pint) __p_error_get_io_from_system (__p_socket_get_errno ()),
 				     (pint) __p_socket_get_errno (),
@@ -1300,7 +1307,7 @@ p_socket_shutdown (PSocket	*socket,
 		return FALSE;
 	}
 
-	if (shutdown_read && shutdown_write)
+	if (shutdown_read == TRUE && shutdown_write == TRUE)
 		socket->connected = FALSE;
 
 	return TRUE;
@@ -1309,11 +1316,11 @@ p_socket_shutdown (PSocket	*socket,
 P_LIB_API void
 p_socket_free (PSocket *socket)
 {
-	if (!socket)
+	if (P_UNLIKELY (socket == NULL))
 		return;
 
 #ifdef P_OS_WIN
-	if (socket->events)
+	if (P_LIKELY (socket->events != WSA_INVALID_EVENT))
 		WSACloseEvent (socket->events);
 #endif
 
@@ -1330,7 +1337,7 @@ p_socket_set_buffer_size (const PSocket		*socket,
 	pint	optname;
 	pint	optval;
 
-	if (socket == NULL) {
+	if (P_UNLIKELY (socket == NULL)) {
 		p_error_set_error_p (error,
 				     (pint) P_ERROR_IO_INVALID_ARGUMENT,
 				     0,
@@ -1339,9 +1346,9 @@ p_socket_set_buffer_size (const PSocket		*socket,
 	}
 
 	optname = (dir == P_SOCKET_DIRECTION_RCV) ? SO_RCVBUF : SO_SNDBUF;
-	optval	= (pint) size;
+	optval  = (pint) size;
 
-	if (setsockopt (socket->fd, SOL_SOCKET, optname, (pconstpointer) &optval, sizeof (optval)) != 0) {
+	if (P_UNLIKELY (setsockopt (socket->fd, SOL_SOCKET, optname, (pconstpointer) &optval, sizeof (optval)) != 0)) {
 		p_error_set_error_p (error,
 				     (pint) __p_error_get_io_from_system (__p_socket_get_errno ()),
 				     (pint) __p_socket_get_errno (),
@@ -1365,7 +1372,7 @@ p_socket_io_condition_wait (const PSocket	*socket,
 	pint		evret;
 	pint		timeout;
 
-	if (socket == NULL) {
+	if (P_UNLIKELY (socket == NULL)) {
 		p_error_set_error_p (error,
 				     (pint) P_ERROR_IO_INVALID_ARGUMENT,
 				     0,
@@ -1373,7 +1380,7 @@ p_socket_io_condition_wait (const PSocket	*socket,
 		return FALSE;
 	}
 
-	if (__p_socket_check (socket, error) == FALSE)
+	if (P_UNLIKELY (__p_socket_check (socket, error) == FALSE))
 		return FALSE;
 
 #ifdef P_OS_WIN
