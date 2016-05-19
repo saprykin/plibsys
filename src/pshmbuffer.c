@@ -31,21 +31,17 @@ struct _PShmBuffer {
 	psize size;
 };
 
-static pssize __p_shm_buffer_get_free_space (PShmBuffer *buf);
-static pssize __p_shm_buffer_get_used_space (PShmBuffer *buf);
+static psize __p_shm_buffer_get_free_space (PShmBuffer *buf);
+static psize __p_shm_buffer_get_used_space (PShmBuffer *buf);
 
 /* Warning: this function is not thread-safe, only for internal usage */
-static pssize
+static psize
 __p_shm_buffer_get_free_space (PShmBuffer *buf)
 {
 	psize		read_pos, write_pos;
 	ppointer	addr;
 
-	/* This should not happen */
-	if ((addr = p_shm_get_address (buf->shm)) == NULL) {
-		P_ERROR ("PShmBuffer: failed to get memory address");
-		return -1;
-	}
+	addr = p_shm_get_address (buf->shm);
 
 	memcpy (&read_pos, (pchar *) addr + SHM_BUFFER_READ_OFFSET, sizeof (read_pos));
 	memcpy (&write_pos, (pchar *) addr + SHM_BUFFER_WRITE_OFFSET, sizeof (write_pos));
@@ -58,17 +54,13 @@ __p_shm_buffer_get_free_space (PShmBuffer *buf)
 		return buf->size - 1;
 }
 
-static pssize
+static psize
 __p_shm_buffer_get_used_space (PShmBuffer *buf)
 {
 	psize		read_pos, write_pos;
 	ppointer	addr;
 
-	/* This should not happen */
-	if ((addr = p_shm_get_address (buf->shm)) == NULL) {
-		P_ERROR ("PShmBuffer: failed to get memory address");
-		return -1;
-	}
+	addr = p_shm_get_address (buf->shm);
 
 	memcpy (&read_pos, (pchar *) addr + SHM_BUFFER_READ_OFFSET, sizeof (read_pos));
 	memcpy (&write_pos, (pchar *) addr + SHM_BUFFER_WRITE_OFFSET, sizeof (write_pos));
@@ -233,7 +225,7 @@ p_shm_buffer_write (PShmBuffer	*buf,
 	memcpy (&read_pos, (pchar *) addr + SHM_BUFFER_READ_OFFSET, sizeof (read_pos));
 	memcpy (&write_pos, (pchar *) addr + SHM_BUFFER_WRITE_OFFSET, sizeof (write_pos));
 
-	if ((psize) __p_shm_buffer_get_free_space (buf) < len) {
+	if (__p_shm_buffer_get_free_space (buf) < len) {
 		if (!p_shm_unlock (buf->shm, error))
 			return -1;
 
@@ -274,14 +266,14 @@ p_shm_buffer_get_free_space (PShmBuffer	*buf,
 	if (!p_shm_unlock (buf->shm, error))
 		return -1;
 
-	return space;
+	return (pssize) space;
 }
 
 P_LIB_API pssize
 p_shm_buffer_get_used_space (PShmBuffer	*buf,
 			     PError	**error)
 {
-	pssize space;
+	psize space;
 
 	if (buf == NULL) {
 		p_error_set_error_p (error,
@@ -299,7 +291,7 @@ p_shm_buffer_get_used_space (PShmBuffer	*buf,
 	if (!p_shm_unlock (buf->shm, error))
 		return -1;
 
-	return space;
+	return (pssize) space;
 }
 
 P_LIB_API void
