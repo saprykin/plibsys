@@ -24,7 +24,7 @@
 #include <string.h>
 
 #ifndef P_OS_WIN
-#include <arpa/inet.h>
+#  include <arpa/inet.h>
 #endif
 
 /* According to Open Group specifications */
@@ -66,10 +66,10 @@ p_socket_address_new_from_native (pconstpointer	native,
 	PSocketAddress	*ret;
 	puint16		family;
 
-	if (native == NULL || len == 0)
+	if (P_UNLIKELY (native == NULL || len == 0))
 		return NULL;
 
-	if ((ret = p_malloc0 (sizeof (PSocketAddress))) == NULL)
+	if (P_UNLIKELY ((ret = p_malloc0 (sizeof (PSocketAddress))) == NULL))
 		return NULL;
 
 	family = ((struct sockaddr *) native)->sa_family;
@@ -120,10 +120,10 @@ p_socket_address_new (const pchar	*address,
 	pint 			len;
 #endif /* P_OS_WIN */
 
-	if (!address)
+	if (P_UNLIKELY (address == NULL))
 		return NULL;
 
-	if ((ret = p_malloc0 (sizeof (PSocketAddress))) == NULL) {
+	if (P_UNLIKELY ((ret = p_malloc0 (sizeof (PSocketAddress))) == NULL)) {
 		P_ERROR ("PSocketAddress: failed to allocate memory");
 		return NULL;
 	}
@@ -178,7 +178,7 @@ p_socket_address_new_any (PSocketFamily	family,
 	struct in6_addr	any6_addr = IN6ADDR_ANY_INIT;
 #endif
 
-	if ((ret = p_malloc0 (sizeof (PSocketAddress))) == NULL) {
+	if (P_UNLIKELY ((ret = p_malloc0 (sizeof (PSocketAddress))) == NULL)) {
 		P_ERROR ("PSocketAddress: failed to allocate memory");
 		return NULL;
 	}
@@ -210,7 +210,7 @@ p_socket_address_new_loopback (PSocketFamily	family,
 	struct in6_addr	loop6_addr = IN6ADDR_LOOPBACK_INIT;
 #endif
 
-	if ((ret = p_malloc0 (sizeof (PSocketAddress))) == NULL) {
+	if (P_UNLIKELY ((ret = p_malloc0 (sizeof (PSocketAddress))) == NULL)) {
 		P_ERROR ("PSocketAddress: failed to allocate memory");
 		return NULL;
 	}
@@ -242,7 +242,7 @@ p_socket_address_to_native (const PSocketAddress	*addr,
 	struct sockaddr_in6	*sin6;
 #endif
 
-	if (!addr || !dest || !destlen)
+	if (P_UNLIKELY (addr == NULL || dest == NULL || destlen == 0))
 		return FALSE;
 
 	sin = (struct sockaddr_in *) dest;
@@ -251,7 +251,7 @@ p_socket_address_to_native (const PSocketAddress	*addr,
 #endif
 
 	if (addr->family == P_SOCKET_FAMILY_INET) {
-		if (destlen < sizeof (struct sockaddr_in)) {
+		if (P_UNLIKELY (destlen < sizeof (struct sockaddr_in))) {
 			P_WARNING ("PSocketAddress: not enough space to convert to native");
 			return FALSE;
 		}
@@ -264,7 +264,7 @@ p_socket_address_to_native (const PSocketAddress	*addr,
 	}
 #ifdef AF_INET6
 	else if (addr->family == P_SOCKET_FAMILY_INET6) {
-		if (destlen < sizeof (struct sockaddr_in6)) {
+		if (P_UNLIKELY (destlen < sizeof (struct sockaddr_in6))) {
 			P_ERROR ("PSocketAddress: not enough space to convert to native");
 			return FALSE;
 		}
@@ -284,7 +284,7 @@ p_socket_address_to_native (const PSocketAddress	*addr,
 P_LIB_API psize
 p_socket_address_get_native_size (const PSocketAddress *addr)
 {
-	if (!addr)
+	if (P_UNLIKELY (addr == NULL))
 		return 0;
 
 	if (addr->family == P_SOCKET_FAMILY_INET)
@@ -302,7 +302,7 @@ p_socket_address_get_native_size (const PSocketAddress *addr)
 P_LIB_API PSocketFamily
 p_socket_address_get_family (const PSocketAddress *addr)
 {
-	if (!addr)
+	if (P_UNLIKELY (addr == NULL))
 		return P_SOCKET_FAMILY_UNKNOWN;
 
 	return addr->family;
@@ -327,7 +327,7 @@ p_socket_address_get_address (const PSocketAddress *addr)
 #  endif /* AF_INET6 */
 #endif /* P_OS_WIN */
 
-	if (!addr || addr->family == P_SOCKET_FAMILY_UNKNOWN)
+	if (P_UNLIKELY (addr == NULL || addr->family == P_SOCKET_FAMILY_UNKNOWN))
 		return NULL;
 #ifdef P_OS_WIN
 	sin = (struct sockaddr_in *) &sa;
@@ -354,7 +354,11 @@ p_socket_address_get_address (const PSocketAddress *addr)
 	}
 #  endif /* AF_INET6 */
 
-	if (WSAAddressToStringA ((LPSOCKADDR) &sa, addrlen, NULL, (LPSTR) buffer, &buflen) != 0)
+	if (P_UNLIKELY (WSAAddressToStringA ((LPSOCKADDR) &sa,
+					     addrlen,
+					     NULL,
+					     (LPSTR) buffer,
+					     &buflen) != 0))
 		return NULL;
 #else /* !P_OS_WIN */
 	if (addr->family == P_SOCKET_FAMILY_INET)
@@ -371,7 +375,7 @@ p_socket_address_get_address (const PSocketAddress *addr)
 P_LIB_API puint16
 p_socket_address_get_port (const PSocketAddress *addr)
 {
-	if (!addr)
+	if (P_UNLIKELY (addr == NULL))
 		return 0;
 
 	return addr->port;
@@ -382,7 +386,7 @@ p_socket_address_is_any (const PSocketAddress *addr)
 {
 	puint32 addr4;
 
-	if (!addr || addr->family == P_SOCKET_FAMILY_UNKNOWN)
+	if (P_UNLIKELY (addr == NULL || addr->family == P_SOCKET_FAMILY_UNKNOWN))
 		return FALSE;
 
 	if (addr->family == P_SOCKET_FAMILY_INET) {
@@ -404,7 +408,7 @@ p_socket_address_is_loopback (const PSocketAddress *addr)
 {
 	puint32 addr4;
 
-	if (!addr || addr->family == P_SOCKET_FAMILY_UNKNOWN)
+	if (P_UNLIKELY (addr == NULL || addr->family == P_SOCKET_FAMILY_UNKNOWN))
 		return FALSE;
 
 	if (addr->family == P_SOCKET_FAMILY_INET) {
@@ -425,7 +429,7 @@ p_socket_address_is_loopback (const PSocketAddress *addr)
 P_LIB_API void
 p_socket_address_free (PSocketAddress *addr)
 {
-	if (addr == NULL)
+	if (P_UNLIKELY (addr == NULL))
 		return;
 
 	p_free (addr);

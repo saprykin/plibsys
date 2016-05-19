@@ -54,13 +54,13 @@
 #include <ptypes.h>
 
 #ifdef P_OS_WIN
-#include <winsock2.h>
-#include <ws2tcpip.h>
-#include <windows.h>
+#  include <winsock2.h>
+#  include <ws2tcpip.h>
+#  include <windows.h>
 #else
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
+#  include <sys/types.h>
+#  include <sys/socket.h>
+#  include <netinet/in.h>
 #endif
 
 P_BEGIN_DECLS
