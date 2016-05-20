@@ -27,7 +27,7 @@ p_spinlock_new (void)
 {
 	PSpinLock *ret;
 
-	if ((ret = p_malloc0 (sizeof (PSpinLock))) == NULL) {
+	if (P_UNLIKELY ((ret = p_malloc0 (sizeof (PSpinLock))) == NULL)) {
 		P_ERROR ("PSpinLock: failed to allocate memory");
 		return NULL;
 	}
@@ -40,7 +40,7 @@ p_spinlock_lock (PSpinLock *spinlock)
 {
 	pint tmp_int;
 
-	if (spinlock == NULL)
+	if (P_UNLIKELY (spinlock == NULL))
 		return FALSE;
 
 	do {
@@ -60,7 +60,7 @@ p_spinlock_trylock (PSpinLock *spinlock)
 {
 	pint tmp_int = 0;
 
-	if (spinlock == NULL)
+	if (P_UNLIKELY (spinlock == NULL))
 		return FALSE;
 
 	return (pboolean) __atomic_compare_exchange_n (&(spinlock->spin),
@@ -74,7 +74,7 @@ p_spinlock_trylock (PSpinLock *spinlock)
 P_LIB_API pboolean
 p_spinlock_unlock (PSpinLock *spinlock)
 {
-	if (spinlock == NULL)
+	if (P_UNLIKELY (spinlock == NULL))
 		return FALSE;
 
 	__atomic_store_4 (&(spinlock->spin), 0, __ATOMIC_RELEASE);

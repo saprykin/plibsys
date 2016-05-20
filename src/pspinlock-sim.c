@@ -28,12 +28,12 @@ p_spinlock_new (void)
 {
 	PSpinLock *ret;
 
-	if ((ret = p_malloc0 (sizeof (PSpinLock))) == NULL) {
+	if (P_UNLIKELY ((ret = p_malloc0 (sizeof (PSpinLock))) == NULL)) {
 		P_ERROR ("PSpinLock: failed to allocate memory");
 		return NULL;
 	}
 
-	if ((ret->mutex = p_mutex_new ()) == NULL) {
+	if (P_UNLIKELY ((ret->mutex = p_mutex_new ()) == NULL)) {
 		P_ERROR ("PSpinLock: failed to create mutex object");
 		p_free (ret);
 		return NULL;
@@ -45,7 +45,7 @@ p_spinlock_new (void)
 P_LIB_API pboolean
 p_spinlock_lock (PSpinLock *spinlock)
 {
-	if (spinlock == NULL)
+	if (P_UNLIKELY (spinlock == NULL))
 		return FALSE;
 
 	return p_mutex_lock (spinlock->mutex);
@@ -63,7 +63,7 @@ p_spinlock_trylock (PSpinLock *spinlock)
 P_LIB_API pboolean
 p_spinlock_unlock (PSpinLock *spinlock)
 {
-	if (spinlock == NULL)
+	if (P_UNLIKELY (spinlock == NULL))
 		return FALSE;
 
 	return p_mutex_unlock (spinlock->mutex);
@@ -72,7 +72,7 @@ p_spinlock_unlock (PSpinLock *spinlock)
 P_LIB_API void
 p_spinlock_free (PSpinLock *spinlock)
 {
-	if (spinlock == NULL)
+	if (P_UNLIKELY (spinlock == NULL))
 		return;
 
 	p_mutex_free (spinlock->mutex);
