@@ -36,7 +36,7 @@ __p_tree_avl_rotate_left (__PTreeAVLNode *node, __PTreeBaseNode **root)
 	node->parent = ((__PTreeAVLNode *) node->base.left)->parent;
 	((__PTreeAVLNode *) node->base.left)->parent = node;
 
-	if (node->parent != NULL) {
+	if (P_LIKELY (node->parent != NULL)) {
 		if (node->parent->base.left == node->base.left)
 			node->parent->base.left = (__PTreeBaseNode *) node;
 		else
@@ -61,7 +61,7 @@ __p_tree_avl_rotate_right (__PTreeAVLNode *node, __PTreeBaseNode **root)
 	node->parent = ((__PTreeAVLNode *) node->base.right)->parent;
 	((__PTreeAVLNode *) node->base.right)->parent = node;
 
-	if (node->parent != NULL) {
+	if (P_LIKELY (node->parent != NULL)) {
 		if (node->parent->base.left == node->base.right)
 			node->parent->base.left = (__PTreeBaseNode *) node;
 		else
@@ -87,7 +87,7 @@ __p_tree_avl_rotate_left_right (__PTreeAVLNode *node, __PTreeBaseNode **root)
 
 	tmp_node->parent = node->parent->parent;
 
-	if (tmp_node->parent != NULL) {
+	if (P_LIKELY (tmp_node->parent != NULL)) {
 		if (tmp_node->parent->base.left == (__PTreeBaseNode *) node->parent)
 			tmp_node->parent->base.left = (__PTreeBaseNode *) tmp_node;
 		else
@@ -134,7 +134,7 @@ __p_tree_avl_rotate_right_left (__PTreeAVLNode *node, __PTreeBaseNode **root)
 
 	tmp_node->parent = node->parent->parent;
 
-	if (tmp_node->parent != NULL) {
+	if (P_LIKELY (tmp_node->parent != NULL)) {
 		if (tmp_node->parent->base.left == (__PTreeBaseNode *) node->parent)
 			tmp_node->parent->base.left = (__PTreeBaseNode *) tmp_node;
 		else
@@ -176,7 +176,7 @@ __p_tree_avl_balance_insert (__PTreeAVLNode *node, __PTreeBaseNode **root)
 	while (TRUE) {
 		parent = node->parent;
 
-		if (parent == NULL)
+		if (P_UNLIKELY (parent == NULL))
 			break;
 
 		if (parent->base.left == (__PTreeBaseNode *) node) {
@@ -299,7 +299,7 @@ __p_tree_avl_insert (__PTreeBaseNode	**root_node,
 		return FALSE;
 	}
 
-	if ((*cur_node = p_malloc0 (sizeof (__PTreeAVLNode))) == NULL)
+	if (P_UNLIKELY ((*cur_node = p_malloc0 (sizeof (__PTreeAVLNode))) == NULL))
 		return FALSE;
 
 	(*cur_node)->key   = key;
@@ -324,7 +324,7 @@ __p_tree_avl_balance_remove (__PTreeAVLNode *node, __PTreeBaseNode **root)
 	while (TRUE) {
 		parent = node->parent;
 
-		if (parent == NULL)
+		if (P_UNLIKELY (parent == NULL))
 			break;
 
 		if (parent->base.left == (__PTreeBaseNode *) node) {
@@ -406,7 +406,7 @@ __p_tree_avl_remove (__PTreeBaseNode	**root_node,
 			break;
 	}
 
-	if (cur_node == NULL)
+	if (P_UNLIKELY (cur_node == NULL))
 		return FALSE;
 
 	if (cur_node->left != NULL && cur_node->right != NULL) {
@@ -428,7 +428,7 @@ __p_tree_avl_remove (__PTreeBaseNode	**root_node,
 		__p_tree_avl_balance_remove ((__PTreeAVLNode *) cur_node, root_node);
 
 	/* Replace node with its child */
-	if (cur_node == *root_node) {
+	if (P_UNLIKELY (cur_node == *root_node)) {
 		*root_node   = child_node;
 		child_parent = NULL;
 	} else {

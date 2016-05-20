@@ -44,7 +44,7 @@ __p_tree_bst_insert (__PTreeBaseNode	**root_node,
 	}
 
 	if ((*cur_node) == NULL) {
-		if ((*cur_node = p_malloc0 (sizeof (__PTreeBaseNode))) == NULL)
+		if (P_UNLIKELY ((*cur_node = p_malloc0 (sizeof (__PTreeBaseNode))) == NULL))
 			return FALSE;
 
 		(*cur_node)->key   = key;
@@ -94,7 +94,7 @@ __p_tree_bst_remove (__PTreeBaseNode	**root_node,
 			break;
 	}
 
-	if (cur_node == NULL)
+	if (P_UNLIKELY (cur_node == NULL))
 		return FALSE;
 
 	if (cur_node->left != NULL && cur_node->right != NULL) {

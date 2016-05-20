@@ -78,7 +78,7 @@ __p_tree_rb_rotate_left (__PTreeRBNode *node, __PTreeBaseNode **root)
 
 	tmp_node = node->base.right;
 
-	if (node->parent != NULL) {
+	if (P_LIKELY (node->parent != NULL)) {
 		if (node->parent->base.left == (__PTreeBaseNode *) node)
 			node->parent->base.left = tmp_node;
 		else
@@ -94,7 +94,7 @@ __p_tree_rb_rotate_left (__PTreeRBNode *node, __PTreeBaseNode **root)
 	((__PTreeRBNode *) tmp_node)->parent = node->parent;
 	node->parent = (__PTreeRBNode *) tmp_node;
 
-	if (((__PTreeRBNode *) tmp_node)->parent == NULL)
+	if (P_UNLIKELY (((__PTreeRBNode *) tmp_node)->parent == NULL))
 		*root = tmp_node;
 }
 
@@ -105,7 +105,7 @@ __p_tree_rb_rotate_right (__PTreeRBNode *node, __PTreeBaseNode **root)
 
 	tmp_node = node->base.left;
 
-	if (node->parent != NULL) {
+	if (P_LIKELY (node->parent != NULL)) {
 		if (node->parent->base.left == (__PTreeBaseNode *) node)
 			node->parent->base.left = tmp_node;
 		else
@@ -121,7 +121,7 @@ __p_tree_rb_rotate_right (__PTreeRBNode *node, __PTreeBaseNode **root)
 	((__PTreeRBNode *) tmp_node)->parent = node->parent;
 	node->parent = (__PTreeRBNode *) tmp_node;
 
-	if (((__PTreeRBNode *) tmp_node)->parent == NULL)
+	if (P_UNLIKELY (((__PTreeRBNode *) tmp_node)->parent == NULL))
 		*root = tmp_node;
 }
 
@@ -133,7 +133,7 @@ __p_tree_rb_balance_insert (__PTreeRBNode *node, __PTreeBaseNode **root)
 
 	while (TRUE) {
 		/* Case 1: We are at the root  */
-		if (node->parent == NULL) {
+		if (P_UNLIKELY (node->parent == NULL)) {
 			node->color = P_TREE_RB_COLOR_BLACK;
 			break;
 		}
@@ -255,7 +255,7 @@ __p_tree_rb_insert (__PTreeBaseNode	**root_node,
 		return FALSE;
 	}
 
-	if ((*cur_node = p_malloc0 (sizeof (__PTreeRBNode))) == NULL)
+	if (P_UNLIKELY ((*cur_node = p_malloc0 (sizeof (__PTreeRBNode))) == NULL))
 		return FALSE;
 
 	(*cur_node)->key   = key;
@@ -277,7 +277,7 @@ __p_tree_rb_balance_remove (__PTreeRBNode *node, __PTreeBaseNode **root)
 
 	while (TRUE) {
 		/* Case 1: We are at the root */
-		if (node->parent == NULL)
+		if (P_UNLIKELY (node->parent == NULL))
 			break;
 
 		sibling = __p_tree_rb_get_sibling (node);
@@ -405,7 +405,7 @@ __p_tree_rb_remove (__PTreeBaseNode	**root_node,
 			break;
 	}
 
-	if (cur_node == NULL)
+	if (P_UNLIKELY (cur_node == NULL))
 		return FALSE;
 
 	if (cur_node->left != NULL && cur_node->right != NULL) {

@@ -75,13 +75,13 @@ p_tree_new_full (PTreeType		type,
 {
 	PTree *ret;
 
-	if (type < P_TREE_TYPE_BINARY || type > P_TREE_TYPE_AVL)
+	if (P_UNLIKELY (type < P_TREE_TYPE_BINARY || type > P_TREE_TYPE_AVL))
 		return NULL;
 
-	if (func == NULL)
+	if (P_UNLIKELY (func == NULL))
 		return NULL;
 
-	if ((ret = p_malloc0 (sizeof (PTree))) == NULL)
+	if (P_UNLIKELY ((ret = p_malloc0 (sizeof (PTree))) == NULL))
 		return NULL;
 
 	ret->type               = type;
@@ -121,7 +121,7 @@ p_tree_insert (PTree	*tree,
 {
 	pboolean result;
 
-	if (tree == NULL)
+	if (P_UNLIKELY (tree == NULL))
 		return;
 
 	result = tree->insert_node_func (&tree->root,
@@ -142,7 +142,7 @@ p_tree_remove (PTree		*tree,
 {
 	pboolean result;
 
-	if (tree == NULL || tree->root == NULL)
+	if (P_UNLIKELY (tree == NULL || tree->root == NULL))
 		return FALSE;
 
 	result = tree->remove_node_func (&tree->root,
@@ -164,7 +164,7 @@ p_tree_lookup (PTree		*tree,
 	__PTreeBaseNode	*cur_node;
 	pint		cmp_result;
 
-	if (tree == NULL)
+	if (P_UNLIKELY (tree == NULL))
 		return NULL;
 
 	cur_node = tree->root;
@@ -193,10 +193,10 @@ p_tree_foreach (PTree		*tree,
 	pint		mod_counter;
 	pboolean	need_stop;
 
-	if (tree == NULL || traverse_func == NULL)
+	if (P_UNLIKELY (tree == NULL || traverse_func == NULL))
 		return;
 
-	if (tree->root == NULL)
+	if (P_UNLIKELY (tree->root == NULL))
 		return;
 
 	cur_node    = tree->root;
@@ -247,7 +247,7 @@ p_tree_clear (PTree *tree)
 	__PTreeBaseNode	*prev_node;
 	__PTreeBaseNode	*next_node;
 
-	if (tree == NULL || tree->root == NULL)
+	if (P_UNLIKELY (tree == NULL || tree->root == NULL))
 		return;
 
 	cur_node = tree->root;
@@ -285,7 +285,7 @@ p_tree_clear (PTree *tree)
 P_LIB_API PTreeType
 p_tree_get_type (const PTree *tree)
 {
-	if (tree == NULL)
+	if (P_UNLIKELY (tree == NULL))
 		return (PTreeType) -1;
 
 	return tree->type;
@@ -294,7 +294,7 @@ p_tree_get_type (const PTree *tree)
 P_LIB_API pint
 p_tree_get_nnodes (const PTree *tree)
 {
-	if (tree == NULL)
+	if (P_UNLIKELY (tree == NULL))
 		return 0;
 
 	return tree->nnodes;
