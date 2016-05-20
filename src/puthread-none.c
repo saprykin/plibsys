@@ -47,19 +47,19 @@ p_uthread_create_full (PUThreadFunc	func,
 		       pboolean		joinable,
 		       PUThreadPriority	prio)
 {
-	PUThread		*ret;
+	PUThread	*ret;
 
-	if (!func)
+	if (P_UNLIKELY (func == NULL))
 		return NULL;
 
-	if ((ret = p_malloc0 (sizeof (PUThread))) == NULL) {
+	if (P_UNLIKELY ((ret = p_malloc0 (sizeof (PUThread))) == NULL)) {
 		P_ERROR ("PUThread: failed to allocate memory");
 		return NULL;
 	}
 
-	ret->hdl = -1;
+	ret->hdl      = -1;
 	ret->joinable = joinable;
-	ret->prio = prio;
+	ret->prio     = prio;
 
 	func (data);
 
@@ -67,9 +67,9 @@ p_uthread_create_full (PUThreadFunc	func,
 }
 
 P_LIB_API PUThread *
-p_uthread_create (PUThreadFunc		func,
-		  ppointer		data,
-		  pboolean		joinable)
+p_uthread_create (PUThreadFunc	func,
+		  ppointer	data,
+		  pboolean	joinable)
 {
 	/* All checks will be inside */
 	return p_uthread_create_full (func, data, joinable, P_UTHREAD_PRIORITY_INHERIT);
@@ -86,7 +86,10 @@ p_uthread_join (PUThread *thread)
 {
 	ppointer ret;
 
-	if (!thread || !thread->joinable)
+	if (P_UNLIKELY (thread == NULL))
+		return -1;
+
+	if (thread->joinable == FALSE)
 		return -1;
 
 	return thread->hdl;
@@ -95,7 +98,7 @@ p_uthread_join (PUThread *thread)
 P_LIB_API void
 p_uthread_free (PUThread *thread)
 {
-	if (!thread)
+	if (P_UNLIKELY (thread == NULL))
 		return;
 
 	p_free (thread);
@@ -110,7 +113,7 @@ P_LIB_API pboolean
 p_uthread_set_priority (PUThread		*thread,
 			PUThreadPriority	prio)
 {
-	if (thread == NULL)
+	if (P_UNLIKELY (thread == NULL))
 		return FALSE;
 
 	thread->prio = prio;

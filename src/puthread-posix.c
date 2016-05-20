@@ -93,15 +93,15 @@ __p_uthread_get_unix_priority (PUThreadPriority prio, int *sched_policy, int *sc
 	prio_min = sched_get_priority_min (*sched_policy);
 	prio_max = sched_get_priority_max (*sched_policy);
 
-	if (prio_min == -1 || prio_max == -1)
+	if (P_UNLIKELY (prio_min == -1 || prio_max == -1))
 		return FALSE;
 
 	native_prio = ((pint) prio - lowBound) * (prio_max - prio_min) / upperBound + prio_min;
 
-	if (native_prio > prio_max)
+	if (P_UNLIKELY (native_prio > prio_max))
 		native_prio = prio_max;
 
-	if (native_prio < prio_min)
+	if (P_UNLIKELY (native_prio < prio_min))
 		native_prio = prio_min;
 
 	*sched_priority = native_prio;
@@ -132,22 +132,22 @@ __p_uthread_get_tls_key (PUThreadKey *key)
 
 	thread_key = (pthread_key_t *) p_atomic_pointer_get ((ppointer) &key->key);
 
-	if (thread_key == NULL) {
-		if ((thread_key = p_malloc0 (sizeof (pthread_key_t))) == NULL) {
+	if (P_UNLIKELY (thread_key == NULL)) {
+		if (P_UNLIKELY ((thread_key = p_malloc0 (sizeof (pthread_key_t))) == NULL)) {
 			P_ERROR ("PUThread: failed to allocate memory for a TLS key");
 			return NULL;
 		}
 
-		if (pthread_key_create (thread_key, key->free_func) != 0) {
+		if (P_UNLIKELY (pthread_key_create (thread_key, key->free_func) != 0)) {
 			P_ERROR ("PUThread: failed to call pthread_key_create()");
 			p_free (thread_key);
 			return NULL;
 		}
 
-		if (!p_atomic_pointer_compare_and_exchange ((ppointer) &key->key,
-							    NULL,
-							    (ppointer) thread_key)) {
-			if (pthread_key_delete (*thread_key) != 0) {
+		if (P_UNLIKELY (p_atomic_pointer_compare_and_exchange ((ppointer) &key->key,
+								       NULL,
+								       (ppointer) thread_key) == FALSE)) {
+			if (P_UNLIKELY (pthread_key_delete (*thread_key) != 0)) {
 				P_ERROR ("PUThread: failed to call pthread_key_delete()");
 				p_free (thread_key);
 				return NULL;
@@ -177,23 +177,25 @@ p_uthread_create_full (PUThreadFunc	func,
 	pint			sched_policy;
 #endif
 
-	if (!func)
+	if (P_UNLIKELY (func == NULL))
 		return NULL;
 
-	if ((ret = p_malloc0 (sizeof (PUThread))) == NULL) {
+	if (P_UNLIKELY ((ret = p_malloc0 (sizeof (PUThread))) == NULL)) {
 		P_ERROR ("PUThread: failed to allocate memory");
 		return NULL;
 	}
 
 	ret->joinable = joinable;
 
-	if (pthread_attr_init (&attr) != 0) {
+	if (P_UNLIKELY (pthread_attr_init (&attr) != 0)) {
 		P_ERROR ("PUThread: failed to call pthread_attr_init()");
 		p_free (ret);
 		return NULL;
 	}
 
-	if (pthread_attr_setdetachstate (&attr, joinable ? PTHREAD_CREATE_JOINABLE : PTHREAD_CREATE_DETACHED) != 0) {
+	if (P_UNLIKELY (pthread_attr_setdetachstate (&attr,
+						     joinable ? PTHREAD_CREATE_JOINABLE
+							      : PTHREAD_CREATE_DETACHED) != 0)) {
 		P_ERROR ("PUThread: failed to call pthread_attr_setdetachstate()");
 		pthread_attr_destroy (&attr);
 		p_free (ret);
@@ -205,14 +207,16 @@ p_uthread_create_full (PUThreadFunc	func,
 		if (pthread_attr_setinheritsched (&attr, PTHREAD_INHERIT_SCHED) != 0)
 			P_WARNING ("PUThread: failed to call pthread_attr_setinheritsched()");
 	} else {
-		if (pthread_attr_getschedpolicy (&attr, &sched_policy) == 0) {
-			if (__p_uthread_get_unix_priority (prio, &sched_policy, &native_prio) == TRUE) {
+		if (P_LIKELY (pthread_attr_getschedpolicy (&attr, &sched_policy) == 0)) {
+			if (P_LIKELY (__p_uthread_get_unix_priority (prio,
+								     &sched_policy,
+								     &native_prio) == TRUE)) {
 				memset (&sched, 0, sizeof (sched));
 				sched.sched_priority = native_prio;
 
-				if (pthread_attr_setinheritsched (&attr, PTHREAD_EXPLICIT_SCHED) != 0 ||
-				    pthread_attr_setschedpolicy (&attr, sched_policy) != 0 ||
-				    pthread_attr_setschedparam (&attr, &sched) != 0)
+				if (P_LIKELY (pthread_attr_setinheritsched (&attr, PTHREAD_EXPLICIT_SCHED) != 0 ||
+					      pthread_attr_setschedpolicy (&attr, sched_policy) != 0 ||
+					      pthread_attr_setschedparam (&attr, &sched) != 0))
 					P_WARNING ("PUThread: failed to set thread priority");
 			} else
 				P_WARNING ("PUThread: failed to get native thread priority");
@@ -232,7 +236,7 @@ p_uthread_create_full (PUThreadFunc	func,
 	}
 #endif
 
-	if (create_code != 0) {
+	if (P_UNLIKELY (create_code != 0)) {
 		P_ERROR ("PUThread: failed to call pthread_create()");
 		pthread_attr_destroy (&attr);
 		p_free (ret);
@@ -246,9 +250,9 @@ p_uthread_create_full (PUThreadFunc	func,
 }
 
 P_LIB_API PUThread *
-p_uthread_create (PUThreadFunc		func,
-		  ppointer		data,
-		  pboolean		joinable)
+p_uthread_create (PUThreadFunc	func,
+		  ppointer	data,
+		  pboolean	joinable)
 {
 	/* All checks will be inside */
 	return p_uthread_create_full (func, data, joinable, P_UTHREAD_PRIORITY_INHERIT);
@@ -268,10 +272,13 @@ p_uthread_join (PUThread *thread)
 {
 	ppointer ret;
 
-	if (!thread || !thread->joinable)
+	if (P_UNLIKELY (thread == NULL))
 		return -1;
 
-	if (pthread_join (thread->hdl, &ret) != 0) {
+	if (thread->joinable == FALSE)
+		return -1;
+
+	if (P_UNLIKELY (pthread_join (thread->hdl, &ret) != 0)) {
 		P_ERROR ("PUThread: failed to call pthread_join()");
 		return -1;
 	}
@@ -282,7 +289,7 @@ p_uthread_join (PUThread *thread)
 P_LIB_API void
 p_uthread_free (PUThread *thread)
 {
-	if (!thread)
+	if (P_UNLIKELY (thread == NULL))
 		return;
 
 	p_free (thread);
@@ -304,16 +311,16 @@ p_uthread_set_priority (PUThread		*thread,
 	pint			native_prio;
 #endif
 
-	if (thread == NULL)
+	if (P_UNLIKELY (thread == NULL))
 		return FALSE;
 
 #ifdef PLIBSYS_HAS_POSIX_SCHEDULING
-	if (pthread_getschedparam (thread->hdl, &policy, &sched) != 0) {
+	if (P_UNLIKELY (pthread_getschedparam (thread->hdl, &policy, &sched) != 0)) {
 		P_ERROR ("PUThread: failed to call pthread_getschedparam()");
 		return FALSE;
 	}
 
-	if (__p_uthread_get_unix_priority (prio, &policy, &native_prio) == FALSE) {
+	if (P_UNLIKELY (__p_uthread_get_unix_priority (prio, &policy, &native_prio) == FALSE)) {
 		P_ERROR ("PUThread: failed to get native thread priority (2)");
 		return FALSE;
 	}
@@ -321,7 +328,7 @@ p_uthread_set_priority (PUThread		*thread,
 	memset (&sched, 0, sizeof (sched));
 	sched.sched_priority = native_prio;
 
-	if (pthread_setschedparam (thread->hdl, policy, &sched) != 0) {
+	if (P_UNLIKELY (pthread_setschedparam (thread->hdl, policy, &sched) != 0)) {
 		P_ERROR ("PUThread: failed to call pthread_setschedparam()");
 		return FALSE;
 	}
@@ -342,7 +349,7 @@ p_uthread_local_new (PDestroyFunc free_func)
 {
 	PUThreadKey *ret;
 
-	if ((ret = p_malloc0 (sizeof (PUThreadKey))) == NULL) {
+	if (P_UNLIKELY ((ret = p_malloc0 (sizeof (PUThreadKey))) == NULL)) {
 		P_ERROR ("PUThread: failed to allocate memory for PUThreadKey");
 		return NULL;
 	}
@@ -355,7 +362,7 @@ p_uthread_local_new (PDestroyFunc free_func)
 P_LIB_API void
 p_uthread_local_free (PUThreadKey *key)
 {
-	if (key == NULL)
+	if (P_UNLIKELY (key == NULL))
 		return;
 
 	p_free (key);
@@ -366,7 +373,7 @@ p_uthread_get_local (PUThreadKey *key)
 {
 	pthread_key_t *tls_key;
 
-	if (key == NULL)
+	if (P_UNLIKELY (key == NULL))
 		return NULL;
 
 	tls_key = __p_uthread_get_tls_key (key);
@@ -380,13 +387,13 @@ p_uthread_set_local (PUThreadKey	*key,
 {
 	pthread_key_t *tls_key;
 
-	if (key == NULL)
+	if (P_UNLIKELY (key == NULL))
 		return;
 
 	tls_key = __p_uthread_get_tls_key (key);
 
-	if (tls_key != NULL) {
-		if (pthread_setspecific (*tls_key, value) != 0)
+	if (P_LIKELY (tls_key != NULL)) {
+		if (P_UNLIKELY (pthread_setspecific (*tls_key, value) != 0))
 			P_ERROR ("PUThread: failed to call pthread_setspecific()");
 	}
 }
@@ -398,12 +405,12 @@ p_uthread_replace_local	(PUThreadKey	*key,
 	pthread_key_t	*tls_key;
 	ppointer	old_value;
 
-	if (key == NULL)
+	if (P_UNLIKELY (key == NULL))
 		return;
 
 	tls_key = __p_uthread_get_tls_key (key);
 
-	if (tls_key == NULL)
+	if (P_UNLIKELY (tls_key == NULL))
 		return;
 
 	old_value = pthread_getspecific (*tls_key);
@@ -411,6 +418,6 @@ p_uthread_replace_local	(PUThreadKey	*key,
 	if (old_value != NULL && key->free_func != NULL)
 		key->free_func (old_value);
 
-	if (pthread_setspecific (*tls_key, value) != 0)
+	if (P_UNLIKELY (pthread_setspecific (*tls_key, value) != 0))
 		P_ERROR ("PUThread: failed to call(2) pthread_setspecific()");
 }
