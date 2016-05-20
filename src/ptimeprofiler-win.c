@@ -34,8 +34,8 @@ __p_time_profiler_current_ticks (const PTimeProfiler *profiler)
 {
 	LARGE_INTEGER	tcounter;
 
-	if (profiler->hasPerformanceCounter) {
-		if (QueryPerformanceCounter (&tcounter) == FALSE) {
+	if (P_LIKELY (profiler->hasPerformanceCounter == TRUE)) {
+		if (P_UNLIKELY (QueryPerformanceCounter (&tcounter) == FALSE)) {
 			P_ERROR ("PTimeProfiler: Failed to get current ticks count");
 			tcounter.QuadPart = 0;
 		}
@@ -43,9 +43,9 @@ __p_time_profiler_current_ticks (const PTimeProfiler *profiler)
 		return (puint64) tcounter.QuadPart;
 	} else {
 #ifdef PLIBSYS_HAS_GETTICKCOUNT_64
-	return (puint64) GetTickCount64 ();
+		return (puint64) GetTickCount64 ();
 #else
-	return (puint64) GetTickCount ();
+		return (puint64) GetTickCount ();
 #endif
 	}
 }
@@ -56,10 +56,10 @@ p_time_profiler_new ()
 	PTimeProfiler	*ret;
 	LARGE_INTEGER	tcounter;
 
-	if ((ret = p_malloc0 (sizeof (PTimeProfiler))) == NULL)
+	if (P_UNLIKELY ((ret = p_malloc0 (sizeof (PTimeProfiler))) == NULL))
 		return NULL;
 
-	if (QueryPerformanceCounter (&tcounter) == FALSE || tcounter.QuadPart == 0)
+	if (P_UNLIKELY (QueryPerformanceCounter (&tcounter) == FALSE || tcounter.QuadPart == 0))
 		ret->hasPerformanceCounter = FALSE;
 	else
 		ret->hasPerformanceCounter = TRUE;
@@ -72,7 +72,7 @@ p_time_profiler_new ()
 P_LIB_API void
 p_time_profiler_reset (PTimeProfiler *profiler)
 {
-	if (profiler == NULL)
+	if (P_UNLIKELY (profiler == NULL))
 		return;
 
 	profiler->counter = __p_time_profiler_current_ticks (profiler);
@@ -87,11 +87,11 @@ p_time_profiler_elapsed_usecs (const PTimeProfiler *profiler)
 	puint64		high_bit;
 #endif
 
-	if (profiler == NULL)
+	if (P_UNLIKELY (profiler == NULL))
 		return 0;
 
-	if (profiler->hasPerformanceCounter) {
-		if (QueryPerformanceFrequency (&frequency) == FALSE) {
+	if (P_LIKELY (profiler->hasPerformanceCounter == TRUE)) {
+		if (P_UNLIKELY (QueryPerformanceFrequency (&frequency) == FALSE)) {
 			P_ERROR ("PTimeProfiler: Failed to get performance frequency, fallback to 1000000 Hz");
 			frequency.QuadPart = 1000000;
 		}
@@ -100,14 +100,15 @@ p_time_profiler_elapsed_usecs (const PTimeProfiler *profiler)
 				  (frequency.QuadPart / 1000000.0F));
 	} else {
 #ifdef PLIBSYS_HAS_GETTICKCOUNT_64
-	return (puint64) (GetTickCount64 () - profiler->counter) * 1000;
+		return (puint64) (GetTickCount64 () - profiler->counter) * 1000;
 #else
-	high_bit = 0;
-	val = (puint64) GetTickCount ();
-	if (val < profiler->counter)
-		high_bit = 1;
+		high_bit = 0;
+		val = (puint64) GetTickCount ();
+		
+		if (P_UNLIKELY (val < profiler->counter))
+			high_bit = 1;
 
-	return (val | (high_bit << 32)) - profiler->counter;
+		return (val | (high_bit << 32)) - profiler->counter;
 #endif
 	}
 }
@@ -115,7 +116,7 @@ p_time_profiler_elapsed_usecs (const PTimeProfiler *profiler)
 P_LIB_API void
 p_time_profiler_free (PTimeProfiler *profiler)
 {
-	if (profiler == NULL)
+	if (P_UNLIKELY (profiler == NULL))
 		return;
 
 	p_free (profiler);

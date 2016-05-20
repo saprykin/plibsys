@@ -31,7 +31,7 @@ p_time_profiler_new ()
 {
 	PTimeProfiler	*ret;
 
-	if ((ret = p_malloc0 (sizeof (PTimeProfiler))) == NULL)
+	if (P_UNLIKELY ((ret = p_malloc0 (sizeof (PTimeProfiler))) == NULL))
 		return NULL;
 
 	ret->counter = (puint64) gethrtime ();
@@ -42,7 +42,7 @@ p_time_profiler_new ()
 P_LIB_API void
 p_time_profiler_reset (PTimeProfiler *profiler)
 {
-	if (profiler == NULL)
+	if (P_UNLIKELY (profiler == NULL))
 		return;
 
 	profiler->counter = (puint64) gethrtime ();
@@ -51,7 +51,7 @@ p_time_profiler_reset (PTimeProfiler *profiler)
 P_LIB_API puint64
 p_time_profiler_elapsed_usecs (const PTimeProfiler *profiler)
 {
-	if (profiler == NULL)
+	if (P_UNLIKELY (profiler == NULL))
 		return 0;
 
 	return (((puint64) gethrtime ()) - profiler->counter) / 1000;
@@ -60,7 +60,7 @@ p_time_profiler_elapsed_usecs (const PTimeProfiler *profiler)
 P_LIB_API void
 p_time_profiler_free (PTimeProfiler *profiler)
 {
-	if (profiler == NULL)
+	if (P_UNLIKELY (profiler == NULL))
 		return;
 
 	p_free (profiler);

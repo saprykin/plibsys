@@ -42,8 +42,8 @@ __p_time_profiler_current_ticks (const PTimeProfiler *profiler)
 #endif
 
 #if _POSIX_MONOTONIC_CLOCK >= 0
-	if (profiler->hasMonotonicClock) {
-		if (clock_gettime (CLOCK_MONOTONIC, &ts) != 0) {
+	if (P_LIKELY (profiler->hasMonotonicClock == TRUE)) {
+		if (P_UNLIKELY (clock_gettime (CLOCK_MONOTONIC, &ts) != 0)) {
 			P_ERROR ("PTimeProfiler: Failed to get time using clock_gettime()");
 			return __p_time_profiler_current_tick_gtod ();
 		} else
@@ -60,7 +60,7 @@ __p_time_profiler_current_tick_gtod ()
 {
 	struct timeval tv;
 
-	if (gettimeofday (&tv, NULL) != 0) {
+	if (P_UNLIKELY (gettimeofday (&tv, NULL) != 0)) {
 		P_ERROR ("PTimeProfiler: Failed to get time using gettimeofday()");
 		return 0;
 	}
@@ -73,11 +73,11 @@ p_time_profiler_new ()
 {
 	PTimeProfiler	*ret;
 
-	if ((ret = p_malloc0 (sizeof (PTimeProfiler))) == NULL)
+	if (P_UNLIKELY ((ret = p_malloc0 (sizeof (PTimeProfiler))) == NULL))
 		return NULL;
 
 #if _POSIX_MONOTONIC_CLOCK == 0
-	if (sysconf (_SC_MONOTONIC_CLOCK) > 0)
+	if (P_LIKELY (sysconf (_SC_MONOTONIC_CLOCK) > 0))
 		ret->hasMonotonicClock = TRUE;
 	else
 		ret->hasMonotonicClock = FALSE;
@@ -95,7 +95,7 @@ p_time_profiler_new ()
 P_LIB_API void
 p_time_profiler_reset (PTimeProfiler *profiler)
 {
-	if (profiler == NULL)
+	if (P_UNLIKELY (profiler == NULL))
 		return;
 
 	profiler->counter = __p_time_profiler_current_ticks (profiler);
@@ -104,7 +104,7 @@ p_time_profiler_reset (PTimeProfiler *profiler)
 P_LIB_API puint64
 p_time_profiler_elapsed_usecs (const PTimeProfiler *profiler)
 {
-	if (profiler == NULL)
+	if (P_UNLIKELY (profiler == NULL))
 		return 0;
 
 	return __p_time_profiler_current_ticks (profiler) - profiler->counter;
@@ -113,7 +113,7 @@ p_time_profiler_elapsed_usecs (const PTimeProfiler *profiler)
 P_LIB_API void
 p_time_profiler_free (PTimeProfiler *profiler)
 {
-	if (profiler == NULL)
+	if (P_UNLIKELY (profiler == NULL))
 		return;
 
 	p_free (profiler);

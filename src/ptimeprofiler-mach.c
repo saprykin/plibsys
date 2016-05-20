@@ -39,10 +39,10 @@ p_time_profiler_new ()
 	PTimeProfiler			*ret;
 	mach_timebase_info_data_t	tb;
 
-	if ((ret = p_malloc0 (sizeof (PTimeProfiler))) == NULL)
+	if (P_UNLIKELY ((ret = p_malloc0 (sizeof (PTimeProfiler))) == NULL))
 		return NULL;
 
-	if (mach_timebase_info (&tb) != KERN_SUCCESS || tb.denom == 0) {
+	if (P_UNLIKELY (mach_timebase_info (&tb) != KERN_SUCCESS || tb.denom == 0)) {
 		P_ERROR ("PTimeProfiler: Failed to get clock frequency using mach_timebase_info()");
 		ret->mach_timebase = 0.0;
 	} else
@@ -56,7 +56,7 @@ p_time_profiler_new ()
 P_LIB_API void
 p_time_profiler_reset (PTimeProfiler *profiler)
 {
-	if (profiler == NULL)
+	if (P_UNLIKELY (profiler == NULL))
 		return;
 
 	profiler->counter = __p_time_profiler_current_ticks (profiler);
@@ -65,7 +65,7 @@ p_time_profiler_reset (PTimeProfiler *profiler)
 P_LIB_API puint64
 p_time_profiler_elapsed_usecs (const PTimeProfiler *profiler)
 {
-	if (profiler == NULL)
+	if (P_UNLIKELY (profiler == NULL))
 		return 0;
 
 	return __p_time_profiler_current_ticks (profiler) - profiler->counter;
@@ -74,7 +74,7 @@ p_time_profiler_elapsed_usecs (const PTimeProfiler *profiler)
 P_LIB_API void
 p_time_profiler_free (PTimeProfiler *profiler)
 {
-	if (profiler == NULL)
+	if (P_UNLIKELY (profiler == NULL))
 		return;
 
 	p_free (profiler);
