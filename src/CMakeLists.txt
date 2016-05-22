@@ -377,6 +377,28 @@ if (NOT PLIBSYS_TARGET_OS STREQUAL windows OR PLIBSYS_TARGET_OS STREQUAL cygwin
 	else()
 		message (STATUS "Checking whether nanosleep() presents - no")
 	endif()
+
+	# Check for getaddrinfo() call
+	message (STATUS "Checking whether getaddrinfo() presents")
+
+	check_c_source_compiles (
+				 "#include <sys/socket.h>
+				  #include <netdb.h>
+				 int main () {
+					getaddrinfo (0, 0, 0, 0);
+					freeaddrinfo (0);
+
+					return 0;
+				 }"
+				 PLIBSYS_HAS_GETADDRINFO
+				)
+
+	if (PLIBSYS_HAS_GETADDRINFO)
+		message (STATUS "Checking whether getaddrinfo() presents - yes")
+		add_definitions (-DPLIBSYS_HAS_GETADDRINFO)
+	else()
+		message (STATUS "Checking whether getaddrinfo() presents - no")
+	endif()
 endif()
 
 if (PLIBSYS_THREAD_MODEL STREQUAL posix)
