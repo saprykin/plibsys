@@ -83,7 +83,7 @@ p_socket_address_new_from_native (pconstpointer	native,
 
 		memcpy (&ret->addr.sin_addr, &((struct sockaddr_in *) native)->sin_addr, sizeof (struct in_addr));
 		ret->family = P_SOCKET_FAMILY_INET;
-		ret->port = ntohs (((struct sockaddr_in *) native)->sin_port);
+		ret->port   = p_ntohs (((struct sockaddr_in *) native)->sin_port);
 		return ret;
 	}
 #ifdef AF_INET6
@@ -96,7 +96,7 @@ p_socket_address_new_from_native (pconstpointer	native,
 
 		memcpy (&ret->addr.sin6_addr, &((struct sockaddr_in6 *) native)->sin6_addr, sizeof (struct in6_addr));
 		ret->family = P_SOCKET_FAMILY_INET6;
-		ret->port = ntohs (((struct sockaddr_in *) native)->sin_port);
+		ret->port   = p_ntohs (((struct sockaddr_in *) native)->sin_port);
 		return ret;
 	}
 #endif
@@ -195,7 +195,7 @@ p_socket_address_new_any (PSocketFamily	family,
 	}
 
 	ret->family = family;
-	ret->port = port;
+	ret->port   = port;
 
 	return ret;
 }
@@ -227,7 +227,7 @@ p_socket_address_new_loopback (PSocketFamily	family,
 	}
 
 	ret->family = family;
-	ret->port = port;
+	ret->port   = port;
 
 	return ret;
 }
@@ -258,7 +258,7 @@ p_socket_address_to_native (const PSocketAddress	*addr,
 
 		memcpy (&sin->sin_addr, &addr->addr.sin_addr, sizeof (struct in_addr));
 		sin->sin_family = AF_INET;
-		sin->sin_port = htons (addr->port);
+		sin->sin_port   = p_htons (addr->port);
 		memset (sin->sin_zero, 0, sizeof (sin->sin_zero));
 		return TRUE;
 	}
@@ -270,8 +270,8 @@ p_socket_address_to_native (const PSocketAddress	*addr,
 		}
 
 		memcpy (&sin6->sin6_addr, &addr->addr.sin6_addr, sizeof (struct in6_addr));
-		sin->sin_family = AF_INET6;
-		sin->sin_port = htons (addr->port);
+		sin6->sin6_family   = AF_INET6;
+		sin6->sin6_port     = p_htons (addr->port);
 		return TRUE;
 	}
 #endif
@@ -390,7 +390,7 @@ p_socket_address_is_any (const PSocketAddress *addr)
 		return FALSE;
 
 	if (addr->family == P_SOCKET_FAMILY_INET) {
-		addr4 = ntohl (* ((puint32 *) &addr->addr.sin_addr));
+		addr4 = p_ntohl (* ((puint32 *) &addr->addr.sin_addr));
 
 		return (addr4 == INADDR_ANY);
 	}
@@ -412,7 +412,7 @@ p_socket_address_is_loopback (const PSocketAddress *addr)
 		return FALSE;
 
 	if (addr->family == P_SOCKET_FAMILY_INET) {
-		addr4 = ntohl (* ((puint32 *) &addr->addr.sin_addr));
+		addr4 = p_ntohl (* ((puint32 *) &addr->addr.sin_addr));
 
 		/* 127.0.0.0/8 */
 		return ((addr4 & 0xff000000) == 0x7f000000);
