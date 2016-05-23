@@ -30,12 +30,12 @@ p_strdup (const pchar *str)
 	pchar	*ret;
 	psize	len;
 
-	if (str == NULL)
+	if (P_UNLIKELY (str == NULL))
 		return NULL;
 
 	len = strlen (str) + 1;
 
-	if ((ret = p_malloc (len)) == NULL)
+	if (P_UNLIKELY ((ret = p_malloc (len)) == NULL))
 		return NULL;
 
 	memcpy (ret, str, len);
@@ -51,7 +51,7 @@ p_strchomp (const pchar *str)
 	pchar		*ret;
 	const pchar	*ptr;
 
-	if (str == NULL)
+	if (P_UNLIKELY (str == NULL))
 		return NULL;
 
 	ptr = str;
@@ -74,7 +74,7 @@ p_strchomp (const pchar *str)
 
 	str_len = pos_end - pos_start + 2;
 
-	if ((ret = p_malloc0 (str_len)) == NULL)
+	if (P_UNLIKELY ((ret = p_malloc0 (str_len)) == NULL))
 		return NULL;
 
 	memcpy (ret, str + pos_start, str_len - 1);
@@ -86,12 +86,12 @@ p_strchomp (const pchar *str)
 P_LIB_API pchar *
 p_strtok (pchar *str, const pchar *delim, pchar **buf)
 {
-	if (delim == NULL)
+	if (P_UNLIKELY (delim == NULL))
 		return str;
 
 #ifdef P_OS_WIN
 #  ifdef P_CC_MSVC
-	if (buf == NULL)
+	if (P_UNLIKELY (buf == NULL))
 		return str;
 #    if _MSC_VER < 1400
 	P_UNUSED (buf);
@@ -104,7 +104,7 @@ p_strtok (pchar *str, const pchar *delim, pchar **buf)
 	return strtok (str, delim);
 #  endif
 #else
-	if (buf == NULL)
+	if (P_UNLIKELY (buf == NULL))
 		return str;
 
 	return strtok_r (str, delim, buf);
@@ -114,17 +114,17 @@ p_strtok (pchar *str, const pchar *delim, pchar **buf)
 P_LIB_API double
 p_strtod (const pchar *str)
 {
-	double		sign;
-	double		value;
-	double		scale;
-	double		pow10;
-	unsigned int	expon;
-	int		frac;
-	pchar		*orig_str, *strp;
+	double	sign;
+	double	value;
+	double	scale;
+	double	pow10;
+	puint	expon;
+	pint	frac;
+	pchar	*orig_str, *strp;
 
 	orig_str = p_strchomp (str);
 
-	if (orig_str == NULL)
+	if (P_UNLIKELY (orig_str == NULL))
 		return 0.0;
 
 	strp = orig_str;
@@ -137,7 +137,7 @@ p_strtod (const pchar *str)
 		strp += 1;
 
 	/* Get digits before decimal point or exponent, if any */
-	for (value = 0.0; isdigit ((int) *strp); strp += 1)
+	for (value = 0.0; isdigit ((pint) *strp); strp += 1)
 		value = value * 10.0 + (*strp - '0');
 
 	/* Get digits after decimal point, if any */
@@ -145,7 +145,7 @@ p_strtod (const pchar *str)
 		pow10 = 10.0;
 		strp += 1;
 
-		while (isdigit ((int) *strp)) {
+		while (isdigit ((pint) *strp)) {
 			value += (*strp - '0') / pow10;
 			pow10 *= 10.0;
 			strp += 1;
@@ -168,11 +168,10 @@ p_strtod (const pchar *str)
 			strp += 1;
 
 		/* Get digits of exponent, if any */
-		for (expon = 0; isdigit ((int) *strp); strp += 1) {
+		for (expon = 0; isdigit ((pint) *strp); strp += 1)
 			expon = expon * 10 + (*strp - '0');
-		}
 
-		if (expon > P_STR_MAX_EXPON)
+		if (P_UNLIKELY (expon > P_STR_MAX_EXPON))
 			expon = P_STR_MAX_EXPON;
 
 		/* Calculate scaling factor */
