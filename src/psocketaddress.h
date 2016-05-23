@@ -176,6 +176,44 @@ P_LIB_API pchar *		p_socket_address_get_address		(const PSocketAddress	*addr);
 P_LIB_API puint16		p_socket_address_get_port		(const PSocketAddress	*addr);
 
 /**
+ * @brief Gets IPv6 traffic class and flow information.
+ * @param addr #PSocketAddress to get flow information for.
+ * @return IPv6 traffic class and flow information.
+ * @since 0.0.1
+ * @note This call is valid only for an IPv6 address, otherwise 0 is returned.
+ */
+P_LIB_API puint32		p_socket_address_get_flow_info		(const PSocketAddress	*addr);
+
+/**
+ * @brief Gets an IPv6 set of interfaces for a scope.
+ * @param addr #PSocketAddress to get a set of interfaces for.
+ * @return Index that identifies a set of interfaces for a scope.
+ * @since 0.0.1
+ * @note This call is valid only for an IPv6 address, otherwise 0 is returned.
+ */
+P_LIB_API puint32		p_socket_address_get_scope_id		(const PSocketAddress	*addr);
+
+/**
+ * @brief Sets IPv6 traffic class and flow information.
+ * @param addr #PSocketAddress to set flow information for.
+ * @param flow_info Flow information to set.
+ * @since 0.0.1
+ * @note This call is valid only for an IPv6 address.
+ */
+P_LIB_API void			p_socket_address_set_flow_info		(PSocketAddress		*addr,
+									 puint32		flowinfo);
+
+/**
+ * @brief Sets an IPv6 set of interfaces for a scope.
+ * @param addr #PSocketAddress to set a set of interfaces for.
+ * @param scope_id Index that identifies a set of interfaces for a scope.
+ * @since 0.0.1
+ * @note This call is valid only for an IPv6 address.
+ */
+P_LIB_API void			p_socket_address_set_scope_id		(PSocketAddress		*addr,
+									 puint32		scope_id);
+
+/**
  * @brief Checks whether a given socket address is the any-address
  * representation. Such address is a 0.0.0.0.
  * @param addr #PSocketAddress to check.

@@ -27,6 +27,10 @@
 #  include <arpa/inet.h>
 #endif
 
+#ifdef PLIBSYS_HAS_GETADDRINFO
+#  include <netdb.h>
+#endif
+
 /* According to Open Group specifications */
 #ifndef INET_ADDRSTRLEN
 #  ifdef P_OS_WIN
@@ -57,6 +61,8 @@ struct _PSocketAddress {
 #endif
 	} 		addr;
 	puint16 	port;
+	puint32		flowinfo;
+	puint32		scope_id;
 };
 
 P_LIB_API PSocketAddress *
@@ -111,6 +117,11 @@ p_socket_address_new (const pchar	*address,
 		      puint16		port)
 {
 	PSocketAddress		*ret;
+#if defined (P_OS_WIN) || defined (PLIBSYS_HAS_GETADDRINFO)
+	struct addrinfo		hints;
+	struct addrinfo		*res;
+#endif
+
 #ifdef P_OS_WIN
 	struct sockaddr_storage	sa;
 	struct sockaddr_in 	*sin = (struct sockaddr_in *) &sa;
@@ -129,6 +140,31 @@ p_socket_address_new (const pchar	*address,
 	}
 
 	ret->port = port;
+
+#if (defined (P_OS_WIN) || defined (PLIBSYS_HAS_GETADDRINFO)) && defined (AF_INET6)
+	if (strchr (address, ':') != NULL) {
+		memset (&hints, 0, sizeof (hints));
+
+		hints.ai_family   = AF_UNSPEC;
+		hints.ai_socktype = SOCK_STREAM;
+		hints.ai_protocol = 0;
+		hints.ai_flags    = AI_NUMERICHOST;
+
+		if (getaddrinfo (address, NULL, &hints, &res) != 0)
+			return NULL;
+
+		if (res->ai_family  == AF_INET6 &&
+		    res->ai_addrlen == sizeof (struct sockaddr_in6)) {
+			((struct sockaddr_in6 *) res->ai_addr)->sin6_port = p_htons (port);
+			ret = p_socket_address_new_from_native (res->ai_addr, res->ai_addrlen);
+		} else
+			ret = NULL;
+
+		freeaddrinfo (res);
+
+		return ret;
+	}
+#endif
 
 #ifdef P_OS_WIN
 	memset (&sa, 0, sizeof (sa));
@@ -272,6 +308,8 @@ p_socket_address_to_native (const PSocketAddress	*addr,
 		memcpy (&sin6->sin6_addr, &addr->addr.sin6_addr, sizeof (struct in6_addr));
 		sin6->sin6_family   = AF_INET6;
 		sin6->sin6_port     = p_htons (addr->port);
+		sin6->sin6_flowinfo = addr->flowinfo;
+		sin6->sin6_scope_id = addr->scope_id;
 		return TRUE;
 	}
 #endif
@@ -379,6 +417,74 @@ p_socket_address_get_port (const PSocketAddress *addr)
 		return 0;
 
 	return addr->port;
+}
+
+P_LIB_API puint32
+p_socket_address_get_flow_info (const PSocketAddress *addr)
+{
+	if (P_UNLIKELY (addr == NULL))
+		return 0;
+
+#ifndef AF_INET6
+	return 0;
+#else
+	if (P_UNLIKELY (addr->family != P_SOCKET_FAMILY_INET6))
+		return 0;
+
+	return addr->flowinfo;
+#endif
+}
+
+P_LIB_API puint32
+p_socket_address_get_scope_id (const PSocketAddress *addr)
+{
+	if (P_UNLIKELY (addr == NULL))
+		return 0;
+
+#ifndef AF_INET6
+	return 0;
+#else
+	if (P_UNLIKELY (addr->family != P_SOCKET_FAMILY_INET6))
+		return 0;
+
+	return addr->scope_id;
+#endif
+}
+
+P_LIB_API void
+p_socket_address_set_flow_info (PSocketAddress	*addr,
+				 puint32	flowinfo)
+{
+	if (P_UNLIKELY (addr == NULL))
+		return;
+
+#ifndef AF_INET6
+	P_UNUSED (flowinfo);
+	return;
+#else
+	if (P_UNLIKELY (addr->family != P_SOCKET_FAMILY_INET6))
+		return;
+
+	addr->flowinfo = flowinfo;
+#endif
+}
+
+P_LIB_API void
+p_socket_address_set_scope_id (PSocketAddress	*addr,
+			       puint32		scope_id)
+{
+	if (P_UNLIKELY (addr == NULL))
+		return;
+
+#ifndef AF_INET6
+	P_UNUSED (scope_id);
+	return;
+#else
+	if (P_UNLIKELY (addr->family != P_SOCKET_FAMILY_INET6))
+		return;
+
+	addr->scope_id = scope_id;
+#endif
 }
 
 P_LIB_API pboolean
