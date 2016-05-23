@@ -101,8 +101,10 @@ p_socket_address_new_from_native (pconstpointer	native,
 		}
 
 		memcpy (&ret->addr.sin6_addr, &((struct sockaddr_in6 *) native)->sin6_addr, sizeof (struct in6_addr));
-		ret->family = P_SOCKET_FAMILY_INET6;
-		ret->port   = p_ntohs (((struct sockaddr_in *) native)->sin_port);
+		ret->family   = P_SOCKET_FAMILY_INET6;
+		ret->port     = p_ntohs (((struct sockaddr_in *) native)->sin_port);
+		ret->flowinfo = ((struct sockaddr_in6 *) native)->sin6_flowinfo;
+		ret->scope_id = ((struct sockaddr_in6 *) native)->sin6_scope_id;
 		return ret;
 	}
 #endif
