@@ -145,11 +145,11 @@ p_socket_address_new (const pchar	*address,
 		hints.ai_protocol = 0;
 		hints.ai_flags    = AI_NUMERICHOST;
 
-		if (getaddrinfo (address, NULL, &hints, &res) != 0)
+		if (P_UNLIKELY (getaddrinfo (address, NULL, &hints, &res) != 0))
 			return NULL;
 
-		if (res->ai_family  == AF_INET6 &&
-		    res->ai_addrlen == sizeof (struct sockaddr_in6)) {
+		if (P_LIKELY (res->ai_family  == AF_INET6 &&
+			      res->ai_addrlen == sizeof (struct sockaddr_in6))) {
 			((struct sockaddr_in6 *) res->ai_addr)->sin6_port = p_htons (port);
 			ret = p_socket_address_new_from_native (res->ai_addr, res->ai_addrlen);
 		} else
