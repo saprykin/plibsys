@@ -136,13 +136,6 @@ p_socket_address_new (const pchar	*address,
 	if (P_UNLIKELY (address == NULL))
 		return NULL;
 
-	if (P_UNLIKELY ((ret = p_malloc0 (sizeof (PSocketAddress))) == NULL)) {
-		P_ERROR ("PSocketAddress: failed to allocate memory");
-		return NULL;
-	}
-
-	ret->port = port;
-
 #if (defined (P_OS_WIN) || defined (PLIBSYS_HAS_GETADDRINFO)) && defined (AF_INET6)
 	if (strchr (address, ':') != NULL) {
 		memset (&hints, 0, sizeof (hints));
@@ -167,6 +160,13 @@ p_socket_address_new (const pchar	*address,
 		return ret;
 	}
 #endif
+
+	if (P_UNLIKELY ((ret = p_malloc0 (sizeof (PSocketAddress))) == NULL)) {
+		P_ERROR ("PSocketAddress: failed to allocate memory");
+		return NULL;
+	}
+
+	ret->port = port;
 
 #ifdef P_OS_WIN
 	memset (&sa, 0, sizeof (sa));
