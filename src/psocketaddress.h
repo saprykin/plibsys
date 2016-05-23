@@ -96,6 +96,11 @@ P_LIB_API PSocketAddress *	p_socket_address_new_from_native	(pconstpointer		nati
  * @return Pointer to #PSocketAddress in case of success, NULL otherwise.
  * @since 0.0.1
  * @note It tries to automatically detect a socket family.
+ *
+ * If @a address is an IPv6 address, it can also contain a scope index separated
+ * from the address by a '%' literal). Most target platforms should correctly
+ * parse such an address though some old operating systems may fail in case of
+ * lack of the getaddrinfo() call.
  */
 P_LIB_API PSocketAddress *	p_socket_address_new			(const pchar		*address,
 									 puint16		port);
