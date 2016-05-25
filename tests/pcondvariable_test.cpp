@@ -94,6 +94,8 @@ static void * producer_test_thread (void *)
 
 	p_cond_variable_broadcast (queue_full_cond);
 	p_uthread_exit (0);
+
+	return NULL;
 }
 
 static void * consumer_test_thread (void *)
@@ -134,6 +136,8 @@ static void * consumer_test_thread (void *)
 
 	p_cond_variable_signal (queue_empty_cond);
 	p_uthread_exit (0);
+
+	return NULL;
 }
 
 BOOST_AUTO_TEST_SUITE (BOOST_TEST_MODULE)

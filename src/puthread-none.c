@@ -62,30 +62,20 @@ __p_uthread_create_internal (PUThreadFunc	func,
 }
 
 void
+__p_uthread_exit_internal (void)
+{
+}
+
+void
+__p_uthread_wait_internal (PUThread *thread)
+{
+	P_UNUSED (thread);
+}
+
+void
 __p_uthread_free_internal (PUThread *thread)
 {
 	p_free (thread);
-}
-
-
-P_LIB_API void
-p_uthread_exit (pint code)
-{
-	P_INT_TO_POINTER (code);
-}
-
-P_LIB_API pint
-p_uthread_join (PUThread *thread)
-{
-	ppointer ret;
-
-	if (P_UNLIKELY (thread == NULL))
-		return -1;
-
-	if (thread->base.joinable == FALSE)
-		return -1;
-
-	return thread->hdl;
 }
 
 P_LIB_API void

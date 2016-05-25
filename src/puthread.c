@@ -26,10 +26,12 @@
 
 extern void __p_uthread_init_internal (void);
 extern void __p_uthread_shutdown_internal (void);
-extern void __p_uthread_free_internal (PUThread *thread);
 extern PUThread * __p_uthread_create_internal (PUThreadFunc	func,
 					       pboolean		joinable,
 					       PUThreadPriority	prio);
+extern void __p_uthread_exit_internal (void);
+extern void __p_uthread_wait_internal (PUThread *thread);
+extern void __p_uthread_free_internal (PUThread *thread);
 
 static void __p_uthread_cleanup (ppointer data);
 static ppointer __p_uthread_proxy (ppointer data);
@@ -123,6 +125,42 @@ p_uthread_create (PUThreadFunc	func,
 {
 	/* All checks will be inside */
 	return p_uthread_create_full (func, data, joinable, P_UTHREAD_PRIORITY_INHERIT);
+}
+
+P_LIB_API void
+p_uthread_exit (pint code)
+{
+	__PUThreadBase *base_thread = (__PUThreadBase *) p_uthread_current ();
+
+	if (P_UNLIKELY (base_thread == NULL))
+		return;
+
+	if (P_UNLIKELY (base_thread->ours == FALSE)) {
+		P_WARNING ("Trying to call p_uthread_exit() from an unknown thread");
+		return;
+	}
+
+	base_thread->ret_code = code;
+
+	__p_uthread_exit_internal ();
+}
+
+P_LIB_API pint
+p_uthread_join (PUThread *thread)
+{
+	__PUThreadBase *base_thread;
+
+	if (P_UNLIKELY (thread == NULL))
+		return -1;
+
+	 base_thread = (__PUThreadBase *) thread;
+
+	if (base_thread->joinable == FALSE)
+		return -1;
+
+	__p_uthread_wait_internal (thread);
+
+	return base_thread->ret_code;
 }
 
 P_LIB_API PUThread *

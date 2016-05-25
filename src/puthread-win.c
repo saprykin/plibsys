@@ -210,40 +210,23 @@ __p_uthread_create_internal (PUThreadFunc	func,
 }
 
 void
+__p_uthread_exit_internal (void)
+{
+	ExitThread (0);
+}
+
+void
+__p_uthread_wait_internal (PUThread *thread)
+{
+	if (P_UNLIKELY ((WaitForSingleObject (thread->hdl, INFINITE)) != WAIT_OBJECT_0))
+		P_ERROR ("PUThread: failed to call WaitForSingleObject() to join a thread");
+}
+
+void
 __p_uthread_free_internal (PUThread *thread)
 {
 	CloseHandle (thread->hdl);
 	p_free (thread);
-}
-
-P_LIB_API void
-p_uthread_exit (pint code)
-{
-	ExitThread ((DWORD) code);
-}
-
-P_LIB_API pint
-p_uthread_join (PUThread *thread)
-{
-	DWORD exit_code;
-
-	if (P_UNLIKELY (thread == NULL))
-		return -1;
-
-	if (thread->base.joinable == FALSE)
-		return -1;
-
-	if (P_UNLIKELY ((WaitForSingleObject (thread->hdl, INFINITE)) != WAIT_OBJECT_0)) {
-		P_ERROR ("PUThread: failed to call WaitForSingleObject() to join a thread");
-		return -1;
-	}
-
-	if (P_UNLIKELY (GetExitCodeThread (thread->hdl, &exit_code) == 0)) {
-		P_ERROR ("PUThread: failed to call GetExitCodeThread()");
-		return -1;
-	}
-
-	return exit_code;
 }
 
 P_LIB_API void

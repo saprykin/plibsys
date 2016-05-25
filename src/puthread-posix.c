@@ -245,37 +245,22 @@ __p_uthread_create_internal (PUThreadFunc	func,
 }
 
 void
+__p_uthread_exit_internal (void)
+{
+	pthread_exit (P_INT_TO_POINTER (0));
+}
+
+void
+__p_uthread_wait_internal (PUThread *thread)
+{
+	if (P_UNLIKELY (pthread_join (thread->hdl, NULL) != 0))
+		P_ERROR ("PUThread: failed to call pthread_join()");
+}
+
+void
 __p_uthread_free_internal (PUThread *thread)
 {
 	p_free (thread);
-}
-
-P_LIB_API void
-p_uthread_exit (pint code)
-{
-	pthread_exit (P_INT_TO_POINTER (code));
-
-	/* To smile a compiler */
-	while (1);
-}
-
-P_LIB_API pint
-p_uthread_join (PUThread *thread)
-{
-	ppointer ret;
-
-	if (P_UNLIKELY (thread == NULL))
-		return -1;
-
-	if (thread->base.joinable == FALSE)
-		return -1;
-
-	if (P_UNLIKELY (pthread_join (thread->hdl, &ret) != 0)) {
-		P_ERROR ("PUThread: failed to call pthread_join()");
-		return -1;
-	}
-
-	return P_POINTER_TO_INT (ret);
 }
 
 P_LIB_API void

@@ -92,6 +92,8 @@ static void * test_thread_func (void *data)
 	}
 
 	p_uthread_exit (*counter);
+
+	return NULL;
 }
 
 static void * test_thread_nonjoinable_func (void *data)
@@ -109,6 +111,8 @@ static void * test_thread_nonjoinable_func (void *data)
 	is_threads_working = FALSE;
 
 	p_uthread_exit (0);
+
+	return NULL;
 }
 
 static void * test_thread_tls_func (void *data)
@@ -157,6 +161,8 @@ static void * test_thread_tls_func (void *data)
 	}
 
 	p_uthread_exit (counter);
+
+	return NULL;
 }
 
 BOOST_AUTO_TEST_SUITE (BOOST_TEST_MODULE)

@@ -90,6 +90,8 @@ static void * shm_buffer_test_write_thread (void *)
 
 	p_shm_buffer_free (buffer);
 	p_uthread_exit (0);
+
+	return NULL;
 }
 
 static void * shm_buffer_test_read_thread (void *)
@@ -149,6 +151,8 @@ static void * shm_buffer_test_read_thread (void *)
 
 	p_shm_buffer_free (buffer);
 	p_uthread_exit (0);
+
+	return NULL;
 }
 #  endif /* !P_OS_HPUX */
 #endif /* !P_OS_MSYS */

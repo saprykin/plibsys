@@ -32,6 +32,7 @@ P_BEGIN_DECLS
 /** Base thread structure */
 typedef struct _PUThreadBase {
 	pint			ref_count;	/**< Reference counter.	*/
+	pint			ret_code;	/**< Return code.	*/
 	pboolean		ours;		/**< Our thread flag.	*/
 	pboolean		joinable;	/**< Joinable flag.	*/
 	PUThreadFunc		func;		/**< Thread routine.	*/

@@ -119,10 +119,10 @@ typedef enum _PUThreadPriority {
  * @note Unreference the returned value after use with p_uthread_unref(). You do
  * not need to call p_uthread_ref() explicitly on the returned value.
  */
-P_LIB_API PUThread *		p_uthread_create_full	(PUThreadFunc		func,
-							 ppointer		data,
-							 pboolean		joinable,
-							 PUThreadPriority	prio);
+P_LIB_API PUThread *	p_uthread_create_full	(PUThreadFunc		func,
+						 ppointer		data,
+						 pboolean		joinable,
+						 PUThreadPriority	prio);
 
 /**
  * @brief Creates a #PUThread and starts it. Short version of
@@ -135,16 +135,16 @@ P_LIB_API PUThread *		p_uthread_create_full	(PUThreadFunc		func,
  * @note Unreference the returned value after use with p_uthread_unref(). You do
  * not need to call p_uthread_ref() explicitly on the returned value.
  */
-P_LIB_API PUThread *		p_uthread_create	(PUThreadFunc		func,
-							 ppointer		data,
-							 pboolean		joinable);
+P_LIB_API PUThread *	p_uthread_create	(PUThreadFunc		func,
+						 ppointer		data,
+						 pboolean		joinable);
 
 /**
  * @brief Exits from the currently running (caller) thread.
  * @param code Exit code.
  * @since 0.0.1
  */
-P_LIB_API P_NO_RETURN void	p_uthread_exit		(pint			code);
+P_LIB_API void		p_uthread_exit		(pint			code);
 
 /**
  * @brief Waits for selected thread to become finished. Thread must be joinable
@@ -153,7 +153,7 @@ P_LIB_API P_NO_RETURN void	p_uthread_exit		(pint			code);
  * @return Thread exit code in case of success, -1 otherwise.
  * @since 0.0.1
  */
-P_LIB_API pint			p_uthread_join		(PUThread		*thread);
+P_LIB_API pint		p_uthread_join		(PUThread		*thread);
 
 /**
  * @brief Sleeps the current thread (caller) for specified amount of time.
@@ -161,7 +161,7 @@ P_LIB_API pint			p_uthread_join		(PUThread		*thread);
  * @return 0 in case of success, -1 otherwise.
  * @since 0.0.1
  */
-P_LIB_API pint			p_uthread_sleep		(puint32		msec);
+P_LIB_API pint		p_uthread_sleep		(puint32		msec);
 
 /**
  * @brief Sets thread priority.
@@ -170,8 +170,8 @@ P_LIB_API pint			p_uthread_sleep		(puint32		msec);
  * @return TRUE in case of success, FALSE otherwise.
  * @since 0.0.1
  */
-P_LIB_API pboolean		p_uthread_set_priority	(PUThread		*thread,
-							 PUThreadPriority	prio);
+P_LIB_API pboolean	p_uthread_set_priority	(PUThread		*thread,
+						 PUThreadPriority	prio);
 
 /**
  * @brief Tells scheduler to skip the current (caller) thread in the current
@@ -181,7 +181,7 @@ P_LIB_API pboolean		p_uthread_set_priority	(PUThread		*thread,
  * Scheduler shouldn't give time ticks for the current thread during the current
  * period, but it may ignore this call.
  */
-P_LIB_API void			p_uthread_yield		(void);
+P_LIB_API void		p_uthread_yield		(void);
 
 /**
  * @brief Gets an ID of the current (caller) thread.
@@ -191,7 +191,7 @@ P_LIB_API void			p_uthread_yield		(void);
  * This is a platform-dependent type. You shouldn't treat it as a number, it
  * only gives you a uniquer ID of the thread accross the system.
  */
-P_LIB_API P_HANDLE		p_uthread_current_id	(void);
+P_LIB_API P_HANDLE	p_uthread_current_id	(void);
 
 /**
  * @brief Gets a thread structure of the current (caller) thread.
@@ -204,7 +204,7 @@ P_LIB_API P_HANDLE		p_uthread_current_id	(void);
  * outside the library. But you should not use thread manipulation routines over
  * that structure.
  */
-P_LIB_API PUThread *		p_uthread_current	(void);
+P_LIB_API PUThread *	p_uthread_current	(void);
 
 /**
  * @brief Incremetns a thread reference counter
@@ -213,7 +213,7 @@ P_LIB_API PUThread *		p_uthread_current	(void);
  * @note The #PUThread object will not be removed until the reference counter is
  * positive.
  */
-P_LIB_API void			p_uthread_ref		(PUThread		*thread);
+P_LIB_API void		p_uthread_ref		(PUThread		*thread);
 
 /**
  * @brief Decrements a thread reference counter
@@ -222,7 +222,7 @@ P_LIB_API void			p_uthread_ref		(PUThread		*thread);
  * @note When the reference counter becomes zero the #PUThread is removed from
  * the memory.
  */
-P_LIB_API void			p_uthread_unref		(PUThread		*thread);
+P_LIB_API void		p_uthread_unref		(PUThread		*thread);
 
 /**
  * @brief Create a new TLS reference key.
@@ -230,7 +230,7 @@ P_LIB_API void			p_uthread_unref		(PUThread		*thread);
  * @return New TLS reference key in case of success, NULL otherwise.
  * @since 0.0.1
  */
-P_LIB_API PUThreadKey *		p_uthread_local_new	(PDestroyFunc		free_func);
+P_LIB_API PUThreadKey *	p_uthread_local_new	(PDestroyFunc		free_func);
 
 /**
  * @brief Frees TLS reference key.
@@ -240,7 +240,7 @@ P_LIB_API PUThreadKey *		p_uthread_local_new	(PDestroyFunc		free_func);
  * It doesn't remove a TLS key itself but only removes a reference used to
  * access a TLS slot.
  */
-P_LIB_API void			p_uthread_local_free	(PUThreadKey		*key);
+P_LIB_API void		p_uthread_local_free	(PUThreadKey		*key);
 
 /**
  * @brief Gets a TLS value.
@@ -250,7 +250,7 @@ P_LIB_API void			p_uthread_local_free	(PUThreadKey		*key);
  * @note This call may fail only in case of abnormal use or program behavior,
  * NULL value will be returned to tolerance the failure.
  */
-P_LIB_API ppointer		p_uthread_get_local	(PUThreadKey		*key);
+P_LIB_API ppointer	p_uthread_get_local	(PUThreadKey		*key);
 
 /**
  * @brief Sets a TLS value.
@@ -262,8 +262,8 @@ P_LIB_API ppointer		p_uthread_get_local	(PUThreadKey		*key);
  * It doesn't call a destructor notification function provided with
  * p_uthread_local_new().
  */
-P_LIB_API void			p_uthread_set_local	(PUThreadKey		*key,
-							 ppointer		value);
+P_LIB_API void		p_uthread_set_local	(PUThreadKey		*key,
+						 ppointer		value);
 
 /**
  * @brief Replaces a TLS value.
@@ -276,8 +276,8 @@ P_LIB_API void			p_uthread_set_local	(PUThreadKey		*key,
  * p_uthread_local_new() on an old TLS value. This is the only difference with
  * p_uthread_set_local().
  */
-P_LIB_API void			p_uthread_replace_local	(PUThreadKey		*key,
-							 ppointer		value);
+P_LIB_API void		p_uthread_replace_local	(PUThreadKey		*key,
+						 ppointer		value);
 
 P_END_DECLS
 

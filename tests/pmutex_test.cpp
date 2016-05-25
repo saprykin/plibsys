@@ -72,6 +72,8 @@ static void * mutex_test_thread (void *)
 	}
 
 	p_uthread_exit (0);
+
+	return NULL;
 }
 
 BOOST_AUTO_TEST_SUITE (BOOST_TEST_MODULE)

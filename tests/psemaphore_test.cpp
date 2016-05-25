@@ -83,6 +83,8 @@ static void * semaphore_test_thread (void *)
 
 	p_semaphore_free (sem);
 	p_uthread_exit (0);
+
+	return NULL;
 }
 #endif /* !P_OS_MSYS */
 

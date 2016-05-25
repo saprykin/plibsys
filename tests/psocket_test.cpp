@@ -221,6 +221,8 @@ static void * udp_socket_sender_thread (void *arg)
 	p_socket_address_free (addr_receiver);
 	p_socket_free (skt_sender);
 	p_uthread_exit (send_counter);
+
+	return NULL;
 }
 
 static void * udp_socket_receiver_thread (void *arg)
@@ -315,6 +317,8 @@ static void * udp_socket_receiver_thread (void *arg)
 
 	p_socket_free (skt_receiver);
 	p_uthread_exit (recv_counter);
+
+	return NULL;
 }
 
 static void * tcp_socket_sender_thread (void *arg)
@@ -448,6 +452,8 @@ static void * tcp_socket_sender_thread (void *arg)
 	p_socket_address_free (addr_receiver);
 	p_socket_free (skt_sender);
 	p_uthread_exit (send_counter);
+
+	return NULL;
 }
 
 static void * tcp_socket_receiver_thread (void *arg)
@@ -555,6 +561,8 @@ static void * tcp_socket_receiver_thread (void *arg)
 	p_socket_free (skt_receiver);
 
 	p_uthread_exit (recv_counter);
+
+	return NULL;
 }
 
 BOOST_AUTO_TEST_SUITE (BOOST_TEST_MODULE)

@@ -61,6 +61,8 @@ static void * shm_test_thread (void *arg)
 		p_uthread_exit (1);
 
 	p_uthread_exit (0);
+
+	return NULL;
 }
 #endif /* !P_OS_MSYS */
 
