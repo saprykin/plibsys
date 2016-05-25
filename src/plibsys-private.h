@@ -25,15 +25,22 @@
 #include "pmacros.h"
 #include "ptypes.h"
 #include "perrortypes.h"
+#include "puthread.h"
 
 P_BEGIN_DECLS
 
+/** Base thread structure */
+typedef struct _PUThreadBase {
+	pboolean		joinable;	/**< Joinable flag.	*/
+	PUThreadPriority	prio;		/**< Thread priority.	*/
+} __PUThreadBase;
+
 /** Base tree leaf structure. */
 typedef struct _PTreeBaseNode {
-	struct _PTreeBaseNode	*left;	/**< Left child.	*/
-	struct _PTreeBaseNode	*right;	/**< Right child.	*/
-	ppointer		key;	/**< Node key.		*/
-	ppointer		value;	/**< Node value.	*/
+	struct _PTreeBaseNode	*left;		/**< Left child.	*/
+	struct _PTreeBaseNode	*right;		/**< Right child.	*/
+	ppointer		key;		/**< Node key.		*/
+	ppointer		value;		/**< Node value.	*/
 } __PTreeBaseNode;
 
 #ifndef PLIBSYS_HAS_SOCKLEN_T

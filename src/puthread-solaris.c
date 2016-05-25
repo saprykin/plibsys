@@ -16,8 +16,8 @@
  */
 
 #include "pmem.h"
-#include "puthread.h"
 #include "patomic.h"
+#include "plibsys-private.h"
 
 #ifndef P_OS_UNIXWARE
 #  include "pmutex.h"
@@ -40,9 +40,8 @@
 typedef thread_t puthread_hdl;
 
 struct _PUThread {
+	__PUThreadBase		base;
 	puthread_hdl		hdl;
-	pboolean		joinable;
-	PUThreadPriority	prio;
 };
 
 struct _PUThreadKey {
@@ -182,8 +181,8 @@ p_uthread_create_full (PUThreadFunc	func,
 		return NULL;
 	}
 
-	ret->joinable	= joinable;
-	ret->prio	= prio;
+	ret->base.joinable = joinable;
+	ret->base.prio     = prio;
 
 	return ret;
 }
@@ -216,7 +215,7 @@ p_uthread_join (PUThread *thread)
 	if (P_UNLIKELY (thread == NULL))
 		return -1;
 
-	if (thread->joinable == FALSE)
+	if (thread->base.joinable == FALSE)
 		return -1;
 
 	if (P_UNLIKELY (thr_join (thread->hdl, NULL, &ret) != 0)) {
@@ -255,7 +254,7 @@ p_uthread_set_priority (PUThread		*thread,
 		return FALSE;
 	}
 
-	thread->prio = prio;
+	thread->base.prio = prio;
 
 	return TRUE;
 }

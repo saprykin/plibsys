@@ -16,14 +16,13 @@
  */
 
 #include "pmem.h"
-#include "puthread.h"
+#include "plibsys-private.h"
 
 #include <stdlib.h>
 
 struct _PUThread {
-	pint			hdl;
-	pboolean		joinable;
-	PUThreadPriority	prio;
+	__PUThreadBase	base;
+	pint		hdl;
 };
 
 void
@@ -57,9 +56,9 @@ p_uthread_create_full (PUThreadFunc	func,
 		return NULL;
 	}
 
-	ret->hdl      = -1;
-	ret->joinable = joinable;
-	ret->prio     = prio;
+	ret->hdl           = -1;
+	ret->base.joinable = joinable;
+	ret->base.prio     = prio;
 
 	func (data);
 
@@ -89,7 +88,7 @@ p_uthread_join (PUThread *thread)
 	if (P_UNLIKELY (thread == NULL))
 		return -1;
 
-	if (thread->joinable == FALSE)
+	if (thread->base.joinable == FALSE)
 		return -1;
 
 	return thread->hdl;
@@ -116,7 +115,7 @@ p_uthread_set_priority (PUThread		*thread,
 	if (P_UNLIKELY (thread == NULL))
 		return FALSE;
 
-	thread->prio = prio;
+	thread->base.prio = prio;
 
 	return FALSE;
 }

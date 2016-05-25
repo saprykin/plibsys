@@ -17,7 +17,7 @@
 
 #include "pmem.h"
 #include "patomic.h"
-#include "puthread.h"
+#include "plibsys-private.h"
 
 #include <stdlib.h>
 #include <time.h>
@@ -59,9 +59,8 @@
 typedef pthread_t puthread_hdl;
 
 struct _PUThread {
+	__PUThreadBase		base;
 	puthread_hdl		hdl;
-	pboolean		joinable;
-	PUThreadPriority	prio;
 };
 
 struct _PUThreadKey {
@@ -185,7 +184,7 @@ p_uthread_create_full (PUThreadFunc	func,
 		return NULL;
 	}
 
-	ret->joinable = joinable;
+	ret->base.joinable = joinable;
 
 	if (P_UNLIKELY (pthread_attr_init (&attr) != 0)) {
 		P_ERROR ("PUThread: failed to call pthread_attr_init()");
@@ -243,7 +242,7 @@ p_uthread_create_full (PUThreadFunc	func,
 		return NULL;
 	}
 
-	ret->prio = prio;
+	ret->base.prio = prio;
 	pthread_attr_destroy (&attr);
 
 	return ret;
@@ -275,7 +274,7 @@ p_uthread_join (PUThread *thread)
 	if (P_UNLIKELY (thread == NULL))
 		return -1;
 
-	if (thread->joinable == FALSE)
+	if (thread->base.joinable == FALSE)
 		return -1;
 
 	if (P_UNLIKELY (pthread_join (thread->hdl, &ret) != 0)) {
@@ -334,7 +333,7 @@ p_uthread_set_priority (PUThread		*thread,
 	}
 #endif
 
-	thread->prio = prio;
+	thread->base.prio = prio;
 	return TRUE;
 }
 
