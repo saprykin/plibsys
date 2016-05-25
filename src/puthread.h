@@ -185,6 +185,7 @@ P_LIB_API void			p_uthread_yield		(void);
 
 /**
  * @brief Gets an ID of the current (caller) thread.
+ * @return The ID of the current thread.
  * @since 0.0.1
  *
  * This is a platform-dependent type. You shouldn't treat it as a number, it
