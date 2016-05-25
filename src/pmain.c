@@ -58,9 +58,9 @@ p_libsys_shutdown (void)
 
 	plibsys_inited = FALSE;
 
-	__p_atomic_thread_shutdown ();
-	__p_socket_close_once ();
 	__p_uthread_shutdown ();
+	__p_socket_close_once ();
+	__p_atomic_thread_shutdown ();
 	__p_mem_shutdown ();
 }
 
