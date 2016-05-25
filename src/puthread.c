@@ -125,6 +125,25 @@ p_uthread_create (PUThreadFunc	func,
 	return p_uthread_create_full (func, data, joinable, P_UTHREAD_PRIORITY_INHERIT);
 }
 
+P_LIB_API PUThread *
+p_uthread_current (void)
+{
+	__PUThreadBase *base_thread = p_uthread_get_local (__p_uthread_specific_data);
+
+	if (P_UNLIKELY (base_thread == NULL)) {
+		if (P_UNLIKELY ((base_thread = p_malloc0 (sizeof (__PUThreadBase))) == NULL)) {
+			P_ERROR ("PUThread: failed to allocate memory for a thread local structure");
+			return NULL;
+		}
+
+		base_thread->ref_count = 1;
+
+		p_uthread_set_local (__p_uthread_specific_data, base_thread);
+	}
+
+	return (PUThread *) base_thread;
+}
+
 P_LIB_API void
 p_uthread_ref (PUThread *thread)
 {

@@ -193,6 +193,19 @@ P_LIB_API void			p_uthread_yield		(void);
 P_LIB_API P_HANDLE		p_uthread_current_id	(void);
 
 /**
+ * @brief Gets a thread structure of the current (caller) thread.
+ * @return The thread structure of the current thread.
+ * @since 0.0.1
+ * @note This call doesn't not increment the reference counter of the returned
+ * structure.
+ *
+ * A thread structure will be returned even for a thread which was created
+ * outside the library. But you should not use thread manipulation routines over
+ * that structure.
+ */
+P_LIB_API PUThread *		p_uthread_current	(void);
+
+/**
  * @brief Incremetns a thread reference counter
  * @param thread #PUThread to increment the reference counter.
  * @since 0.0.1
