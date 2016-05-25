@@ -36,6 +36,8 @@ static volatile pboolean is_threads_working = TRUE;
 
 static P_HANDLE thread1_id = (P_HANDLE) NULL;
 static P_HANDLE thread2_id = (P_HANDLE) NULL;
+static PUThread *thread1_obj = NULL;
+static PUThread *thread2_obj = NULL;
 
 static PUThreadKey *tls_key = NULL;
 static volatile pint free_counter = 0;
@@ -68,10 +70,13 @@ static void * test_thread_func (void *data)
 {
 	pint *counter =  static_cast < pint * > (data);
 
-	if ((*counter) == 1)
-		thread1_id = p_uthread_current_id ();
-	else
-		thread2_id = p_uthread_current_id ();
+	if ((*counter) == 1) {
+		thread1_id  = p_uthread_current_id ();
+		thread1_obj = p_uthread_current ();
+	} else {
+		thread2_id  = p_uthread_current_id ();
+		thread2_obj = p_uthread_current ();
+	}
 
 	p_uthread_set_local (tls_key, (ppointer) p_uthread_current_id ());
 
@@ -180,6 +185,7 @@ BOOST_AUTO_TEST_CASE (puthread_nomem_test)
 					    TRUE,
 					    P_UTHREAD_PRIORITY_NORMAL) == NULL);
 
+	BOOST_CHECK (p_uthread_current () == NULL);
 	BOOST_CHECK (p_uthread_local_new (NULL) == NULL);
 
 	p_uthread_set_local (thread_key, PINT_TO_POINTER (10));
@@ -248,11 +254,17 @@ BOOST_AUTO_TEST_CASE (puthread_general_test)
 	BOOST_CHECK (thread1_id != p_uthread_current_id () &&
 		     thread2_id != p_uthread_current_id ());
 
+	BOOST_CHECK (thread1_obj == thr1);
+	BOOST_CHECK (thread2_obj == thr2);
+
 	p_uthread_local_free (tls_key);
 	p_uthread_unref (thr1);
 	p_uthread_unref (thr2);
 
 	p_uthread_unref (thr1);
+
+	PUThread *cur_thr = p_uthread_current ();
+	BOOST_CHECK (cur_thr != NULL);
 
 	p_libsys_shutdown ();
 }
