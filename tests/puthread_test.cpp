@@ -211,6 +211,7 @@ BOOST_AUTO_TEST_CASE (puthread_bad_input_test)
 	BOOST_CHECK (p_uthread_get_local (NULL) == NULL);
 	p_uthread_set_local (NULL, NULL);
 	p_uthread_replace_local (NULL, NULL);
+	p_uthread_ref (NULL);
 	p_uthread_unref (NULL);
 	p_uthread_local_free (NULL);
 
