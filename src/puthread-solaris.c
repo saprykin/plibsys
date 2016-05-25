@@ -66,31 +66,6 @@ __p_uthread_get_unix_priority (PUThreadPriority prio)
 	       PLIBSYS_THREAD_MIN_PRIO;
 }
 
-void
-__p_uthread_init (void)
-{
-#ifndef P_OS_UNIXWARE
-	if (P_LIKELY (__tls_mutex == NULL))
-		__tls_mutex = p_mutex_new ();
-#endif
-}
-
-void
-__p_uthread_shutdown (void)
-{
-#ifndef P_OS_UNIXWARE
-	if (P_LIKELY (__tls_mutex != NULL)) {
-		p_mutex_free (__tls_mutex);
-		__tls_mutex = NULL;
-	}
-#endif
-}
-
-void
-__p_uthread_win32_thread_detach (void)
-{
-}
-
 static thread_key_t *
 __p_uthread_get_tls_key (PUThreadKey *key)
 {
@@ -146,17 +121,38 @@ __p_uthread_get_tls_key (PUThreadKey *key)
 	return thread_key;
 }
 
-P_LIB_API PUThread *
-p_uthread_create_full (PUThreadFunc	func,
-		       ppointer		data,
-		       pboolean		joinable,
-		       PUThreadPriority prio)
+void
+__p_uthread_init_internal (void)
+{
+#ifndef P_OS_UNIXWARE
+	if (P_LIKELY (__tls_mutex == NULL))
+		__tls_mutex = p_mutex_new ();
+#endif
+}
+
+void
+__p_uthread_shutdown_internal (void)
+{
+#ifndef P_OS_UNIXWARE
+	if (P_LIKELY (__tls_mutex != NULL)) {
+		p_mutex_free (__tls_mutex);
+		__tls_mutex = NULL;
+	}
+#endif
+}
+
+void
+__p_uthread_win32_thread_detach (void)
+{
+}
+
+PUThread *
+__p_uthread_create_internal (PUThreadFunc	func,
+			     pboolean		joinable,
+			     PUThreadPriority	prio)
 {
 	PUThread	*ret;
 	pint32		flags;
-
-	if (P_UNLIKELY (func == NULL))
-		return NULL;
 
 	if (P_UNLIKELY ((ret = p_malloc0 (sizeof (PUThread))) == NULL)) {
 		P_ERROR ("PUThread: failed to allocate memory");
@@ -166,7 +162,7 @@ p_uthread_create_full (PUThreadFunc	func,
 	flags = THR_SUSPENDED;
 	flags |= joinable ? 0 : THR_DETACHED;
 
-	if (P_UNLIKELY (thr_create (NULL, 0, func, data, flags, &ret->hdl) != 0)) {
+	if (P_UNLIKELY (thr_create (NULL, 0, func, ret, flags, &ret->hdl) != 0)) {
 		P_ERROR ("PUThread: failed to call thr_create()");
 		p_free (ret);
 		return NULL;
@@ -187,13 +183,10 @@ p_uthread_create_full (PUThreadFunc	func,
 	return ret;
 }
 
-P_LIB_API PUThread *
-p_uthread_create (PUThreadFunc	func,
-		  ppointer	data,
-		  pboolean	joinable)
+void
+__p_uthread_free_internal (PUThread *thread)
 {
-	/* All checks will be inside */
-	return p_uthread_create_full (func, data, joinable, P_UTHREAD_PRIORITY_INHERIT);
+	p_free (thread);
 }
 
 P_LIB_API void
@@ -225,15 +218,6 @@ p_uthread_join (PUThread *thread)
 	}
 
 	return P_POINTER_TO_INT (ret);
-}
-
-P_LIB_API void
-p_uthread_free (PUThread *thread)
-{
-	if (P_UNLIKELY (thread == NULL))
-		return;
-
-	p_free (thread);
 }
 
 P_LIB_API void

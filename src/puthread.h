@@ -32,6 +32,13 @@
  * proceeding further. Thus you can synchronize threads execution within the
  * main thread.
  *
+ * A reference counter mechanism is used to keep track of a #PUThread structure.
+ * It means that the structure will be freed automatically when the reference
+ * counter becomes zero. Use p_uthread_ref() to hold the structure and
+ * p_uthread_unref() to decrement the counter back. A running thread holds a
+ * reference to itself structure, so you do not require to hold a reference
+ * to the thread while it is running.
+ *
  * Priorities (if supported) allow to tune scheduler behavior: threads with
  * higher priority will be executed more frequently. Be careful that improper
  * priorities may lead to negative effects when some threads may receive almost
@@ -109,6 +116,8 @@ typedef enum _PUThreadPriority {
  * @param prio Thread priority.
  * @return Pointer to #PUThread in case of success, NULL otherwise.
  * @since 0.0.1
+ * @note Unreference the returned value after use with p_uthread_unref(). You do
+ * not need to call p_uthread_ref() explicitly on the returned value.
  */
 P_LIB_API PUThread *		p_uthread_create_full	(PUThreadFunc		func,
 							 ppointer		data,
@@ -123,6 +132,8 @@ P_LIB_API PUThread *		p_uthread_create_full	(PUThreadFunc		func,
  * @param joinable Whether to create joinable thread or not.
  * @return Pointer to #PUThread in case of success, NULL otherwise.
  * @since 0.0.1
+ * @note Unreference the returned value after use with p_uthread_unref(). You do
+ * not need to call p_uthread_ref() explicitly on the returned value.
  */
 P_LIB_API PUThread *		p_uthread_create	(PUThreadFunc		func,
 							 ppointer		data,
@@ -143,14 +154,6 @@ P_LIB_API P_NO_RETURN void	p_uthread_exit		(pint			code);
  * @since 0.0.1
  */
 P_LIB_API pint			p_uthread_join		(PUThread		*thread);
-
-/**
- * @brief Frees #PUThread and it's resources.
- * @param thread #PUThread to free.
- * @note Freeing the running thread can lead to unpredictable behavior.
- * @since 0.0.1
- */
-P_LIB_API void			p_uthread_free		(PUThread		*thread);
 
 /**
  * @brief Sleeps the current thread (caller) for specified amount of time.
@@ -190,6 +193,24 @@ P_LIB_API void			p_uthread_yield		(void);
 P_LIB_API P_HANDLE		p_uthread_current_id	(void);
 
 /**
+ * @brief Incremetns a thread reference counter
+ * @param thread #PUThread to increment the reference counter.
+ * @since 0.0.1
+ * @note The #PUThread object will not be removed until the reference counter is
+ * positive.
+ */
+P_LIB_API void			p_uthread_ref		(PUThread		*thread);
+
+/**
+ * @brief Decrements a thread reference counter
+ * @param thread #PUThread to decrement the reference counter.
+ * @since 0.0.1
+ * @note When the reference counter becomes zero the #PUThread is removed from
+ * the memory.
+ */
+P_LIB_API void			p_uthread_unref		(PUThread		*thread);
+
+/**
  * @brief Create a new TLS reference key.
  * @param free_func TLS key destroy notification call, leave NULL if not need.
  * @return New TLS reference key in case of success, NULL otherwise.
@@ -212,7 +233,7 @@ P_LIB_API void			p_uthread_local_free	(PUThreadKey		*key);
  * @param key TLS reference key to get the value for.
  * @return TLS value for the given key.
  * @since 0.0.1
- * @note This call may fail only in case of abnormal usage or program behavior,
+ * @note This call may fail only in case of abnormal use or program behavior,
  * NULL value will be returned to tolerance the failure.
  */
 P_LIB_API ppointer		p_uthread_get_local	(PUThreadKey		*key);
@@ -222,7 +243,7 @@ P_LIB_API ppointer		p_uthread_get_local	(PUThreadKey		*key);
  * @param key TLS reference key to set the value for.
  * @param value TLS value to set.
  * @since 0.0.1
- * @note This call may fail only in case of abnormal usage or program behavior.
+ * @note This call may fail only in case of abnormal use or program behavior.
  *
  * It doesn't call a destructor notification function provided with
  * p_uthread_local_new().
@@ -235,7 +256,7 @@ P_LIB_API void			p_uthread_set_local	(PUThreadKey		*key,
  * @param key TLS reference key to replace the value for.
  * @param value TLS value to set.
  * @since 0.0.1
- * @note This call may fail only in case of abnormal usage or program behavior.
+ * @note This call may fail only in case of abnormal use or program behavior.
  *
  * This call does perform a notification function provided with
  * p_uthread_local_new() on an old TLS value. This is the only difference with

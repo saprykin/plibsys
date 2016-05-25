@@ -120,8 +120,8 @@ BOOST_AUTO_TEST_CASE (pmutex_general_test)
 
 	BOOST_REQUIRE (mutex_test_val == 10);
 
-	p_uthread_free (thr1);
-	p_uthread_free (thr2);
+	p_uthread_unref (thr1);
+	p_uthread_unref (thr2);
 	p_mutex_free (global_mutex);
 
 	p_libsys_shutdown ();

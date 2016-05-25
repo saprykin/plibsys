@@ -211,8 +211,8 @@ BOOST_AUTO_TEST_CASE (psemaphore_thread_test)
 	p_semaphore_take_ownership (sem);
 	p_semaphore_free (sem);
 
-	p_uthread_free (thr1);
-	p_uthread_free (thr2);
+	p_uthread_unref (thr1);
+	p_uthread_unref (thr2);
 
 	p_libsys_shutdown ();
 #endif /* !P_OS_MSYS */

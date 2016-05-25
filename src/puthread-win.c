@@ -46,67 +46,8 @@ struct __PUThreadDestructor {
 	_PUThreadDestructor	*next;
 };
 
-static _PUThreadDestructor * volatile __tls_destructors;
+static _PUThreadDestructor * volatile __tls_destructors = NULL;
 static PMutex *__tls_mutex = NULL;
-
-void
-__p_uthread_win32_thread_detach (void)
-{
-	pboolean was_called;
-
-	do {
-		_PUThreadDestructor *destr;
-
-		was_called = FALSE;
-
-		destr = (_PUThreadDestructor *) p_atomic_pointer_get ((const PVOID volatile *) &__tls_destructors);
-
-		while (destr != NULL) {
-			ppointer value;
-
-			value = TlsGetValue (destr->key_idx);
-
-			if (value != NULL && destr->free_func != NULL) {
-				TlsSetValue (destr->key_idx, NULL);
-				destr->free_func (value);
-				was_called = TRUE;
-			}
-
-			destr = destr->next;
-		}
-	} while (was_called);
-}
-
-void
-__p_uthread_init (void)
-{
-	if (P_LIKELY (__tls_mutex == NULL))
-		__tls_mutex = p_mutex_new ();
-}
-
-void
-__p_uthread_shutdown (void)
-{
-	_PUThreadDestructor *destr;
-
-	if (P_LIKELY (__tls_mutex != NULL)) {
-		p_mutex_free (__tls_mutex);
-		__tls_mutex = NULL;
-	}
-
-	__p_uthread_win32_thread_detach ();
-
-	destr = __tls_destructors;
-
-	while (destr != NULL) {
-		_PUThreadDestructor *next_destr = destr->next;
-
-		TlsFree (destr->key_idx);
-		p_free (destr);
-
-		destr = next_destr;
-	}
-}
 
 static DWORD
 __p_uthread_get_tls_key (PUThreadKey *key)
@@ -171,16 +112,73 @@ __p_uthread_get_tls_key (PUThreadKey *key)
 	return tls_key;
 }
 
-P_LIB_API PUThread *
-p_uthread_create_full (PUThreadFunc	func,
-		       ppointer		data,
-		       pboolean		joinable,
-		       PUThreadPriority	prio)
+void
+__p_uthread_win32_thread_detach (void)
+{
+	pboolean was_called;
+
+	do {
+		_PUThreadDestructor *destr;
+
+		was_called = FALSE;
+
+		destr = (_PUThreadDestructor *) p_atomic_pointer_get ((const PVOID volatile *) &__tls_destructors);
+
+		while (destr != NULL) {
+			ppointer value;
+
+			value = TlsGetValue (destr->key_idx);
+
+			if (value != NULL && destr->free_func != NULL) {
+				TlsSetValue (destr->key_idx, NULL);
+				destr->free_func (value);
+				was_called = TRUE;
+			}
+
+			destr = destr->next;
+		}
+	} while (was_called);
+}
+
+void
+__p_uthread_init_internal (void)
+{
+	if (P_LIKELY (__tls_mutex == NULL))
+		__tls_mutex = p_mutex_new ();
+}
+
+void
+__p_uthread_shutdown_internal (void)
+{
+	_PUThreadDestructor *destr;
+
+	if (P_LIKELY (__tls_mutex != NULL)) {
+		p_mutex_free (__tls_mutex);
+		__tls_mutex = NULL;
+	}
+
+	__p_uthread_win32_thread_detach ();
+
+	destr = __tls_destructors;
+
+	while (destr != NULL) {
+		_PUThreadDestructor *next_destr = destr->next;
+
+		TlsFree (destr->key_idx);
+		p_free (destr);
+
+		destr = next_destr;
+	}
+
+	__tls_destructors = NULL;
+}
+
+PUThread *
+__p_uthread_create_internal (PUThreadFunc	func,
+			     pboolean		joinable,
+			     PUThreadPriority	prio)
 {
 	PUThread	*ret;
-
-	if (P_UNLIKELY (func == NULL))
-		return NULL;
 
 	if (P_UNLIKELY ((ret = p_malloc0 (sizeof (PUThread))) == NULL)) {
 		P_ERROR ("PUThread: failed to allocate memory");
@@ -190,7 +188,7 @@ p_uthread_create_full (PUThreadFunc	func,
 	if (P_UNLIKELY ((ret->hdl = CreateThread (NULL,
 						  0,
 						  (LPTHREAD_START_ROUTINE) func,
-						  data,
+						  ret,
 						  CREATE_SUSPENDED,
 						  NULL)) == NULL)) {
 		P_ERROR ("PUThread: failed to call CreateThread()");
@@ -211,13 +209,11 @@ p_uthread_create_full (PUThreadFunc	func,
 	return ret;
 }
 
-P_LIB_API PUThread *
-p_uthread_create (PUThreadFunc	func,
-		  ppointer	data,
-		  pboolean	joinable)
+void
+__p_uthread_free_internal (PUThread *thread)
 {
-	/* All checks will be inside */
-	return p_uthread_create_full (func, data, joinable, P_UTHREAD_PRIORITY_INHERIT);
+	CloseHandle (thread->hdl);
+	p_free (thread);
 }
 
 P_LIB_API void
@@ -248,17 +244,6 @@ p_uthread_join (PUThread *thread)
 	}
 
 	return exit_code;
-}
-
-P_LIB_API void
-p_uthread_free (PUThread *thread)
-{
-	if (P_UNLIKELY (thread == NULL))
-		return;
-
-	CloseHandle (thread->hdl);
-
-	p_free (thread);
 }
 
 P_LIB_API void

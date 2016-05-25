@@ -109,21 +109,6 @@ __p_uthread_get_unix_priority (PUThreadPriority prio, int *sched_policy, int *sc
 }
 #endif
 
-void
-__p_uthread_init (void)
-{
-}
-
-void
-__p_uthread_shutdown (void)
-{
-}
-
-void
-__p_uthread_win32_thread_detach (void)
-{
-}
-
 static pthread_key_t *
 __p_uthread_get_tls_key (PUThreadKey *key)
 {
@@ -161,11 +146,25 @@ __p_uthread_get_tls_key (PUThreadKey *key)
 	return thread_key;
 }
 
-P_LIB_API PUThread *
-p_uthread_create_full (PUThreadFunc	func,
-		       ppointer		data,
-		       pboolean		joinable,
-		       PUThreadPriority	prio)
+void
+__p_uthread_init_internal (void)
+{
+}
+
+void
+__p_uthread_shutdown_internal (void)
+{
+}
+
+void
+__p_uthread_win32_thread_detach (void)
+{
+}
+
+PUThread *
+__p_uthread_create_internal (PUThreadFunc	func,
+			     pboolean		joinable,
+			     PUThreadPriority	prio)
 {
 	PUThread		*ret;
 	pthread_attr_t		attr;
@@ -175,9 +174,6 @@ p_uthread_create_full (PUThreadFunc	func,
 	pint			native_prio;
 	pint			sched_policy;
 #endif
-
-	if (P_UNLIKELY (func == NULL))
-		return NULL;
 
 	if (P_UNLIKELY ((ret = p_malloc0 (sizeof (PUThread))) == NULL)) {
 		P_ERROR ("PUThread: failed to allocate memory");
@@ -224,14 +220,14 @@ p_uthread_create_full (PUThreadFunc	func,
 	}
 #endif
 
-	create_code = pthread_create (&ret->hdl, &attr, func, data);
+	create_code = pthread_create (&ret->hdl, &attr, func, ret);
 
 #ifdef EPERM
 	if (create_code == EPERM) {
 #  ifdef PLIBSYS_HAS_POSIX_SCHEDULING
 		pthread_attr_setinheritsched (&attr, PTHREAD_INHERIT_SCHED);
 #  endif
-		create_code = pthread_create (&ret->hdl, &attr, func, data);
+		create_code = pthread_create (&ret->hdl, &attr, func, ret);
 	}
 #endif
 
@@ -248,13 +244,10 @@ p_uthread_create_full (PUThreadFunc	func,
 	return ret;
 }
 
-P_LIB_API PUThread *
-p_uthread_create (PUThreadFunc	func,
-		  ppointer	data,
-		  pboolean	joinable)
+void
+__p_uthread_free_internal (PUThread *thread)
 {
-	/* All checks will be inside */
-	return p_uthread_create_full (func, data, joinable, P_UTHREAD_PRIORITY_INHERIT);
+	p_free (thread);
 }
 
 P_LIB_API void
@@ -283,15 +276,6 @@ p_uthread_join (PUThread *thread)
 	}
 
 	return P_POINTER_TO_INT (ret);
-}
-
-P_LIB_API void
-p_uthread_free (PUThread *thread)
-{
-	if (P_UNLIKELY (thread == NULL))
-		return;
-
-	p_free (thread);
 }
 
 P_LIB_API void

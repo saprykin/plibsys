@@ -299,9 +299,9 @@ BOOST_AUTO_TEST_CASE (pshm_thread_test)
 
 	BOOST_REQUIRE (test_ok == TRUE);
 
-	p_uthread_free (thr1);
-	p_uthread_free (thr2);
-	p_uthread_free (thr3);
+	p_uthread_unref (thr1);
+	p_uthread_unref (thr2);
+	p_uthread_unref (thr3);
 	p_shm_free (shm);
 
 	p_libsys_shutdown ();

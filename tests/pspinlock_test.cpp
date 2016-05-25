@@ -120,8 +120,8 @@ BOOST_AUTO_TEST_CASE (pspinlock_general_test)
 
 	BOOST_REQUIRE (spinlock_test_val == 10);
 
-	p_uthread_free (thr1);
-	p_uthread_free (thr2);
+	p_uthread_unref (thr1);
+	p_uthread_unref (thr2);
 	p_spinlock_free (global_spinlock);
 
 	p_libsys_shutdown ();

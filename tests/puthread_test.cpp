@@ -205,7 +205,7 @@ BOOST_AUTO_TEST_CASE (puthread_bad_input_test)
 	BOOST_CHECK (p_uthread_get_local (NULL) == NULL);
 	p_uthread_set_local (NULL, NULL);
 	p_uthread_replace_local (NULL, NULL);
-	p_uthread_free (NULL);
+	p_uthread_unref (NULL);
 	p_uthread_local_free (NULL);
 
 	p_libsys_shutdown ();
@@ -230,6 +230,8 @@ BOOST_AUTO_TEST_CASE (puthread_general_test)
 						TRUE,
 						P_UTHREAD_PRIORITY_NORMAL);
 
+	p_uthread_ref (thr1);
+
 	BOOST_CHECK (p_uthread_set_priority (thr1, P_UTHREAD_PRIORITY_NORMAL) == TRUE);
 
 	BOOST_REQUIRE (thr1 != NULL);
@@ -247,8 +249,10 @@ BOOST_AUTO_TEST_CASE (puthread_general_test)
 		     thread2_id != p_uthread_current_id ());
 
 	p_uthread_local_free (tls_key);
-	p_uthread_free (thr1);
-	p_uthread_free (thr2);
+	p_uthread_unref (thr1);
+	p_uthread_unref (thr2);
+
+	p_uthread_unref (thr1);
 
 	p_libsys_shutdown ();
 }
@@ -274,7 +278,7 @@ BOOST_AUTO_TEST_CASE (puthread_nonjoinable_test)
 
 	BOOST_CHECK (thread_wakes_1 == thread_to_wakes);
 
-	p_uthread_free (thr1);
+	p_uthread_unref (thr1);
 
 	p_libsys_shutdown ();
 }
@@ -313,8 +317,8 @@ BOOST_AUTO_TEST_CASE (puthread_tls_test)
 	BOOST_CHECK (total_counter == free_counter);
 
 	p_uthread_local_free (tls_key);
-	p_uthread_free (thr1);
-	p_uthread_free (thr2);
+	p_uthread_unref (thr1);
+	p_uthread_unref (thr2);
 
 	/* Without destroy notification */
 	tls_key = p_uthread_local_new (NULL);
@@ -347,8 +351,8 @@ BOOST_AUTO_TEST_CASE (puthread_tls_test)
 	BOOST_CHECK (free_counter == 0);
 
 	p_uthread_local_free (tls_key);
-	p_uthread_free (thr1);
-	p_uthread_free (thr2);
+	p_uthread_unref (thr1);
+	p_uthread_unref (thr2);
 
 	p_libsys_shutdown ();
 }

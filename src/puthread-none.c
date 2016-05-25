@@ -26,12 +26,12 @@ struct _PUThread {
 };
 
 void
-__p_uthread_init (void)
+__p_uthread_init_internal (void)
 {
 }
 
 void
-__p_uthread_shutdown (void)
+__p_uthread_shutdown_internal (void)
 {
 }
 
@@ -40,16 +40,12 @@ __p_uthread_win32_thread_detach (void)
 {
 }
 
-P_LIB_API PUThread *
-p_uthread_create_full (PUThreadFunc	func,
-		       ppointer		data,
-		       pboolean		joinable,
-		       PUThreadPriority	prio)
+PUThread *
+__p_uthread_create_internal (PUThreadFunc	func,
+			     pboolean		joinable,
+			     PUThreadPriority	prio)
 {
 	PUThread	*ret;
-
-	if (P_UNLIKELY (func == NULL))
-		return NULL;
 
 	if (P_UNLIKELY ((ret = p_malloc0 (sizeof (PUThread))) == NULL)) {
 		P_ERROR ("PUThread: failed to allocate memory");
@@ -60,19 +56,17 @@ p_uthread_create_full (PUThreadFunc	func,
 	ret->base.joinable = joinable;
 	ret->base.prio     = prio;
 
-	func (data);
+	ret->base.func (ret);
 
 	return ret;
 }
 
-P_LIB_API PUThread *
-p_uthread_create (PUThreadFunc	func,
-		  ppointer	data,
-		  pboolean	joinable)
+void
+__p_uthread_free_internal (PUThread *thread)
 {
-	/* All checks will be inside */
-	return p_uthread_create_full (func, data, joinable, P_UTHREAD_PRIORITY_INHERIT);
+	p_free (thread);
 }
+
 
 P_LIB_API void
 p_uthread_exit (pint code)
@@ -92,15 +86,6 @@ p_uthread_join (PUThread *thread)
 		return -1;
 
 	return thread->hdl;
-}
-
-P_LIB_API void
-p_uthread_free (PUThread *thread)
-{
-	if (P_UNLIKELY (thread == NULL))
-		return;
-
-	p_free (thread);
 }
 
 P_LIB_API void

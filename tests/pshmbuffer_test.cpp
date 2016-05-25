@@ -296,8 +296,8 @@ BOOST_AUTO_TEST_CASE (pshmbuffer_thread_test)
 	BOOST_CHECK (write_count > 0);
 
 	p_shm_buffer_free (buffer);
-	p_uthread_free (thr1);
-	p_uthread_free (thr2);
+	p_uthread_unref (thr1);
+	p_uthread_unref (thr2);
 
 	p_libsys_shutdown ();
 }

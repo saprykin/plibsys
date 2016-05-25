@@ -196,9 +196,9 @@ BOOST_AUTO_TEST_CASE (pcondvariable_general_test)
 
 	BOOST_REQUIRE (thread_wakeups > 0 && thread_queue >= 0 && thread_queue <= 10);
 
-	p_uthread_free (thr1);
-	p_uthread_free (thr2);
-	p_uthread_free (thr3);
+	p_uthread_unref (thr1);
+	p_uthread_unref (thr2);
+	p_uthread_unref (thr3);
 	p_cond_variable_free (queue_empty_cond);
 	p_cond_variable_free (queue_full_cond);
 	p_mutex_free (cond_mutex);
