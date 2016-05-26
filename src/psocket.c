@@ -308,7 +308,10 @@ P_LIB_API PSocket *
 p_socket_new_from_fd (pint	fd,
 		      PError	**error)
 {
-	PSocket *ret;
+	PSocket	*ret;
+#if !defined (P_OS_WIN) && defined (SO_NOSIGPIPE)
+	pint	flags;
+#endif
 
 	if (P_UNLIKELY (fd < 0)) {
 		p_error_set_error_p (error,
@@ -337,6 +340,13 @@ p_socket_new_from_fd (pint	fd,
 		p_free (ret);
 		return NULL;
 	}
+
+#if !defined (P_OS_WIN) && defined (SO_NOSIGPIPE)
+	flags = 1;
+
+	if (setsockopt (ret->fd, SOL_SOCKET, SO_NOSIGPIPE, &flags, sizeof (flags)) < 0)
+		P_WARNING ("PSocket: failed to set SO_NOSIGPIPE flag");
+#endif
 
 	p_socket_set_listen_backlog (ret, P_SOCKET_DEFAULT_BACKLOG);
 
@@ -446,6 +456,13 @@ p_socket_new (PSocketFamily	family,
 		p_free (ret);
 		return NULL;
 	}
+
+#if !defined (P_OS_WIN) && defined (SO_NOSIGPIPE)
+	flags = 1;
+
+	if (setsockopt (ret->fd, SOL_SOCKET, SO_NOSIGPIPE, &flags, sizeof (flags)) < 0)
+		P_WARNING ("PSocket: failed to set SO_NOSIGPIPE flag");
+#endif
 
 	ret->timeout  = 0;
 	ret->blocking = TRUE;
@@ -682,7 +699,7 @@ p_socket_set_keepalive (PSocket		*socket,
 	val = !! (pint) keepalive;
 #endif
 	if (setsockopt (socket->fd, SOL_SOCKET, SO_KEEPALIVE, &val, sizeof (val)) < 0) {
-		P_WARNING ("PSocket: failed to set keepalive flag");
+		P_WARNING ("PSocket: failed to set SO_KEEPALIVE flag");
 		return;
 	}
 
@@ -755,7 +772,7 @@ p_socket_bind (const PSocket	*socket,
 	/* Ignore errors here, the only likely error is "not supported", and
 	   this is a "best effort" thing mainly */
 	if (setsockopt (socket->fd, SOL_SOCKET, SO_REUSEADDR, &value, sizeof (value)) < 0)
-		P_WARNING ("PSocket: Failed to set SO_REUSEADDR option for socket descriptor");
+		P_WARNING ("PSocket: Failed to set SO_REUSEADDR flag for socket descriptor");
 #endif
 
 	if (P_UNLIKELY (p_socket_address_to_native (address, &addr, sizeof (addr)) == FALSE)) {
