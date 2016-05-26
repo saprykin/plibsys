@@ -131,7 +131,7 @@
  * p_socket_free (sock);
  * p_libsys_shutdown ();
  * @endcode
- * Here a UDP socket was created, binded to the localhost address and port 5432.
+ * Here a UDP socket was created, bound to the localhost address and port 5432.
  * Do not forget to close socket and free memory after its usage.
  */
 
@@ -191,7 +191,7 @@ typedef struct _PSocket PSocket;
  * Given file descriptor @a fd will be put in non-blocking mode. #PSocket will
  * emulate blocking mode if required.
  *
- * If socket was not binded yet then on some systems (i.e. Windows) call may
+ * If socket was not bound yet then on some systems (i.e. Windows) call may
  * fail to get socket family from the descriptor thus failing to construct a
  * #PSocket object.
  */
@@ -467,7 +467,7 @@ P_LIB_API void			p_socket_set_timeout		(PSocket		*socket,
  * @since 0.0.1
  * @sa p_socket_get_local_address()
  *
- * @a allow_reuse option allows to resolve address conflicts for several binded
+ * @a allow_reuse option allows to resolve address conflicts for several bound
  * sockets. It controls SO_REUSEADDR socket flag.
  *
  * In common case two or more sockets can't be bound to the same address
