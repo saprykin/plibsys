@@ -23,11 +23,11 @@
 #  include "pmutex.h"
 #endif
 
-#include <thread.h>
 #include <unistd.h>
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
+#include <thread.h>
 
 #ifdef P_OS_UNIXWARE
 #  define PLIBSYS_THREAD_MIN_PRIO 0

@@ -19,12 +19,12 @@
 #include "patomic.h"
 #include "plibsys-private.h"
 
-#include <stdlib.h>
-#include <time.h>
-#include <string.h>
-#include <pthread.h>
 #include <unistd.h>
+#include <stdlib.h>
+#include <string.h>
 #include <errno.h>
+#include <pthread.h>
+#include <time.h>
 
 #ifdef PLIBSYS_HAS_POSIX_SCHEDULING
 #  include <sched.h>
