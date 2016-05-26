@@ -415,6 +415,12 @@ static void * tcp_socket_sender_thread (void *arg)
 			is_connected = FALSE;
 	}
 
+	if (data->shutdown_channel == TRUE && p_socket_is_closed (skt_sender) == TRUE) {
+		p_socket_address_free (addr_receiver);
+		p_socket_free (skt_sender);
+		p_uthread_exit (-1);
+	}
+
 	p_socket_set_blocking (skt_sender, TRUE);
 
 	while (is_sender_working == TRUE) {
@@ -528,7 +534,8 @@ static void * tcp_socket_receiver_thread (void *arg)
 			}
 		}
 
-		if (data->shutdown_channel == FALSE && p_socket_is_connected (conn_socket) == FALSE) {
+		if ((data->shutdown_channel == FALSE && p_socket_is_connected (conn_socket) == FALSE) ||
+		    (data->shutdown_channel == TRUE && p_socket_is_closed (conn_socket) == TRUE)) {
 			p_socket_free (conn_socket);
 			p_socket_free (skt_receiver);
 			p_uthread_exit (-1);
@@ -661,6 +668,7 @@ BOOST_AUTO_TEST_CASE (psocket_bad_input_test)
 	clean_error (&error);
 
 	BOOST_CHECK (p_socket_is_connected (NULL) == FALSE);
+	BOOST_CHECK (p_socket_is_closed (NULL) == TRUE);
 
 	BOOST_CHECK (p_socket_check_connect_result (NULL, &error) == FALSE);
 	BOOST_CHECK (error != NULL);
@@ -744,6 +752,7 @@ BOOST_AUTO_TEST_CASE (psocket_general_udp_test)
 	BOOST_CHECK (p_socket_get_blocking (socket) == TRUE);
 	BOOST_CHECK (p_socket_get_type (socket) == P_SOCKET_TYPE_DATAGRAM);
 	BOOST_CHECK (p_socket_get_keepalive (socket) == FALSE);
+	BOOST_CHECK (p_socket_is_closed (socket) == FALSE);
 
 	p_socket_set_listen_backlog (socket, 12);
 	p_socket_set_timeout (socket, -10);
@@ -770,6 +779,7 @@ BOOST_AUTO_TEST_CASE (psocket_general_udp_test)
 	BOOST_CHECK (p_socket_get_blocking (fd_socket) == TRUE);
 	BOOST_CHECK (p_socket_get_type (fd_socket) == P_SOCKET_TYPE_DATAGRAM);
 	BOOST_CHECK (p_socket_get_keepalive (fd_socket) == FALSE);
+	BOOST_CHECK (p_socket_is_closed (fd_socket) == FALSE);
 
 	p_socket_set_keepalive (fd_socket, FALSE);
 	BOOST_CHECK (p_socket_get_keepalive (fd_socket) == FALSE);
@@ -823,6 +833,7 @@ BOOST_AUTO_TEST_CASE (psocket_general_udp_test)
 	BOOST_CHECK (p_socket_check_connect_result (socket, NULL) == FALSE);
 	BOOST_CHECK (p_socket_get_fd (socket) == -1);
 	BOOST_CHECK (p_socket_is_connected (socket) == FALSE);
+	BOOST_CHECK (p_socket_is_closed (socket) == TRUE);
 
 	p_socket_set_keepalive (socket, TRUE);
 	BOOST_CHECK (p_socket_get_keepalive (socket) == FALSE);
@@ -864,6 +875,7 @@ BOOST_AUTO_TEST_CASE (psocket_general_tcp_test)
 	BOOST_CHECK (p_socket_get_blocking (socket) == FALSE);
 	BOOST_CHECK (p_socket_get_type (socket) == P_SOCKET_TYPE_STREAM);
 	BOOST_CHECK (p_socket_get_keepalive (socket) == FALSE);
+	BOOST_CHECK (p_socket_is_closed (socket) == FALSE);
 
 	p_socket_set_keepalive (socket, FALSE);
 	BOOST_CHECK (p_socket_get_keepalive (socket) == FALSE);
@@ -903,6 +915,7 @@ BOOST_AUTO_TEST_CASE (psocket_general_tcp_test)
 	BOOST_CHECK (p_socket_shutdown (socket, TRUE, TRUE, NULL) == FALSE);
 	BOOST_CHECK (p_socket_get_local_address (socket, NULL) == NULL);
 	BOOST_CHECK (p_socket_check_connect_result (socket, NULL) == FALSE);
+	BOOST_CHECK (p_socket_is_closed (socket) == TRUE);
 	BOOST_CHECK (p_socket_get_fd (socket) == -1);
 
 	p_socket_set_keepalive (socket, TRUE);

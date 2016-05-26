@@ -380,6 +380,19 @@ P_LIB_API PSocketAddress *	p_socket_get_remote_address	(const PSocket 		*socket,
 P_LIB_API pboolean		p_socket_is_connected		(const PSocket		*socket);
 
 /**
+ * @brief Checks whether @a socket is closed.
+ * @param socket #PSocket to check a closed state.
+ * @return TRUE if @a socket is closed, FALSE otherwise.
+ * @since 0.0.1
+ * @sa p_socket_close(), p_socket_shutdown()
+ *
+ * If a socket is in non-blocking mode this call will not return TRUE until
+ * p_socket_check_connect_result() is called. A socket will be closed if
+ * p_socket_shutdown() is called for both the directions.
+ */
+P_LIB_API pboolean		p_socket_is_closed		(const PSocket		*socket);
+
+/**
  * @brief Checks a connection state after calling p_socket_connect().
  * @param socket #PSocket to check a connection state for.
  * @param[out] error Error report object, NULL to ignore.
@@ -670,7 +683,7 @@ P_LIB_API pssize		p_socket_send_to		(const PSocket		*socket,
  * @param[out] error Error report object, NULL to ignore.
  * @return TRUE in case of success, FALSE otherwise.
  * @since 0.0.1
- * @sa p_socket_free()
+ * @sa p_socket_free(), p_socket_is_closed()
  *
  * For connection oriented sockets some time is required to completely close
  * a socket connection. See documentation for p_socket_bind() for more

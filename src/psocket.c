@@ -642,6 +642,15 @@ p_socket_is_connected (const PSocket *socket)
 }
 
 P_LIB_API pboolean
+p_socket_is_closed (const PSocket *socket)
+{
+	if (P_UNLIKELY (socket == NULL))
+		return TRUE;
+
+	return socket->closed;
+}
+
+P_LIB_API pboolean
 p_socket_check_connect_result (PSocket  *socket,
 			       PError	**error)
 {
