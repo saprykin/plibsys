@@ -682,9 +682,9 @@ p_socket_set_keepalive (PSocket		*socket,
 			pboolean	keepalive)
 {
 #ifdef P_OS_WIN
-	pchar val;
+	pchar value;
 #else
-	pint val;
+	pint value;
 #endif
 
 	if (P_UNLIKELY (socket == NULL))
@@ -694,11 +694,11 @@ p_socket_set_keepalive (PSocket		*socket,
 		return;
 
 #ifdef P_OS_WIN
-	val = !! (pchar) keepalive;
+	value = !! (pchar) keepalive;
 #else
-	val = !! (pint) keepalive;
+	value = !! (pint) keepalive;
 #endif
-	if (setsockopt (socket->fd, SOL_SOCKET, SO_KEEPALIVE, &val, sizeof (val)) < 0) {
+	if (setsockopt (socket->fd, SOL_SOCKET, SO_KEEPALIVE, &value, sizeof (value)) < 0) {
 		P_WARNING ("PSocket: failed to set SO_KEEPALIVE flag");
 		return;
 	}
@@ -746,12 +746,15 @@ p_socket_bind (const PSocket	*socket,
 	       PError		**error)
 {
 	struct sockaddr_storage	addr;
-#ifndef P_OS_WIN
-	pint			value;
+
+#ifdef SO_REUSEPORT
+	pboolean		reuse_port;
 #endif
 
 #ifdef P_OS_WIN
-	P_UNUSED (allow_reuse);
+	pchar			value;
+#else
+	pint			value;
 #endif
 
 	if (P_UNLIKELY (socket == NULL || address == NULL)) {
@@ -765,14 +768,33 @@ p_socket_bind (const PSocket	*socket,
 	if (P_UNLIKELY (__p_socket_check (socket, error) == FALSE))
 		return FALSE;
 
-	/* SO_REUSEADDR on Windows means something else and is not what we want.
-	   It always allows the UNIX variant of SO_REUSEADDR anyway */
-#ifndef P_OS_WIN
+	/* Windows allows to reuse the same address even for an active TCP
+	 * connection, that's why on Windows we should use SO_REUSEADDR only
+	 * for UDP sockets, UNIX doesn't have such behavior
+	 *
+	 * Ignore errors here, the only likely error is "not supported", and
+	 * this is a "best effort" thing mainly */
+
+#ifdef P_OS_WIN
+	value = !! (pchar) (allow_reuse && (socket->type == P_SOCKET_TYPE_DATAGRAM));
+#else
 	value = !! (pint) allow_reuse;
-	/* Ignore errors here, the only likely error is "not supported", and
-	   this is a "best effort" thing mainly */
+#endif
+
 	if (setsockopt (socket->fd, SOL_SOCKET, SO_REUSEADDR, &value, sizeof (value)) < 0)
-		P_WARNING ("PSocket: Failed to set SO_REUSEADDR flag for socket descriptor");
+		P_WARNING ("PSocket: failed to set SO_REUSEADDR flag");
+
+#ifdef SO_REUSEPORT
+	reuse_port = allow_reuse && (socket->type == P_SOCKET_TYPE_DATAGRAM);
+
+#  ifdef P_OS_WIN
+	value = !! (pchar) reuse_port;
+#  else
+	value = !! (pint) reuse_port;
+#  endif
+
+	if (setsockopt (socket->fd, SOL_SOCKET, SO_REUSEPORT, &value, sizeof (value)) < 0)
+		P_WARNING ("PSocket: failed to set SO_REUSEPORT flag");
 #endif
 
 	if (P_UNLIKELY (p_socket_address_to_native (address, &addr, sizeof (addr)) == FALSE)) {
