@@ -821,6 +821,8 @@ BOOST_AUTO_TEST_CASE (psocket_general_udp_test)
 	BOOST_CHECK (p_socket_shutdown (socket, TRUE, TRUE, NULL) == FALSE);
 	BOOST_CHECK (p_socket_get_local_address (socket, NULL) == NULL);
 	BOOST_CHECK (p_socket_check_connect_result (socket, NULL) == FALSE);
+	BOOST_CHECK (p_socket_get_fd (socket) == -1);
+	BOOST_CHECK (p_socket_is_connected (socket) == FALSE);
 
 	p_socket_set_keepalive (socket, TRUE);
 	BOOST_CHECK (p_socket_get_keepalive (socket) == FALSE);
@@ -901,6 +903,7 @@ BOOST_AUTO_TEST_CASE (psocket_general_tcp_test)
 	BOOST_CHECK (p_socket_shutdown (socket, TRUE, TRUE, NULL) == FALSE);
 	BOOST_CHECK (p_socket_get_local_address (socket, NULL) == NULL);
 	BOOST_CHECK (p_socket_check_connect_result (socket, NULL) == FALSE);
+	BOOST_CHECK (p_socket_get_fd (socket) == -1);
 
 	p_socket_set_keepalive (socket, TRUE);
 	BOOST_CHECK (p_socket_get_keepalive (socket) == FALSE);

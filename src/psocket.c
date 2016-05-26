@@ -1249,6 +1249,7 @@ p_socket_close (PSocket	*socket,
 		socket->connected = FALSE;
 		socket->closed = TRUE;
 		socket->listening = FALSE;
+		socket->fd	  = -1;
 
 		return TRUE;
 	}
