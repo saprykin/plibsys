@@ -25,12 +25,14 @@
 #include <string.h>
 
 #include <windows.h>
+#include <process.h>
 
 typedef HANDLE puthread_hdl;
 
 struct _PUThread {
 	__PUThreadBase		base;
 	puthread_hdl		hdl;
+	PUThreadFunc		proxy;
 };
 
 struct _PUThreadKey {
@@ -112,6 +114,18 @@ __p_uthread_get_tls_key (PUThreadKey *key)
 	return tls_key;
 }
 
+static puint __stdcall
+__p_uthread_win32_proxy (ppointer data)
+{
+	PUThread *thread = data;
+
+	thread->proxy (thread);
+
+	_endthreadex (0);
+
+	return 0;
+}
+
 void
 __p_uthread_win32_thread_detach (void)
 {
@@ -178,20 +192,22 @@ __p_uthread_create_internal (PUThreadFunc	func,
 			     pboolean		joinable,
 			     PUThreadPriority	prio)
 {
-	PUThread	*ret;
+	PUThread *ret;
 
 	if (P_UNLIKELY ((ret = p_malloc0 (sizeof (PUThread))) == NULL)) {
 		P_ERROR ("PUThread: failed to allocate memory");
 		return NULL;
 	}
 
-	if (P_UNLIKELY ((ret->hdl = CreateThread (NULL,
-						  0,
-						  (LPTHREAD_START_ROUTINE) func,
-						  ret,
-						  CREATE_SUSPENDED,
-						  NULL)) == NULL)) {
-		P_ERROR ("PUThread: failed to call CreateThread()");
+	ret->proxy = func;
+
+	if (P_UNLIKELY ((ret->hdl = (HANDLE) _beginthreadex (NULL,
+							     0,
+							     __p_uthread_win32_proxy,
+							     ret,
+							     CREATE_SUSPENDED,
+							     NULL)) == NULL)) {
+		P_ERROR ("PUThread: failed to call _beginthreadex()");
 		p_free (ret);
 		return NULL;
 	}
@@ -212,7 +228,7 @@ __p_uthread_create_internal (PUThreadFunc	func,
 void
 __p_uthread_exit_internal (void)
 {
-	ExitThread (0);
+	_endthreadex (0);
 }
 
 void
