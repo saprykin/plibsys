@@ -340,7 +340,7 @@ p_socket_new_from_fd (pint	fd,
 
 	p_socket_set_listen_backlog (ret, P_SOCKET_DEFAULT_BACKLOG);
 
-	ret->timeout = 0;
+	ret->timeout  = 0;
 	ret->blocking = TRUE;
 
 #ifdef P_OS_WIN
@@ -447,11 +447,11 @@ p_socket_new (PSocketFamily	family,
 		return NULL;
 	}
 
-	ret->timeout = 0;
+	ret->timeout  = 0;
 	ret->blocking = TRUE;
-	ret->family = family;
+	ret->family   = family;
 	ret->protocol = protocol;
-	ret->type = type;
+	ret->type     = type;
 
 	p_socket_set_listen_backlog (ret, P_SOCKET_DEFAULT_BACKLOG);
 
@@ -1247,7 +1247,7 @@ p_socket_close (PSocket	*socket,
 
 	if (P_LIKELY (res == 0)) {
 		socket->connected = FALSE;
-		socket->closed = TRUE;
+		socket->closed    = TRUE;
 		socket->listening = FALSE;
 		socket->fd	  = -1;
 
