@@ -66,16 +66,13 @@
 P_BEGIN_DECLS
 
 /** Opaque data structure for handling cryptographic hash context. */
-typedef struct _PCryptoHash PCryptoHash;
+typedef struct PCryptoHash_ PCryptoHash;
 
-/**
- * Cryptographic hash function types for #PCryptoHash.
- * @since 0.0.1
- */
-typedef enum {
-	P_CRYPTO_HASH_TYPE_MD5		= 0, /**< MD5 hash function.			*/
-	P_CRYPTO_HASH_TYPE_SHA1		= 1, /**< SHA-1 hash function.			*/
-	P_CRYPTO_HASH_TYPE_GOST		= 2  /**< GOST (R 34.11-94) hash function.	*/
+/** Cryptographic hash function types for #PCryptoHash. */
+typedef enum PCryptoHashType_ {
+	P_CRYPTO_HASH_TYPE_MD5	= 0, /**< MD5 hash function.			*/
+	P_CRYPTO_HASH_TYPE_SHA1	= 1, /**< SHA-1 hash function.			*/
+	P_CRYPTO_HASH_TYPE_GOST	= 2  /**< GOST (R 34.11-94) hash function.	*/
 } PCryptoHashType;
 
 /**

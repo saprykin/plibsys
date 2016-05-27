@@ -27,16 +27,16 @@
 #include "ptypes.h"
 #include "pmacros.h"
 
-typedef struct _PHashSHA1 PHashSHA1;
-
 P_BEGIN_DECLS
 
-PHashSHA1 *	__p_sha1_new	(void);
-void		__p_sha1_update	(PHashSHA1 *ctx, const puchar *data, psize len);
-void		__p_sha1_finish	(PHashSHA1 *ctx);
-const puchar *	__p_sha1_digest	(PHashSHA1 *ctx);
-void		__p_sha1_reset	(PHashSHA1 *ctx);
-void		__p_sha1_free	(PHashSHA1 *ctx);
+typedef struct PHashSHA1_ PHashSHA1;
+
+PHashSHA1 *	p_crypto_hash_sha1_new		(void);
+void		p_crypto_hash_sha1_update	(PHashSHA1 *ctx, const puchar *data, psize len);
+void		p_crypto_hash_sha1_finish	(PHashSHA1 *ctx);
+const puchar *	p_crypto_hash_sha1_digest	(PHashSHA1 *ctx);
+void		p_crypto_hash_sha1_reset	(PHashSHA1 *ctx);
+void		p_crypto_hash_sha1_free		(PHashSHA1 *ctx);
 
 P_END_DECLS
 

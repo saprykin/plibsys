@@ -27,18 +27,18 @@
 #include "ptypes.h"
 #include "pmacros.h"
 
-typedef struct _PHashGOST3411 PHashGOST3411;
-
 P_BEGIN_DECLS
 
-PHashGOST3411 *	__p_gost3411_new	(void);
-void		__p_gost3411_update	(PHashGOST3411		*ctx,
-					 const puchar		*data,
-					 psize			len);
-void		__p_gost3411_finish	(PHashGOST3411		*ctx);
-const puchar *	__p_gost3411_digest	(PHashGOST3411		*ctx);
-void		__p_gost3411_reset	(PHashGOST3411		*ctx);
-void		__p_gost3411_free	(PHashGOST3411		*ctx);
+typedef struct PHashGOST3411_ PHashGOST3411;
+
+PHashGOST3411 *	p_crypto_hash_gost3411_new	(void);
+void		p_crypto_hash_gost3411_update	(PHashGOST3411		*ctx,
+						 const puchar		*data,
+						 psize			len);
+void		p_crypto_hash_gost3411_finish	(PHashGOST3411		*ctx);
+const puchar *	p_crypto_hash_gost3411_digest	(PHashGOST3411		*ctx);
+void		p_crypto_hash_gost3411_reset	(PHashGOST3411		*ctx);
+void		p_crypto_hash_gost3411_free	(PHashGOST3411		*ctx);
 
 P_END_DECLS
 

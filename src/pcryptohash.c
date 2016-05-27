@@ -31,14 +31,14 @@
 #define P_MAX_HASH_LENGTH	32
 
 #define P_HASH_FUNCS(ctx, type) \
-	ctx->create = (void * (*) (void)) __p_##type##_new;				\
-	ctx->update = (void (*) (void *, const puchar *, psize)) __p_##type##_update;	\
-	ctx->finish = (void (*) (void *)) __p_##type##_finish;				\
-	ctx->digest = (const puchar * (*) (void *)) __p_##type##_digest;		\
-	ctx->reset = (void (*) (void *)) __p_##type##_reset;				\
-	ctx->free = (void (*) (void *)) __p_##type##_free;
+	ctx->create = (void * (*) (void)) p_crypto_hash_##type##_new;				\
+	ctx->update = (void (*) (void *, const puchar *, psize)) p_crypto_hash_##type##_update;	\
+	ctx->finish = (void (*) (void *)) p_crypto_hash_##type##_finish;			\
+	ctx->digest = (const puchar * (*) (void *)) p_crypto_hash_##type##_digest;		\
+	ctx->reset = (void (*) (void *)) p_crypto_hash_##type##_reset;				\
+	ctx->free = (void (*) (void *)) p_crypto_hash_##type##_free;
 
-struct _PCryptoHash {
+struct PCryptoHash_ {
 	PCryptoHashType	type;
 	ppointer	context;
 	puint		hash_len;
@@ -78,8 +78,8 @@ p_crypto_hash_new (PCryptoHashType type)
 		return NULL;
 	}
 
-	ret->type = type;
-	ret->closed = FALSE;
+	ret->type    = type;
+	ret->closed  = FALSE;
 	ret->reseted = TRUE;
 
 	if (P_UNLIKELY ((ret->context = ret->create ()) == NULL)) {
@@ -111,7 +111,7 @@ p_crypto_hash_reset (PCryptoHash *hash)
 		return;
 
 	hash->reset (hash->context);
-	hash->closed = FALSE;
+	hash->closed  = FALSE;
 	hash->reseted = TRUE;
 }
 
