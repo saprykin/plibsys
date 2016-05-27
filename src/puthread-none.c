@@ -43,9 +43,12 @@ __p_uthread_win32_thread_detach (void)
 PUThread *
 __p_uthread_create_internal (PUThreadFunc	func,
 			     pboolean		joinable,
-			     PUThreadPriority	prio)
+			     PUThreadPriority	prio,
+			     psize		stack_size)
 {
 	PUThread	*ret;
+
+	P_UNUSED (stack_size);
 
 	if (P_UNLIKELY ((ret = p_malloc0 (sizeof (PUThread))) == NULL)) {
 		P_ERROR ("PUThread: failed to allocate memory");

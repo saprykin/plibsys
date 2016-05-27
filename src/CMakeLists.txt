@@ -431,6 +431,28 @@ if (PLIBSYS_THREAD_MODEL STREQUAL posix)
 			message (STATUS "Checking whether POSIX thread scheduling presents - no")
 		endif()
 	endif()
+
+	# Check for thread stack size
+	message (STATUS "Checking whether POSIX thread stack size is supported")
+
+	check_c_source_compiles (
+				 "#include <pthread.h>
+
+				 int main () {
+					pthread_attr_t attr;
+
+					pthread_attr_setstacksize (&attr, 0);
+					return 0;
+				 }"
+				 PLIBSYS_HAS_POSIX_STACKSIZE
+				)
+
+	if (PLIBSYS_HAS_POSIX_STACKSIZE)
+		message (STATUS "Checking whether POSIX thread stack size is supported - yes")
+		add_definitions (-DPLIBSYS_HAS_POSIX_STACKSIZE)
+	else()
+		message (STATUS "Checking whether POSIX thread stack size is supported - no")
+	endif()
 endif()
 
 if ((PLIBSYS_TARGET_OS STREQUAL windows) AND NOT (PLIBSYS_TARGET_OS STREQUAL cygwin)

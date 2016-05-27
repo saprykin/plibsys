@@ -164,7 +164,8 @@ __p_uthread_win32_thread_detach (void)
 PUThread *
 __p_uthread_create_internal (PUThreadFunc	func,
 			     pboolean		joinable,
-			     PUThreadPriority	prio)
+			     PUThreadPriority	prio,
+			     psize		stack_size)
 {
 	PUThread		*ret;
 	pthread_attr_t		attr;
@@ -174,6 +175,11 @@ __p_uthread_create_internal (PUThreadFunc	func,
 	pint			native_prio;
 	pint			sched_policy;
 #endif
+
+#if defined (PLIBSYS_HAS_POSIX_STACKSIZE) && defined (_SC_THREAD_STACK_MIN)
+	plong			min_stack;
+#endif
+
 
 	if (P_UNLIKELY ((ret = p_malloc0 (sizeof (PUThread))) == NULL)) {
 		P_ERROR ("PUThread: failed to allocate memory");
@@ -218,6 +224,23 @@ __p_uthread_create_internal (PUThreadFunc	func,
 		} else
 			P_WARNING ("PUThread: failed to call pthread_attr_getschedpolicy()");
 	}
+#endif
+
+#ifdef PLIBSYS_HAS_POSIX_STACKSIZE
+#  ifdef _SC_THREAD_STACK_MIN
+	if (stack_size > 0) {
+		min_stack = (plong) sysconf (_SC_THREAD_STACK_MIN);
+
+		if (P_LIKELY (min_stack > 0)) {
+			if (P_UNLIKELY (stack_size < (psize) min_stack))
+				stack_size = (psize) min_stack;
+		} else
+			P_WARNING ("PUThread: failed to call sysconf() for _SC_THREAD_STACK_MIN");
+
+		if (P_UNLIKELY (pthread_attr_setstacksize (&attr, stack_size) != 0))
+			P_WARNING ("PUThread: failed to call pthread_attr_setstacksize()");
+	}
+#  endif
 #endif
 
 	create_code = pthread_create (&ret->hdl, &attr, func, ret);

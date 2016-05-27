@@ -190,7 +190,8 @@ __p_uthread_shutdown_internal (void)
 PUThread *
 __p_uthread_create_internal (PUThreadFunc	func,
 			     pboolean		joinable,
-			     PUThreadPriority	prio)
+			     PUThreadPriority	prio,
+			     psize		stack_size)
 {
 	PUThread *ret;
 
@@ -202,7 +203,7 @@ __p_uthread_create_internal (PUThreadFunc	func,
 	ret->proxy = func;
 
 	if (P_UNLIKELY ((ret->hdl = (HANDLE) _beginthreadex (NULL,
-							     0,
+							     (puint) stack_size,
 							     __p_uthread_win32_proxy,
 							     ret,
 							     CREATE_SUSPENDED,

@@ -114,6 +114,8 @@ typedef enum _PUThreadPriority {
  * @param data Pointer to pass into the thread main function, may be NULL.
  * @param joinable Whether to create joinable thread or not.
  * @param prio Thread priority.
+ * @param stack_size Thread stack size, in bytes. Leave zero to use a default
+ * value.
  * @return Pointer to #PUThread in case of success, NULL otherwise.
  * @since 0.0.1
  * @note Unreference the returned value after use with p_uthread_unref(). You do
@@ -122,10 +124,11 @@ typedef enum _PUThreadPriority {
 P_LIB_API PUThread *	p_uthread_create_full	(PUThreadFunc		func,
 						 ppointer		data,
 						 pboolean		joinable,
-						 PUThreadPriority	prio);
+						 PUThreadPriority	prio,
+						 psize			stack_size);
 
 /**
- * @brief Creates a #PUThread and starts it. Short version of
+ * @brief Creates a #PUThread and starts it. A short version of
  * p_uthread_create_full().
  * @param func Main thread function to run.
  * @param data Pointer to pass into the thread main function, may be NULL.

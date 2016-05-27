@@ -149,20 +149,33 @@ __p_uthread_win32_thread_detach (void)
 PUThread *
 __p_uthread_create_internal (PUThreadFunc	func,
 			     pboolean		joinable,
-			     PUThreadPriority	prio)
+			     PUThreadPriority	prio,
+			     psize		stack_size)
 {
 	PUThread	*ret;
 	pint32		flags;
+	psize		min_stack;
 
 	if (P_UNLIKELY ((ret = p_malloc0 (sizeof (PUThread))) == NULL)) {
 		P_ERROR ("PUThread: failed to allocate memory");
 		return NULL;
 	}
 
+	if (stack_size > 0) {
+#ifdef P_OS_UNIXWARE
+		min_stack = thr_minstack ();	
+#else
+		min_stack = thr_min_stack ();
+#endif
+
+		if (P_UNLIKELY (stack_size < min_stack))
+			stack_size = min_stack;
+	}
+
 	flags = THR_SUSPENDED;
 	flags |= joinable ? 0 : THR_DETACHED;
 
-	if (P_UNLIKELY (thr_create (NULL, 0, func, ret, flags, &ret->hdl) != 0)) {
+	if (P_UNLIKELY (thr_create (NULL, stack_size, func, ret, flags, &ret->hdl) != 0)) {
 		P_ERROR ("PUThread: failed to call thr_create()");
 		p_free (ret);
 		return NULL;

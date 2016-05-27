@@ -189,7 +189,8 @@ BOOST_AUTO_TEST_CASE (puthread_nomem_test)
 	BOOST_CHECK (p_uthread_create_full ((PUThreadFunc) test_thread_func,
 					    (ppointer) &thread_wakes_2,
 					    TRUE,
-					    P_UTHREAD_PRIORITY_NORMAL) == NULL);
+					    P_UTHREAD_PRIORITY_NORMAL,
+					    0) == NULL);
 
 	BOOST_CHECK (p_uthread_current () == NULL);
 	BOOST_CHECK (p_uthread_local_new (NULL) == NULL);
@@ -211,7 +212,7 @@ BOOST_AUTO_TEST_CASE (puthread_bad_input_test)
 	p_libsys_init ();
 
 	BOOST_CHECK (p_uthread_create (NULL, NULL, false) == NULL);
-	BOOST_CHECK (p_uthread_create_full (NULL, NULL, false, P_UTHREAD_PRIORITY_NORMAL) == NULL);
+	BOOST_CHECK (p_uthread_create_full (NULL, NULL, false, P_UTHREAD_PRIORITY_NORMAL, 0) == NULL);
 	BOOST_CHECK (p_uthread_join (NULL) == -1);
 	BOOST_CHECK (p_uthread_set_priority (NULL, P_UTHREAD_PRIORITY_NORMAL) == FALSE);
 	BOOST_CHECK (p_uthread_get_local (NULL) == NULL);
@@ -241,7 +242,8 @@ BOOST_AUTO_TEST_CASE (puthread_general_test)
 	PUThread *thr2 = p_uthread_create_full ((PUThreadFunc) test_thread_func,
 						(ppointer) &thread_wakes_2,
 						TRUE,
-						P_UTHREAD_PRIORITY_NORMAL);
+						P_UTHREAD_PRIORITY_NORMAL,
+						0);
 
 	p_uthread_ref (thr1);
 

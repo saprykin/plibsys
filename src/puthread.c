@@ -28,7 +28,8 @@ extern void __p_uthread_init_internal (void);
 extern void __p_uthread_shutdown_internal (void);
 extern PUThread * __p_uthread_create_internal (PUThreadFunc	func,
 					       pboolean		joinable,
-					       PUThreadPriority	prio);
+					       PUThreadPriority	prio,
+					       psize		stack_size);
 extern void __p_uthread_exit_internal (void);
 extern void __p_uthread_wait_internal (PUThread *thread);
 extern void __p_uthread_free_internal (PUThread *thread);
@@ -92,7 +93,8 @@ P_LIB_API PUThread *
 p_uthread_create_full (PUThreadFunc	func,
 		       ppointer		data,
 		       pboolean		joinable,
-		       PUThreadPriority	prio)
+		       PUThreadPriority	prio,
+		       psize		stack_size)
 {
 	__PUThreadBase *base_thread;
 
@@ -103,7 +105,8 @@ p_uthread_create_full (PUThreadFunc	func,
 
 	base_thread = (__PUThreadBase *) __p_uthread_create_internal (__p_uthread_proxy,
 								      joinable,
-								      prio);
+								      prio,
+								      stack_size);
 
 	if (P_LIKELY (base_thread != NULL)) {
 		base_thread->ref_count = 2;
@@ -124,7 +127,7 @@ p_uthread_create (PUThreadFunc	func,
 		  pboolean	joinable)
 {
 	/* All checks will be inside */
-	return p_uthread_create_full (func, data, joinable, P_UTHREAD_PRIORITY_INHERIT);
+	return p_uthread_create_full (func, data, joinable, P_UTHREAD_PRIORITY_INHERIT, 0);
 }
 
 P_LIB_API void
