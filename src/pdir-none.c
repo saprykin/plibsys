@@ -19,7 +19,7 @@
 
 #include <stdlib.h>
 
-struct _PDir {
+struct PDir_ {
 	pint	hdl;
 };
 

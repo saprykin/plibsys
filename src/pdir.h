@@ -50,17 +50,17 @@
 P_BEGIN_DECLS
 
 /** Directory opaque data structure. */
-typedef struct _PDir PDir;
+typedef struct PDir_ PDir;
 
 /** Directory entry types. */
-typedef enum _PDirEntryType {
+typedef enum PDirEntryType_ {
 	P_DIR_ENTRY_TYPE_DIR	= 1,	/**< Directory.	*/
 	P_DIR_ENTRY_TYPE_FILE	= 2,	/**< File.	*/
 	P_DIR_ENTRY_TYPE_OTHER	= 3	/**< Other.	*/
 } PDirEntryType;
 
 /** Structure with a directory entry information. */
-typedef struct _PDirEntry {
+typedef struct PDirEntry_ {
 	char		*name;	/**< Name.	*/
 	PDirEntryType	type;	/**< Type.	*/
 } PDirEntry;

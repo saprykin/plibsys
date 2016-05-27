@@ -42,7 +42,7 @@
 #  endif
 #endif
 
-struct _PDir {
+struct PDir_ {
 	DIR *		dir;
 	struct dirent	*dir_result;
 	pchar		*path;
@@ -82,9 +82,9 @@ p_dir_new (const pchar	*path,
 		return NULL;
 	}
 
-	ret->dir	= dir;
-	ret->path	= p_strdup (path);
-	ret->orig_path	= p_strdup (path);
+	ret->dir       = dir;
+	ret->path      = p_strdup (path);
+	ret->orig_path = p_strdup (path);
 
 	pathp = ret->path + strlen (ret->path) - 1;
 

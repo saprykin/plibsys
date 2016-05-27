@@ -25,7 +25,7 @@
 
 #include <windows.h>
 
-struct _PDir {
+struct PDir_ {
 	WIN32_FIND_DATAA	find_data;
 	HANDLE			search_handle;
 	pboolean		cached;
@@ -86,7 +86,7 @@ p_dir_new (const pchar	*path,
 		return NULL;
 	}
 
-	ret->cached = TRUE;
+	ret->cached    = TRUE;
 	ret->orig_path = p_strdup (path);
 
 	return ret;
