@@ -20,7 +20,7 @@
 
 #include <stdlib.h>
 
-struct _PSemaphore {
+struct PSemaphore_ {
 	pint	hdl;
 };
 

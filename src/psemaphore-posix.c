@@ -15,9 +15,9 @@
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "plibsys-private.h"
 #include "pmem.h"
 #include "psemaphore.h"
+#include "plibsys-private.h"
 
 #include <stdlib.h>
 #include <string.h>
@@ -33,16 +33,16 @@ typedef sem_t psem_hdl;
 
 /* On some HP-UX versions it may not be defined */
 #ifndef SEM_FAILED
-#define SEM_FAILED ((sem_t *) -1)
+#  define SEM_FAILED ((sem_t *) -1)
 #endif
 
 #ifdef P_OS_SOLARIS
-#define P_SEM_INVALID_HDL	(sem_t *) -1
+#  define P_SEM_INVALID_HDL	(sem_t *) -1
 #else
-#define P_SEM_INVALID_HDL	SEM_FAILED
+#  define P_SEM_INVALID_HDL	SEM_FAILED
 #endif
 
-struct _PSemaphore {
+struct PSemaphore_ {
 	pboolean		sem_created;
 	pchar			*platform_key;
 	psem_hdl		*sem_hdl;
@@ -50,12 +50,12 @@ struct _PSemaphore {
 	pint			init_val;
 };
 
-static pboolean __p_semaphore_create_handle (PSemaphore *sem, PError **error);
-static void __p_semaphore_clean_handle (PSemaphore *sem);
+static pboolean pp_semaphore_create_handle (PSemaphore *sem, PError **error);
+static void pp_semaphore_clean_handle (PSemaphore *sem);
 
 static pboolean
-__p_semaphore_create_handle (PSemaphore *sem,
-			     PError	**error)
+pp_semaphore_create_handle (PSemaphore *sem,
+			    PError	**error)
 {
 	if (P_UNLIKELY (sem == NULL || sem->platform_key == NULL)) {
 		p_error_set_error_p (error,
@@ -66,8 +66,11 @@ __p_semaphore_create_handle (PSemaphore *sem,
 	}
 
 	/* Solaris may interrupt sem_open() call */
-	while ((sem->sem_hdl = sem_open (sem->platform_key, O_CREAT | O_EXCL, 0660, sem->init_val)) == P_SEM_INVALID_HDL
-		&& p_error_get_last_error () == EINTR)
+	while ((sem->sem_hdl = sem_open (sem->platform_key,
+					 O_CREAT | O_EXCL,
+					 0660,
+					 sem->init_val)) == P_SEM_INVALID_HDL &&
+		p_error_get_last_error () == EINTR)
 	;
 
 	if (sem->sem_hdl == P_SEM_INVALID_HDL) {
@@ -75,8 +78,11 @@ __p_semaphore_create_handle (PSemaphore *sem,
 			if (sem->mode == P_SEM_ACCESS_CREATE)
 				sem_unlink (sem->platform_key);
 
-			while ((sem->sem_hdl = sem_open (sem->platform_key, 0, 0, 0)) == P_SEM_INVALID_HDL
-				&& p_error_get_last_error () == EINTR)
+			while ((sem->sem_hdl = sem_open (sem->platform_key,
+							 0,
+							 0,
+							 0)) == P_SEM_INVALID_HDL &&
+				p_error_get_last_error () == EINTR)
 			;
 		}
 	} else
@@ -87,7 +93,7 @@ __p_semaphore_create_handle (PSemaphore *sem,
 				     (pint) p_error_get_last_ipc (),
 				     p_error_get_last_error (),
 				     "Failed to call sem_open() to create semaphore");
-		__p_semaphore_clean_handle (sem);
+		pp_semaphore_clean_handle (sem);
 		return FALSE;
 	}
 
@@ -95,7 +101,7 @@ __p_semaphore_create_handle (PSemaphore *sem,
 }
 
 static void
-__p_semaphore_clean_handle (PSemaphore *sem)
+pp_semaphore_clean_handle (PSemaphore *sem)
 {
 	if (P_UNLIKELY (sem->sem_hdl != P_SEM_INVALID_HDL &&
 			sem_close (sem->sem_hdl) == -1))
@@ -158,7 +164,7 @@ p_semaphore_new (const pchar		*name,
 
 	p_free (new_name);
 
-	if (P_UNLIKELY (__p_semaphore_create_handle (ret, error) == FALSE)) {
+	if (P_UNLIKELY (pp_semaphore_create_handle (ret, error) == FALSE)) {
 		p_semaphore_free (ret);
 		return NULL;
 	}
@@ -235,7 +241,7 @@ p_semaphore_free (PSemaphore *sem)
 	if (P_UNLIKELY (sem == NULL))
 		return;
 
-	__p_semaphore_clean_handle (sem);
+	pp_semaphore_clean_handle (sem);
 
 	if (P_LIKELY (sem->platform_key != NULL))
 		p_free (sem->platform_key);

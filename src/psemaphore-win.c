@@ -15,9 +15,9 @@
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "plibsys-private.h"
 #include "pmem.h"
 #include "psemaphore.h"
+#include "plibsys-private.h"
 
 #include <stdlib.h>
 #include <string.h>
@@ -29,17 +29,17 @@
 
 typedef HANDLE psem_hdl;
 
-struct _PSemaphore {
-	pchar			*platform_key;
-	psem_hdl		sem_hdl;
-	pint			init_val;
+struct PSemaphore_ {
+	pchar		*platform_key;
+	psem_hdl	sem_hdl;
+	pint		init_val;
 };
 
-static pboolean __p_semaphore_create_handle (PSemaphore *sem, PError **error);
-static void __p_semaphore_clean_handle (PSemaphore *sem);
+static pboolean pp_semaphore_create_handle (PSemaphore *sem, PError **error);
+static void pp_semaphore_clean_handle (PSemaphore *sem);
 
 static pboolean
-__p_semaphore_create_handle (PSemaphore *sem, PError **error)
+pp_semaphore_create_handle (PSemaphore *sem, PError **error)
 {
 	if (P_UNLIKELY (sem == NULL || sem->platform_key == NULL)) {
 		p_error_set_error_p (error,
@@ -65,7 +65,7 @@ __p_semaphore_create_handle (PSemaphore *sem, PError **error)
 }
 
 static void
-__p_semaphore_clean_handle (PSemaphore *sem)
+pp_semaphore_clean_handle (PSemaphore *sem)
 {
 	if (P_UNLIKELY (sem->sem_hdl != P_SEM_INVALID_HDL && CloseHandle (sem->sem_hdl) == 0))
 		P_ERROR ("PSemaphore: CloseHandle() failed");
@@ -117,7 +117,7 @@ p_semaphore_new (const pchar		*name,
 
 	p_free (new_name);
 
-	if (P_UNLIKELY (__p_semaphore_create_handle (ret, error) == FALSE)) {
+	if (P_UNLIKELY (pp_semaphore_create_handle (ret, error) == FALSE)) {
 		p_semaphore_free (ret);
 		return NULL;
 	}
@@ -187,7 +187,7 @@ p_semaphore_free (PSemaphore *sem)
 	if (P_UNLIKELY (sem == NULL))
 		return;
 
-	__p_semaphore_clean_handle (sem);
+	pp_semaphore_clean_handle (sem);
 
 	if (P_LIKELY (sem->platform_key != NULL))
 		p_free (sem->platform_key);

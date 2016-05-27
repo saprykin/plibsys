@@ -15,9 +15,9 @@
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "plibsys-private.h"
 #include "pmem.h"
 #include "psemaphore.h"
+#include "plibsys-private.h"
 
 #include <stdlib.h>
 #include <string.h>
@@ -36,7 +36,7 @@
 struct sembuf sem_lock = {0, -1, SEM_UNDO};
 struct sembuf sem_unlock = {0, 1, SEM_UNDO};
 
-typedef union _p_semun {
+typedef union p_semun_ {
 	pint		val;
 	struct semid_ds	*buf;
 	pushort		*array;
@@ -44,7 +44,7 @@ typedef union _p_semun {
 
 typedef int psem_hdl;
 
-struct _PSemaphore {
+struct PSemaphore_ {
 	pboolean		file_created;
 	pboolean		sem_created;
 	key_t			unix_key;
@@ -54,11 +54,11 @@ struct _PSemaphore {
 	pint			init_val;
 };
 
-static pboolean __p_semaphore_create_handle (PSemaphore *sem, PError **error);
-static void __p_semaphore_clean_handle (PSemaphore *sem);
+static pboolean pp_semaphore_create_handle (PSemaphore *sem, PError **error);
+static void pp_semaphore_clean_handle (PSemaphore *sem);
 
 static pboolean
-__p_semaphore_create_handle (PSemaphore *sem, PError **error)
+pp_semaphore_create_handle (PSemaphore *sem, PError **error)
 {
 	pint	built;
 	p_semun	semun_op;
@@ -76,7 +76,7 @@ __p_semaphore_create_handle (PSemaphore *sem, PError **error)
 				     (pint) p_error_get_last_ipc (),
 				     p_error_get_last_error (),
 				     "Failed to create key file");
-		__p_semaphore_clean_handle (sem);
+		pp_semaphore_clean_handle (sem);
 		return FALSE;
 	} else if (built == 0)
 		sem->file_created = TRUE;
@@ -86,11 +86,13 @@ __p_semaphore_create_handle (PSemaphore *sem, PError **error)
 				     (pint) p_error_get_last_ipc (),
 				     p_error_get_last_error (),
 				     "Failed to get unique IPC key");
-		__p_semaphore_clean_handle (sem);
+		pp_semaphore_clean_handle (sem);
 		return FALSE;
 	}
 
-	if ((sem->sem_hdl = semget (sem->unix_key, 1, IPC_CREAT | IPC_EXCL | 0660)) == P_SEM_INVALID_HDL) {
+	if ((sem->sem_hdl = semget (sem->unix_key,
+				    1,
+				    IPC_CREAT | IPC_EXCL | 0660)) == P_SEM_INVALID_HDL) {
 		if (p_error_get_last_error () == EEXIST)
 			sem->sem_hdl = semget (sem->unix_key, 1, 0660);
 	} else {
@@ -105,7 +107,7 @@ __p_semaphore_create_handle (PSemaphore *sem, PError **error)
 				     (pint) p_error_get_last_ipc (),
 				     p_error_get_last_error (),
 				     "Failed to call semget() to create semaphore");
-		__p_semaphore_clean_handle (sem);
+		pp_semaphore_clean_handle (sem);
 		return FALSE;
 	}
 
@@ -117,7 +119,7 @@ __p_semaphore_create_handle (PSemaphore *sem, PError **error)
 					     (pint) p_error_get_last_ipc (),
 					     p_error_get_last_error (),
 					     "Failed to set semaphore initial value with semctl()");
-			__p_semaphore_clean_handle (sem);
+			pp_semaphore_clean_handle (sem);
 			return FALSE;
 		}
 	}
@@ -126,7 +128,7 @@ __p_semaphore_create_handle (PSemaphore *sem, PError **error)
 }
 
 static void
-__p_semaphore_clean_handle (PSemaphore *sem)
+pp_semaphore_clean_handle (PSemaphore *sem)
 {
 	if (sem->sem_hdl != P_SEM_INVALID_HDL &&
 	    sem->sem_created == TRUE &&
@@ -150,8 +152,8 @@ p_semaphore_new (const pchar		*name,
 		 PSemaphoreAccessMode	mode,
 		 PError			**error)
 {
-	PSemaphore *ret;
-	pchar *new_name;
+	PSemaphore	*ret;
+	pchar		*new_name;
 
 	if (P_UNLIKELY (name == NULL || init_val < 0)) {
 		p_error_set_error_p (error,
@@ -187,7 +189,7 @@ p_semaphore_new (const pchar		*name,
 
 	p_free (new_name);
 
-	if (P_UNLIKELY (__p_semaphore_create_handle (ret, error) == FALSE)) {
+	if (P_UNLIKELY (pp_semaphore_create_handle (ret, error) == FALSE)) {
 		p_semaphore_free (ret);
 		return NULL;
 	}
@@ -219,7 +221,8 @@ p_semaphore_acquire (PSemaphore *sem,
 		return FALSE;
 	}
 
-	while ((res = semop (sem->sem_hdl, &sem_lock, 1)) == -1 && p_error_get_last_error () == EINTR)
+	while ((res = semop (sem->sem_hdl, &sem_lock, 1)) == -1 &&
+		p_error_get_last_error () == EINTR)
 		;
 
 	ret = (res == 0);
@@ -228,12 +231,13 @@ p_semaphore_acquire (PSemaphore *sem,
 			(p_error_get_last_error () == EIDRM ||
 			 p_error_get_last_error () == EINVAL))) {
 		P_WARNING ("PSemaphore: trying to recreate");
-		__p_semaphore_clean_handle (sem);
+		pp_semaphore_clean_handle (sem);
 
-		if (P_UNLIKELY (__p_semaphore_create_handle (sem, error) == FALSE))
+		if (P_UNLIKELY (pp_semaphore_create_handle (sem, error) == FALSE))
 			return FALSE;
 
-		while ((res = semop (sem->sem_hdl, &sem_lock, 1)) == -1 && p_error_get_last_error () == EINTR)
+		while ((res = semop (sem->sem_hdl, &sem_lock, 1)) == -1 &&
+			p_error_get_last_error () == EINTR)
 			;
 
 		ret = (res == 0);
@@ -263,7 +267,8 @@ p_semaphore_release (PSemaphore *sem,
 		return FALSE;
 	}
 
-	while ((res = semop (sem->sem_hdl, &sem_unlock, 1)) == -1 && p_error_get_last_error () == EINTR)
+	while ((res = semop (sem->sem_hdl, &sem_unlock, 1)) == -1 &&
+		p_error_get_last_error () == EINTR)
 		;
 
 	ret = (res == 0);
@@ -272,9 +277,9 @@ p_semaphore_release (PSemaphore *sem,
 			(p_error_get_last_error () == EIDRM ||
 			 p_error_get_last_error () == EINVAL))) {
 		P_WARNING ("PSemaphore: trying to recreate");
-		__p_semaphore_clean_handle (sem);
+		pp_semaphore_clean_handle (sem);
 
-		if (P_UNLIKELY (__p_semaphore_create_handle (sem, error) == FALSE))
+		if (P_UNLIKELY (pp_semaphore_create_handle (sem, error) == FALSE))
 			return FALSE;
 
 		return TRUE;
@@ -295,7 +300,7 @@ p_semaphore_free (PSemaphore *sem)
 	if (P_UNLIKELY (sem == NULL))
 		return;
 
-	__p_semaphore_clean_handle (sem);
+	pp_semaphore_clean_handle (sem);
 
 	if (P_LIKELY (sem->platform_key != NULL))
 		p_free (sem->platform_key);
