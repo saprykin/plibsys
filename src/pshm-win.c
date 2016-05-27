@@ -168,7 +168,7 @@ p_shm_new (const pchar		*name,
 	strcpy (new_name, name);
 	strcat (new_name, P_SHM_SUFFIX);
 
-	ret->platform_key = __p_ipc_get_platform_key (new_name, FALSE);
+	ret->platform_key = p_ipc_get_platform_key (new_name, FALSE);
 	ret->perms        = perms;
 	ret->size         = size;
 

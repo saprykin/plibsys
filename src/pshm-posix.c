@@ -194,9 +194,9 @@ p_shm_new (const pchar		*name,
 
 #ifdef P_OS_IRIX
 	/* IRIX uses filename styled IPC names */
-	ret->platform_key = __p_ipc_get_platform_key (new_name, FALSE);
+	ret->platform_key = p_ipc_get_platform_key (new_name, FALSE);
 #else
-	ret->platform_key = __p_ipc_get_platform_key (new_name, TRUE);
+	ret->platform_key = p_ipc_get_platform_key (new_name, TRUE);
 #endif
 	ret->perms = perms;
 	ret->size  = size;

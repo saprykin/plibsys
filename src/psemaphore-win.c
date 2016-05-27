@@ -112,7 +112,7 @@ p_semaphore_new (const pchar		*name,
 	strcpy (new_name, name);
 	strcpy (new_name, P_SEM_SUFFIX);
 
-	ret->platform_key = __p_ipc_get_platform_key (new_name, FALSE);
+	ret->platform_key = p_ipc_get_platform_key (new_name, FALSE);
 	ret->init_val = init_val;
 
 	p_free (new_name);

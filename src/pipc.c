@@ -24,19 +24,19 @@
 #include <string.h>
 
 #ifndef P_OS_WIN
-#include <unistd.h>
-#include <errno.h>
-#include <fcntl.h>
-#include <sys/stat.h>
-#include <sys/types.h>
-#include <sys/ipc.h>
+#  include <unistd.h>
+#  include <errno.h>
+#  include <fcntl.h>
+#  include <sys/stat.h>
+#  include <sys/types.h>
+#  include <sys/ipc.h>
 #else
-#include <windows.h>
+#  include <windows.h>
 #endif
 
 #ifndef P_OS_WIN
 pchar *
-__p_ipc_unix_get_temp_dir (void)
+p_ipc_unix_get_temp_dir (void)
 {
 	pchar	*str, *ret;
 	pint	len;
@@ -78,7 +78,7 @@ __p_ipc_unix_get_temp_dir (void)
 /* Create file for System V IPC, if needed
  * Returns: -1 = error, 0 = file successfully created, 1 = file already exists */
 pint
-__p_ipc_unix_create_key_file (const pchar *file_name)
+p_ipc_unix_create_key_file (const pchar *file_name)
 {
 	pint fd;
 
@@ -93,7 +93,7 @@ __p_ipc_unix_create_key_file (const pchar *file_name)
 }
 
 pint
-__p_ipc_unix_get_ftok_key (const pchar *file_name)
+p_ipc_unix_get_ftok_key (const pchar *file_name)
 {
 	struct stat st_info;
 
@@ -110,7 +110,7 @@ __p_ipc_unix_get_ftok_key (const pchar *file_name)
 /* Returns a platform-independent key for IPC usage, object name for Windows and
  * a file name to use with ftok () for UNIX-like systems */
 pchar *
-__p_ipc_get_platform_key (const pchar *name, pboolean posix)
+p_ipc_get_platform_key (const pchar *name, pboolean posix)
 {
 	PCryptoHash	*sha1;
 	pchar		*hash_str;
@@ -154,7 +154,7 @@ __p_ipc_get_platform_key (const pchar *name, pboolean posix)
 		strcpy (path_name, "/");
 		strncat (path_name, hash_str, 13);
 	} else {
-		tmp_path = __p_ipc_unix_get_temp_dir ();
+		tmp_path = p_ipc_unix_get_temp_dir ();
 
 		/* tmp dir + filename + zero symbol */
 		path_name = p_malloc0 (strlen (tmp_path) + strlen (hash_str) + 1);

@@ -67,7 +67,7 @@ __p_shm_create_handle (PShm	*shm,
 
 	is_exists = FALSE;
 
-	if (P_UNLIKELY ((built = __p_ipc_unix_create_key_file (shm->platform_key)) == -1)) {
+	if (P_UNLIKELY ((built = p_ipc_unix_create_key_file (shm->platform_key)) == -1)) {
 		p_error_set_error_p (error,
 				     (pint) p_error_get_last_ipc (),
 				     p_error_get_last_error (),
@@ -77,7 +77,7 @@ __p_shm_create_handle (PShm	*shm,
 	} else if (built == 0)
 		shm->file_created = TRUE;
 
-	if (P_UNLIKELY ((shm->unix_key = __p_ipc_unix_get_ftok_key (shm->platform_key)) == -1)) {
+	if (P_UNLIKELY ((shm->unix_key = p_ipc_unix_get_ftok_key (shm->platform_key)) == -1)) {
 		p_error_set_error_p (error,
 				     (pint) p_error_get_last_ipc (),
 				     p_error_get_last_error (),
@@ -206,7 +206,7 @@ p_shm_new (const pchar		*name,
 	strcpy (new_name, name);
 	strcat (new_name, P_SHM_SUFFIX);
 
-	ret->platform_key = __p_ipc_get_platform_key (new_name, FALSE);
+	ret->platform_key = p_ipc_get_platform_key (new_name, FALSE);
 	ret->perms        = perms;
 	ret->size         = size;
 

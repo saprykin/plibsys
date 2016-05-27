@@ -81,7 +81,7 @@ struct sockaddr_storage {
  * @brief Gets a temporary directory on UNIX systems.
  * @return Temporary directory.
  */
-pchar *		__p_ipc_unix_get_temp_dir	(void);
+pchar *		p_ipc_unix_get_temp_dir		(void);
 
 /* Create file for System V IPC, if needed
  * Returns: -1 = error, 0 = file successfully created, 1 = file already exists */
@@ -91,14 +91,14 @@ pchar *		__p_ipc_unix_get_temp_dir	(void);
  * @return -1 in case of error, 0 if all was OK, and 1 if the file already
  * exists.
  */
-pint		__p_ipc_unix_create_key_file	(const pchar	*file_name);
+pint		p_ipc_unix_create_key_file	(const pchar	*file_name);
 
 /**
  * @brief Wrapps ftok() UNIX call for a uniquer IPC key.
  * @param file_name File name for ftok() call.
  * @return Key in case of success, -1 otherwise.
  */
-pint		__p_ipc_unix_get_ftok_key	(const pchar	*file_name);
+pint		p_ipc_unix_get_ftok_key		(const pchar	*file_name);
 #endif /* !P_OS_WIN */
 
 /**
@@ -109,7 +109,7 @@ pint		__p_ipc_unix_get_ftok_key	(const pchar	*file_name);
  * otherwise FALSE. This parameter is not used on Windows platform.
  * @return Platform independent key for IPC usage.
  */
-pchar *		__p_ipc_get_platform_key	(const pchar	*name,
+pchar *		p_ipc_get_platform_key		(const pchar	*name,
 						 pboolean	posix);
 
 /**

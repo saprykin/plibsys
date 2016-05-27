@@ -71,7 +71,7 @@ __p_semaphore_create_handle (PSemaphore *sem, PError **error)
 		return FALSE;
 	}
 
-	if (P_UNLIKELY ((built = __p_ipc_unix_create_key_file (sem->platform_key)) == -1)) {
+	if (P_UNLIKELY ((built = p_ipc_unix_create_key_file (sem->platform_key)) == -1)) {
 		p_error_set_error_p (error,
 				     (pint) p_error_get_last_ipc (),
 				     p_error_get_last_error (),
@@ -81,7 +81,7 @@ __p_semaphore_create_handle (PSemaphore *sem, PError **error)
 	} else if (built == 0)
 		sem->file_created = TRUE;
 
-	if (P_UNLIKELY ((sem->unix_key = __p_ipc_unix_get_ftok_key (sem->platform_key)) == -1)) {
+	if (P_UNLIKELY ((sem->unix_key = p_ipc_unix_get_ftok_key (sem->platform_key)) == -1)) {
 		p_error_set_error_p (error,
 				     (pint) p_error_get_last_ipc (),
 				     p_error_get_last_error (),
@@ -181,7 +181,7 @@ p_semaphore_new (const pchar		*name,
 	strcpy (new_name, name);
 	strcat (new_name, P_SEM_SUFFIX);
 
-	ret->platform_key = __p_ipc_get_platform_key (new_name, FALSE);
+	ret->platform_key = p_ipc_get_platform_key (new_name, FALSE);
 	ret->init_val     = init_val;
 	ret->mode         = mode;
 
