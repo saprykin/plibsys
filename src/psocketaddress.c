@@ -15,10 +15,10 @@
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "plibsys-private.h"
 #include "pmem.h"
-#include "psocketaddress.h"
 #include "pstring.h"
+#include "psocketaddress.h"
+#include "plibsys-private.h"
 
 #include <stdlib.h>
 #include <string.h>
@@ -52,9 +52,9 @@
 #  endif
 #endif
 
-struct _PSocketAddress {
+struct PSocketAddress_ {
 	PSocketFamily	family;
-	union _addr {
+	union addr_ {
 		struct in_addr sin_addr;
 #ifdef AF_INET6
 		struct in6_addr sin6_addr;
@@ -100,7 +100,10 @@ p_socket_address_new_from_native (pconstpointer	native,
 			return NULL;
 		}
 
-		memcpy (&ret->addr.sin6_addr, &((struct sockaddr_in6 *) native)->sin6_addr, sizeof (struct in6_addr));
+		memcpy (&ret->addr.sin6_addr,
+			&((struct sockaddr_in6 *) native)->sin6_addr,
+			sizeof (struct in6_addr));
+
 		ret->family   = P_SOCKET_FAMILY_INET6;
 		ret->port     = p_ntohs (((struct sockaddr_in *) native)->sin_port);
 		ret->flowinfo = ((struct sockaddr_in6 *) native)->sin6_flowinfo;

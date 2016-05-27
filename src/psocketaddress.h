@@ -66,7 +66,7 @@
 P_BEGIN_DECLS
 
 /** Socket address family. */
-typedef enum _PSocketFamily {
+typedef enum PSocketFamily_ {
 	P_SOCKET_FAMILY_UNKNOWN = 0,		/**< Unknown family.	*/
 #ifdef AF_INET6
 	P_SOCKET_FAMILY_INET	= AF_INET,	/**< IPv4 family.	*/
@@ -77,7 +77,7 @@ typedef enum _PSocketFamily {
 } PSocketFamily;
 
 /** Socket address opaque structure. */
-typedef struct _PSocketAddress PSocketAddress;
+typedef struct PSocketAddress_ PSocketAddress;
 
 /**
  * @brief Creates new #PSocketAddress from native socket address raw data.
