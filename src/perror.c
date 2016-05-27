@@ -33,7 +33,7 @@ struct _PError {
 };
 
 pint
-__p_error_get_last_error ()
+__p_error_get_last_error (void)
 {
 #ifdef P_OS_WIN
 	return (pint) GetLastError ();
@@ -369,7 +369,7 @@ __p_error_get_io_from_system (pint err_code)
 }
 
 PErrorIO
-__p_error_get_last_io ()
+__p_error_get_last_io (void)
 {
 	return __p_error_get_io_from_system (__p_error_get_last_error ());
 }
@@ -539,13 +539,13 @@ __p_error_get_ipc_from_system (pint err_code)
 }
 
 PErrorIPC
-__p_error_get_last_ipc ()
+__p_error_get_last_ipc (void)
 {
 	return __p_error_get_ipc_from_system (__p_error_get_last_error ());
 }
 
 P_LIB_API PError *
-p_error_new ()
+p_error_new (void)
 {
 	PError *ret;
 

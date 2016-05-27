@@ -127,7 +127,7 @@ PErrorIO	__p_error_get_io_from_system		(pint		err_code);
  * @brief Gets an IO error code from the last call result.
  * @return IO error code.
  */
-PErrorIO	__p_error_get_last_io			();
+PErrorIO	__p_error_get_last_io			(void);
 
 /**
  * @brief Gets an IPC error code from a system error code
@@ -140,13 +140,13 @@ PErrorIPC	__p_error_get_ipc_from_system		(pint		err_code);
  * @brief Gets an IPC error code from the last call result.
  * @return IPC error code.
  */
-PErrorIPC	__p_error_get_last_ipc			();
+PErrorIPC	__p_error_get_last_ipc			(void);
 
 /**
  * @brief Gets the last native error code.
  * @return Last native error code.
  */
-pint		__p_error_get_last_error		();
+pint		__p_error_get_last_error		(void);
 
 P_END_DECLS
 
