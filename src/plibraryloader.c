@@ -22,9 +22,9 @@
 #include "plibsys-private.h"
 
 #ifdef P_OS_WIN
-#include <windows.h>
+#  include <windows.h>
 #else
-#include <dlfcn.h>
+#  include <dlfcn.h>
 #endif
 
 #ifdef P_OS_WIN
@@ -33,14 +33,14 @@
 	typedef ppointer	plibrary_handle;
 #endif
 
-struct _PLibraryLoader {
+struct PLibraryLoader_ {
 	plibrary_handle	handle;
 };
 
-static void __p_library_loader_clean_handle (plibrary_handle handle);
+static void pp_library_loader_clean_handle (plibrary_handle handle);
 
 static void
-__p_library_loader_clean_handle (plibrary_handle handle)
+pp_library_loader_clean_handle (plibrary_handle handle)
 {
 #ifdef P_OS_WIN
 	if (P_UNLIKELY (!FreeLibrary (handle)))
@@ -76,7 +76,7 @@ p_library_loader_new (const pchar *path)
 
 	if (P_UNLIKELY ((loader = p_malloc0 (sizeof (PLibraryLoader))) == NULL)) {
 		P_ERROR ("PLibraryLoader: failed to allocate memory");
-		__p_library_loader_clean_handle (handle);
+		pp_library_loader_clean_handle (handle);
 		return NULL;
 	}
 
@@ -108,7 +108,7 @@ p_library_loader_free (PLibraryLoader *loader)
 	if (P_UNLIKELY (loader == NULL))
 		return;
 
-	__p_library_loader_clean_handle (loader->handle);
+	pp_library_loader_clean_handle (loader->handle);
 
 	p_free (loader);
 }
