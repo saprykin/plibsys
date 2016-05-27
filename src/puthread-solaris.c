@@ -151,9 +151,9 @@ pp_uthread_win32_thread_detach (void)
 
 PUThread *
 pp_uthread_create_internal (PUThreadFunc	func,
-			     pboolean		joinable,
-			     PUThreadPriority	prio,
-			     psize		stack_size)
+			    pboolean		joinable,
+			    PUThreadPriority	prio,
+			    psize		stack_size)
 {
 	PUThread	*ret;
 	pint32		flags;
