@@ -16,8 +16,8 @@
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "pstring.h"
 #include "pmem.h"
+#include "pstring.h"
 
 #include <string.h>
 #include <ctype.h>
