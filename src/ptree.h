@@ -63,10 +63,10 @@
 P_BEGIN_DECLS
 
 /** Tree opaque data structure. */
-typedef struct _PTree PTree;
+typedef struct PTree_ PTree;
 
 /** Internal data organization algorithm for #PTree. */
-typedef enum {
+typedef enum PTreeType_ {
 	P_TREE_TYPE_BINARY	= 0,	/**< Unbalanced binary tree.		*/
 	P_TREE_TYPE_RB		= 1,	/**< Red-black self-balancing tree.	*/
 	P_TREE_TYPE_AVL		= 2	/**< AVL self-balancing tree		*/

@@ -41,12 +41,12 @@ typedef struct _PUThreadBase {
 } __PUThreadBase;
 
 /** Base tree leaf structure. */
-typedef struct _PTreeBaseNode {
-	struct _PTreeBaseNode	*left;		/**< Left child.	*/
-	struct _PTreeBaseNode	*right;		/**< Right child.	*/
+typedef struct PTreeBaseNode_ {
+	struct PTreeBaseNode_	*left;		/**< Left child.	*/
+	struct PTreeBaseNode_	*right;		/**< Right child.	*/
 	ppointer		key;		/**< Node key.		*/
 	ppointer		value;		/**< Node value.	*/
-} __PTreeBaseNode;
+} PTreeBaseNode;
 
 #ifndef PLIBSYS_HAS_SOCKLEN_T
 typedef int socklen_t;

@@ -21,7 +21,7 @@
 #include "ptree-bst.h"
 #include "ptree-rb.h"
 
-typedef pboolean	(*__PTreeInsertNode)	(__PTreeBaseNode	**root_node,
+typedef pboolean	(*PTreeInsertNode)	(PTreeBaseNode		**root_node,
 						 PCompareDataFunc	compare_func,
 						 ppointer		data,
 						 PDestroyFunc		key_destroy_func,
@@ -29,20 +29,20 @@ typedef pboolean	(*__PTreeInsertNode)	(__PTreeBaseNode	**root_node,
 						 ppointer		key,
 						 ppointer		value);
 
-typedef pboolean	(*__PTreeRemoveNode)	(__PTreeBaseNode	**root_node,
+typedef pboolean	(*PTreeRemoveNode)	(PTreeBaseNode		**root_node,
 						 PCompareDataFunc	compare_func,
 						 ppointer		data,
 						 PDestroyFunc		key_destroy_func,
 						 PDestroyFunc		value_destroy_func,
 						 pconstpointer		key);
 
-typedef void		(*__PTreeFreeNode)	(__PTreeBaseNode	*node);
+typedef void		(*PTreeFreeNode)	(PTreeBaseNode	*node);
 
-struct _PTree {
-	__PTreeBaseNode		*root;
-	__PTreeInsertNode	insert_node_func;
-	__PTreeRemoveNode	remove_node_func;
-	__PTreeFreeNode		free_node_func;
+struct PTree_ {
+	PTreeBaseNode		*root;
+	PTreeInsertNode		insert_node_func;
+	PTreeRemoveNode		remove_node_func;
+	PTreeFreeNode		free_node_func;
 	PDestroyFunc		key_destroy_func;
 	PDestroyFunc		value_destroy_func;
 	PCompareDataFunc	compare_func;
@@ -92,19 +92,19 @@ p_tree_new_full (PTreeType		type,
 
 	switch (type) {
 	case P_TREE_TYPE_BINARY:
-		ret->insert_node_func = __p_tree_bst_insert;
-		ret->remove_node_func = __p_tree_bst_remove;
-		ret->free_node_func   = __p_tree_bst_node_free;
+		ret->insert_node_func = p_tree_bst_insert;
+		ret->remove_node_func = p_tree_bst_remove;
+		ret->free_node_func   = p_tree_bst_node_free;
 		break;
 	case P_TREE_TYPE_RB:
-		ret->insert_node_func = __p_tree_rb_insert;
-		ret->remove_node_func = __p_tree_rb_remove;
-		ret->free_node_func   = __p_tree_rb_node_free;
+		ret->insert_node_func = p_tree_rb_insert;
+		ret->remove_node_func = p_tree_rb_remove;
+		ret->free_node_func   = p_tree_rb_node_free;
 		break;
 	case P_TREE_TYPE_AVL:
-		ret->insert_node_func = __p_tree_avl_insert;
-		ret->remove_node_func = __p_tree_avl_remove;
-		ret->free_node_func   = __p_tree_avl_node_free;
+		ret->insert_node_func = p_tree_avl_insert;
+		ret->remove_node_func = p_tree_avl_remove;
+		ret->free_node_func   = p_tree_avl_node_free;
 		break;
 	default:
 		p_free (ret);
@@ -161,7 +161,7 @@ P_LIB_API ppointer
 p_tree_lookup (PTree		*tree,
 	       pconstpointer	key)
 {
-	__PTreeBaseNode	*cur_node;
+	PTreeBaseNode	*cur_node;
 	pint		cmp_result;
 
 	if (P_UNLIKELY (tree == NULL))
@@ -188,8 +188,8 @@ p_tree_foreach (PTree		*tree,
 		PTraverseFunc	traverse_func,
 		ppointer	user_data)
 {
-	__PTreeBaseNode	*cur_node;
-	__PTreeBaseNode	*prev_node;
+	PTreeBaseNode	*cur_node;
+	PTreeBaseNode	*prev_node;
 	pint		mod_counter;
 	pboolean	need_stop;
 
@@ -243,9 +243,9 @@ p_tree_foreach (PTree		*tree,
 P_LIB_API void
 p_tree_clear (PTree *tree)
 {
-	__PTreeBaseNode	*cur_node;
-	__PTreeBaseNode	*prev_node;
-	__PTreeBaseNode	*next_node;
+	PTreeBaseNode	*cur_node;
+	PTreeBaseNode	*prev_node;
+	PTreeBaseNode	*next_node;
 
 	if (P_UNLIKELY (tree == NULL || tree->root == NULL))
 		return;

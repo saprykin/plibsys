@@ -28,7 +28,7 @@
 
 P_BEGIN_DECLS
 
-pboolean	__p_tree_avl_insert	(__PTreeBaseNode	**root_node,
+pboolean	p_tree_avl_insert	(PTreeBaseNode		**root_node,
 					 PCompareDataFunc	compare_func,
 					 ppointer		data,
 					 PDestroyFunc		key_destroy_func,
@@ -36,14 +36,14 @@ pboolean	__p_tree_avl_insert	(__PTreeBaseNode	**root_node,
 					 ppointer		key,
 					 ppointer		value);
 
-pboolean	__p_tree_avl_remove	(__PTreeBaseNode	**root_node,
+pboolean	p_tree_avl_remove	(PTreeBaseNode		**root_node,
 					 PCompareDataFunc	compare_func,
 					 ppointer		data,
 					 PDestroyFunc		key_destroy_func,
 					 PDestroyFunc		value_destroy_func,
 					 pconstpointer		key);
 
-void		__p_tree_avl_node_free	(__PTreeBaseNode	*node);
+void		p_tree_avl_node_free	(PTreeBaseNode	*node);
 
 P_END_DECLS
 

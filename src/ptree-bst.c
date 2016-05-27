@@ -19,15 +19,15 @@
 #include "ptree-bst.h"
 
 pboolean
-__p_tree_bst_insert (__PTreeBaseNode	**root_node,
-		     PCompareDataFunc	compare_func,
-		     ppointer		data,
-		     PDestroyFunc	key_destroy_func,
-		     PDestroyFunc	value_destroy_func,
-		     ppointer		key,
-		     ppointer		value)
+p_tree_bst_insert (PTreeBaseNode	**root_node,
+		   PCompareDataFunc	compare_func,
+		   ppointer		data,
+		   PDestroyFunc		key_destroy_func,
+		   PDestroyFunc		value_destroy_func,
+		   ppointer		key,
+		   ppointer		value)
 {
-	__PTreeBaseNode	**cur_node;
+	PTreeBaseNode	**cur_node;
 	pint		cmp_result;
 
 	cur_node = root_node;
@@ -44,7 +44,7 @@ __p_tree_bst_insert (__PTreeBaseNode	**root_node,
 	}
 
 	if ((*cur_node) == NULL) {
-		if (P_UNLIKELY ((*cur_node = p_malloc0 (sizeof (__PTreeBaseNode))) == NULL))
+		if (P_UNLIKELY ((*cur_node = p_malloc0 (sizeof (PTreeBaseNode))) == NULL))
 			return FALSE;
 
 		(*cur_node)->key   = key;
@@ -66,16 +66,16 @@ __p_tree_bst_insert (__PTreeBaseNode	**root_node,
 }
 
 pboolean
-__p_tree_bst_remove (__PTreeBaseNode	**root_node,
-		     PCompareDataFunc	compare_func,
-		     ppointer		data,
-		     PDestroyFunc	key_destroy_func,
-		     PDestroyFunc	value_destroy_func,
-		     pconstpointer	key)
+p_tree_bst_remove (PTreeBaseNode	**root_node,
+		   PCompareDataFunc	compare_func,
+		   ppointer		data,
+		   PDestroyFunc		key_destroy_func,
+		   PDestroyFunc		value_destroy_func,
+		   pconstpointer	key)
 {
-	__PTreeBaseNode	*cur_node;
-	__PTreeBaseNode	*prev_node;
-	__PTreeBaseNode	**node_pointer;
+	PTreeBaseNode	*cur_node;
+	PTreeBaseNode	*prev_node;
+	PTreeBaseNode	**node_pointer;
 	pint		cmp_result;
 
 	cur_node     = *root_node;
@@ -126,7 +126,7 @@ __p_tree_bst_remove (__PTreeBaseNode	**root_node,
 }
 
 void
-__p_tree_bst_node_free (__PTreeBaseNode *node)
+p_tree_bst_node_free (PTreeBaseNode *node)
 {
 	p_free (node);
 }
