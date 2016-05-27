@@ -75,12 +75,12 @@
  * provided destroy notification function before replacing the old value.
  */
 
-#if !defined (__PLIBSYS_H_INSIDE__) && !defined (PLIBSYS_COMPILATION)
+#if !defined (PLIBSYS_H_INSIDE) && !defined (PLIBSYS_COMPILATION)
 #  error "Header files shouldn't be included directly, consider using <plibsys.h> instead."
 #endif
 
-#ifndef __PUTHREAD_H__
-#define __PUTHREAD_H__
+#ifndef PLIBSYS_HEADER_PUTHREAD_H
+#define PLIBSYS_HEADER_PUTHREAD_H
 
 #include <pmacros.h>
 #include <ptypes.h>
@@ -284,4 +284,4 @@ P_LIB_API void		p_uthread_replace_local	(PUThreadKey		*key,
 
 P_END_DECLS
 
-#endif /* __PUTHREAD_H__ */
+#endif /* PLIBSYS_HEADER_PUTHREAD_H */

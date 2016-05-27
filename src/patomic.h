@@ -41,12 +41,12 @@
  * so it always has lock-free support.
  */
 
-#if !defined (__PLIBSYS_H_INSIDE__) && !defined (PLIBSYS_COMPILATION)
+#if !defined (PLIBSYS_H_INSIDE) && !defined (PLIBSYS_COMPILATION)
 #  error "Header files shouldn't be included directly, consider using <plibsys.h> instead."
 #endif
 
-#ifndef __PATOMIC_H__
-#define __PATOMIC_H__
+#ifndef PLIBSYS_HEADER_PATOMIC_H
+#define PLIBSYS_HEADER_PATOMIC_H
 
 #include <ptypes.h>
 #include <pmacros.h>
@@ -297,4 +297,4 @@ P_LIB_API pboolean	p_atomic_is_lock_free			(void);
 
 P_END_DECLS
 
-#endif /* __PATOMIC_H__ */
+#endif /* PLIBSYS_HEADER_PATOMIC_H */

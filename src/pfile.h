@@ -27,12 +27,12 @@
  * which you can use to form a file or directory path.
  */
 
-#if !defined (__PLIBSYS_H_INSIDE__) && !defined (PLIBSYS_COMPILATION)
+#if !defined (PLIBSYS_H_INSIDE) && !defined (PLIBSYS_COMPILATION)
 #  error "Header files shouldn't be included directly, consider using <plibsys.h> instead."
 #endif
 
-#ifndef __PFILE_H__
-#define __PFILE_H__
+#ifndef PLIBSYS_HEADER_PFILE_H
+#define PLIBSYS_HEADER_PFILE_H
 
 #include <pmacros.h>
 #include <ptypes.h>
@@ -76,4 +76,4 @@ P_LIB_API pboolean p_file_remove	(const pchar	*file,
 
 P_END_DECLS
 
-#endif /* __PFILE_H__ */
+#endif /* PLIBSYS_HEADER_PFILE_H */

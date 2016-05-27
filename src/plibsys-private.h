@@ -15,12 +15,12 @@
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#if !defined (__PLIBSYS_H_INSIDE__) && !defined (PLIBSYS_COMPILATION)
+#if !defined (PLIBSYS_H_INSIDE) && !defined (PLIBSYS_COMPILATION)
 #  error "Header files shouldn't be included directly, consider using <plibsys.h> instead."
 #endif
 
-#ifndef __PLIBSYSPRIVATE_H__
-#define __PLIBSYSPRIVATE_H__
+#ifndef PLIBSYS_HEADER_PLIBSYSPRIVATE_H
+#define PLIBSYS_HEADER_PLIBSYSPRIVATE_H
 
 #include "pmacros.h"
 #include "ptypes.h"
@@ -146,4 +146,4 @@ pint		p_error_get_last_error		(void);
 
 P_END_DECLS
 
-#endif /* __PLIBSYSPRIVATE_H__ */
+#endif /* PLIBSYS_HEADER_PLIBSYSPRIVATE_H */

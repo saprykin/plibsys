@@ -135,12 +135,12 @@
  * Do not forget to close socket and free memory after its usage.
  */
 
-#if !defined (__PLIBSYS_H_INSIDE__) && !defined (PLIBSYS_COMPILATION)
+#if !defined (PLIBSYS_H_INSIDE) && !defined (PLIBSYS_COMPILATION)
 #  error "Header files shouldn't be included directly, consider using <plibsys.h> instead."
 #endif
 
-#ifndef __PSOCKET_H__
-#define __PSOCKET_H__
+#ifndef PLIBSYS_HEADER_PSOCKET_H
+#define PLIBSYS_HEADER_PSOCKET_H
 
 #include <pmacros.h>
 #include <psocketaddress.h>
@@ -754,4 +754,4 @@ P_LIB_API pboolean		p_socket_io_condition_wait	(const PSocket		*socket,
 
 P_END_DECLS
 
-#endif /* __PSOCKET_H__ */
+#endif /* PLIBSYS_HEADER_PSOCKET_H */

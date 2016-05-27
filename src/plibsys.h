@@ -15,10 +15,10 @@
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __PLIBSYS_H__
-#define __PLIBSYS_H__
+#ifndef PLIBSYS_HEADER_PLIBSYS_H
+#define PLIBSYS_HEADER_PLIBSYS_H
 
-#define __PLIBSYS_H_INSIDE__
+#define PLIBSYS_H_INSIDE
 
 #include "plibsysconfig.h"
 #include "patomic.h"
@@ -48,4 +48,4 @@
 #include "ptypes.h"
 #include "puthread.h"
 
-#endif /* __PLIBSYS_H__ */
+#endif /* PLIBSYS_HEADER_PLIBSYS_H */

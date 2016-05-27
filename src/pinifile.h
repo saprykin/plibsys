@@ -82,12 +82,12 @@
  * @endcode
  */
 
-#if !defined (__PLIBSYS_H_INSIDE__) && !defined (PLIBSYS_COMPILATION)
+#if !defined (PLIBSYS_H_INSIDE) && !defined (PLIBSYS_COMPILATION)
 #  error "Header files shouldn't be included directly, consider using <plibsys.h> instead."
 #endif
 
-#ifndef __PINIFILE_H__
-#define __PINIFILE_H__
+#ifndef PLIBSYS_HEADER_PINIFILE_H
+#define PLIBSYS_HEADER_PINIFILE_H
 
 #include <pmacros.h>
 #include <ptypes.h>
@@ -245,4 +245,4 @@ P_LIB_API PList *	p_ini_file_parameter_list	(const PIniFile	*file,
 
 P_END_DECLS
 
-#endif /* __PINIFILE_H__ */
+#endif /* PLIBSYS_HEADER_PINIFILE_H */

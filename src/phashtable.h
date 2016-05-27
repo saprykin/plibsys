@@ -46,12 +46,12 @@
  * and #P_INT_TO_POINTER macros.
  */
 
-#if !defined (__PLIBSYS_H_INSIDE__) && !defined (PLIBSYS_COMPILATION)
+#if !defined (PLIBSYS_H_INSIDE) && !defined (PLIBSYS_COMPILATION)
 #  error "Header files shouldn't be included directly, consider using <plibsys.h> instead."
 #endif
 
-#ifndef __PHASHTABLE_H__
-#define __PHASHTABLE_H__
+#ifndef PLIBSYS_HEADER_PHASHTABLE_H
+#define PLIBSYS_HEADER_PHASHTABLE_H
 
 #include <pmacros.h>
 #include <ptypes.h>
@@ -154,4 +154,4 @@ P_LIB_API PList *	p_hash_table_lookup_by_value	(const PHashTable	*table,
 
 P_END_DECLS
 
-#endif /* __PHASHTABLE_H__ */
+#endif /* PLIBSYS_HEADER_PHASHTABLE_H */

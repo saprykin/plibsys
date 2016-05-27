@@ -17,12 +17,12 @@
 
 /* MD5 interface implementation for #PCryptoHash */
 
-#if !defined (__PLIBSYS_H_INSIDE__) && !defined (PLIBSYS_COMPILATION)
+#if !defined (PLIBSYS_H_INSIDE) && !defined (PLIBSYS_COMPILATION)
 #  error "Header files shouldn't be included directly, consider using <plibsys.h> instead."
 #endif
 
-#ifndef __PCRYPTOHASHMD5_H__
-#define __PCRYPTOHASHMD5_H__
+#ifndef PLIBSYS_HEADER_PCRYPTOHASHMD5_H
+#define PLIBSYS_HEADER_PCRYPTOHASHMD5_H
 
 #include "ptypes.h"
 #include "pmacros.h"
@@ -40,4 +40,4 @@ void		p_crypto_hash_md5_free		(PHashMD5 *ctx);
 
 P_END_DECLS
 
-#endif /* __PCRYPTOHASHMD5_H__ */
+#endif /* PLIBSYS_HEADER_PCRYPTOHASHMD5_H */

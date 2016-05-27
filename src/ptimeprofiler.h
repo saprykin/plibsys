@@ -33,12 +33,12 @@
  * profiler with p_time_profiler_free().
  */
 
-#if !defined (__PLIBSYS_H_INSIDE__) && !defined (PLIBSYS_COMPILATION)
+#if !defined (PLIBSYS_H_INSIDE) && !defined (PLIBSYS_COMPILATION)
 #  error "Header files shouldn't be included directly, consider using <plibsys.h> instead."
 #endif
 
-#ifndef __PTIMEPROFILER_H__
-#define __PTIMEPROFILER_H__
+#ifndef PLIBSYS_HEADER_PTIMEPROFILER_H
+#define PLIBSYS_HEADER_PTIMEPROFILER_H
 
 #include <pmacros.h>
 #include <ptypes.h>
@@ -82,4 +82,4 @@ P_LIB_API void			p_time_profiler_free		(PTimeProfiler *	profiler);
 
 P_END_DECLS
 
-#endif /* __PTIMEPROFILER_H__ */
+#endif /* PLIBSYS_HEADER_PTIMEPROFILER_H */

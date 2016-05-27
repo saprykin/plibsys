@@ -17,12 +17,12 @@
 
 /* GOST R 34.11-94 interface implementation for #PCryptoHash */
 
-#if !defined (__PLIBSYS_H_INSIDE__) && !defined (PLIBSYS_COMPILATION)
+#if !defined (PLIBSYS_H_INSIDE) && !defined (PLIBSYS_COMPILATION)
 #  error "Header files shouldn't be included directly, consider using <plibsys.h> instead."
 #endif
 
-#ifndef __PCRYPTOHASHGOST3411_H__
-#define __PCRYPTOHASHGOST3411_H__
+#ifndef PLIBSYS_HEADER_PCRYPTOHASHGOST3411_H
+#define PLIBSYS_HEADER_PCRYPTOHASHGOST3411_H
 
 #include "ptypes.h"
 #include "pmacros.h"
@@ -42,4 +42,4 @@ void		p_crypto_hash_gost3411_free	(PHashGOST3411		*ctx);
 
 P_END_DECLS
 
-#endif /* __PCRYPTOHASHGOST3411_H__ */
+#endif /* PLIBSYS_HEADER_PCRYPTOHASHGOST3411_H */

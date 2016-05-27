@@ -34,12 +34,12 @@
  * always defined.
  */
 
-#if !defined (__PLIBSYS_H_INSIDE__) && !defined (PLIBSYS_COMPILATION)
+#if !defined (PLIBSYS_H_INSIDE) && !defined (PLIBSYS_COMPILATION)
 #  error "Header files shouldn't be included directly, consider using <plibsys.h> instead."
 #endif
 
-#ifndef __PMACROS_H__
-#define __PMACROS_H__
+#ifndef PLIBSYS_HEADER_PMACROS_H
+#define PLIBSYS_HEADER_PMACROS_H
 
 #include <stdio.h>
 
@@ -613,4 +613,4 @@
 #  define P_END_DECLS
 #endif
 
-#endif /* __PMACROS_H__ */
+#endif /* PLIBSYS_HEADER_PMACROS_H */

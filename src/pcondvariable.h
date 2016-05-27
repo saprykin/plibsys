@@ -56,12 +56,12 @@
  * called for waiting), so do not rely on this behavior.
  */
 
-#if !defined (__PLIBSYS_H_INSIDE__) && !defined (PLIBSYS_COMPILATION)
+#if !defined (PLIBSYS_H_INSIDE) && !defined (PLIBSYS_COMPILATION)
 #  error "Header files shouldn't be included directly, consider using <plibsys.h> instead."
 #endif
 
-#ifndef __PCONDVARIABLE_H__
-#define __PCONDVARIABLE_H__
+#ifndef PLIBSYS_HEADER_PCONDVARIABLE_H
+#define PLIBSYS_HEADER_PCONDVARIABLE_H
 
 #include <pmacros.h>
 #include <ptypes.h>
@@ -127,4 +127,4 @@ P_LIB_API pboolean		p_cond_variable_broadcast	(PCondVariable	*cond);
 
 P_END_DECLS
 
-#endif /* __PCONDVARIABLE_H__ */
+#endif /* PLIBSYS_HEADER_PCONDVARIABLE_H */

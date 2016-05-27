@@ -49,12 +49,12 @@
  * You can also find some of the function definitions used within the library.
  */
 
-#if !defined (__PLIBSYS_H_INSIDE__) && !defined (PLIBSYS_COMPILATION)
+#if !defined (PLIBSYS_H_INSIDE) && !defined (PLIBSYS_COMPILATION)
 #  error "Header files shouldn't be included directly, consider using <plibsys.h> instead."
 #endif
 
-#ifndef __PTYPES_H__
-#define __PTYPES_H__
+#ifndef PLIBSYS_HEADER_PTYPES_H
+#define PLIBSYS_HEADER_PTYPES_H
 
 #include <plibsysconfig.h>
 #include <pmacros.h>
@@ -1111,4 +1111,4 @@ typedef pint (*PCompareDataFunc) (pconstpointer a, pconstpointer b, ppointer dat
 
 P_END_DECLS
 
-#endif /* __PTYPES_H__ */
+#endif /* PLIBSYS_HEADER_PTYPES_H */

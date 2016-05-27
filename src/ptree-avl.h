@@ -15,12 +15,12 @@
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#if !defined (__PLIBSYS_H_INSIDE__) && !defined (PLIBSYS_COMPILATION)
+#if !defined (PLIBSYS_H_INSIDE) && !defined (PLIBSYS_COMPILATION)
 #  error "Header files shouldn't be included directly, consider using <plibsys.h> instead."
 #endif
 
-#ifndef __PTREEAVL_H__
-#define __PTREEAVL_H__
+#ifndef PLIBSYS_HEADER_PTREEAVL_H
+#define PLIBSYS_HEADER_PTREEAVL_H
 
 #include "pmacros.h"
 #include "ptypes.h"
@@ -47,4 +47,4 @@ void		p_tree_avl_node_free	(PTreeBaseNode	*node);
 
 P_END_DECLS
 
-#endif /* __PTREEAVL_H__ */
+#endif /* PLIBSYS_HEADER_PTREEAVL_H */

@@ -70,12 +70,12 @@
  * explicitly remove it from the system after closing.
  */
 
-#if !defined (__PLIBSYS_H_INSIDE__) && !defined (PLIBSYS_COMPILATION)
+#if !defined (PLIBSYS_H_INSIDE) && !defined (PLIBSYS_COMPILATION)
 #  error "Header files shouldn't be included directly, consider using <plibsys.h> instead."
 #endif
 
-#ifndef __PSEMAPHORE_H__
-#define __PSEMAPHORE_H__
+#ifndef PLIBSYS_HEADER_PSEMAPHORE_H
+#define PLIBSYS_HEADER_PSEMAPHORE_H
 
 #include <pmacros.h>
 #include <ptypes.h>
@@ -167,4 +167,4 @@ P_LIB_API void		p_semaphore_free		(PSemaphore		*sem);
 
 P_END_DECLS
 
-#endif /* __PSEMAPHORE_H__ */
+#endif /* PLIBSYS_HEADER_PSEMAPHORE_H */

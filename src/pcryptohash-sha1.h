@@ -17,12 +17,12 @@
 
 /* SHA1 interface implementation for #PCryptoHash */
 
-#if !defined (__PLIBSYS_H_INSIDE__) && !defined (PLIBSYS_COMPILATION)
+#if !defined (PLIBSYS_H_INSIDE) && !defined (PLIBSYS_COMPILATION)
 #  error "Header files shouldn't be included directly, consider using <plibsys.h> instead."
 #endif
 
-#ifndef __PCRYPTOHASHSHA1_H__
-#define __PCRYPTOHASHSHA1_H__
+#ifndef PLIBSYS_HEADER_PCRYPTOHASHSHA1_H
+#define PLIBSYS_HEADER_PCRYPTOHASHSHA1_H
 
 #include "ptypes.h"
 #include "pmacros.h"
@@ -40,4 +40,4 @@ void		p_crypto_hash_sha1_free		(PHashSHA1 *ctx);
 
 P_END_DECLS
 
-#endif /* __PCRYPTOHASHSHA1_H__ */
+#endif /* PLIBSYS_HEADER_PCRYPTOHASHSHA1_H */

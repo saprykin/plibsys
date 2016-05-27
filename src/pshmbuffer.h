@@ -59,12 +59,12 @@
  * this action.
  */
 
-#if !defined (__PLIBSYS_H_INSIDE__) && !defined (PLIBSYS_COMPILATION)
+#if !defined (PLIBSYS_H_INSIDE) && !defined (PLIBSYS_COMPILATION)
 #  error "Header files shouldn't be included directly, consider using <plibsys.h> instead."
 #endif
 
-#ifndef __PSHMBUFFER_H__
-#define __PSHMBUFFER_H__
+#ifndef PLIBSYS_HEADER_PSHMBUFFER_H
+#define PLIBSYS_HEADER_PSHMBUFFER_H
 
 #include <ptypes.h>
 #include <pmacros.h>
@@ -179,4 +179,4 @@ P_LIB_API void		p_shm_buffer_clear		(PShmBuffer	*buf);
 
 P_END_DECLS
 
-#endif /* __PSHMBUFFER_H__ */
+#endif /* PLIBSYS_HEADER_PSHMBUFFER_H */

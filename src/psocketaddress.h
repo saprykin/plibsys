@@ -43,12 +43,12 @@
  * p_socket_address_new_from_native() for a vice versa conversion.
  */
 
-#if !defined (__PLIBSYS_H_INSIDE__) && !defined (PLIBSYS_COMPILATION)
+#if !defined (PLIBSYS_H_INSIDE) && !defined (PLIBSYS_COMPILATION)
 #  error "Header files shouldn't be included directly, consider using <plibsys.h> instead."
 #endif
 
-#ifndef __PSOCKETADDRESS_H__
-#define __PSOCKETADDRESS_H__
+#ifndef PLIBSYS_HEADER_PSOCKETADDRESS_H
+#define PLIBSYS_HEADER_PSOCKETADDRESS_H
 
 #include <pmacros.h>
 #include <ptypes.h>
@@ -247,4 +247,4 @@ P_LIB_API void			p_socket_address_free			(PSocketAddress		*addr);
 
 P_END_DECLS
 
-#endif /* __PSOCKETADDRESS_H__ */
+#endif /* PLIBSYS_HEADER_PSOCKETADDRESS_H */
