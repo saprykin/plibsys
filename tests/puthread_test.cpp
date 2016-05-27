@@ -243,7 +243,7 @@ BOOST_AUTO_TEST_CASE (puthread_general_test)
 						(ppointer) &thread_wakes_2,
 						TRUE,
 						P_UTHREAD_PRIORITY_NORMAL,
-						0);
+						64 * 1024);
 
 	p_uthread_ref (thr1);
 
