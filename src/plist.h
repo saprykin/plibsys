@@ -82,13 +82,13 @@
 P_BEGIN_DECLS
 
 /** Typedef for a list node. */
-typedef struct _PList PList;
+typedef struct PList_ PList;
 
 /**
  * @struct _PList
  * @brief Node for a singly linked list.
  */
-struct _PList {
+struct PList_ {
 	ppointer	data;	/**< Pointer to the node data.	*/
 	PList		*next;	/**< Next list node.		*/
 };
