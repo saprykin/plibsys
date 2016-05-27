@@ -24,7 +24,7 @@
 
 typedef CRITICAL_SECTION mutex_hdl;
 
-struct _PMutex {
+struct PMutex_ {
 	mutex_hdl	hdl;
 };
 

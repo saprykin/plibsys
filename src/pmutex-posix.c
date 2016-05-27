@@ -23,7 +23,7 @@
 
 typedef pthread_mutex_t mutex_hdl;
 
-struct _PMutex {
+struct PMutex_ {
 	mutex_hdl	hdl;
 };
 

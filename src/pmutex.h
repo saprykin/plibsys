@@ -64,7 +64,7 @@
 P_BEGIN_DECLS
 
 /** Mutex opaque data structure. */
-typedef struct _PMutex PMutex;
+typedef struct PMutex_ PMutex;
 
 /**
  * @brief Creates a new #PMutex object.
