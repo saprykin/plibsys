@@ -70,12 +70,10 @@
 #include <pmacros.h>
 #include <perror.h>
 
-#include <stdlib.h>
+P_BEGIN_DECLS
 
 /** Shared memory buffer opaque data structure. */
-typedef struct _PShmBuffer PShmBuffer;
-
-P_BEGIN_DECLS
+typedef struct PShmBuffer_ PShmBuffer;
 
 /**
  * @brief Creates a new #PShmBuffer structure.

@@ -16,35 +16,35 @@
  */
 
 #include "pmem.h"
-#include "pshmbuffer.h"
-#include "ptypes.h"
 #include "pshm.h"
+#include "pshmbuffer.h"
 
+#include <stdlib.h>
 #include <string.h>
 
-#define SHM_BUFFER_READ_OFFSET	0
-#define SHM_BUFFER_WRITE_OFFSET	sizeof (psize)
-#define SHM_BUFFER_DATA_OFFSET	sizeof (psize) * 2
+#define P_SHM_BUFFER_READ_OFFSET	0
+#define P_SHM_BUFFER_WRITE_OFFSET	sizeof (psize)
+#define P_SHM_BUFFER_DATA_OFFSET	sizeof (psize) * 2
 
-struct _PShmBuffer {
+struct PShmBuffer_ {
 	PShm *shm;
 	psize size;
 };
 
-static psize __p_shm_buffer_get_free_space (PShmBuffer *buf);
-static psize __p_shm_buffer_get_used_space (PShmBuffer *buf);
+static psize pp_shm_buffer_get_free_space (PShmBuffer *buf);
+static psize pp_shm_buffer_get_used_space (PShmBuffer *buf);
 
 /* Warning: this function is not thread-safe, only for internal usage */
 static psize
-__p_shm_buffer_get_free_space (PShmBuffer *buf)
+pp_shm_buffer_get_free_space (PShmBuffer *buf)
 {
 	psize		read_pos, write_pos;
 	ppointer	addr;
 
 	addr = p_shm_get_address (buf->shm);
 
-	memcpy (&read_pos, (pchar *) addr + SHM_BUFFER_READ_OFFSET, sizeof (read_pos));
-	memcpy (&write_pos, (pchar *) addr + SHM_BUFFER_WRITE_OFFSET, sizeof (write_pos));
+	memcpy (&read_pos, (pchar *) addr + P_SHM_BUFFER_READ_OFFSET, sizeof (read_pos));
+	memcpy (&write_pos, (pchar *) addr + P_SHM_BUFFER_WRITE_OFFSET, sizeof (write_pos));
 
 	if (write_pos < read_pos)
 		return read_pos - write_pos;
@@ -55,15 +55,15 @@ __p_shm_buffer_get_free_space (PShmBuffer *buf)
 }
 
 static psize
-__p_shm_buffer_get_used_space (PShmBuffer *buf)
+pp_shm_buffer_get_used_space (PShmBuffer *buf)
 {
 	psize		read_pos, write_pos;
 	ppointer	addr;
 
 	addr = p_shm_get_address (buf->shm);
 
-	memcpy (&read_pos, (pchar *) addr + SHM_BUFFER_READ_OFFSET, sizeof (read_pos));
-	memcpy (&write_pos, (pchar *) addr + SHM_BUFFER_WRITE_OFFSET, sizeof (write_pos));
+	memcpy (&read_pos, (pchar *) addr + P_SHM_BUFFER_READ_OFFSET, sizeof (read_pos));
+	memcpy (&write_pos, (pchar *) addr + P_SHM_BUFFER_WRITE_OFFSET, sizeof (write_pos));
 
 	if (write_pos > read_pos)
 		return write_pos - read_pos;
@@ -90,12 +90,12 @@ p_shm_buffer_new (const pchar	*name,
 	}
 
 	if (P_UNLIKELY ((shm = p_shm_new (name,
-					  (size != 0) ? size + SHM_BUFFER_DATA_OFFSET + 1 : 0,
+					  (size != 0) ? size + P_SHM_BUFFER_DATA_OFFSET + 1 : 0,
 					  P_SHM_ACCESS_READWRITE,
 					  error)) == NULL))
 		return NULL;
 
-	if (P_UNLIKELY (p_shm_get_size (shm) <= SHM_BUFFER_DATA_OFFSET + 1)) {
+	if (P_UNLIKELY (p_shm_get_size (shm) <= P_SHM_BUFFER_DATA_OFFSET + 1)) {
 		p_error_set_error_p (error,
 				     (pint) P_ERROR_IPC_INVALID_ARGUMENT,
 				     0,
@@ -114,7 +114,7 @@ p_shm_buffer_new (const pchar	*name,
 	}
 
 	ret->shm  = shm;
-	ret->size = p_shm_get_size (shm) - SHM_BUFFER_DATA_OFFSET;
+	ret->size = p_shm_get_size (shm) - P_SHM_BUFFER_DATA_OFFSET;
 
 	return ret;
 }
@@ -168,8 +168,8 @@ p_shm_buffer_read (PShmBuffer	*buf,
 	if (P_UNLIKELY (p_shm_lock (buf->shm, error) == FALSE))
 		return -1;
 
-	memcpy (&read_pos, (pchar *) addr + SHM_BUFFER_READ_OFFSET, sizeof (read_pos));
-	memcpy (&write_pos, (pchar *) addr + SHM_BUFFER_WRITE_OFFSET, sizeof (write_pos));
+	memcpy (&read_pos, (pchar *) addr + P_SHM_BUFFER_READ_OFFSET, sizeof (read_pos));
+	memcpy (&write_pos, (pchar *) addr + P_SHM_BUFFER_WRITE_OFFSET, sizeof (write_pos));
 
 	if (read_pos == write_pos) {
 		if (P_UNLIKELY (p_shm_unlock (buf->shm, error) == FALSE))
@@ -178,14 +178,16 @@ p_shm_buffer_read (PShmBuffer	*buf,
 		return 0;
 	}
 
-	data_aval = __p_shm_buffer_get_used_space (buf);
+	data_aval = pp_shm_buffer_get_used_space (buf);
 	to_copy   = (data_aval <= len) ? data_aval : len;
 
 	for (i = 0; i < to_copy; ++i)
-		memcpy ((pchar *) storage + i, (pchar *) addr + SHM_BUFFER_DATA_OFFSET + ((read_pos + i) % buf->size), 1);
+		memcpy ((pchar *) storage + i,
+			(pchar *) addr + P_SHM_BUFFER_DATA_OFFSET + ((read_pos + i) % buf->size),
+			1);
 
 	read_pos = (read_pos + to_copy) % buf->size;
-	memcpy ((pchar *) addr + SHM_BUFFER_READ_OFFSET, &read_pos, sizeof (read_pos));
+	memcpy ((pchar *) addr + P_SHM_BUFFER_READ_OFFSET, &read_pos, sizeof (read_pos));
 
 	if (P_UNLIKELY (p_shm_unlock (buf->shm, error) == FALSE))
 		return -1;
@@ -222,10 +224,10 @@ p_shm_buffer_write (PShmBuffer	*buf,
 	if (P_UNLIKELY (p_shm_lock (buf->shm, error) == FALSE))
 		return -1;
 
-	memcpy (&read_pos, (pchar *) addr + SHM_BUFFER_READ_OFFSET, sizeof (read_pos));
-	memcpy (&write_pos, (pchar *) addr + SHM_BUFFER_WRITE_OFFSET, sizeof (write_pos));
+	memcpy (&read_pos, (pchar *) addr + P_SHM_BUFFER_READ_OFFSET, sizeof (read_pos));
+	memcpy (&write_pos, (pchar *) addr + P_SHM_BUFFER_WRITE_OFFSET, sizeof (write_pos));
 
-	if (__p_shm_buffer_get_free_space (buf) < len) {
+	if (pp_shm_buffer_get_free_space (buf) < len) {
 		if (P_UNLIKELY (p_shm_unlock (buf->shm, error) == FALSE))
 			return -1;
 
@@ -233,10 +235,12 @@ p_shm_buffer_write (PShmBuffer	*buf,
 	}
 
 	for (i = 0; i < len; ++i)
-		memcpy ((pchar *) addr + SHM_BUFFER_DATA_OFFSET + ((write_pos + i) % buf->size), (pchar *) data + i, 1);
+		memcpy ((pchar *) addr + P_SHM_BUFFER_DATA_OFFSET + ((write_pos + i) % buf->size),
+			(pchar *) data + i,
+			1);
 
 	write_pos = (write_pos + len) % buf->size;
-	memcpy ((pchar *) addr + SHM_BUFFER_WRITE_OFFSET, &write_pos, sizeof (write_pos));
+	memcpy ((pchar *) addr + P_SHM_BUFFER_WRITE_OFFSET, &write_pos, sizeof (write_pos));
 
 	if (P_UNLIKELY (p_shm_unlock (buf->shm, error) == FALSE))
 		return -1;
@@ -261,7 +265,7 @@ p_shm_buffer_get_free_space (PShmBuffer	*buf,
 	if (P_UNLIKELY (p_shm_lock (buf->shm, error) == FALSE))
 		return -1;
 
-	space = __p_shm_buffer_get_free_space (buf);
+	space = pp_shm_buffer_get_free_space (buf);
 
 	if (P_UNLIKELY (p_shm_unlock (buf->shm, error) == FALSE))
 		return -1;
@@ -286,7 +290,7 @@ p_shm_buffer_get_used_space (PShmBuffer	*buf,
 	if (P_UNLIKELY (p_shm_lock (buf->shm, error) == FALSE))
 		return -1;
 
-	space = __p_shm_buffer_get_used_space (buf);
+	space = pp_shm_buffer_get_used_space (buf);
 
 	if (P_UNLIKELY (p_shm_unlock (buf->shm, error) == FALSE))
 		return -1;
