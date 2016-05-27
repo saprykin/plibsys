@@ -60,7 +60,7 @@
 P_BEGIN_DECLS
 
 /** Opaque data structure for a hash table. */
-typedef struct _PHashTable PHashTable;
+typedef struct PHashTable_ PHashTable;
 
 /**
  * @brief Initializes a new hash table.

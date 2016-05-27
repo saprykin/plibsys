@@ -23,39 +23,39 @@
 
 #include <stdlib.h>
 
-typedef struct _PHashTableNode PHashTableNode;
+typedef struct PHashTableNode_ PHashTableNode;
 
-struct _PHashTableNode {
-	PHashTableNode *next;
-	ppointer key;
-	ppointer value;
+struct PHashTableNode_ {
+	PHashTableNode	*next;
+	ppointer	key;
+	ppointer	value;
 };
 
-struct _PHashTable {
-	PHashTableNode **table;
-	psize size;
+struct PHashTable_ {
+	PHashTableNode	**table;
+	psize		size;
 };
 
 /* Size of unique hash keys in hash table */
-#define P_HASH_SIZE 101
+#define P_HASH_TABLE_SIZE 101
 
-static puint __p_hash_table_calc_hash (pconstpointer pointer, psize modulo);
-static PHashTableNode * __p_hash_table_find_node (const PHashTable *table, pconstpointer key);
+static puint pp_hash_table_calc_hash (pconstpointer pointer, psize modulo);
+static PHashTableNode * pp_hash_table_find_node (const PHashTable *table, pconstpointer key);
 
 static puint
-__p_hash_table_calc_hash (pconstpointer pointer, psize modulo)
+pp_hash_table_calc_hash (pconstpointer pointer, psize modulo)
 {
 	/* As simple as we can :) */
 	return (puint) ((P_POINTER_TO_INT (pointer) + 37) % modulo);
 }
 
 static PHashTableNode *
-__p_hash_table_find_node (const PHashTable *table, pconstpointer key)
+pp_hash_table_find_node (const PHashTable *table, pconstpointer key)
 {
 	puint		hash;
 	PHashTableNode	*ret;
 
-	hash = __p_hash_table_calc_hash (key, table->size);
+	hash = pp_hash_table_calc_hash (key, table->size);
 
 	for (ret = table->table[hash]; ret != NULL; ret = ret->next)
 		if (ret->key == key)
@@ -74,13 +74,13 @@ p_hash_table_new (void)
 		return NULL;
 	}
 
-	if (P_UNLIKELY ((ret->table = p_malloc0 (P_HASH_SIZE * sizeof (PHashTableNode *))) == NULL)) {
+	if (P_UNLIKELY ((ret->table = p_malloc0 (P_HASH_TABLE_SIZE * sizeof (PHashTableNode *))) == NULL)) {
 		P_ERROR ("PHashTable: failed to allocate memory");
 		p_free (ret);
 		return NULL;
 	}
 
-	ret->size = P_HASH_SIZE;
+	ret->size = P_HASH_TABLE_SIZE;
 
 	return ret;
 }
@@ -94,13 +94,13 @@ p_hash_table_insert (PHashTable *table, ppointer key, ppointer value)
 	if (P_UNLIKELY (table == NULL))
 		return;
 
-	if ((node = __p_hash_table_find_node (table, key)) == NULL) {
+	if ((node = pp_hash_table_find_node (table, key)) == NULL) {
 		if (P_UNLIKELY ((node = p_malloc0 (sizeof (PHashTableNode))) == NULL)) {
 			P_ERROR ("PHashTable: failed to allocate memory");
 			return;
 		}
 
-		hash = __p_hash_table_calc_hash (key, table->size);
+		hash = pp_hash_table_calc_hash (key, table->size);
 
 		/* Insert a new node in front of others */
 		node->key   = key;
@@ -120,7 +120,7 @@ p_hash_table_lookup (const PHashTable *table, pconstpointer key)
 	if (P_UNLIKELY (table == NULL))
 		return NULL;
 
-	return ((node = __p_hash_table_find_node (table, key)) == NULL) ? (ppointer) (-1) : node->value;
+	return ((node = pp_hash_table_find_node (table, key)) == NULL) ? (ppointer) (-1) : node->value;
 }
 
 P_LIB_API PList *
@@ -186,8 +186,8 @@ p_hash_table_remove (PHashTable *table, pconstpointer key)
 	if (P_UNLIKELY (table == NULL))
 		return;
 
-	if (__p_hash_table_find_node (table, key) != NULL) {
-		hash = __p_hash_table_calc_hash (key, table->size);
+	if (pp_hash_table_find_node (table, key) != NULL) {
+		hash = pp_hash_table_calc_hash (key, table->size);
 		node = table->table[hash];
 		prev_node = NULL;
 
