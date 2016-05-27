@@ -18,7 +18,7 @@
 #include "pmem.h"
 #include "pspinlock.h"
 
-struct _PSpinLock {
+struct PSpinLock_ {
 	volatile pint spin;
 };
 

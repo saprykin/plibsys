@@ -19,7 +19,7 @@
 #include "pmutex.h"
 #include "pspinlock.h"
 
-struct _PSpinLock {
+struct PSpinLock_ {
 	PMutex *mutex;
 };
 

@@ -56,7 +56,7 @@
 P_BEGIN_DECLS
 
 /** Spinlock opaque data structure. */
-typedef struct _PSpinLock PSpinLock;
+typedef struct PSpinLock_ PSpinLock;
 
 /**
  * @brief Creates a new #PSpinLock object.
