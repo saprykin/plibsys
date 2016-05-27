@@ -149,7 +149,7 @@
 P_BEGIN_DECLS
 
 /** Socket protocols specified by IANA.  */
-typedef enum _PSocketProtocol {
+typedef enum PSocketProtocol_ {
 	P_SOCKET_PROTOCOL_UNKNOWN	= -1,	/**< Unknown protocol.	*/
 	P_SOCKET_PROTOCOL_DEFAULT	= 0,	/**< Default protocol.	*/
 	P_SOCKET_PROTOCOL_TCP		= 6,	/**< TCP protocol.	*/
@@ -158,7 +158,7 @@ typedef enum _PSocketProtocol {
 } PSocketProtocol;
 
 /** Socket types. */
-typedef enum _PSocketType {
+typedef enum PSocketType_ {
 	P_SOCKET_TYPE_UNKNOWN		= 0,	/**< Unknown type.							*/
 	P_SOCKET_TYPE_STREAM		= 1,	/**< Connection oritented, reliable, stream of bytes (i.e. TCP).	*/
 	P_SOCKET_TYPE_DATAGRAM		= 2,	/**< Connection-less, unreliable, datagram passing (i.e. UDP).		*/
@@ -166,19 +166,19 @@ typedef enum _PSocketType {
 } PSocketType;
 
 /** Socket direction for data operations. */
-typedef enum _PSocketDirection {
+typedef enum PSocketDirection_ {
 	P_SOCKET_DIRECTION_SND		= 0,	/**< Send direction.	*/
 	P_SOCKET_DIRECTION_RCV		= 1	/**< Receive direction.	*/
 } PSocketDirection;
 
 /** Socket IO waiting (polling) conditions. */
-typedef enum _PSocketIOCondition {
+typedef enum PSocketIOCondition_ {
 	P_SOCKET_IO_CONDITION_POLLIN	= 1,	/**< Ready to read.	*/
 	P_SOCKET_IO_CONDITION_POLLOUT	= 2	/**< Ready to write.	*/
 } PSocketIOCondition;
 
 /** Socket opaque structure. */
-typedef struct _PSocket PSocket;
+typedef struct PSocket_ PSocket;
 
 /**
  * @brief Creates a new #PSocket from a file descriptor.

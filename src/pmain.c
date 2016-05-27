@@ -22,8 +22,8 @@ extern void p_mem_init			(void);
 extern void p_mem_shutdown		(void);
 extern void p_atomic_thread_init	(void);
 extern void p_atomic_thread_shutdown	(void);
-extern void __p_socket_init_once	(void);
-extern void __p_socket_close_once	(void);
+extern void p_socket_init_once		(void);
+extern void p_socket_close_once		(void);
 extern void p_uthread_init		(void);
 extern void p_uthread_shutdown		(void);
 
@@ -39,7 +39,7 @@ p_libsys_init (void)
 
 	p_mem_init ();
 	p_atomic_thread_init ();
-	__p_socket_init_once ();
+	p_socket_init_once ();
 	p_uthread_init ();
 }
 
@@ -59,7 +59,7 @@ p_libsys_shutdown (void)
 	pp_plibsys_inited = FALSE;
 
 	p_uthread_shutdown ();
-	__p_socket_close_once ();
+	p_socket_close_once ();
 	p_atomic_thread_shutdown ();
 	p_mem_shutdown ();
 }
