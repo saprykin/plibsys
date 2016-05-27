@@ -69,8 +69,8 @@ __p_shm_create_handle (PShm	*shm,
 
 	if (P_UNLIKELY ((built = __p_ipc_unix_create_key_file (shm->platform_key)) == -1)) {
 		p_error_set_error_p (error,
-				     (pint) __p_error_get_last_ipc (),
-				     __p_error_get_last_error (),
+				     (pint) p_error_get_last_ipc (),
+				     p_error_get_last_error (),
 				     "Failed to create key file");
 		__p_shm_clean_handle (shm);
 		return FALSE;
@@ -79,8 +79,8 @@ __p_shm_create_handle (PShm	*shm,
 
 	if (P_UNLIKELY ((shm->unix_key = __p_ipc_unix_get_ftok_key (shm->platform_key)) == -1)) {
 		p_error_set_error_p (error,
-				     (pint) __p_error_get_last_ipc (),
-				     __p_error_get_last_error (),
+				     (pint) p_error_get_last_ipc (),
+				     p_error_get_last_error (),
 				     "Failed to get unique IPC key");
 		__p_shm_clean_handle (shm);
 		return FALSE;
@@ -89,7 +89,7 @@ __p_shm_create_handle (PShm	*shm,
 	flags = (shm->perms == P_SHM_ACCESS_READONLY) ? 0444 : 0660;
 
 	if ((shm->shm_hdl = shmget (shm->unix_key, shm->size, IPC_CREAT | IPC_EXCL | flags)) == P_SHM_INVALID_HDL) {
-		if (__p_error_get_last_error () == EEXIST) {
+		if (p_error_get_last_error () == EEXIST) {
 			is_exists = TRUE;
 
 			shm->shm_hdl = shmget (shm->unix_key, 0, flags);
@@ -99,8 +99,8 @@ __p_shm_create_handle (PShm	*shm,
 
 	if (P_UNLIKELY (shm->shm_hdl == P_SHM_INVALID_HDL)) {
 		p_error_set_error_p (error,
-				     (pint) __p_error_get_last_ipc (),
-				     __p_error_get_last_error (),
+				     (pint) p_error_get_last_ipc (),
+				     p_error_get_last_error (),
 				     "Failed to call shmget() to create memory segment");
 		__p_shm_clean_handle (shm);
 		return FALSE;
@@ -108,8 +108,8 @@ __p_shm_create_handle (PShm	*shm,
 
 	if (P_UNLIKELY (shmctl (shm->shm_hdl, IPC_STAT, &shm_stat) == -1)) {
 		p_error_set_error_p (error,
-				     (pint) __p_error_get_last_ipc (),
-				     __p_error_get_last_error (),
+				     (pint) p_error_get_last_ipc (),
+				     p_error_get_last_error (),
 				     "Failed to call shmctl() to get memory segment size");
 		__p_shm_clean_handle (shm);
 		return FALSE;
@@ -121,8 +121,8 @@ __p_shm_create_handle (PShm	*shm,
 
 	if (P_UNLIKELY ((shm->addr = shmat (shm->shm_hdl, 0, flags)) == (void *) -1)) {
 		p_error_set_error_p (error,
-				     (pint) __p_error_get_last_ipc (),
-				     __p_error_get_last_error (),
+				     (pint) p_error_get_last_ipc (),
+				     p_error_get_last_error (),
 				     "Failed to call shmat() to attach to the memory segment");
 		__p_shm_clean_handle (shm);
 		return FALSE;

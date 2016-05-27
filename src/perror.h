@@ -50,7 +50,7 @@
 P_BEGIN_DECLS
 
 /** Opaque data structure for an error object. */
-typedef struct _PError PError;
+typedef struct PError_ PError;
 
 /**
  * @brief Initializes new empty #PError.

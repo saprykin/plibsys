@@ -70,8 +70,8 @@ __p_shm_create_handle (PShm	*shm,
 							    (DWORD) shm->size,
 							    shm->platform_key)) == NULL)) {
 		p_error_set_error_p (error,
-				     (pint) __p_error_get_last_ipc (),
-				     __p_error_get_last_error (),
+				     (pint) p_error_get_last_ipc (),
+				     p_error_get_last_error (),
 				     "Failed to call CreateFileMapping() to create file mapping");
 		__p_shm_clean_handle (shm);
 		return FALSE;
@@ -81,20 +81,20 @@ __p_shm_create_handle (PShm	*shm,
 
 	if (P_UNLIKELY ((shm->addr = MapViewOfFile (shm->shm_hdl, protect, 0, 0, 0)) == NULL)) {
 		p_error_set_error_p (error,
-				     (pint) __p_error_get_last_ipc (),
-				     __p_error_get_last_error (),
+				     (pint) p_error_get_last_ipc (),
+				     p_error_get_last_error (),
 				     "Failed to call MapViewOfFile() to map file to memory");
 		__p_shm_clean_handle (shm);
 		return FALSE;
 	}
 
-	if (__p_error_get_last_error () == ERROR_ALREADY_EXISTS)
+	if (p_error_get_last_error () == ERROR_ALREADY_EXISTS)
 		is_exists = TRUE;
 
 	if (P_UNLIKELY (VirtualQuery (shm->addr, &mem_stat, sizeof (mem_stat)) == 0)) {
 		p_error_set_error_p (error,
-				     (pint) __p_error_get_last_ipc (),
-				     __p_error_get_last_error (),
+				     (pint) p_error_get_last_ipc (),
+				     p_error_get_last_error (),
 				     "Failed to call VirtualQuery() to get memory map info");
 		__p_shm_clean_handle (shm);
 		return FALSE;

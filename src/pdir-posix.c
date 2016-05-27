@@ -67,8 +67,8 @@ p_dir_new (const pchar	*path,
 
 	if (P_UNLIKELY ((dir = opendir (path)) == NULL)) {
 		p_error_set_error_p (error,
-				     (pint) __p_error_get_last_io (),
-				     __p_error_get_last_error (),
+				     (pint) p_error_get_last_io (),
+				     p_error_get_last_error (),
 				     "Failed to call opendir() to open directory stream");
 		return NULL;
 	}
@@ -112,8 +112,8 @@ p_dir_create (const pchar	*path,
 
 	if (P_UNLIKELY (mkdir (path, mode) != 0)) {
 		p_error_set_error_p (error,
-				     (pint) __p_error_get_last_io (),
-				     __p_error_get_last_error (),
+				     (pint) p_error_get_last_io (),
+				     p_error_get_last_error (),
 				     "Failed to call mkdir() to create directory");
 		return FALSE;
 	} else
@@ -142,8 +142,8 @@ p_dir_remove (const pchar	*path,
 
 	if (P_UNLIKELY (rmdir (path) != 0)) {
 		p_error_set_error_p (error,
-				     (pint) __p_error_get_last_io (),
-				     __p_error_get_last_error (),
+				     (pint) p_error_get_last_io (),
+				     p_error_get_last_error (),
 				     "Failed to call rmdir() to remove directory");
 		return FALSE;
 	} else
@@ -201,7 +201,7 @@ p_dir_get_next_entry (PDir	*dir,
 	name_max = (pint) pathconf (dir->orig_path, _PC_NAME_MAX);
 
 	if (name_max == -1) {
-		if (__p_error_get_last_error () == 0)
+		if (p_error_get_last_error () == 0)
 			name_max = _POSIX_PATH_MAX;
 		else {
 			p_error_set_error_p (error,
@@ -226,10 +226,10 @@ p_dir_get_next_entry (PDir	*dir,
 
 #  ifdef P_DIR_NEED_SIMPLE_R
 	if ((dir->dir_result = readdir_r (dir->dir, dirent_st)) == NULL) {
-		if (P_UNLIKELY (__p_error_get_last_error () != 0)) {
+		if (P_UNLIKELY (p_error_get_last_error () != 0)) {
 			p_error_set_error_p (error,
-					     (pint) __p_error_get_last_io (),
-					     __p_error_get_last_error (),
+					     (pint) p_error_get_last_io (),
+					     p_error_get_last_error (),
 					     "Failed to call readdir_r() to read directory stream");
 			p_free (dirent_st);
 			return NULL;
@@ -238,8 +238,8 @@ p_dir_get_next_entry (PDir	*dir,
 #  else
 	if (P_UNLIKELY (readdir_r (dir->dir, dirent_st, &dir->dir_result) != 0)) {
 		p_error_set_error_p (error,
-				     (pint) __p_error_get_last_io (),
-				     __p_error_get_last_error (),
+				     (pint) p_error_get_last_io (),
+				     p_error_get_last_error (),
 				     "Failed to call readdir_r() to read directory stream");
 		p_free (dirent_st);
 		return NULL;
@@ -248,8 +248,8 @@ p_dir_get_next_entry (PDir	*dir,
 #else
 	if (P_UNLIKELY (readdir_r (dir->dir, &dirent_st, &dir->dir_result) != 0)) {
 		p_error_set_error_p (error,
-				     (pint) __p_error_get_last_io (),
-				     __p_error_get_last_error (),
+				     (pint) p_error_get_last_io (),
+				     p_error_get_last_error (),
 				     "Failed to call readdir_r() to read directory stream");
 		return NULL;
 	}

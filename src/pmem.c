@@ -155,8 +155,8 @@ p_mem_mmap (psize	n_bytes,
 						   (DWORD) n_bytes,
 						   NULL)) == NULL)) {
 		p_error_set_error_p (error,
-				     (pint) __p_error_get_last_io (),
-				     __p_error_get_last_error (),
+				     (pint) p_error_get_last_io (),
+				     p_error_get_last_error (),
 				     "Failed to call CreateFileMapping() to create file mapping");
 		return NULL;
 	}
@@ -167,8 +167,8 @@ p_mem_mmap (psize	n_bytes,
 					       0,
 					       n_bytes)) == NULL)) {
 		p_error_set_error_p (error,
-				     (pint) __p_error_get_last_io (),
-				     __p_error_get_last_error (),
+				     (pint) p_error_get_last_io (),
+				     p_error_get_last_error (),
 				     "Failed to call MapViewOfFile() to map file view");
 		CloseHandle (hdl);
 		return NULL;
@@ -176,8 +176,8 @@ p_mem_mmap (psize	n_bytes,
 
 	if (P_UNLIKELY (!CloseHandle (hdl))) {
 		p_error_set_error_p (error,
-				     (pint) __p_error_get_last_io (),
-				     __p_error_get_last_error (),
+				     (pint) p_error_get_last_io (),
+				     p_error_get_last_error (),
 				     "Failed to call CloseHandle() to close file mapping");
 		UnmapViewOfFile (addr);
 		return NULL;
@@ -186,8 +186,8 @@ p_mem_mmap (psize	n_bytes,
 #  if !defined (PLIBSYS_MMAP_HAS_MAP_ANONYMOUS) && !defined (PLIBSYS_MMAP_HAS_MAP_ANON)
 	if (P_UNLIKELY ((fd = open ("/dev/zero", O_RDWR | O_EXCL, 0754)) == -1)) {
 		p_error_set_error_p (error,
-				     (pint) __p_error_get_last_io (),
-				     __p_error_get_last_error (),
+				     (pint) p_error_get_last_io (),
+				     p_error_get_last_error (),
 				     "Failed to open /dev/zero for file mapping");
 		return NULL;
 	}
@@ -208,8 +208,8 @@ p_mem_mmap (psize	n_bytes,
 				      fd,
 				      0)) == (void *) -1)) {
 		p_error_set_error_p (error,
-				     (pint) __p_error_get_last_io (),
-				     __p_error_get_last_error (),
+				     (pint) p_error_get_last_io (),
+				     p_error_get_last_error (),
 				     "Failed to call mmap() to create file mapping");
 #  if !defined (PLIBSYS_MMAP_HAS_MAP_ANONYMOUS) && !defined (PLIBSYS_MMAP_HAS_MAP_ANON)
 		close (fd);
@@ -220,8 +220,8 @@ p_mem_mmap (psize	n_bytes,
 #  if !defined (PLIBSYS_MMAP_HAS_MAP_ANONYMOUS) && !defined (PLIBSYS_MMAP_HAS_MAP_ANON)
 	if (P_UNLIKELY (close (fd) == -1)) {
 		p_error_set_error_p (error,
-				     (pint) __p_error_get_last_io (),
-				     __p_error_get_last_error (),
+				     (pint) p_error_get_last_io (),
+				     p_error_get_last_error (),
 				     "Failed to close /dev/zero handle");
 		munmap (addr, n_bytes);
 		return NULL;
@@ -248,14 +248,14 @@ p_mem_munmap (ppointer	mem,
 #ifdef P_OS_WIN
 	if (P_UNLIKELY (UnmapViewOfFile (mem) == 0)) {
 		p_error_set_error_p (error,
-				     (pint) __p_error_get_last_io (),
-				     __p_error_get_last_error (),
+				     (pint) p_error_get_last_io (),
+				     p_error_get_last_error (),
 				     "Failed to call UnmapViewOfFile() to remove file mapping");
 #else
 	if (P_UNLIKELY (munmap (mem, n_bytes) != 0)) {
 		p_error_set_error_p (error,
-				     (pint) __p_error_get_last_io (),
-				     __p_error_get_last_error (),
+				     (pint) p_error_get_last_io (),
+				     p_error_get_last_error (),
 				     "Failed to call munmap() to remove file mapping");
 #endif
 		return FALSE;

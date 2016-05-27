@@ -234,7 +234,7 @@ static int pp_uthread_nanosleep (puint32 msec)
 
 	while (rc != 0) {
 		if (P_UNLIKELY ((rc = select (0, NULL, NULL, NULL, &time2wait)) != 0)) {
-			if (__p_error_get_last_error () == EINTR) {
+			if (p_error_get_last_error () == EINTR) {
 				if (gettimeofday (&tstop, NULL) != 0)
 					return -1;
 
@@ -273,7 +273,7 @@ p_uthread_sleep (puint32 msec)
 	result = -1;
 	while (result != 0) {
 		if (P_UNLIKELY ((result = nanosleep (&time_req, &time_rem)) != 0)) {
-			if (__p_error_get_last_error () == EINTR)
+			if (p_error_get_last_error () == EINTR)
 				time_req = time_rem;
 			else
 				return -1;

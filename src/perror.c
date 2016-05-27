@@ -15,25 +15,25 @@
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "plibsys-private.h"
 #include "pmem.h"
 #include "perror.h"
 #include "pstring.h"
+#include "plibsys-private.h"
 
 #ifndef P_OS_WIN
-#include <errno.h>
+#  include <errno.h>
 #else
-#include <windows.h>
+#  include <windows.h>
 #endif
 
-struct _PError {
+struct PError_ {
 	pint	code;
 	pint	native_code;
 	pchar	*message;
 };
 
 pint
-__p_error_get_last_error (void)
+p_error_get_last_error (void)
 {
 #ifdef P_OS_WIN
 	return (pint) GetLastError ();
@@ -43,7 +43,7 @@ __p_error_get_last_error (void)
 }
 
 PErrorIO
-__p_error_get_io_from_system (pint err_code)
+p_error_get_io_from_system (pint err_code)
 {
 	switch (err_code) {
 	case 0:
@@ -369,13 +369,13 @@ __p_error_get_io_from_system (pint err_code)
 }
 
 PErrorIO
-__p_error_get_last_io (void)
+p_error_get_last_io (void)
 {
-	return __p_error_get_io_from_system (__p_error_get_last_error ());
+	return p_error_get_io_from_system (p_error_get_last_error ());
 }
 
 PErrorIPC
-__p_error_get_ipc_from_system (pint err_code)
+p_error_get_ipc_from_system (pint err_code)
 {
 	switch (err_code) {
 	case 0:
@@ -539,9 +539,9 @@ __p_error_get_ipc_from_system (pint err_code)
 }
 
 PErrorIPC
-__p_error_get_last_ipc (void)
+p_error_get_last_ipc (void)
 {
-	return __p_error_get_ipc_from_system (__p_error_get_last_error ());
+	return p_error_get_ipc_from_system (p_error_get_last_error ());
 }
 
 P_LIB_API PError *

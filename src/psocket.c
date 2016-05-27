@@ -111,7 +111,7 @@ __p_socket_set_fd_blocking (pint	fd,
 	if (P_UNLIKELY (ioctlsocket (fd, FIONBIO, &arg) == SOCKET_ERROR)) {
 #endif
 		p_error_set_error_p (error,
-				     (pint) __p_error_get_io_from_system (__p_socket_get_errno ()),
+				     (pint) p_error_get_io_from_system (__p_socket_get_errno ()),
 				     (pint) __p_socket_get_errno (),
 				     "Failed to set socket blocking flags");
 		return FALSE;
@@ -157,7 +157,7 @@ __p_socket_set_details_from_fd (PSocket	*socket,
 
 	if (P_UNLIKELY (getsockopt (fd, SOL_SOCKET, SO_TYPE, (ppointer) &value, &optlen) != 0)) {
 		p_error_set_error_p (error,
-				     (pint) __p_error_get_io_from_system (__p_socket_get_errno ()),
+				     (pint) p_error_get_io_from_system (__p_socket_get_errno ()),
 				     (pint) __p_socket_get_errno (),
 				     "Failed to call getsockopt() to get socket info for fd");
 		return FALSE;
@@ -193,7 +193,7 @@ __p_socket_set_details_from_fd (PSocket	*socket,
 
 	if (P_UNLIKELY (getsockname (fd, (struct sockaddr *) &address, &addrlen) != 0)) {
 		p_error_set_error_p (error,
-				     (pint) __p_error_get_io_from_system (__p_socket_get_errno ()),
+				     (pint) p_error_get_io_from_system (__p_socket_get_errno ()),
 				     (pint) __p_socket_get_errno (),
 				     "Failed to call getsockname() to get socket address info");
 		return FALSE;
@@ -205,7 +205,7 @@ __p_socket_set_details_from_fd (PSocket	*socket,
 
 		if (P_UNLIKELY (getsockopt (socket->fd, SOL_SOCKET, SO_DOMAIN, (ppointer) &family, &optlen) != 0)) {
 			p_error_set_error_p (error,
-					     (pint) __p_error_get_io_from_system (__p_socket_get_errno ()),
+					     (pint) p_error_get_io_from_system (__p_socket_get_errno ()),
 					     (pint) __p_socket_get_errno (),
 					     "Failed to call getsockopt() to get socket SO_DOMAIN option");
 			return FALSE;
@@ -415,7 +415,7 @@ p_socket_new (PSocketFamily	family,
 #endif
 	if (P_UNLIKELY ((fd = (pint) socket (family, native_type, protocol)) < 0)) {
 		p_error_set_error_p (error,
-				     (pint) __p_error_get_io_from_system (__p_socket_get_errno ()),
+				     (pint) p_error_get_io_from_system (__p_socket_get_errno ()),
 				     (pint) __p_socket_get_errno (),
 				     "Failed to call socket() to create socket");
 		return NULL;
@@ -578,7 +578,7 @@ p_socket_get_local_address (const PSocket	*socket,
 
 	if (P_UNLIKELY (getsockname (socket->fd, (struct sockaddr *) &buffer, &len) < 0)) {
 		p_error_set_error_p (error,
-				     (pint) __p_error_get_io_from_system (__p_socket_get_errno ()),
+				     (pint) p_error_get_io_from_system (__p_socket_get_errno ()),
 				     (pint) __p_socket_get_errno (),
 				     "Failed to call getsockname() to get local socket address");
 		return NULL;
@@ -615,7 +615,7 @@ p_socket_get_remote_address (const PSocket	*socket,
 
 	if (P_UNLIKELY (getpeername (socket->fd, (struct sockaddr *) &buffer, &len) < 0)) {
 		p_error_set_error_p (error,
-				     (pint) __p_error_get_io_from_system (__p_socket_get_errno ()),
+				     (pint) p_error_get_io_from_system (__p_socket_get_errno ()),
 				     (pint) __p_socket_get_errno (),
 				     "Failed to call getpeername() to get remote socket address");
 		return NULL;
@@ -669,7 +669,7 @@ p_socket_check_connect_result (PSocket  *socket,
 
 	if (P_UNLIKELY (getsockopt (socket->fd, SOL_SOCKET, SO_ERROR, (ppointer) &val, &optlen) < 0)) {
 		p_error_set_error_p (error,
-				     (pint) __p_error_get_io_from_system (__p_socket_get_errno ()),
+				     (pint) p_error_get_io_from_system (__p_socket_get_errno ()),
 				     (pint) __p_socket_get_errno (),
 				     "Failed to call getsockopt() to get connection status");
 		return FALSE;
@@ -677,7 +677,7 @@ p_socket_check_connect_result (PSocket  *socket,
 
 	if (P_UNLIKELY (val != 0))
 		p_error_set_error_p (error,
-				     (pint) __p_error_get_io_from_system (val),
+				     (pint) p_error_get_io_from_system (val),
 				     val,
 				     "Error in socket layer");
 
@@ -818,7 +818,7 @@ p_socket_bind (const PSocket	*socket,
 			      (struct sockaddr *) &addr,
 			      (pint) p_socket_address_get_native_size (address)) < 0)) {
 		p_error_set_error_p (error,
-				     (pint) __p_error_get_io_from_system (__p_socket_get_errno ()),
+				     (pint) p_error_get_io_from_system (__p_socket_get_errno ()),
 				     (pint) __p_socket_get_errno (),
 				     "Failed to call bind() on socket");
 		return FALSE;
@@ -884,7 +884,7 @@ p_socket_connect (PSocket		*socket,
 		return TRUE;
 	}
 
-	sock_err = __p_error_get_io_from_system (err_code);
+	sock_err = p_error_get_io_from_system (err_code);
 
 	if (P_LIKELY (sock_err == P_ERROR_IO_WOULD_BLOCK || sock_err == P_ERROR_IO_IN_PROGRESS)) {
 		if (socket->blocking) {
@@ -926,7 +926,7 @@ p_socket_listen (PSocket	*socket,
 
 	if (P_UNLIKELY (listen (socket->fd, socket->listen_backlog) < 0)) {
 		p_error_set_error_p (error,
-				     (pint) __p_error_get_io_from_system (__p_socket_get_errno ()),
+				     (pint) p_error_get_io_from_system (__p_socket_get_errno ()),
 				     (pint) __p_socket_get_errno (),
 				     "Failed to call listen() on socket");
 		return FALSE;
@@ -972,7 +972,7 @@ p_socket_accept (const PSocket	*socket,
 			if (__p_socket_get_errno () == EINTR)
 				continue;
 #endif
-			sock_err = __p_error_get_io_from_system (err_code);
+			sock_err = p_error_get_io_from_system (err_code);
 
 			if (socket->blocking && sock_err == P_ERROR_IO_WOULD_BLOCK)
 				continue;
@@ -1050,7 +1050,7 @@ p_socket_receive (const PSocket	*socket,
 			if (err_code == EINTR)
 				continue;
 #endif
-			sock_err = __p_error_get_io_from_system (err_code);
+			sock_err = p_error_get_io_from_system (err_code);
 
 			if (socket->blocking && sock_err == P_ERROR_IO_WOULD_BLOCK)
 				continue;
@@ -1109,7 +1109,7 @@ p_socket_receive_from (const PSocket	*socket,
 			if (err_code == EINTR)
 				continue;
 #endif
-			sock_err = __p_error_get_io_from_system (err_code);
+			sock_err = p_error_get_io_from_system (err_code);
 
 			if (socket->blocking && sock_err == P_ERROR_IO_WOULD_BLOCK)
 				continue;
@@ -1166,7 +1166,7 @@ p_socket_send (const PSocket	*socket,
 			if (err_code == EINTR)
 				continue;
 #endif
-			sock_err = __p_error_get_io_from_system (err_code);
+			sock_err = p_error_get_io_from_system (err_code);
 
 			if (socket->blocking && sock_err == P_ERROR_IO_WOULD_BLOCK)
 				continue;
@@ -1231,7 +1231,7 @@ p_socket_send_to (const PSocket		*socket,
 			if (err_code == EINTR)
 				continue;
 #endif
-			sock_err = __p_error_get_io_from_system (err_code);
+			sock_err = p_error_get_io_from_system (err_code);
 
 			if (socket->blocking && sock_err == P_ERROR_IO_WOULD_BLOCK)
 				continue;
@@ -1303,7 +1303,7 @@ p_socket_close (PSocket	*socket,
 	}
 
 	p_error_set_error_p (error,
-			     (pint) __p_error_get_io_from_system (err_code),
+			     (pint) p_error_get_io_from_system (err_code),
 			     err_code,
 			     "Failed to close socket");
 
@@ -1350,7 +1350,7 @@ p_socket_shutdown (PSocket	*socket,
 
 	if (P_UNLIKELY (shutdown (socket->fd, how) != 0)) {
 		p_error_set_error_p (error,
-				     (pint) __p_error_get_io_from_system (__p_socket_get_errno ()),
+				     (pint) p_error_get_io_from_system (__p_socket_get_errno ()),
 				     (pint) __p_socket_get_errno (),
 				     "Failed to call shutdown() on socket");
 		return FALSE;
@@ -1399,7 +1399,7 @@ p_socket_set_buffer_size (const PSocket		*socket,
 
 	if (P_UNLIKELY (setsockopt (socket->fd, SOL_SOCKET, optname, (pconstpointer) &optval, sizeof (optval)) != 0)) {
 		p_error_set_error_p (error,
-				     (pint) __p_error_get_io_from_system (__p_socket_get_errno ()),
+				     (pint) p_error_get_io_from_system (__p_socket_get_errno ()),
 				     (pint) __p_socket_get_errno (),
 				     "Failed to call setsockopt() on socket to set buffer size");
 		return FALSE;
@@ -1455,7 +1455,7 @@ p_socket_io_condition_wait (const PSocket	*socket,
 		return FALSE;
 	} else {
 		p_error_set_error_p (error,
-				     (pint) __p_error_get_io_from_system (__p_socket_get_errno ()),
+				     (pint) p_error_get_io_from_system (__p_socket_get_errno ()),
 				     (pint) __p_socket_get_errno (),
 				     "Failed to call WSAWaitForMultipleEvents() on socket");
 		return FALSE;
@@ -1489,7 +1489,7 @@ p_socket_io_condition_wait (const PSocket	*socket,
 			return FALSE;
 		} else {
 			p_error_set_error_p (error,
-					     (pint) __p_error_get_io_from_system (__p_socket_get_errno ()),
+					     (pint) p_error_get_io_from_system (__p_socket_get_errno ()),
 					     (pint) __p_socket_get_errno (),
 					     "Failed to call poll() on socket");
 			return FALSE;

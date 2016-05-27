@@ -58,8 +58,8 @@ p_dir_new (const pchar	*path,
 
 	if (P_UNLIKELY (!GetFullPathNameA (path, MAX_PATH, ret->path, NULL))) {
 		p_error_set_error_p (error,
-				     (pint) __p_error_get_last_io (),
-				     __p_error_get_last_error (),
+				     (pint) p_error_get_last_io (),
+				     p_error_get_last_error (),
 				     "Failed to call GetFullPathNameA() to get directory path");
 		p_free (ret);
 		return NULL;
@@ -79,8 +79,8 @@ p_dir_new (const pchar	*path,
 
 	if (P_UNLIKELY (ret->search_handle == INVALID_HANDLE_VALUE)) {
 		p_error_set_error_p (error,
-				     (pint) __p_error_get_last_io (),
-				     __p_error_get_last_error (),
+				     (pint) p_error_get_last_io (),
+				     p_error_get_last_error (),
 				     "Failed to call FindFirstFileA() to open directory stream");
 		p_free (ret);
 		return NULL;
@@ -112,8 +112,8 @@ p_dir_create (const pchar	*path,
 
 	if (P_UNLIKELY (CreateDirectoryA (path, NULL) == 0)) {
 		p_error_set_error_p (error,
-				     (pint) __p_error_get_last_io (),
-				     __p_error_get_last_error (),
+				     (pint) p_error_get_last_io (),
+				     p_error_get_last_error (),
 				     "Failed to call CreateDirectoryA() to create directory");
 		return FALSE;
 	} else
@@ -142,8 +142,8 @@ p_dir_remove (const pchar	*path,
 
 	if (P_UNLIKELY (RemoveDirectoryA (path) == 0)) {
 		p_error_set_error_p (error,
-				     (pint) __p_error_get_last_io (),
-				     __p_error_get_last_error (),
+				     (pint) p_error_get_last_io (),
+				     p_error_get_last_error (),
 				     "Failed to call RemoveDirectoryA() to remove directory");
 		return FALSE;
 	} else
@@ -200,8 +200,8 @@ p_dir_get_next_entry (PDir	*dir,
 
 		if (P_UNLIKELY (!FindNextFileA (dir->search_handle, &dir->find_data))) {
 			p_error_set_error_p (error,
-					     (pint) __p_error_get_last_io (),
-					     __p_error_get_last_error (),
+					     (pint) p_error_get_last_io (),
+					     p_error_get_last_error (),
 					     "Failed to call FindNextFileA() to read directory stream");
 			FindClose (dir->search_handle);
 			dir->search_handle = INVALID_HANDLE_VALUE;
@@ -246,8 +246,8 @@ p_dir_rewind (PDir	*dir,
 	if (dir->search_handle != INVALID_HANDLE_VALUE) {
 		if (P_UNLIKELY (FindClose (dir->search_handle) == 0)) {
 			p_error_set_error_p (error,
-					     (pint) __p_error_get_last_io (),
-					     __p_error_get_last_error (),
+					     (pint) p_error_get_last_io (),
+					     p_error_get_last_error (),
 					     "Failed to call FindClose() to close directory stream");
 			return FALSE;
 		}
@@ -257,8 +257,8 @@ p_dir_rewind (PDir	*dir,
 
 	if (P_UNLIKELY (dir->search_handle == INVALID_HANDLE_VALUE)) {
 		p_error_set_error_p (error,
-				     (pint) __p_error_get_last_io (),
-				     __p_error_get_last_error (),
+				     (pint) p_error_get_last_io (),
+				     p_error_get_last_error (),
 				     "Failed to call FindFirstFileA() to open directory stream");
 		dir->cached = FALSE;
 		return FALSE;

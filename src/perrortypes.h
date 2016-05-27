@@ -41,14 +41,14 @@
 P_BEGIN_DECLS
 
 /** Enum with error domains. */
-typedef enum _PErrorDomain {
+typedef enum PErrorDomain_ {
 	P_ERROR_DOMAIN_NONE		= 0,	/**< No domain was specified.				*/
 	P_ERROR_DOMAIN_IO		= 500,	/**< Input/output domain.				*/
 	P_ERROR_DOMAIN_IPC		= 600	/**< Interprocess communication domain.			*/
 } PErrorDomain;
 
 /** Enum with IO errors. */
-typedef enum _PErrorIO {
+typedef enum PErrorIO_ {
 	P_ERROR_IO_NONE			= 500,	/**< No error.						*/
 	P_ERROR_IO_NO_RESOURCES		= 501,	/**< Operating system hasn't enough resources.		*/
 	P_ERROR_IO_NOT_AVAILABLE	= 502,	/**< Resource isn't available.				*/
@@ -75,7 +75,7 @@ typedef enum _PErrorIO {
 } PErrorIO;
 
 /** Enum with IPC errors */
-typedef enum _PErrorIPC {
+typedef enum PErrorIPC_ {
 	P_ERROR_IPC_NONE		= 600,	/**< No error.						*/
 	P_ERROR_IPC_ACCESS		= 601,	/**< Not enough rights to access object or its key.	*/
 	P_ERROR_IPC_EXISTS		= 602,	/**< Object already exists and no proper open flags

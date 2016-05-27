@@ -80,9 +80,8 @@ struct sockaddr_storage {
 /**
  * @brief Gets a temporary directory on UNIX systems.
  * @return Temporary directory.
- * @since 0.0.1
  */
-pchar *		__p_ipc_unix_get_temp_dir		(void);
+pchar *		__p_ipc_unix_get_temp_dir	(void);
 
 /* Create file for System V IPC, if needed
  * Returns: -1 = error, 0 = file successfully created, 1 = file already exists */
@@ -91,17 +90,15 @@ pchar *		__p_ipc_unix_get_temp_dir		(void);
  * @param file_name File name to create.
  * @return -1 in case of error, 0 if all was OK, and 1 if the file already
  * exists.
- * @since 0.0.1
  */
-pint		__p_ipc_unix_create_key_file		(const pchar	*file_name);
+pint		__p_ipc_unix_create_key_file	(const pchar	*file_name);
 
 /**
  * @brief Wrapps ftok() UNIX call for a uniquer IPC key.
  * @param file_name File name for ftok() call.
  * @return Key in case of success, -1 otherwise.
- * @since 0.0.1
  */
-pint		__p_ipc_unix_get_ftok_key		(const pchar	*file_name);
+pint		__p_ipc_unix_get_ftok_key	(const pchar	*file_name);
 #endif /* !P_OS_WIN */
 
 /**
@@ -111,42 +108,41 @@ pint		__p_ipc_unix_get_ftok_key		(const pchar	*file_name);
  * @param posix TRUE if the key will be used for the POSIX IPC calls,
  * otherwise FALSE. This parameter is not used on Windows platform.
  * @return Platform independent key for IPC usage.
- * @since 0.0.1
  */
-pchar *		__p_ipc_get_platform_key		(const pchar	*name,
-							 pboolean	posix);
+pchar *		__p_ipc_get_platform_key	(const pchar	*name,
+						 pboolean	posix);
 
 /**
  * @brief Gets an IO error code from a system error code.
  * @param err_code System error code.
  * @return IO error code.
  */
-PErrorIO	__p_error_get_io_from_system		(pint		err_code);
+PErrorIO	p_error_get_io_from_system	(pint		err_code);
 
 /**
  * @brief Gets an IO error code from the last call result.
  * @return IO error code.
  */
-PErrorIO	__p_error_get_last_io			(void);
+PErrorIO	p_error_get_last_io		(void);
 
 /**
  * @brief Gets an IPC error code from a system error code
  * @param err_code System error code.
  * @return IPC error code.
  */
-PErrorIPC	__p_error_get_ipc_from_system		(pint		err_code);
+PErrorIPC	p_error_get_ipc_from_system	(pint		err_code);
 
 /**
  * @brief Gets an IPC error code from the last call result.
  * @return IPC error code.
  */
-PErrorIPC	__p_error_get_last_ipc			(void);
+PErrorIPC	p_error_get_last_ipc		(void);
 
 /**
  * @brief Gets the last native error code.
  * @return Last native error code.
  */
-pint		__p_error_get_last_error		(void);
+pint		p_error_get_last_error		(void);
 
 P_END_DECLS
 

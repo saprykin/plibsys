@@ -65,8 +65,8 @@ p_file_remove (const pchar	*file,
 
 	if (P_UNLIKELY (!result))
 		p_error_set_error_p (error,
-				     (pint) __p_error_get_last_io (),
-				     __p_error_get_last_error (),
+				     (pint) p_error_get_last_io (),
+				     p_error_get_last_error (),
 				     "Failed to remove file");
 
 	return result;

@@ -73,8 +73,8 @@ __p_semaphore_create_handle (PSemaphore *sem, PError **error)
 
 	if (P_UNLIKELY ((built = __p_ipc_unix_create_key_file (sem->platform_key)) == -1)) {
 		p_error_set_error_p (error,
-				     (pint) __p_error_get_last_ipc (),
-				     __p_error_get_last_error (),
+				     (pint) p_error_get_last_ipc (),
+				     p_error_get_last_error (),
 				     "Failed to create key file");
 		__p_semaphore_clean_handle (sem);
 		return FALSE;
@@ -83,15 +83,15 @@ __p_semaphore_create_handle (PSemaphore *sem, PError **error)
 
 	if (P_UNLIKELY ((sem->unix_key = __p_ipc_unix_get_ftok_key (sem->platform_key)) == -1)) {
 		p_error_set_error_p (error,
-				     (pint) __p_error_get_last_ipc (),
-				     __p_error_get_last_error (),
+				     (pint) p_error_get_last_ipc (),
+				     p_error_get_last_error (),
 				     "Failed to get unique IPC key");
 		__p_semaphore_clean_handle (sem);
 		return FALSE;
 	}
 
 	if ((sem->sem_hdl = semget (sem->unix_key, 1, IPC_CREAT | IPC_EXCL | 0660)) == P_SEM_INVALID_HDL) {
-		if (__p_error_get_last_error () == EEXIST)
+		if (p_error_get_last_error () == EEXIST)
 			sem->sem_hdl = semget (sem->unix_key, 1, 0660);
 	} else {
 		sem->sem_created = TRUE;
@@ -102,8 +102,8 @@ __p_semaphore_create_handle (PSemaphore *sem, PError **error)
 
 	if (P_UNLIKELY (sem->sem_hdl == P_SEM_INVALID_HDL)) {
 		p_error_set_error_p (error,
-				     (pint) __p_error_get_last_ipc (),
-				     __p_error_get_last_error (),
+				     (pint) p_error_get_last_ipc (),
+				     p_error_get_last_error (),
 				     "Failed to call semget() to create semaphore");
 		__p_semaphore_clean_handle (sem);
 		return FALSE;
@@ -114,8 +114,8 @@ __p_semaphore_create_handle (PSemaphore *sem, PError **error)
 
 		if (P_UNLIKELY (semctl (sem->sem_hdl, 0, SETVAL, semun_op) == -1)) {
 			p_error_set_error_p (error,
-					     (pint) __p_error_get_last_ipc (),
-					     __p_error_get_last_error (),
+					     (pint) p_error_get_last_ipc (),
+					     p_error_get_last_error (),
 					     "Failed to set semaphore initial value with semctl()");
 			__p_semaphore_clean_handle (sem);
 			return FALSE;
@@ -219,21 +219,21 @@ p_semaphore_acquire (PSemaphore *sem,
 		return FALSE;
 	}
 
-	while ((res = semop (sem->sem_hdl, &sem_lock, 1)) == -1 && __p_error_get_last_error () == EINTR)
+	while ((res = semop (sem->sem_hdl, &sem_lock, 1)) == -1 && p_error_get_last_error () == EINTR)
 		;
 
 	ret = (res == 0);
 
 	if (P_UNLIKELY (ret == FALSE &&
-			(__p_error_get_last_error () == EIDRM ||
-			 __p_error_get_last_error () == EINVAL))) {
+			(p_error_get_last_error () == EIDRM ||
+			 p_error_get_last_error () == EINVAL))) {
 		P_WARNING ("PSemaphore: trying to recreate");
 		__p_semaphore_clean_handle (sem);
 
 		if (P_UNLIKELY (__p_semaphore_create_handle (sem, error) == FALSE))
 			return FALSE;
 
-		while ((res = semop (sem->sem_hdl, &sem_lock, 1)) == -1 && __p_error_get_last_error () == EINTR)
+		while ((res = semop (sem->sem_hdl, &sem_lock, 1)) == -1 && p_error_get_last_error () == EINTR)
 			;
 
 		ret = (res == 0);
@@ -241,8 +241,8 @@ p_semaphore_acquire (PSemaphore *sem,
 
 	if (P_UNLIKELY (ret == FALSE))
 		p_error_set_error_p (error,
-				     (pint) __p_error_get_last_ipc (),
-				     __p_error_get_last_error (),
+				     (pint) p_error_get_last_ipc (),
+				     p_error_get_last_error (),
 				     "Failed to call semop() on semaphore");
 
 	return ret;
@@ -263,14 +263,14 @@ p_semaphore_release (PSemaphore *sem,
 		return FALSE;
 	}
 
-	while ((res = semop (sem->sem_hdl, &sem_unlock, 1)) == -1 && __p_error_get_last_error () == EINTR)
+	while ((res = semop (sem->sem_hdl, &sem_unlock, 1)) == -1 && p_error_get_last_error () == EINTR)
 		;
 
 	ret = (res == 0);
 
 	if (P_UNLIKELY (ret == FALSE &&
-			(__p_error_get_last_error () == EIDRM ||
-			 __p_error_get_last_error () == EINVAL))) {
+			(p_error_get_last_error () == EIDRM ||
+			 p_error_get_last_error () == EINVAL))) {
 		P_WARNING ("PSemaphore: trying to recreate");
 		__p_semaphore_clean_handle (sem);
 
@@ -282,8 +282,8 @@ p_semaphore_release (PSemaphore *sem,
 
 	if (P_UNLIKELY (ret == FALSE))
 		p_error_set_error_p (error,
-				     (pint) __p_error_get_last_ipc (),
-				     __p_error_get_last_error (),
+				     (pint) p_error_get_last_ipc (),
+				     p_error_get_last_error (),
 				     "Failed to call semop() on semaphore");
 
 	return ret;

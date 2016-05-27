@@ -122,7 +122,7 @@ p_library_loader_get_last_error (void)
 	DWORD	err_code;
 	LPVOID	msg_buf;
 
-	err_code = __p_error_get_last_error ();
+	err_code = p_error_get_last_error ();
 
 	if (err_code == 0)
 		return NULL;
