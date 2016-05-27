@@ -142,11 +142,11 @@ p_atomic_is_lock_free (void)
 }
 
 void
-__p_atomic_thread_init (void)
+pp_atomic_thread_init (void)
 {
 }
 
 void
-__p_atomic_thread_shutdown (void)
+pp_atomic_thread_shutdown (void)
 {
 }

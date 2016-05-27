@@ -59,7 +59,7 @@ VOID MemoryBarrier (VOID)
 					      || defined (P_CC_BORLAND)
 /* Inlined versions for older compilers */
 static LONG
-_pInterlockedAnd (LONG volatile	*atomic,
+ppInterlockedAnd (LONG volatile	*atomic,
 		  LONG		val)
 {
 	LONG i, j;
@@ -73,10 +73,10 @@ _pInterlockedAnd (LONG volatile	*atomic,
 	return j;
 }
 
-#  define InterlockedAnd(a,b) _pInterlockedAnd(a,b)
+#  define InterlockedAnd(a,b) ppInterlockedAnd(a,b)
 
 static LONG
-_pInterlockedOr (LONG volatile 	*atomic,
+ppInterlockedOr (LONG volatile 	*atomic,
 		 LONG		val)
 {
 	LONG i, j;
@@ -90,10 +90,10 @@ _pInterlockedOr (LONG volatile 	*atomic,
 	return j;
 }
 
-#  define InterlockedOr(a,b) _pInterlockedOr(a,b)
+#  define InterlockedOr(a,b) ppInterlockedOr(a,b)
 
 static LONG
-_pInterlockedXor (LONG volatile	*atomic,
+ppInterlockedXor (LONG volatile	*atomic,
 		  LONG		val)
 {
 	LONG i, j;
@@ -107,7 +107,7 @@ _pInterlockedXor (LONG volatile	*atomic,
 	return j;
 }
 
-#  define InterlockedXor(a,b) _pInterlockedXor(a,b)
+#  define InterlockedXor(a,b) ppInterlockedXor(a,b)
 #endif
 
 /* http://msdn.microsoft.com/en-us/library/ms684122(v=vs.85).aspx */
@@ -257,11 +257,11 @@ p_atomic_is_lock_free (void)
 }
 
 void
-__p_atomic_thread_init (void)
+pp_atomic_thread_init (void)
 {
 }
 
 void
-__p_atomic_thread_shutdown (void)
+pp_atomic_thread_shutdown (void)
 {
 }
