@@ -410,6 +410,7 @@ if (PLIBSYS_THREAD_MODEL STREQUAL posix)
 
 		check_c_source_compiles (
 					 "#include <unistd.h>
+					  #include <pthread.h>
 					  #include <sched.h>
 
 					 int main () {
