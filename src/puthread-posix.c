@@ -205,7 +205,7 @@ __p_uthread_create_internal (PUThreadFunc	func,
 
 #ifdef PLIBSYS_HAS_POSIX_SCHEDULING
 	if (prio == P_UTHREAD_PRIORITY_INHERIT) {
-		if (pthread_attr_setinheritsched (&attr, PTHREAD_INHERIT_SCHED) != 0)
+		if (P_UNLIKELY (pthread_attr_setinheritsched (&attr, PTHREAD_INHERIT_SCHED) != 0))
 			P_WARNING ("PUThread: failed to call pthread_attr_setinheritsched()");
 	} else {
 		if (P_LIKELY (pthread_attr_getschedpolicy (&attr, &sched_policy) == 0)) {
