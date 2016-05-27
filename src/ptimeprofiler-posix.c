@@ -15,8 +15,8 @@
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "ptimeprofiler.h"
 #include "pmem.h"
+#include "ptimeprofiler.h"
 
 #include <unistd.h>
 #include <time.h>
@@ -26,16 +26,16 @@
 #  define _POSIX_MONOTONIC_CLOCK (-1)
 #endif
 
-struct _PTimeProfiler {
+struct PTimeProfiler_ {
 	puint64		counter;
 	pboolean	hasMonotonicClock;
 };
 
-static puint64 __p_time_profiler_current_ticks (const PTimeProfiler *profiler);
-static puint64 __p_time_profiler_current_tick_gtod ();
+static puint64 pp_time_profiler_current_ticks (const PTimeProfiler *profiler);
+static puint64 pp_time_profiler_current_tick_gtod ();
 
 static puint64
-__p_time_profiler_current_ticks (const PTimeProfiler *profiler)
+pp_time_profiler_current_ticks (const PTimeProfiler *profiler)
 {
 #if _POSIX_MONOTONIC_CLOCK >= 0
 	struct timespec	ts;
@@ -45,18 +45,18 @@ __p_time_profiler_current_ticks (const PTimeProfiler *profiler)
 	if (P_LIKELY (profiler->hasMonotonicClock == TRUE)) {
 		if (P_UNLIKELY (clock_gettime (CLOCK_MONOTONIC, &ts) != 0)) {
 			P_ERROR ("PTimeProfiler: Failed to get time using clock_gettime()");
-			return __p_time_profiler_current_tick_gtod ();
+			return pp_time_profiler_current_tick_gtod ();
 		} else
 			return (puint64) (ts.tv_sec * 1000000 + ts.tv_nsec / 1000);
 	} else
-		return __p_time_profiler_current_tick_gtod ();
+		return pp_time_profiler_current_tick_gtod ();
 #else
-	return __p_time_profiler_current_tick_gtod ();
+	return pp_time_profiler_current_tick_gtod ();
 #endif
 }
 
 static puint64
-__p_time_profiler_current_tick_gtod ()
+pp_time_profiler_current_tick_gtod ()
 {
 	struct timeval tv;
 
@@ -87,7 +87,7 @@ p_time_profiler_new ()
 	ret->hasMonotonicClock = FALSE;
 #endif
 
-	ret->counter = __p_time_profiler_current_ticks (ret);
+	ret->counter = pp_time_profiler_current_ticks (ret);
 
 	return ret;
 }
@@ -98,7 +98,7 @@ p_time_profiler_reset (PTimeProfiler *profiler)
 	if (P_UNLIKELY (profiler == NULL))
 		return;
 
-	profiler->counter = __p_time_profiler_current_ticks (profiler);
+	profiler->counter = pp_time_profiler_current_ticks (profiler);
 }
 
 P_LIB_API puint64
@@ -107,7 +107,7 @@ p_time_profiler_elapsed_usecs (const PTimeProfiler *profiler)
 	if (P_UNLIKELY (profiler == NULL))
 		return 0;
 
-	return __p_time_profiler_current_ticks (profiler) - profiler->counter;
+	return pp_time_profiler_current_ticks (profiler) - profiler->counter;
 }
 
 P_LIB_API void

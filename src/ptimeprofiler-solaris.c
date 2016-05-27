@@ -15,14 +15,14 @@
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "ptimeprofiler.h"
 #include "pmem.h"
+#include "ptimeprofiler.h"
 
 #include <unistd.h>
 #include <time.h>
 #include <sys/time.h>
 
-struct _PTimeProfiler {
+struct PTimeProfiler_ {
 	puint64	counter;
 };
 

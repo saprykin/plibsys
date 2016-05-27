@@ -15,22 +15,22 @@
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "ptimeprofiler.h"
 #include "pmem.h"
+#include "ptimeprofiler.h"
 
 #include <time.h>
 
 #include <windows.h>
 
-struct _PTimeProfiler {
+struct PTimeProfiler_ {
 	puint64		counter;
 	pboolean	hasPerformanceCounter;
 };
 
-static puint64 __p_time_profiler_current_ticks (const PTimeProfiler *profiler);
+static puint64 pp_time_profiler_current_ticks (const PTimeProfiler *profiler);
 
 static puint64
-__p_time_profiler_current_ticks (const PTimeProfiler *profiler)
+pp_time_profiler_current_ticks (const PTimeProfiler *profiler)
 {
 	LARGE_INTEGER	tcounter;
 
@@ -64,7 +64,7 @@ p_time_profiler_new ()
 	else
 		ret->hasPerformanceCounter = TRUE;
 
-	ret->counter = __p_time_profiler_current_ticks (ret);
+	ret->counter = pp_time_profiler_current_ticks (ret);
 
 	return ret;
 }
@@ -75,7 +75,7 @@ p_time_profiler_reset (PTimeProfiler *profiler)
 	if (P_UNLIKELY (profiler == NULL))
 		return;
 
-	profiler->counter = __p_time_profiler_current_ticks (profiler);
+	profiler->counter = pp_time_profiler_current_ticks (profiler);
 }
 
 P_LIB_API puint64
@@ -96,7 +96,7 @@ p_time_profiler_elapsed_usecs (const PTimeProfiler *profiler)
 			frequency.QuadPart = 1000000;
 		}
 
-		return (puint64) ((double)(__p_time_profiler_current_ticks (profiler) - profiler->counter) /
+		return (puint64) ((double)(pp_time_profiler_current_ticks (profiler) - profiler->counter) /
 				  (frequency.QuadPart / 1000000.0F));
 	} else {
 #ifdef PLIBSYS_HAS_GETTICKCOUNT_64

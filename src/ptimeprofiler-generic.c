@@ -15,19 +15,19 @@
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "ptimeprofiler.h"
 #include "pmem.h"
+#include "ptimeprofiler.h"
 
 #include <time.h>
 
-struct _PTimeProfiler {
+struct PTimeProfiler_ {
 	puint64		counter;
 };
 
-static puint64 __p_time_profiler_current_ticks (const PTimeProfiler *profiler);
+static puint64 pp_time_profiler_current_ticks (const PTimeProfiler *profiler);
 
 static puint64
-__p_time_profiler_current_ticks (const PTimeProfiler *profiler)
+pp_time_profiler_current_ticks (const PTimeProfiler *profiler)
 {
 	pint64 val;
 
@@ -47,7 +47,7 @@ p_time_profiler_new ()
 	if (P_UNLIKELY ((ret = p_malloc0 (sizeof (PTimeProfiler))) == NULL))
 		return NULL;
 
-	ret->counter = __p_time_profiler_current_ticks (ret);
+	ret->counter = pp_time_profiler_current_ticks (ret);
 
 	return ret;
 }
@@ -58,7 +58,7 @@ p_time_profiler_reset (PTimeProfiler *profiler)
 	if (P_UNLIKELY (profiler == NULL))
 		return;
 
-	profiler->counter = __p_time_profiler_current_ticks (profiler);
+	profiler->counter = pp_time_profiler_current_ticks (profiler);
 }
 
 P_LIB_API puint64
@@ -67,7 +67,7 @@ p_time_profiler_elapsed_usecs (const PTimeProfiler *profiler)
 	if (P_UNLIKELY (profiler == NULL))
 		return 0;
 
-	return __p_time_profiler_current_ticks (profiler) - profiler->counter;
+	return pp_time_profiler_current_ticks (profiler) - profiler->counter;
 }
 
 P_LIB_API void
