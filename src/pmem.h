@@ -56,7 +56,7 @@
 P_BEGIN_DECLS
 
 /** Memory management table. */
-typedef struct _PMemVTable {
+typedef struct PMemVTable_ {
 	ppointer	(*malloc)	(psize		n_bytes);	/**< malloc() implementation.	*/
 	ppointer	(*realloc)	(ppointer	mem,
 					 psize		n_bytes);	/**< realloc() implementation.	*/

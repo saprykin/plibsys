@@ -22,20 +22,20 @@
 #include "plibsys-private.h"
 
 #ifdef P_OS_WIN
-#include <windows.h>
+#  include <windows.h>
 #else
-#include <sys/types.h>
-#include <sys/mman.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-#include <unistd.h>
+#  include <unistd.h>
+#  include <sys/types.h>
+#  include <sys/mman.h>
+#  include <sys/stat.h>
+#  include <fcntl.h>
 #endif
 
 pboolean		p_mem_table_inited = FALSE;
 static PMemVTable	p_mem_table;
 
 void
-__p_mem_init (void)
+p_mem_init (void)
 {
 	if (P_UNLIKELY (p_mem_table_inited == TRUE))
 		return;
@@ -44,7 +44,7 @@ __p_mem_init (void)
 }
 
 void
-__p_mem_shutdown (void)
+p_mem_shutdown (void)
 {
 	if (P_UNLIKELY (!p_mem_table_inited))
 		return;
