@@ -97,7 +97,7 @@
 P_BEGIN_DECLS
 
 /** INI file opaque data structure. */
-typedef struct _PIniFile PIniFile;
+typedef struct PIniFile_ PIniFile;
 
 /**
  * @brief Creates a new #PIniFile for parsing.

@@ -26,33 +26,33 @@
 #include <string.h>
 #include <ctype.h>
 
-#define	P_INI_MAX_LINE_LENGTH	1024
+#define	P_INI_FILE_MAX_LINE	1024
 
-typedef struct _PIniParameter {
+typedef struct PIniParameter_ {
 	pchar		*name;
 	pchar		*value;
 } PIniParameter;
 
-typedef struct _PIniSection {
+typedef struct PIniSection_ {
 	pchar		*name;
 	PList		*keys;
 } PIniSection;
 
-struct _PIniFile {
+struct PIniFile_ {
 	pchar		*path;
 	PList		*sections;
 	pboolean	is_parsed;
 };
 
-static PIniParameter * __p_ini_parameter_new (const pchar *name, const pchar *val);
-static void __p_ini_parameter_free (PIniParameter *param);
-static PIniSection * __p_ini_section_new (const pchar *name);
-static void __p_ini_section_free (PIniSection *section);
-static pchar * __p_ini_find_parameter (const PIniFile *file, const pchar *section, const pchar *key);
+static PIniParameter * pp_ini_file_parameter_new (const pchar *name, const pchar *val);
+static void pp_ini_file_parameter_free (PIniParameter *param);
+static PIniSection * pp_ini_file_section_new (const pchar *name);
+static void pp_ini_file_section_free (PIniSection *section);
+static pchar * pp_ini_file_find_parameter (const PIniFile *file, const pchar *section, const pchar *key);
 
 static PIniParameter *
-__p_ini_parameter_new (const pchar	*name,
-		       const pchar	*val)
+pp_ini_file_parameter_new (const pchar	*name,
+			   const pchar	*val)
 {
 	PIniParameter *ret;
 
@@ -74,7 +74,7 @@ __p_ini_parameter_new (const pchar	*name,
 }
 
 static void
-__p_ini_parameter_free (PIniParameter *param)
+pp_ini_file_parameter_free (PIniParameter *param)
 {
 	p_free (param->name);
 	p_free (param->value);
@@ -82,7 +82,7 @@ __p_ini_parameter_free (PIniParameter *param)
 }
 
 static PIniSection *
-__p_ini_section_new (const pchar *name)
+pp_ini_file_section_new (const pchar *name)
 {
 	PIniSection *ret;
 
@@ -98,16 +98,16 @@ __p_ini_section_new (const pchar *name)
 }
 
 static void
-__p_ini_section_free (PIniSection *section)
+pp_ini_file_section_free (PIniSection *section)
 {
-	p_list_foreach (section->keys, (PFunc) __p_ini_parameter_free, NULL);
+	p_list_foreach (section->keys, (PFunc) pp_ini_file_parameter_free, NULL);
 	p_list_free (section->keys);
 	p_free (section->name);
 	p_free (section);
 }
 
 static pchar *
-__p_ini_find_parameter (const PIniFile *file, const pchar *section, const pchar *key)
+pp_ini_file_find_parameter (const PIniFile *file, const pchar *section, const pchar *key)
 {
 	PList	*item;
 
@@ -155,7 +155,7 @@ p_ini_file_free (PIniFile *file)
 	if (P_UNLIKELY (file == NULL))
 		return;
 
-	p_list_foreach (file->sections, (PFunc) __p_ini_section_free, NULL);
+	p_list_foreach (file->sections, (PFunc) pp_ini_file_section_free, NULL);
 	p_list_free (file->sections);
 	p_free (file->path);
 	p_free (file);
@@ -169,9 +169,9 @@ p_ini_file_parse (PIniFile	*file,
 	PIniParameter	*param;
 	FILE		*in_file;
 	pchar		*dst_line, *tmp_str;
-	pchar		src_line[P_INI_MAX_LINE_LENGTH + 1],
-			key[P_INI_MAX_LINE_LENGTH + 1],
-			value[P_INI_MAX_LINE_LENGTH + 1];
+	pchar		src_line[P_INI_FILE_MAX_LINE + 1],
+			key[P_INI_FILE_MAX_LINE + 1],
+			value[P_INI_FILE_MAX_LINE + 1];
 	pint		bom_shift;
 
 	if (P_UNLIKELY (file == NULL)) {
@@ -221,28 +221,28 @@ p_ini_file_parse (PIniFile	*file,
 			continue;
 
 		/* This should not happen */
-		if (P_UNLIKELY (strlen (dst_line) > P_INI_MAX_LINE_LENGTH))
-			dst_line[P_INI_MAX_LINE_LENGTH] = '\0';
+		if (P_UNLIKELY (strlen (dst_line) > P_INI_FILE_MAX_LINE))
+			dst_line[P_INI_FILE_MAX_LINE] = '\0';
 
 		if (dst_line[0] == '[' && dst_line[strlen (dst_line) - 1] == ']' &&
 		    sscanf (dst_line, "[%[^]]", key) == 1) {
 			/* New section found */
 			if ((tmp_str = p_strchomp (key)) != NULL) {
 				/* This should not happen */
-				if (P_UNLIKELY (strlen (tmp_str) > P_INI_MAX_LINE_LENGTH))
-					tmp_str[P_INI_MAX_LINE_LENGTH] = '\0';
+				if (P_UNLIKELY (strlen (tmp_str) > P_INI_FILE_MAX_LINE))
+					tmp_str[P_INI_FILE_MAX_LINE] = '\0';
 
 				strcpy (key, tmp_str);
 				p_free (tmp_str);
 
 				if (section != NULL) {
 					if (section->keys == NULL)
-						__p_ini_section_free (section);
+						pp_ini_file_section_free (section);
 					else
 						file->sections = p_list_prepend (file->sections, section);
 				}
 
-				section = __p_ini_section_new (key);
+				section = pp_ini_file_section_new (key);
 			}
 		} else if (sscanf (dst_line, "%[^=] = \"%[^\"]\"", key, value) == 2 ||
 			   sscanf (dst_line, "%[^=] = '%[^\']'", key, value) == 2 ||
@@ -250,16 +250,16 @@ p_ini_file_parse (PIniFile	*file,
 			/* New parameter found */
 			if ((tmp_str = p_strchomp (key)) != NULL) {
 				/* This should not happen */
-				if (P_UNLIKELY (strlen (tmp_str) > P_INI_MAX_LINE_LENGTH))
-					tmp_str[P_INI_MAX_LINE_LENGTH] = '\0';
+				if (P_UNLIKELY (strlen (tmp_str) > P_INI_FILE_MAX_LINE))
+					tmp_str[P_INI_FILE_MAX_LINE] = '\0';
 
 				strcpy (key, tmp_str);
 				p_free (tmp_str);
 
 				if ((tmp_str = p_strchomp (value)) != NULL) {
 					/* This should not happen */
-					if (P_UNLIKELY (strlen (tmp_str) > P_INI_MAX_LINE_LENGTH))
-						tmp_str[P_INI_MAX_LINE_LENGTH] = '\0';
+					if (P_UNLIKELY (strlen (tmp_str) > P_INI_FILE_MAX_LINE))
+						tmp_str[P_INI_FILE_MAX_LINE] = '\0';
 
 					strcpy (value, tmp_str);
 					p_free (tmp_str);
@@ -267,7 +267,7 @@ p_ini_file_parse (PIniFile	*file,
 					if (strcmp (value, "\"\"") == 0 || (strcmp (value, "''") == 0))
 						value[0] = '\0';
 
-					if (section != NULL && (param = __p_ini_parameter_new (key, value)) != NULL)
+					if (section != NULL && (param = pp_ini_file_parameter_new (key, value)) != NULL)
 						section->keys = p_list_prepend (section->keys, param);
 				}
 			}
@@ -279,7 +279,7 @@ p_ini_file_parse (PIniFile	*file,
 
 	if (section != NULL) {
 		if (section->keys == NULL)
-			__p_ini_section_free (section);
+			pp_ini_file_section_free (section);
 		else
 			file->sections = p_list_append (file->sections, section);
 	}
@@ -368,14 +368,14 @@ p_ini_file_is_key_exists (const PIniFile	*file,
 }
 
 P_LIB_API pchar *
-p_ini_file_parameter_string	(const PIniFile	*file,
-				 const pchar	*section,
-				 const pchar	*key,
-				 const pchar	*default_val)
+p_ini_file_parameter_string (const PIniFile	*file,
+			     const pchar	*section,
+			     const pchar	*key,
+			     const pchar	*default_val)
 {
 	pchar *val;
 
-	if ((val = __p_ini_find_parameter (file, section, key)) == NULL)
+	if ((val = pp_ini_file_find_parameter (file, section, key)) == NULL)
 		return p_strdup (default_val);
 
 	return val;
@@ -390,7 +390,7 @@ p_ini_file_parameter_int (const PIniFile	*file,
 	pchar	*val;
 	pint	ret;
 
-	if ((val = __p_ini_find_parameter (file, section, key)) == NULL)
+	if ((val = pp_ini_file_find_parameter (file, section, key)) == NULL)
 		return default_val;
 
 	ret = atoi (val);
@@ -408,7 +408,7 @@ p_ini_file_parameter_double (const PIniFile	*file,
 	pchar	*val;
 	pdouble	ret;
 
-	if ((val = __p_ini_find_parameter (file, section, key)) == NULL)
+	if ((val = pp_ini_file_find_parameter (file, section, key)) == NULL)
 		return default_val;
 
 	ret = p_strtod (val);
@@ -426,7 +426,7 @@ p_ini_file_parameter_boolean (const PIniFile	*file,
 	pchar		*val;
 	pboolean	ret;
 
-	if ((val = __p_ini_find_parameter (file, section, key)) == NULL)
+	if ((val = pp_ini_file_find_parameter (file, section, key)) == NULL)
 		return default_val;
 
 	if (strcmp (val, "true") == 0 || strcmp (val, "TRUE") == 0)
@@ -450,10 +450,10 @@ p_ini_file_parameter_list (const PIniFile	*file,
 {
 	PList	*ret = NULL;
 	pchar	*val, *str;
-	pchar	buf[P_INI_MAX_LINE_LENGTH + 1];
+	pchar	buf[P_INI_FILE_MAX_LINE + 1];
 	psize	len, buf_cnt;
 
-	if ((val = __p_ini_find_parameter (file, section, key)) == NULL)
+	if ((val = pp_ini_file_find_parameter (file, section, key)) == NULL)
 		return NULL;
 
 	len = strlen (val);
