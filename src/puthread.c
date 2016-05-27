@@ -24,18 +24,22 @@
 #include <string.h>
 #include <time.h>
 
-extern void pp_uthread_init_internal (void);
-extern void pp_uthread_shutdown_internal (void);
-extern void pp_uthread_exit_internal (void);
-extern void pp_uthread_wait_internal (PUThread *thread);
-extern void pp_uthread_free_internal (PUThread *thread);
-extern PUThread * pp_uthread_create_internal (PUThreadFunc	func,
-					      pboolean		joinable,
-					      PUThreadPriority	prio,
-					      psize		stack_size);
+extern void p_uthread_init_internal (void);
+extern void p_uthread_shutdown_internal (void);
+extern void p_uthread_exit_internal (void);
+extern void p_uthread_wait_internal (PUThread *thread);
+extern void p_uthread_free_internal (PUThread *thread);
+extern PUThread * p_uthread_create_internal (PUThreadFunc	func,
+					     pboolean		joinable,
+					     PUThreadPriority	prio,
+					     psize		stack_size);
 
 static void pp_uthread_cleanup (ppointer data);
 static ppointer pp_uthread_proxy (ppointer data);
+
+#if !defined (P_OS_WIN) && !defined (PLIBSYS_HAS_NANOSLEEP)
+static pint pp_uthread_nanosleep (puint32 msec);
+#endif
 
 static PUThreadKey * pp_uthread_specific_data = NULL;
 static PSpinLock * pp_uthread_new_spin = NULL;
@@ -62,7 +66,7 @@ pp_uthread_proxy (ppointer data)
 }
 
 void
-pp_uthread_init (void)
+p_uthread_init (void)
 {
 	if (P_LIKELY (pp_uthread_specific_data == NULL))
 		pp_uthread_specific_data = p_uthread_local_new ((PDestroyFunc) pp_uthread_cleanup);
@@ -70,11 +74,11 @@ pp_uthread_init (void)
 	if (P_LIKELY (pp_uthread_new_spin == NULL))
 		pp_uthread_new_spin = p_spinlock_new ();
 
-	pp_uthread_init_internal ();
+	p_uthread_init_internal ();
 }
 
 void
-pp_uthread_shutdown (void)
+p_uthread_shutdown (void)
 {
 	if (P_LIKELY (pp_uthread_specific_data != NULL)) {
 		p_uthread_local_free (pp_uthread_specific_data);
@@ -86,7 +90,7 @@ pp_uthread_shutdown (void)
 		pp_uthread_new_spin = NULL;
 	}
 
-	pp_uthread_shutdown_internal ();
+	p_uthread_shutdown_internal ();
 }
 
 P_LIB_API PUThread *
@@ -103,7 +107,7 @@ p_uthread_create_full (PUThreadFunc	func,
 
 	p_spinlock_lock (pp_uthread_new_spin);
 
-	base_thread = (PUThreadBase *) pp_uthread_create_internal (pp_uthread_proxy,
+	base_thread = (PUThreadBase *) p_uthread_create_internal (pp_uthread_proxy,
 								   joinable,
 								   prio,
 								   stack_size);
@@ -145,7 +149,7 @@ p_uthread_exit (pint code)
 
 	base_thread->ret_code = code;
 
-	pp_uthread_exit_internal ();
+	p_uthread_exit_internal ();
 }
 
 P_LIB_API pint
@@ -161,7 +165,7 @@ p_uthread_join (PUThread *thread)
 	if (base_thread->joinable == FALSE)
 		return -1;
 
-	pp_uthread_wait_internal (thread);
+	p_uthread_wait_internal (thread);
 
 	return base_thread->ret_code;
 }
@@ -206,7 +210,7 @@ p_uthread_unref (PUThread *thread)
 
 	if (p_atomic_int_dec_and_test (&base_thread->ref_count) == TRUE) {
 		if (base_thread->ours == TRUE)
-			pp_uthread_free_internal (thread);
+			p_uthread_free_internal (thread);
 		else
 			p_free (thread);
 	}
@@ -219,9 +223,9 @@ p_uthread_unref (PUThread *thread)
 #  if !defined (PLIBSYS_HAS_NANOSLEEP)
 #    include <sys/select.h>
 #    include <sys/time.h>
-static int pp_uthread_nanosleep (puint32 msec)
+static pint pp_uthread_nanosleep (puint32 msec)
 {
-	int		rc;
+	pint		rc;
 	struct timeval	tstart, tstop, tremain, time2wait;
 
 	time2wait.tv_sec  = msec / 1000;

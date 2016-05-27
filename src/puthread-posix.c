@@ -153,25 +153,25 @@ pp_uthread_get_tls_key (PUThreadKey *key)
 }
 
 void
-pp_uthread_init_internal (void)
+p_uthread_init_internal (void)
 {
 }
 
 void
-pp_uthread_shutdown_internal (void)
+p_uthread_shutdown_internal (void)
 {
 }
 
 void
-pp_uthread_win32_thread_detach (void)
+p_uthread_win32_thread_detach (void)
 {
 }
 
 PUThread *
-pp_uthread_create_internal (PUThreadFunc	func,
-			    pboolean		joinable,
-			    PUThreadPriority	prio,
-			    psize		stack_size)
+p_uthread_create_internal (PUThreadFunc		func,
+			   pboolean		joinable,
+			   PUThreadPriority	prio,
+			   psize		stack_size)
 {
 	PUThread		*ret;
 	pthread_attr_t		attr;
@@ -274,20 +274,20 @@ pp_uthread_create_internal (PUThreadFunc	func,
 }
 
 void
-pp_uthread_exit_internal (void)
+p_uthread_exit_internal (void)
 {
 	pthread_exit (P_INT_TO_POINTER (0));
 }
 
 void
-pp_uthread_wait_internal (PUThread *thread)
+p_uthread_wait_internal (PUThread *thread)
 {
 	if (P_UNLIKELY (pthread_join (thread->hdl, NULL) != 0))
 		P_ERROR ("PUThread: failed to call pthread_join()");
 }
 
 void
-pp_uthread_free_internal (PUThread *thread)
+p_uthread_free_internal (PUThread *thread)
 {
 	p_free (thread);
 }

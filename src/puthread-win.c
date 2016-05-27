@@ -130,7 +130,7 @@ pp_uthread_win32_proxy (ppointer data)
 }
 
 void
-pp_uthread_win32_thread_detach (void)
+p_uthread_win32_thread_detach (void)
 {
 	pboolean was_called;
 
@@ -158,14 +158,14 @@ pp_uthread_win32_thread_detach (void)
 }
 
 void
-pp_uthread_init_internal (void)
+p_uthread_init_internal (void)
 {
 	if (P_LIKELY (pp_uthread_tls_mutex == NULL))
 		pp_uthread_tls_mutex = p_mutex_new ();
 }
 
 void
-pp_uthread_shutdown_internal (void)
+p_uthread_shutdown_internal (void)
 {
 	PUThreadDestructor *destr;
 
@@ -174,7 +174,7 @@ pp_uthread_shutdown_internal (void)
 		pp_uthread_tls_mutex = NULL;
 	}
 
-	pp_uthread_win32_thread_detach ();
+	p_uthread_win32_thread_detach ();
 
 	destr = pp_uthread_tls_destructors;
 
@@ -191,7 +191,7 @@ pp_uthread_shutdown_internal (void)
 }
 
 PUThread *
-pp_uthread_create_internal (PUThreadFunc	func,
+p_uthread_create_internal (PUThreadFunc	func,
 			    pboolean		joinable,
 			    PUThreadPriority	prio,
 			    psize		stack_size)
@@ -230,20 +230,20 @@ pp_uthread_create_internal (PUThreadFunc	func,
 }
 
 void
-pp_uthread_exit_internal (void)
+p_uthread_exit_internal (void)
 {
 	_endthreadex (0);
 }
 
 void
-pp_uthread_wait_internal (PUThread *thread)
+p_uthread_wait_internal (PUThread *thread)
 {
 	if (P_UNLIKELY ((WaitForSingleObject (thread->hdl, INFINITE)) != WAIT_OBJECT_0))
 		P_ERROR ("PUThread: failed to call WaitForSingleObject() to join a thread");
 }
 
 void
-pp_uthread_free_internal (PUThread *thread)
+p_uthread_free_internal (PUThread *thread)
 {
 	CloseHandle (thread->hdl);
 	p_free (thread);

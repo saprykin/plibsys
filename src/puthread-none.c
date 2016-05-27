@@ -26,25 +26,25 @@ struct PUThread_ {
 };
 
 void
-pp_uthread_init_internal (void)
+p_uthread_init_internal (void)
 {
 }
 
 void
-pp_uthread_shutdown_internal (void)
+p_uthread_shutdown_internal (void)
 {
 }
 
 void
-pp_uthread_win32_thread_detach (void)
+p_uthread_win32_thread_detach (void)
 {
 }
 
 PUThread *
-pp_uthread_create_internal (PUThreadFunc	func,
-			    pboolean		joinable,
-			    PUThreadPriority	prio,
-			    psize		stack_size)
+p_uthread_create_internal (PUThreadFunc		func,
+			   pboolean		joinable,
+			   PUThreadPriority	prio,
+			   psize		stack_size)
 {
 	PUThread	*ret;
 
@@ -65,18 +65,18 @@ pp_uthread_create_internal (PUThreadFunc	func,
 }
 
 void
-pp_uthread_exit_internal (void)
+p_uthread_exit_internal (void)
 {
 }
 
 void
-pp_uthread_wait_internal (PUThread *thread)
+p_uthread_wait_internal (PUThread *thread)
 {
 	P_UNUSED (thread);
 }
 
 void
-pp_uthread_free_internal (PUThread *thread)
+p_uthread_free_internal (PUThread *thread)
 {
 	p_free (thread);
 }

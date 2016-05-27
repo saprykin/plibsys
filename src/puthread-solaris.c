@@ -125,7 +125,7 @@ pp_uthread_get_tls_key (PUThreadKey *key)
 }
 
 void
-pp_uthread_init_internal (void)
+p_uthread_init_internal (void)
 {
 #ifndef P_OS_UNIXWARE
 	if (P_LIKELY (pp_uthread_tls_mutex == NULL))
@@ -134,7 +134,7 @@ pp_uthread_init_internal (void)
 }
 
 void
-pp_uthread_shutdown_internal (void)
+p_uthread_shutdown_internal (void)
 {
 #ifndef P_OS_UNIXWARE
 	if (P_LIKELY (pp_uthread_tls_mutex != NULL)) {
@@ -145,15 +145,15 @@ pp_uthread_shutdown_internal (void)
 }
 
 void
-pp_uthread_win32_thread_detach (void)
+p_uthread_win32_thread_detach (void)
 {
 }
 
 PUThread *
-pp_uthread_create_internal (PUThreadFunc	func,
-			    pboolean		joinable,
-			    PUThreadPriority	prio,
-			    psize		stack_size)
+p_uthread_create_internal (PUThreadFunc		func,
+			   pboolean		joinable,
+			   PUThreadPriority	prio,
+			   psize		stack_size)
 {
 	PUThread	*ret;
 	pint32		flags;
@@ -200,20 +200,20 @@ pp_uthread_create_internal (PUThreadFunc	func,
 }
 
 void
-pp_uthread_exit_internal (void)
+p_uthread_exit_internal (void)
 {
 	thr_exit (P_INT_TO_POINTER (0));
 }
 
 void
-pp_uthread_wait_internal (PUThread *thread)
+p_uthread_wait_internal (PUThread *thread)
 {
 	if (P_UNLIKELY (thr_join (thread->hdl, NULL, NULL) != 0))
 		P_ERROR ("PUThread: failed to call thr_join()");
 }
 
 void
-pp_uthread_free_internal (PUThread *thread)
+p_uthread_free_internal (PUThread *thread)
 {
 	p_free (thread);
 }
