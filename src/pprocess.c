@@ -18,11 +18,11 @@
 #include "pprocess.h"
 
 #ifdef P_OS_WIN
-#include <windows.h>
+#  include <windows.h>
 #else
-#include <sys/types.h>
-#include <signal.h>
-#include <unistd.h>
+#  include <sys/types.h>
+#  include <signal.h>
+#  include <unistd.h>
 #endif
 
 P_LIB_API puint32
