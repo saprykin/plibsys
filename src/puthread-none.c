@@ -20,31 +20,31 @@
 
 #include <stdlib.h>
 
-struct _PUThread {
-	__PUThreadBase	base;
+struct PUThread_ {
+	PUThreadBase	base;
 	pint		hdl;
 };
 
 void
-__p_uthread_init_internal (void)
+pp_uthread_init_internal (void)
 {
 }
 
 void
-__p_uthread_shutdown_internal (void)
+pp_uthread_shutdown_internal (void)
 {
 }
 
 void
-__p_uthread_win32_thread_detach (void)
+pp_uthread_win32_thread_detach (void)
 {
 }
 
 PUThread *
-__p_uthread_create_internal (PUThreadFunc	func,
-			     pboolean		joinable,
-			     PUThreadPriority	prio,
-			     psize		stack_size)
+pp_uthread_create_internal (PUThreadFunc	func,
+			    pboolean		joinable,
+			    PUThreadPriority	prio,
+			    psize		stack_size)
 {
 	PUThread	*ret;
 
@@ -65,18 +65,18 @@ __p_uthread_create_internal (PUThreadFunc	func,
 }
 
 void
-__p_uthread_exit_internal (void)
+pp_uthread_exit_internal (void)
 {
 }
 
 void
-__p_uthread_wait_internal (PUThread *thread)
+pp_uthread_wait_internal (PUThread *thread)
 {
 	P_UNUSED (thread);
 }
 
 void
-__p_uthread_free_internal (PUThread *thread)
+pp_uthread_free_internal (PUThread *thread)
 {
 	p_free (thread);
 }

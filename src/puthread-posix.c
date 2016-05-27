@@ -58,19 +58,25 @@
 
 typedef pthread_t puthread_hdl;
 
-struct _PUThread {
-	__PUThreadBase		base;
-	puthread_hdl		hdl;
+struct PUThread_ {
+	PUThreadBase	base;
+	puthread_hdl	hdl;
 };
 
-struct _PUThreadKey {
-	pthread_key_t		*key;
-	PDestroyFunc		free_func;
+struct PUThreadKey_ {
+	pthread_key_t	*key;
+	PDestroyFunc	free_func;
 };
 
 #ifdef PLIBSYS_HAS_POSIX_SCHEDULING
+static pboolean pp_uthread_get_unix_priority (PUThreadPriority prio, int *sched_policy, int *sched_priority);
+#endif
+
+static pthread_key_t * pp_uthread_get_tls_key (PUThreadKey *key);
+
+#ifdef PLIBSYS_HAS_POSIX_SCHEDULING
 static pboolean
-__p_uthread_get_unix_priority (PUThreadPriority prio, int *sched_policy, int *sched_priority)
+pp_uthread_get_unix_priority (PUThreadPriority prio, int *sched_policy, int *sched_priority)
 {
 	pint	lowBound, upperBound;
 	pint	prio_min, prio_max;
@@ -110,7 +116,7 @@ __p_uthread_get_unix_priority (PUThreadPriority prio, int *sched_policy, int *sc
 #endif
 
 static pthread_key_t *
-__p_uthread_get_tls_key (PUThreadKey *key)
+pp_uthread_get_tls_key (PUThreadKey *key)
 {
 	pthread_key_t *thread_key;
 
@@ -147,25 +153,25 @@ __p_uthread_get_tls_key (PUThreadKey *key)
 }
 
 void
-__p_uthread_init_internal (void)
+pp_uthread_init_internal (void)
 {
 }
 
 void
-__p_uthread_shutdown_internal (void)
+pp_uthread_shutdown_internal (void)
 {
 }
 
 void
-__p_uthread_win32_thread_detach (void)
+pp_uthread_win32_thread_detach (void)
 {
 }
 
 PUThread *
-__p_uthread_create_internal (PUThreadFunc	func,
-			     pboolean		joinable,
-			     PUThreadPriority	prio,
-			     psize		stack_size)
+pp_uthread_create_internal (PUThreadFunc	func,
+			    pboolean		joinable,
+			    PUThreadPriority	prio,
+			    psize		stack_size)
 {
 	PUThread		*ret;
 	pthread_attr_t		attr;
@@ -209,7 +215,7 @@ __p_uthread_create_internal (PUThreadFunc	func,
 			P_WARNING ("PUThread: failed to call pthread_attr_setinheritsched()");
 	} else {
 		if (P_LIKELY (pthread_attr_getschedpolicy (&attr, &sched_policy) == 0)) {
-			if (P_LIKELY (__p_uthread_get_unix_priority (prio,
+			if (P_LIKELY (pp_uthread_get_unix_priority (prio,
 								     &sched_policy,
 								     &native_prio) == TRUE)) {
 				memset (&sched, 0, sizeof (sched));
@@ -268,20 +274,20 @@ __p_uthread_create_internal (PUThreadFunc	func,
 }
 
 void
-__p_uthread_exit_internal (void)
+pp_uthread_exit_internal (void)
 {
 	pthread_exit (P_INT_TO_POINTER (0));
 }
 
 void
-__p_uthread_wait_internal (PUThread *thread)
+pp_uthread_wait_internal (PUThread *thread)
 {
 	if (P_UNLIKELY (pthread_join (thread->hdl, NULL) != 0))
 		P_ERROR ("PUThread: failed to call pthread_join()");
 }
 
 void
-__p_uthread_free_internal (PUThread *thread)
+pp_uthread_free_internal (PUThread *thread)
 {
 	p_free (thread);
 }
@@ -311,7 +317,7 @@ p_uthread_set_priority (PUThread		*thread,
 		return FALSE;
 	}
 
-	if (P_UNLIKELY (__p_uthread_get_unix_priority (prio, &policy, &native_prio) == FALSE)) {
+	if (P_UNLIKELY (pp_uthread_get_unix_priority (prio, &policy, &native_prio) == FALSE)) {
 		P_ERROR ("PUThread: failed to get native thread priority (2)");
 		return FALSE;
 	}
@@ -367,7 +373,7 @@ p_uthread_get_local (PUThreadKey *key)
 	if (P_UNLIKELY (key == NULL))
 		return NULL;
 
-	tls_key = __p_uthread_get_tls_key (key);
+	tls_key = pp_uthread_get_tls_key (key);
 
 	return tls_key == NULL ? NULL : pthread_getspecific (*tls_key);
 }
@@ -381,7 +387,7 @@ p_uthread_set_local (PUThreadKey	*key,
 	if (P_UNLIKELY (key == NULL))
 		return;
 
-	tls_key = __p_uthread_get_tls_key (key);
+	tls_key = pp_uthread_get_tls_key (key);
 
 	if (P_LIKELY (tls_key != NULL)) {
 		if (P_UNLIKELY (pthread_setspecific (*tls_key, value) != 0))
@@ -399,7 +405,7 @@ p_uthread_replace_local	(PUThreadKey	*key,
 	if (P_UNLIKELY (key == NULL))
 		return;
 
-	tls_key = __p_uthread_get_tls_key (key);
+	tls_key = pp_uthread_get_tls_key (key);
 
 	if (P_UNLIKELY (tls_key == NULL))
 		return;

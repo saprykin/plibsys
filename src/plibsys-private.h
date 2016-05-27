@@ -30,7 +30,7 @@
 P_BEGIN_DECLS
 
 /** Base thread structure */
-typedef struct _PUThreadBase {
+typedef struct PUThreadBase_ {
 	pint			ref_count;	/**< Reference counter.	*/
 	pint			ret_code;	/**< Return code.	*/
 	pboolean		ours;		/**< Our thread flag.	*/
@@ -38,7 +38,7 @@ typedef struct _PUThreadBase {
 	PUThreadFunc		func;		/**< Thread routine.	*/
 	ppointer		data;		/**< Thread input data.	*/
 	PUThreadPriority	prio;		/**< Thread priority.	*/
-} __PUThreadBase;
+} PUThreadBase;
 
 /** Base tree leaf structure. */
 typedef struct PTreeBaseNode_ {

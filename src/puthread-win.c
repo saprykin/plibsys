@@ -29,69 +29,72 @@
 
 typedef HANDLE puthread_hdl;
 
-struct _PUThread {
-	__PUThreadBase		base;
+struct PUThread_ {
+	PUThreadBase		base;
 	puthread_hdl		hdl;
 	PUThreadFunc		proxy;
 };
 
-struct _PUThreadKey {
+struct PUThreadKey_ {
 	DWORD			key_idx;
 	PDestroyFunc		free_func;
 };
 
-typedef struct __PUThreadDestructor _PUThreadDestructor;
+typedef struct PUThreadDestructor_ PUThreadDestructor;
 
-struct __PUThreadDestructor {
+struct PUThreadDestructor_ {
 	DWORD			key_idx;
 	PDestroyFunc		free_func;
-	_PUThreadDestructor	*next;
+	PUThreadDestructor	*next;
 };
 
-static _PUThreadDestructor * volatile __tls_destructors = NULL;
-static PMutex *__tls_mutex = NULL;
+static PUThreadDestructor * volatile pp_uthread_tls_destructors = NULL;
+static PMutex *pp_uthread_tls_mutex = NULL;
+
+static DWORD pp_uthread_get_tls_key (PUThreadKey *key);
+static puint __stdcall pp_uthread_win32_proxy (ppointer data);
 
 static DWORD
-__p_uthread_get_tls_key (PUThreadKey *key)
+pp_uthread_get_tls_key (PUThreadKey *key)
 {
 	DWORD tls_key = key->key_idx;
 
 	if (P_LIKELY (tls_key != TLS_OUT_OF_INDEXES))
 		return tls_key;
 
-	p_mutex_lock (__tls_mutex);
+	p_mutex_lock (pp_uthread_tls_mutex);
 
 	tls_key = key->key_idx;
 
 	if (P_LIKELY (tls_key == TLS_OUT_OF_INDEXES)) {
-		_PUThreadDestructor *destr = NULL;
+		PUThreadDestructor *destr = NULL;
 
 		tls_key = TlsAlloc ();
 
 		if (P_UNLIKELY (tls_key == TLS_OUT_OF_INDEXES)) {
 			P_ERROR ("PUThread: failed to call TlsAlloc()");
-			p_mutex_unlock (__tls_mutex);
+			p_mutex_unlock (pp_uthread_tls_mutex);
 			return TLS_OUT_OF_INDEXES;
 		}
 
 		if (key->free_func != NULL) {
-			if (P_UNLIKELY ((destr = p_malloc0 (sizeof (_PUThreadDestructor))) == NULL)) {
+			if (P_UNLIKELY ((destr = p_malloc0 (sizeof (PUThreadDestructor))) == NULL)) {
 				P_ERROR ("PUThread: failed to allocate memory for a TLS destructor");
 
 				if (P_UNLIKELY (TlsFree (tls_key) == 0))
 					P_ERROR ("PUThread: failed to call TlsFree()");
 
-				p_mutex_unlock (__tls_mutex);
+				p_mutex_unlock (pp_uthread_tls_mutex);
 				return TLS_OUT_OF_INDEXES;
 			}
 
 			destr->key_idx   = tls_key;
 			destr->free_func = key->free_func;
-			destr->next      = __tls_destructors;
+			destr->next      = pp_uthread_tls_destructors;
 
 			/* At the same time thread exit could be performed at there is no
 			 * lock for the global destructor list */
-			if (P_UNLIKELY (p_atomic_pointer_compare_and_exchange ((PVOID volatile *) &__tls_destructors,
+			if (P_UNLIKELY (p_atomic_pointer_compare_and_exchange ((PVOID volatile *) &pp_uthread_tls_destructors,
 									       (PVOID) destr->next,
 									       (PVOID) destr) == FALSE)) {
 				P_ERROR ("PUThread: failed to setup a TLS key destructor");
@@ -101,7 +104,7 @@ __p_uthread_get_tls_key (PUThreadKey *key)
 
 				p_free (destr);
 
-				p_mutex_unlock (__tls_mutex);
+				p_mutex_unlock (pp_uthread_tls_mutex);
 				return TLS_OUT_OF_INDEXES;
 			}
 		}
@@ -109,13 +112,13 @@ __p_uthread_get_tls_key (PUThreadKey *key)
 		key->key_idx = tls_key;
 	}
 
-	p_mutex_unlock (__tls_mutex);
+	p_mutex_unlock (pp_uthread_tls_mutex);
 
 	return tls_key;
 }
 
 static puint __stdcall
-__p_uthread_win32_proxy (ppointer data)
+pp_uthread_win32_proxy (ppointer data)
 {
 	PUThread *thread = data;
 
@@ -127,16 +130,16 @@ __p_uthread_win32_proxy (ppointer data)
 }
 
 void
-__p_uthread_win32_thread_detach (void)
+pp_uthread_win32_thread_detach (void)
 {
 	pboolean was_called;
 
 	do {
-		_PUThreadDestructor *destr;
+		PUThreadDestructor *destr;
 
 		was_called = FALSE;
 
-		destr = (_PUThreadDestructor *) p_atomic_pointer_get ((const PVOID volatile *) &__tls_destructors);
+		destr = (PUThreadDestructor *) p_atomic_pointer_get ((const PVOID volatile *) &pp_uthread_tls_destructors);
 
 		while (destr != NULL) {
 			ppointer value;
@@ -155,28 +158,28 @@ __p_uthread_win32_thread_detach (void)
 }
 
 void
-__p_uthread_init_internal (void)
+pp_uthread_init_internal (void)
 {
-	if (P_LIKELY (__tls_mutex == NULL))
-		__tls_mutex = p_mutex_new ();
+	if (P_LIKELY (pp_uthread_tls_mutex == NULL))
+		pp_uthread_tls_mutex = p_mutex_new ();
 }
 
 void
-__p_uthread_shutdown_internal (void)
+pp_uthread_shutdown_internal (void)
 {
-	_PUThreadDestructor *destr;
+	PUThreadDestructor *destr;
 
-	if (P_LIKELY (__tls_mutex != NULL)) {
-		p_mutex_free (__tls_mutex);
-		__tls_mutex = NULL;
+	if (P_LIKELY (pp_uthread_tls_mutex != NULL)) {
+		p_mutex_free (pp_uthread_tls_mutex);
+		pp_uthread_tls_mutex = NULL;
 	}
 
-	__p_uthread_win32_thread_detach ();
+	pp_uthread_win32_thread_detach ();
 
-	destr = __tls_destructors;
+	destr = pp_uthread_tls_destructors;
 
 	while (destr != NULL) {
-		_PUThreadDestructor *next_destr = destr->next;
+		PUThreadDestructor *next_destr = destr->next;
 
 		TlsFree (destr->key_idx);
 		p_free (destr);
@@ -184,14 +187,14 @@ __p_uthread_shutdown_internal (void)
 		destr = next_destr;
 	}
 
-	__tls_destructors = NULL;
+	pp_uthread_tls_destructors = NULL;
 }
 
 PUThread *
-__p_uthread_create_internal (PUThreadFunc	func,
-			     pboolean		joinable,
-			     PUThreadPriority	prio,
-			     psize		stack_size)
+pp_uthread_create_internal (PUThreadFunc	func,
+			    pboolean		joinable,
+			    PUThreadPriority	prio,
+			    psize		stack_size)
 {
 	PUThread *ret;
 
@@ -204,7 +207,7 @@ __p_uthread_create_internal (PUThreadFunc	func,
 
 	if (P_UNLIKELY ((ret->hdl = (HANDLE) _beginthreadex (NULL,
 							     (puint) stack_size,
-							     __p_uthread_win32_proxy,
+							     pp_uthread_win32_proxy,
 							     ret,
 							     CREATE_SUSPENDED,
 							     NULL)) == NULL)) {
@@ -227,20 +230,20 @@ __p_uthread_create_internal (PUThreadFunc	func,
 }
 
 void
-__p_uthread_exit_internal (void)
+pp_uthread_exit_internal (void)
 {
 	_endthreadex (0);
 }
 
 void
-__p_uthread_wait_internal (PUThread *thread)
+pp_uthread_wait_internal (PUThread *thread)
 {
 	if (P_UNLIKELY ((WaitForSingleObject (thread->hdl, INFINITE)) != WAIT_OBJECT_0))
 		P_ERROR ("PUThread: failed to call WaitForSingleObject() to join a thread");
 }
 
 void
-__p_uthread_free_internal (PUThread *thread)
+pp_uthread_free_internal (PUThread *thread)
 {
 	CloseHandle (thread->hdl);
 	p_free (thread);
@@ -338,7 +341,7 @@ p_uthread_get_local (PUThreadKey *key)
 	if (P_UNLIKELY (key == NULL))
 		return NULL;
 
-	tls_idx = __p_uthread_get_tls_key (key);
+	tls_idx = pp_uthread_get_tls_key (key);
 
 	return tls_idx == TLS_OUT_OF_INDEXES ? NULL : TlsGetValue (tls_idx);
 }
@@ -352,7 +355,7 @@ p_uthread_set_local (PUThreadKey	*key,
 	if (P_UNLIKELY (key == NULL))
 		return;
 
-	tls_idx = __p_uthread_get_tls_key (key);
+	tls_idx = pp_uthread_get_tls_key (key);
 
 	if (P_LIKELY (tls_idx != TLS_OUT_OF_INDEXES)) {
 		if (P_UNLIKELY (TlsSetValue (tls_idx, value) == 0))
@@ -370,7 +373,7 @@ p_uthread_replace_local	(PUThreadKey	*key,
 	if (P_UNLIKELY (key == NULL))
 		return;
 
-	tls_idx = __p_uthread_get_tls_key (key);
+	tls_idx = pp_uthread_get_tls_key (key);
 
 	if (P_UNLIKELY (tls_idx == TLS_OUT_OF_INDEXES))
 		return;

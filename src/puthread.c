@@ -21,40 +21,40 @@
 #include "plibsys-private.h"
 
 #include <stdlib.h>
-#include <time.h>
 #include <string.h>
+#include <time.h>
 
-extern void __p_uthread_init_internal (void);
-extern void __p_uthread_shutdown_internal (void);
-extern PUThread * __p_uthread_create_internal (PUThreadFunc	func,
-					       pboolean		joinable,
-					       PUThreadPriority	prio,
-					       psize		stack_size);
-extern void __p_uthread_exit_internal (void);
-extern void __p_uthread_wait_internal (PUThread *thread);
-extern void __p_uthread_free_internal (PUThread *thread);
+extern void pp_uthread_init_internal (void);
+extern void pp_uthread_shutdown_internal (void);
+extern void pp_uthread_exit_internal (void);
+extern void pp_uthread_wait_internal (PUThread *thread);
+extern void pp_uthread_free_internal (PUThread *thread);
+extern PUThread * pp_uthread_create_internal (PUThreadFunc	func,
+					      pboolean		joinable,
+					      PUThreadPriority	prio,
+					      psize		stack_size);
 
-static void __p_uthread_cleanup (ppointer data);
-static ppointer __p_uthread_proxy (ppointer data);
+static void pp_uthread_cleanup (ppointer data);
+static ppointer pp_uthread_proxy (ppointer data);
 
-static PUThreadKey *__p_uthread_specific_data = NULL;
-static PSpinLock * __p_uthread_new_spin = NULL;
+static PUThreadKey * pp_uthread_specific_data = NULL;
+static PSpinLock * pp_uthread_new_spin = NULL;
 
 static void
-__p_uthread_cleanup (ppointer data)
+pp_uthread_cleanup (ppointer data)
 {
 	p_uthread_unref (data);
 }
 
 static ppointer
-__p_uthread_proxy (ppointer data)
+pp_uthread_proxy (ppointer data)
 {
-	__PUThreadBase* base_thread = data;
+	PUThreadBase *base_thread = data;
 
-	p_uthread_set_local (__p_uthread_specific_data, data);
+	p_uthread_set_local (pp_uthread_specific_data, data);
 
-	p_spinlock_lock (__p_uthread_new_spin);
-	p_spinlock_unlock (__p_uthread_new_spin);
+	p_spinlock_lock (pp_uthread_new_spin);
+	p_spinlock_unlock (pp_uthread_new_spin);
 
 	base_thread->func (base_thread->data);
 
@@ -62,31 +62,31 @@ __p_uthread_proxy (ppointer data)
 }
 
 void
-__p_uthread_init (void)
+pp_uthread_init (void)
 {
-	if (P_LIKELY (__p_uthread_specific_data == NULL))
-		__p_uthread_specific_data = p_uthread_local_new ((PDestroyFunc) __p_uthread_cleanup);
+	if (P_LIKELY (pp_uthread_specific_data == NULL))
+		pp_uthread_specific_data = p_uthread_local_new ((PDestroyFunc) pp_uthread_cleanup);
 
-	if (P_LIKELY (__p_uthread_new_spin == NULL))
-		__p_uthread_new_spin = p_spinlock_new ();
+	if (P_LIKELY (pp_uthread_new_spin == NULL))
+		pp_uthread_new_spin = p_spinlock_new ();
 
-	__p_uthread_init_internal ();
+	pp_uthread_init_internal ();
 }
 
 void
-__p_uthread_shutdown (void)
+pp_uthread_shutdown (void)
 {
-	if (P_LIKELY (__p_uthread_specific_data != NULL)) {
-		p_uthread_local_free (__p_uthread_specific_data);
-		__p_uthread_specific_data = NULL;
+	if (P_LIKELY (pp_uthread_specific_data != NULL)) {
+		p_uthread_local_free (pp_uthread_specific_data);
+		pp_uthread_specific_data = NULL;
 	}
 
-	if (P_LIKELY (__p_uthread_new_spin != NULL)) {
-		p_spinlock_free (__p_uthread_new_spin);
-		__p_uthread_new_spin = NULL;
+	if (P_LIKELY (pp_uthread_new_spin != NULL)) {
+		p_spinlock_free (pp_uthread_new_spin);
+		pp_uthread_new_spin = NULL;
 	}
 
-	__p_uthread_shutdown_internal ();
+	pp_uthread_shutdown_internal ();
 }
 
 P_LIB_API PUThread *
@@ -96,17 +96,17 @@ p_uthread_create_full (PUThreadFunc	func,
 		       PUThreadPriority	prio,
 		       psize		stack_size)
 {
-	__PUThreadBase *base_thread;
+	PUThreadBase *base_thread;
 
 	if (P_UNLIKELY (func == NULL))
 		return NULL;
 
-	p_spinlock_lock (__p_uthread_new_spin);
+	p_spinlock_lock (pp_uthread_new_spin);
 
-	base_thread = (__PUThreadBase *) __p_uthread_create_internal (__p_uthread_proxy,
-								      joinable,
-								      prio,
-								      stack_size);
+	base_thread = (PUThreadBase *) pp_uthread_create_internal (pp_uthread_proxy,
+								   joinable,
+								   prio,
+								   stack_size);
 
 	if (P_LIKELY (base_thread != NULL)) {
 		base_thread->ref_count = 2;
@@ -116,7 +116,7 @@ p_uthread_create_full (PUThreadFunc	func,
 		base_thread->data      = data;
 	}
 
-	p_spinlock_unlock (__p_uthread_new_spin);
+	p_spinlock_unlock (pp_uthread_new_spin);
 
 	return (PUThread *) base_thread;
 }
@@ -133,7 +133,7 @@ p_uthread_create (PUThreadFunc	func,
 P_LIB_API void
 p_uthread_exit (pint code)
 {
-	__PUThreadBase *base_thread = (__PUThreadBase *) p_uthread_current ();
+	PUThreadBase *base_thread = (PUThreadBase *) p_uthread_current ();
 
 	if (P_UNLIKELY (base_thread == NULL))
 		return;
@@ -145,23 +145,23 @@ p_uthread_exit (pint code)
 
 	base_thread->ret_code = code;
 
-	__p_uthread_exit_internal ();
+	pp_uthread_exit_internal ();
 }
 
 P_LIB_API pint
 p_uthread_join (PUThread *thread)
 {
-	__PUThreadBase *base_thread;
+	PUThreadBase *base_thread;
 
 	if (P_UNLIKELY (thread == NULL))
 		return -1;
 
-	 base_thread = (__PUThreadBase *) thread;
+	base_thread = (PUThreadBase *) thread;
 
 	if (base_thread->joinable == FALSE)
 		return -1;
 
-	__p_uthread_wait_internal (thread);
+	pp_uthread_wait_internal (thread);
 
 	return base_thread->ret_code;
 }
@@ -169,17 +169,17 @@ p_uthread_join (PUThread *thread)
 P_LIB_API PUThread *
 p_uthread_current (void)
 {
-	__PUThreadBase *base_thread = p_uthread_get_local (__p_uthread_specific_data);
+	PUThreadBase *base_thread = p_uthread_get_local (pp_uthread_specific_data);
 
 	if (P_UNLIKELY (base_thread == NULL)) {
-		if (P_UNLIKELY ((base_thread = p_malloc0 (sizeof (__PUThreadBase))) == NULL)) {
+		if (P_UNLIKELY ((base_thread = p_malloc0 (sizeof (PUThreadBase))) == NULL)) {
 			P_ERROR ("PUThread: failed to allocate memory for a thread local structure");
 			return NULL;
 		}
 
 		base_thread->ref_count = 1;
 
-		p_uthread_set_local (__p_uthread_specific_data, base_thread);
+		p_uthread_set_local (pp_uthread_specific_data, base_thread);
 	}
 
 	return (PUThread *) base_thread;
@@ -191,22 +191,22 @@ p_uthread_ref (PUThread *thread)
 	if (P_UNLIKELY (thread == NULL))
 		return;
 
-	p_atomic_int_inc (&((__PUThreadBase *) thread)->ref_count);
+	p_atomic_int_inc (&((PUThreadBase *) thread)->ref_count);
 }
 
 P_LIB_API void
 p_uthread_unref (PUThread *thread)
 {
-	__PUThreadBase *base_thread;
+	PUThreadBase *base_thread;
 
 	if (P_UNLIKELY (thread == NULL))
 		return;
 
-	base_thread = (__PUThreadBase *) thread;
+	base_thread = (PUThreadBase *) thread;
 
 	if (p_atomic_int_dec_and_test (&base_thread->ref_count) == TRUE) {
 		if (base_thread->ours == TRUE)
-			__p_uthread_free_internal (thread);
+			pp_uthread_free_internal (thread);
 		else
 			p_free (thread);
 	}
@@ -219,7 +219,7 @@ p_uthread_unref (PUThread *thread)
 #  if !defined (PLIBSYS_HAS_NANOSLEEP)
 #    include <sys/select.h>
 #    include <sys/time.h>
-static int __p_uthread_nanosleep (puint32 msec)
+static int pp_uthread_nanosleep (puint32 msec)
 {
 	int		rc;
 	struct timeval	tstart, tstop, tremain, time2wait;
@@ -282,6 +282,6 @@ p_uthread_sleep (puint32 msec)
 
 	return 0;
 #else
-	return __p_uthread_nanosleep (msec);
+	return pp_uthread_nanosleep (msec);
 #endif
 }

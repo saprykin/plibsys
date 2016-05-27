@@ -24,8 +24,8 @@ extern void __p_atomic_thread_init	(void);
 extern void __p_atomic_thread_shutdown	(void);
 extern void __p_socket_init_once	(void);
 extern void __p_socket_close_once	(void);
-extern void __p_uthread_init		(void);
-extern void __p_uthread_shutdown	(void);
+extern void pp_uthread_init		(void);
+extern void pp_uthread_shutdown		(void);
 
 static pboolean plibsys_inited = FALSE;
 
@@ -40,7 +40,7 @@ p_libsys_init (void)
 	__p_mem_init ();
 	__p_atomic_thread_init ();
 	__p_socket_init_once ();
-	__p_uthread_init ();
+	pp_uthread_init ();
 }
 
 P_LIB_API void
@@ -58,14 +58,14 @@ p_libsys_shutdown (void)
 
 	plibsys_inited = FALSE;
 
-	__p_uthread_shutdown ();
+	pp_uthread_shutdown ();
 	__p_socket_close_once ();
 	__p_atomic_thread_shutdown ();
 	__p_mem_shutdown ();
 }
 
 #ifdef P_OS_WIN
-extern void __p_uthread_win32_thread_detach (void);
+extern void pp_uthread_win32_thread_detach (void);
 
 BOOL WINAPI DllMain (HINSTANCE	hinstDLL,
 		     DWORD	fdwReason,
@@ -84,7 +84,7 @@ DllMain (HINSTANCE	hinstDLL,
 		break;
 
 	case DLL_THREAD_DETACH:
-		__p_uthread_win32_thread_detach ();
+		pp_uthread_win32_thread_detach ();
 		break;
 
 	case DLL_PROCESS_DETACH:

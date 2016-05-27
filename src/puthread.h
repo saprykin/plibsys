@@ -91,13 +91,13 @@ P_BEGIN_DECLS
 typedef ppointer (*PUThreadFunc) (ppointer arg);
 
 /** Thread opaque data type. */
-typedef struct _PUThread PUThread;
+typedef struct PUThread_ PUThread;
 
 /** TLS key opaque data type. */
-typedef struct _PUThreadKey PUThreadKey;
+typedef struct PUThreadKey_ PUThreadKey;
 
 /** Thread priority. */
-typedef enum _PUThreadPriority {
+typedef enum PUThreadPriority_ {
 	P_UTHREAD_PRIORITY_INHERIT	= 0,	/**< Inherits the caller thread priority. Default priority.	*/
 	P_UTHREAD_PRIORITY_IDLE		= 1,	/**< Scheduled only when no other threads are running.		*/
 	P_UTHREAD_PRIORITY_LOWEST	= 2,	/**< Scheduled less often than #P_UTHREAD_PRIORITY_LOW.		*/
