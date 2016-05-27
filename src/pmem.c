@@ -31,7 +31,7 @@
 #  include <fcntl.h>
 #endif
 
-pboolean		p_mem_table_inited = FALSE;
+static pboolean		p_mem_table_inited = FALSE;
 static PMemVTable	p_mem_table;
 
 void

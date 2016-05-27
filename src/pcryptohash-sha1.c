@@ -300,7 +300,7 @@ p_crypto_hash_sha1_finish (PHashSHA1 *ctx)
 	     | ctx->len_low >> 29;
 
 	if (last > 0)
-		p_crypto_hash_sha1_update (ctx, pp_crypto_hash_sha1_pad, last);
+		p_crypto_hash_sha1_update (ctx, pp_crypto_hash_sha1_pad, (psize) last);
 
 	ctx->buf.buf_w[14] = high;
 	ctx->buf.buf_w[15] = low;

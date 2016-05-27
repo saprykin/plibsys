@@ -18,6 +18,7 @@
 #include "patomic.h"
 #include "pspinlock.h"
 #include "pmem.h"
+#include "puthread.h"
 #include "plibsys-private.h"
 
 #include <stdlib.h>

@@ -57,6 +57,9 @@ p_crypto_hash_new (PCryptoHashType type)
 {
 	PCryptoHash *ret;
 
+	if (type < P_CRYPTO_HASH_TYPE_MD5 || type > P_CRYPTO_HASH_TYPE_GOST)
+		return NULL;
+
 	if (P_UNLIKELY ((ret = p_malloc0 (sizeof (PCryptoHash))) == NULL))
 		return NULL;
 
@@ -73,9 +76,6 @@ p_crypto_hash_new (PCryptoHashType type)
 		P_HASH_FUNCS (ret, gost3411);
 		ret->hash_len = 32;
 		break;
-	default:
-		p_free (ret);
-		return NULL;
 	}
 
 	ret->type    = type;

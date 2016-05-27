@@ -39,7 +39,7 @@ pchar *
 p_ipc_unix_get_temp_dir (void)
 {
 	pchar	*str, *ret;
-	pint	len;
+	psize	len;
 
 #ifdef P_tmpdir
 	if (strlen (P_tmpdir) > 0)
@@ -58,7 +58,7 @@ p_ipc_unix_get_temp_dir (void)
 #endif /* P_tmpdir */
 
 	/* Now we need to ensure that we have only the one trailing slash */
-	len = strlen (str);
+	len = (psize) strlen (str);
 	while (*(str + --len) == '/')
 		;
 	*(str + ++len) = '\0';

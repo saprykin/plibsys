@@ -56,7 +56,7 @@ p_strchomp (const pchar *str)
 
 	ptr = str;
 	pos_start = 0;
-	pos_end = strlen (str) - 1;
+	pos_end = ((pssize) strlen (str)) - 1;
 
 	while (pos_start < pos_end && isspace (* ((const puchar *) ptr++)))
 		++pos_start;
@@ -72,7 +72,7 @@ p_strchomp (const pchar *str)
 	if (pos_end == pos_start && isspace (* ((const puchar *) (str + pos_end))))
 		return p_strdup ("\0");
 
-	str_len = pos_end - pos_start + 2;
+	str_len = (psize) (pos_end - pos_start + 2);
 
 	if (P_UNLIKELY ((ret = p_malloc0 (str_len)) == NULL))
 		return NULL;
@@ -169,7 +169,7 @@ p_strtod (const pchar *str)
 
 		/* Get digits of exponent, if any */
 		for (expon = 0; isdigit ((pint) *strp); strp += 1)
-			expon = expon * 10 + (*strp - '0');
+			expon = expon * 10 + (puint) ((*strp - '0'));
 
 		if (P_UNLIKELY (expon > P_STR_MAX_EXPON))
 			expon = P_STR_MAX_EXPON;

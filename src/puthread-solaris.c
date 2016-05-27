@@ -17,6 +17,7 @@
 
 #include "pmem.h"
 #include "patomic.h"
+#include "puthread.h"
 #include "plibsys-private.h"
 
 #ifndef P_OS_UNIXWARE

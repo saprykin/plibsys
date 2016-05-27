@@ -101,9 +101,9 @@ pp_shm_create_handle (PShm	*shm,
 			return FALSE;
 		}
 
-		shm->size = stat_buf.st_size;
+		shm->size = (psize) stat_buf.st_size;
 	} else {
-		if (P_UNLIKELY ((ftruncate (fd, shm->size)) == -1)) {
+		if (P_UNLIKELY ((ftruncate (fd, (off_t) shm->size)) == -1)) {
 			p_error_set_error_p (error,
 					     (pint) p_error_get_last_ipc (),
 					     p_error_get_last_error (),

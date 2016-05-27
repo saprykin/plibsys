@@ -29,9 +29,9 @@ P_LIB_API puint32
 p_process_get_current_pid (void)
 {
 #ifdef P_OS_WIN
-	return GetCurrentProcessId ();
+	return (puint32) GetCurrentProcessId ();
 #else
-	return getpid ();
+	return (puint32) getpid ();
 #endif
 }
 
@@ -50,6 +50,6 @@ p_process_is_running (puint32 pid)
 
 	return ret == WAIT_TIMEOUT;
 #else
-	return kill (pid, 0) == 0;
+	return kill ((pid_t) pid, 0) == 0;
 #endif
 }

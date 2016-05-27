@@ -246,7 +246,7 @@ pp_socket_set_details_from_fd (PSocket	*socket,
 		case P_SOCKET_TYPE_SEQPACKET:
 			socket->protocol = P_SOCKET_PROTOCOL_SCTP;
 			break;
-		default:
+		case P_SOCKET_TYPE_UNKNOWN:
 			break;
 		}
 	}
@@ -726,7 +726,7 @@ p_socket_set_blocking (PSocket	*socket,
 	if (P_UNLIKELY (socket == NULL))
 		return;
 
-	socket->blocking = blocking;
+	socket->blocking = !! blocking;
 }
 
 P_LIB_API void
@@ -820,7 +820,7 @@ p_socket_bind (const PSocket	*socket,
 
 	if (P_UNLIKELY (bind (socket->fd,
 			      (struct sockaddr *) &addr,
-			      (pint) p_socket_address_get_native_size (address)) < 0)) {
+			      (socklen_t) p_socket_address_get_native_size (address)) < 0)) {
 		p_error_set_error_p (error,
 				     (pint) p_error_get_io_from_system (pp_socket_get_errno ()),
 				     (pint) pp_socket_get_errno (),
@@ -863,7 +863,7 @@ p_socket_connect (PSocket		*socket,
 #if !defined (P_OS_WIN) && defined (EINTR)
 	for (;;) {
 		conn_result = connect (socket->fd, (struct sockaddr *) &buffer,
-				       (pint) p_socket_address_get_native_size (address));
+				       (socklen_t) p_socket_address_get_native_size (address));
 
 		if (P_LIKELY (conn_result == 0))
 			break;
@@ -1047,7 +1047,7 @@ p_socket_receive (const PSocket	*socket,
 						error) == FALSE)
 			return -1;
 
-		if ((ret = recv (socket->fd, buffer, (pint32) buflen, 0)) < 0) {
+		if ((ret = recv (socket->fd, buffer, buflen, 0)) < 0) {
 			err_code = pp_socket_get_errno ();
 
 #if !defined (P_OS_WIN) && defined (EINTR)
@@ -1108,7 +1108,7 @@ p_socket_receive_from (const PSocket	*socket,
 
 		if ((ret = recvfrom (socket->fd,
 				     buffer,
-				     (pint32) buflen,
+				     buflen,
 				     0,
 				     (struct sockaddr *) &sa,
 				     &optlen)) < 0) {
@@ -1170,7 +1170,7 @@ p_socket_send (const PSocket	*socket,
 
 		if ((ret = send (socket->fd,
 				 buffer,
-				 (pint) buflen,
+				 buflen,
 				 P_SOCKET_DEFAULT_SEND_FLAGS)) < 0) {
 			err_code = pp_socket_get_errno ();
 
@@ -1238,7 +1238,7 @@ p_socket_send_to (const PSocket		*socket,
 
 		if ((ret = sendto (socket->fd,
 				   buffer,
-				   (pint32) buflen,
+				   buflen,
 				   0,
 				   (struct sockaddr *) &sa,
 				   optlen)) < 0) {

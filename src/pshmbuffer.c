@@ -245,7 +245,7 @@ p_shm_buffer_write (PShmBuffer	*buf,
 	if (P_UNLIKELY (p_shm_unlock (buf->shm, error) == FALSE))
 		return -1;
 
-	return len;
+	return (pssize) len;
 }
 
 P_LIB_API pssize

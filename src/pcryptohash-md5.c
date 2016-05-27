@@ -197,8 +197,8 @@ p_crypto_hash_md5_new (void)
 
 void
 p_crypto_hash_md5_update (PHashMD5	*ctx,
-		const puchar	*data,
-		psize		len)
+			  const puchar	*data,
+			  psize		len)
 {
 	puint32	left, to_fill;
 
@@ -253,7 +253,7 @@ p_crypto_hash_md5_finish (PHashMD5 *ctx)
 	     | ctx->len_low >> 29;
 
 	if (last > 0)
-		p_crypto_hash_md5_update (ctx, pp_crypto_hash_md5_pad, last);
+		p_crypto_hash_md5_update (ctx, pp_crypto_hash_md5_pad, (psize) last);
 
 	ctx->buf.buf_w[14] = low;
 	ctx->buf.buf_w[15] = high;

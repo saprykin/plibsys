@@ -110,7 +110,7 @@ p_dir_create (const pchar	*path,
 	if (p_dir_is_exists (path))
 		return TRUE;
 
-	if (P_UNLIKELY (mkdir (path, mode) != 0)) {
+	if (P_UNLIKELY (mkdir (path, (mode_t) mode) != 0)) {
 		p_error_set_error_p (error,
 				     (pint) p_error_get_last_io (),
 				     p_error_get_last_error (),
@@ -182,7 +182,7 @@ p_dir_get_next_entry (PDir	*dir,
 #endif
 	struct stat	sb;
 	pchar		*entry_path;
-	pint		path_len;
+	psize		path_len;
 #ifdef P_DIR_NEED_BUF_ALLOC
 	pint		name_max;
 #endif
@@ -280,7 +280,7 @@ p_dir_get_next_entry (PDir	*dir,
 	ret->name = p_strdup (dirent_st.d_name);
 #endif
 
-	path_len = strlen (dir->path);
+	path_len = (psize) strlen (dir->path);
 
 	if (P_UNLIKELY ((entry_path = p_malloc0 (path_len + strlen (ret->name) + 2)) == NULL)) {
 		P_WARNING ("PDir: failed to allocate memory for stat()");

@@ -17,6 +17,7 @@
 
 #include "pmem.h"
 #include "patomic.h"
+#include "puthread.h"
 #include "plibsys-private.h"
 
 #include <unistd.h>

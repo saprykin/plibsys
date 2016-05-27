@@ -46,7 +46,7 @@ static puint
 pp_hash_table_calc_hash (pconstpointer pointer, psize modulo)
 {
 	/* As simple as we can :) */
-	return (puint) ((P_POINTER_TO_INT (pointer) + 37) % modulo);
+	return (puint) (((psize) (P_POINTER_TO_INT (pointer) + 37)) % modulo);
 }
 
 static PHashTableNode *
