@@ -15,14 +15,14 @@
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "plibsys-private.h"
 #include "pmem.h"
-#include "pshm.h"
 #include "psemaphore.h"
+#include "pshm.h"
+#include "plibsys-private.h"
 
+#include <unistd.h>
 #include <stdlib.h>
 #include <string.h>
-#include <unistd.h>
 #include <fcntl.h>
 #include <sys/stat.h>
 #include <sys/mman.h>
@@ -31,7 +31,7 @@
 #define P_SHM_SUFFIX		"_p_shm_object"
 #define P_SHM_INVALID_HDL	-1
 
-struct _PShm {
+struct PShm_ {
 	pboolean	shm_created;
 	pchar		*platform_key;
 	ppointer	addr;
@@ -40,12 +40,12 @@ struct _PShm {
 	PShmAccessPerms perms;
 };
 
-static pboolean __p_shm_create_handle (PShm *shm, PError **error);
-static void __p_shm_clean_handle (PShm *shm);
+static pboolean pp_shm_create_handle (PShm *shm, PError **error);
+static void pp_shm_clean_handle (PShm *shm);
 
 static pboolean
-__p_shm_create_handle (PShm	*shm,
-		       PError	**error)
+pp_shm_create_handle (PShm	*shm,
+		      PError	**error)
 {
 	pboolean	is_exists;
 	pint		fd, flags;
@@ -61,16 +61,20 @@ __p_shm_create_handle (PShm	*shm,
 
 	is_exists = FALSE;
 
-	while ((fd = shm_open (shm->platform_key, O_CREAT | O_EXCL | O_RDWR, 0660)) == P_SHM_INVALID_HDL
-	       && p_error_get_last_error () == EINTR)
+	while ((fd = shm_open (shm->platform_key,
+			       O_CREAT | O_EXCL | O_RDWR,
+			       0660)) == P_SHM_INVALID_HDL &&
+	       p_error_get_last_error () == EINTR)
 	;
 
 	if (fd == P_SHM_INVALID_HDL) {
 		if (p_error_get_last_error () == EEXIST) {
 			is_exists = TRUE;
 
-			while ((fd = shm_open (shm->platform_key, O_RDWR, 0660)) == P_SHM_INVALID_HDL
-			       && p_error_get_last_error () == EINTR)
+			while ((fd = shm_open (shm->platform_key,
+					       O_RDWR,
+					       0660)) == P_SHM_INVALID_HDL &&
+			       p_error_get_last_error () == EINTR)
 			;
 		}
 	} else
@@ -81,7 +85,7 @@ __p_shm_create_handle (PShm	*shm,
 				     (pint) p_error_get_last_ipc (),
 				     p_error_get_last_error (),
 				     "Failed to call shm_open() to create memory segment");
-		__p_shm_clean_handle (shm);
+		pp_shm_clean_handle (shm);
 		return FALSE;
 	}
 
@@ -93,7 +97,7 @@ __p_shm_create_handle (PShm	*shm,
 					     p_error_get_last_error (),
 					     "Failed to call fstat() to get memory segment size");
 			close (fd);
-			__p_shm_clean_handle (shm);
+			pp_shm_clean_handle (shm);
 			return FALSE;
 		}
 
@@ -105,7 +109,7 @@ __p_shm_create_handle (PShm	*shm,
 					     p_error_get_last_error (),
 					     "Failed to call ftruncate() to set memory segment size");
 			close (fd);
-			__p_shm_clean_handle (shm);
+			pp_shm_clean_handle (shm);
 			return FALSE;
 		}
 	}
@@ -119,7 +123,7 @@ __p_shm_create_handle (PShm	*shm,
 				     "Failed to call mmap() to map memory segment");
 		shm->addr = NULL;
 		close (fd);
-		__p_shm_clean_handle (shm);
+		pp_shm_clean_handle (shm);
 		return FALSE;
 	}
 
@@ -129,7 +133,7 @@ __p_shm_create_handle (PShm	*shm,
 	if (P_UNLIKELY ((shm->sem = p_semaphore_new (shm->platform_key, 1,
 						     is_exists ? P_SEM_ACCESS_OPEN : P_SEM_ACCESS_CREATE,
 						     error)) == NULL)) {
-		__p_shm_clean_handle (shm);
+		pp_shm_clean_handle (shm);
 		return FALSE;
 	}
 
@@ -137,7 +141,7 @@ __p_shm_create_handle (PShm	*shm,
 }
 
 static void
-__p_shm_clean_handle (PShm *shm)
+pp_shm_clean_handle (PShm *shm)
 {
 	if (P_UNLIKELY (shm->addr != NULL && munmap (shm->addr, shm->size) == -1))
 		P_ERROR ("PShm: failed to unmap shared memory with munmap()");
@@ -203,7 +207,7 @@ p_shm_new (const pchar		*name,
 
 	p_free (new_name);
 
-	if (P_UNLIKELY (__p_shm_create_handle (ret, error) == FALSE)) {
+	if (P_UNLIKELY (pp_shm_create_handle (ret, error) == FALSE)) {
 		p_shm_free (ret);
 		return NULL;
 	}
@@ -230,7 +234,7 @@ p_shm_free (PShm *shm)
 	if (P_UNLIKELY (shm == NULL))
 		return;
 
-	__p_shm_clean_handle (shm);
+	pp_shm_clean_handle (shm);
 
 	if (P_LIKELY (shm->platform_key != NULL))
 		p_free (shm->platform_key);

@@ -20,7 +20,7 @@
 
 #include <stdlib.h>
 
-struct _PShm {
+struct PShm_ {
 	pint	hdl;
 };
 

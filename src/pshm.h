@@ -76,16 +76,16 @@
 #include <ptypes.h>
 #include <perror.h>
 
+P_BEGIN_DECLS
+
 /** Enum with shared memory access permissions. */
-typedef enum _PShmAccessPerms {
+typedef enum PShmAccessPerms_ {
 	P_SHM_ACCESS_READONLY	= 0,	/**< Read-only access.	*/
 	P_SHM_ACCESS_READWRITE	= 1	/**< Read/write access.	*/
 } PShmAccessPerms;
 
 /** Shared memory opaque data structure. */
-typedef struct _PShm PShm;
-
-P_BEGIN_DECLS
+typedef struct PShm_ PShm;
 
 /**
  * @brief Creates a new #PShm object.

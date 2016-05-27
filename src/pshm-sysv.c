@@ -15,27 +15,26 @@
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "plibsys-private.h"
 #include "pmem.h"
-#include "pshm.h"
 #include "psemaphore.h"
-
-#include <stdlib.h>
-#include <string.h>
+#include "pshm.h"
+#include "plibsys-private.h"
 
 #include <unistd.h>
-#include <errno.h>
+#include <stdlib.h>
+#include <string.h>
 #include <sys/stat.h>
 #include <sys/shm.h>
 #include <sys/types.h>
 #include <sys/ipc.h>
+#include <errno.h>
 
 #define P_SHM_SUFFIX		"_p_shm_object"
 #define P_SHM_INVALID_HDL	-1
 
 typedef pint pshm_hdl;
 
-struct _PShm {
+struct PShm_ {
 	pboolean	file_created;
 	key_t		unix_key;
 	pchar		*platform_key;
@@ -46,12 +45,12 @@ struct _PShm {
 	PShmAccessPerms	perms;
 };
 
-static pboolean __p_shm_create_handle (PShm *shm, PError **error);
-static void __p_shm_clean_handle (PShm *shm);
+static pboolean pp_shm_create_handle (PShm *shm, PError **error);
+static void pp_shm_clean_handle (PShm *shm);
 
 static pboolean
-__p_shm_create_handle (PShm	*shm,
-		       PError	**error)
+pp_shm_create_handle (PShm	*shm,
+		      PError	**error)
 {
 	pboolean	is_exists;
 	pint		flags, built;
@@ -72,7 +71,7 @@ __p_shm_create_handle (PShm	*shm,
 				     (pint) p_error_get_last_ipc (),
 				     p_error_get_last_error (),
 				     "Failed to create key file");
-		__p_shm_clean_handle (shm);
+		pp_shm_clean_handle (shm);
 		return FALSE;
 	} else if (built == 0)
 		shm->file_created = TRUE;
@@ -82,13 +81,15 @@ __p_shm_create_handle (PShm	*shm,
 				     (pint) p_error_get_last_ipc (),
 				     p_error_get_last_error (),
 				     "Failed to get unique IPC key");
-		__p_shm_clean_handle (shm);
+		pp_shm_clean_handle (shm);
 		return FALSE;
 	}
 
 	flags = (shm->perms == P_SHM_ACCESS_READONLY) ? 0444 : 0660;
 
-	if ((shm->shm_hdl = shmget (shm->unix_key, shm->size, IPC_CREAT | IPC_EXCL | flags)) == P_SHM_INVALID_HDL) {
+	if ((shm->shm_hdl = shmget (shm->unix_key,
+				    shm->size,
+				    IPC_CREAT | IPC_EXCL | flags)) == P_SHM_INVALID_HDL) {
 		if (p_error_get_last_error () == EEXIST) {
 			is_exists = TRUE;
 
@@ -102,7 +103,7 @@ __p_shm_create_handle (PShm	*shm,
 				     (pint) p_error_get_last_ipc (),
 				     p_error_get_last_error (),
 				     "Failed to call shmget() to create memory segment");
-		__p_shm_clean_handle (shm);
+		pp_shm_clean_handle (shm);
 		return FALSE;
 	}
 
@@ -111,7 +112,7 @@ __p_shm_create_handle (PShm	*shm,
 				     (pint) p_error_get_last_ipc (),
 				     p_error_get_last_error (),
 				     "Failed to call shmctl() to get memory segment size");
-		__p_shm_clean_handle (shm);
+		pp_shm_clean_handle (shm);
 		return FALSE;
 	}
 
@@ -124,14 +125,14 @@ __p_shm_create_handle (PShm	*shm,
 				     (pint) p_error_get_last_ipc (),
 				     p_error_get_last_error (),
 				     "Failed to call shmat() to attach to the memory segment");
-		__p_shm_clean_handle (shm);
+		pp_shm_clean_handle (shm);
 		return FALSE;
 	}
 
 	if (P_UNLIKELY ((shm->sem = p_semaphore_new (shm->platform_key, 1,
 						     is_exists ? P_SEM_ACCESS_OPEN : P_SEM_ACCESS_CREATE,
 						     error)) == NULL)) {
-		__p_shm_clean_handle (shm);
+		pp_shm_clean_handle (shm);
 		return FALSE;
 	}
 
@@ -139,7 +140,7 @@ __p_shm_create_handle (PShm	*shm,
 }
 
 static void
-__p_shm_clean_handle (PShm *shm)
+pp_shm_clean_handle (PShm *shm)
 {
 	struct shmid_ds shm_stat;
 
@@ -212,7 +213,7 @@ p_shm_new (const pchar		*name,
 
 	p_free (new_name);
 
-	if (P_UNLIKELY (__p_shm_create_handle (ret, error) == FALSE)) {
+	if (P_UNLIKELY (pp_shm_create_handle (ret, error) == FALSE)) {
 		p_shm_free (ret);
 		return NULL;
 	}
@@ -239,7 +240,7 @@ p_shm_free (PShm *shm)
 	if (P_UNLIKELY (shm == NULL))
 		return;
 
-	__p_shm_clean_handle (shm);
+	pp_shm_clean_handle (shm);
 
 	if (P_LIKELY (shm->platform_key != NULL))
 		p_free (shm->platform_key);

@@ -16,8 +16,8 @@
  */
 
 #include "pmem.h"
-#include "pshm.h"
 #include "psemaphore.h"
+#include "pshm.h"
 #include "plibsys-private.h"
 
 #include <stdlib.h>
@@ -30,7 +30,7 @@
 
 typedef HANDLE pshm_hdl;
 
-struct _PShm {
+struct PShm_ {
 	pchar		*platform_key;
 	pshm_hdl	shm_hdl;
 	ppointer	addr;
@@ -39,12 +39,12 @@ struct _PShm {
 	PShmAccessPerms	perms;
 };
 
-static pboolean __p_shm_create_handle (PShm *shm, PError **error);
-static void __p_shm_clean_handle (PShm *shm);
+static pboolean pp_shm_create_handle (PShm *shm, PError **error);
+static void pp_shm_clean_handle (PShm *shm);
 
 static pboolean
-__p_shm_create_handle (PShm	*shm,
-		       PError	**error)
+pp_shm_create_handle (PShm	*shm,
+		      PError	**error)
 {
 	pboolean			is_exists;
 	MEMORY_BASIC_INFORMATION	mem_stat;
@@ -73,7 +73,7 @@ __p_shm_create_handle (PShm	*shm,
 				     (pint) p_error_get_last_ipc (),
 				     p_error_get_last_error (),
 				     "Failed to call CreateFileMapping() to create file mapping");
-		__p_shm_clean_handle (shm);
+		pp_shm_clean_handle (shm);
 		return FALSE;
 	}
 
@@ -84,7 +84,7 @@ __p_shm_create_handle (PShm	*shm,
 				     (pint) p_error_get_last_ipc (),
 				     p_error_get_last_error (),
 				     "Failed to call MapViewOfFile() to map file to memory");
-		__p_shm_clean_handle (shm);
+		pp_shm_clean_handle (shm);
 		return FALSE;
 	}
 
@@ -96,7 +96,7 @@ __p_shm_create_handle (PShm	*shm,
 				     (pint) p_error_get_last_ipc (),
 				     p_error_get_last_error (),
 				     "Failed to call VirtualQuery() to get memory map info");
-		__p_shm_clean_handle (shm);
+		pp_shm_clean_handle (shm);
 		return FALSE;
 	}
 
@@ -105,7 +105,7 @@ __p_shm_create_handle (PShm	*shm,
 	if (P_UNLIKELY ((shm->sem = p_semaphore_new (shm->platform_key, 1,
 						     is_exists ? P_SEM_ACCESS_OPEN : P_SEM_ACCESS_CREATE,
 						     error)) == NULL)) {
-		__p_shm_clean_handle (shm);
+		pp_shm_clean_handle (shm);
 		return FALSE;
 	}
 
@@ -113,7 +113,7 @@ __p_shm_create_handle (PShm	*shm,
 }
 
 static void
-__p_shm_clean_handle (PShm *shm)
+pp_shm_clean_handle (PShm *shm)
 {
 	if (P_UNLIKELY (shm->addr != NULL && UnmapViewOfFile ((char *) shm->addr) == 0))
 		P_ERROR ("PShm: UnmapViewOfFile() failed");
@@ -174,7 +174,7 @@ p_shm_new (const pchar		*name,
 
 	p_free (new_name);
 
-	if (P_UNLIKELY (__p_shm_create_handle (ret, error) == FALSE)) {
+	if (P_UNLIKELY (pp_shm_create_handle (ret, error) == FALSE)) {
 		p_shm_free (ret);
 		return NULL;
 	}
@@ -197,7 +197,7 @@ p_shm_free (PShm *shm)
 	if (P_UNLIKELY (shm == NULL))
 		return;
 
-	__p_shm_clean_handle (shm);
+	pp_shm_clean_handle (shm);
 
 	if (P_LIKELY (shm->platform_key != NULL))
 		p_free (shm->platform_key);
