@@ -24,7 +24,7 @@
 #include <thread.h>
 #include <synch.h>
 
-struct _PCondVariable {
+struct PCondVariable_ {
 	cond_t	hdl;
 };
 

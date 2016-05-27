@@ -28,7 +28,7 @@
 
 #include <windows.h>
 
-struct _PCondVariable {
+struct PCondVariable_ {
 #ifdef PLIBSYS_HAS_VISTA_CV
 	CONDITION_VARIABLE	cv;
 #else

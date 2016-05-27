@@ -19,11 +19,11 @@
 #include "pcondvariable.h"
 
 #include <stdlib.h>
-#include <time.h>
 #include <string.h>
+#include <time.h>
 #include <pthread.h>
 
-struct _PCondVariable {
+struct PCondVariable_ {
 	pthread_cond_t	hdl;
 };
 
