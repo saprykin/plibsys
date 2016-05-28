@@ -92,10 +92,14 @@ set (PLIBSYS_PRIVATE_HDRS
 	pcryptohash-gost3411.h
 	pcryptohash-md5.h
 	pcryptohash-sha1.h
+	perror-private.h
+	pipc-private.h
 	plibsys-private.h
 	ptree-avl.h
 	ptree-bst.h
 	ptree-rb.h
+	ptree-private.h
+	puthread-private.h
 	${CMAKE_BINARY_DIR}/plibsysconfig.h
 )
 

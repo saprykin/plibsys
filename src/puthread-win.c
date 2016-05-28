@@ -19,7 +19,7 @@
 #include "pmutex.h"
 #include "patomic.h"
 #include "puthread.h"
-#include "plibsys-private.h"
+#include "puthread-private.h"
 
 #include <stdlib.h>
 #include <time.h>

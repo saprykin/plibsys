@@ -19,7 +19,7 @@
 #include "pstring.h"
 #include "pfile.h"
 #include "pdir.h"
-#include "plibsys-private.h"
+#include "perror-private.h"
 
 #include <stdlib.h>
 #include <string.h>

@@ -19,7 +19,8 @@
 #include "pspinlock.h"
 #include "pmem.h"
 #include "puthread.h"
-#include "plibsys-private.h"
+#include "puthread-private.h"
+#include "perror-private.h"
 
 #include <stdlib.h>
 #include <string.h>

@@ -19,7 +19,7 @@
 #include "plist.h"
 #include "pmem.h"
 #include "pstring.h"
-#include "plibsys-private.h"
+#include "perror-private.h"
 
 #include <stdlib.h>
 #include <stdio.h>

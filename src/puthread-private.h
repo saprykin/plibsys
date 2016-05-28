@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2016 Alexander Saprykin <xelfium@gmail.com>
+ * Copyright (C) 2016 Alexander Saprykin <xelfium@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,32 +19,26 @@
 #  error "Header files shouldn't be included directly, consider using <plibsys.h> instead."
 #endif
 
-#ifndef PLIBSYS_HEADER_PTREEBST_H
-#define PLIBSYS_HEADER_PTREEBST_H
+#ifndef PLIBSYS_HEADER_PUTHREAD_PRIVATE_H
+#define PLIBSYS_HEADER_PUTHREAD_PRIVATE_H
 
 #include "pmacros.h"
 #include "ptypes.h"
-#include "ptree-private.h"
+#include "puthread.h"
 
 P_BEGIN_DECLS
 
-pboolean	p_tree_bst_insert	(PTreeBaseNode		**root_node,
-					 PCompareDataFunc	compare_func,
-					 ppointer		data,
-					 PDestroyFunc		key_destroy_func,
-					 PDestroyFunc		value_destroy_func,
-					 ppointer		key,
-					 ppointer		value);
-
-pboolean	p_tree_bst_remove	(PTreeBaseNode		**root_node,
-					 PCompareDataFunc	compare_func,
-					 ppointer		data,
-					 PDestroyFunc		key_destroy_func,
-					 PDestroyFunc		value_destroy_func,
-					 pconstpointer		key);
-
-void		p_tree_bst_node_free	(PTreeBaseNode	*node);
+/** Base thread structure */
+typedef struct PUThreadBase_ {
+	pint			ref_count;	/**< Reference counter.	*/
+	pint			ret_code;	/**< Return code.	*/
+	pboolean		ours;		/**< Our thread flag.	*/
+	pboolean		joinable;	/**< Joinable flag.	*/
+	PUThreadFunc		func;		/**< Thread routine.	*/
+	ppointer		data;		/**< Thread input data.	*/
+	PUThreadPriority	prio;		/**< Thread priority.	*/
+} PUThreadBase;
 
 P_END_DECLS
 
-#endif /* PLIBSYS_HEADER_PTREEBST_H */
+#endif /* PLIBSYS_HEADER_PUTHREAD_PRIVATE_H */

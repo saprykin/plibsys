@@ -16,7 +16,7 @@
  */
 
 #include "pfile.h"
-#include "plibsys-private.h"
+#include "perror-private.h"
 
 #ifdef P_OS_WIN
 #include <windows.h>

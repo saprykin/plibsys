@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2016 Alexander Saprykin <xelfium@gmail.com>
+ * Copyright (C) 2016 Alexander Saprykin <xelfium@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,32 +19,22 @@
 #  error "Header files shouldn't be included directly, consider using <plibsys.h> instead."
 #endif
 
-#ifndef PLIBSYS_HEADER_PTREEBST_H
-#define PLIBSYS_HEADER_PTREEBST_H
+#ifndef PLIBSYS_HEADER_PTREE_PRIVATE_H
+#define PLIBSYS_HEADER_PTREE_PRIVATE_H
 
 #include "pmacros.h"
 #include "ptypes.h"
-#include "ptree-private.h"
 
 P_BEGIN_DECLS
 
-pboolean	p_tree_bst_insert	(PTreeBaseNode		**root_node,
-					 PCompareDataFunc	compare_func,
-					 ppointer		data,
-					 PDestroyFunc		key_destroy_func,
-					 PDestroyFunc		value_destroy_func,
-					 ppointer		key,
-					 ppointer		value);
-
-pboolean	p_tree_bst_remove	(PTreeBaseNode		**root_node,
-					 PCompareDataFunc	compare_func,
-					 ppointer		data,
-					 PDestroyFunc		key_destroy_func,
-					 PDestroyFunc		value_destroy_func,
-					 pconstpointer		key);
-
-void		p_tree_bst_node_free	(PTreeBaseNode	*node);
+/** Base tree leaf structure. */
+typedef struct PTreeBaseNode_ {
+	struct PTreeBaseNode_	*left;	/**< Left child.	*/
+	struct PTreeBaseNode_	*right;	/**< Right child.	*/
+	ppointer		key;	/**< Node key.		*/
+	ppointer		value;	/**< Node value.	*/
+} PTreeBaseNode;
 
 P_END_DECLS
 
-#endif /* PLIBSYS_HEADER_PTREEBST_H */
+#endif /* PLIBSYS_HEADER_PTREE_PRIVATE_H */

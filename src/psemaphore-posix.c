@@ -17,7 +17,8 @@
 
 #include "pmem.h"
 #include "psemaphore.h"
-#include "plibsys-private.h"
+#include "perror-private.h"
+#include "pipc-private.h"
 
 #include <stdlib.h>
 #include <string.h>

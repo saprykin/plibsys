@@ -17,7 +17,7 @@
 
 #include "pmem.h"
 #include "puthread.h"
-#include "plibsys-private.h"
+#include "puthread-private.h"
 
 #include <stdlib.h>
 

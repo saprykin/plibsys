@@ -19,32 +19,47 @@
 #  error "Header files shouldn't be included directly, consider using <plibsys.h> instead."
 #endif
 
-#ifndef PLIBSYS_HEADER_PTREEAVL_H
-#define PLIBSYS_HEADER_PTREEAVL_H
+#ifndef PLIBSYS_HEADER_PERROR_PRIVATE_H
+#define PLIBSYS_HEADER_PERROR_PRIVATE_H
 
 #include "pmacros.h"
 #include "ptypes.h"
-#include "ptree-private.h"
+#include "perrortypes.h"
 
 P_BEGIN_DECLS
 
-pboolean	p_tree_avl_insert	(PTreeBaseNode		**root_node,
-					 PCompareDataFunc	compare_func,
-					 ppointer		data,
-					 PDestroyFunc		key_destroy_func,
-					 PDestroyFunc		value_destroy_func,
-					 ppointer		key,
-					 ppointer		value);
+/**
+ * @brief Gets an IO error code from a system error code.
+ * @param err_code System error code.
+ * @return IO error code.
+ */
+PErrorIO	p_error_get_io_from_system	(pint	err_code);
 
-pboolean	p_tree_avl_remove	(PTreeBaseNode		**root_node,
-					 PCompareDataFunc	compare_func,
-					 ppointer		data,
-					 PDestroyFunc		key_destroy_func,
-					 PDestroyFunc		value_destroy_func,
-					 pconstpointer		key);
+/**
+ * @brief Gets an IO error code from the last call result.
+ * @return IO error code.
+ */
+PErrorIO	p_error_get_last_io		(void);
 
-void		p_tree_avl_node_free	(PTreeBaseNode	*node);
+/**
+ * @brief Gets an IPC error code from a system error code
+ * @param err_code System error code.
+ * @return IPC error code.
+ */
+PErrorIPC	p_error_get_ipc_from_system	(pint	err_code);
+
+/**
+ * @brief Gets an IPC error code from the last call result.
+ * @return IPC error code.
+ */
+PErrorIPC	p_error_get_last_ipc		(void);
+
+/**
+ * @brief Gets the last native error code.
+ * @return Last native error code.
+ */
+pint		p_error_get_last_error		(void);
 
 P_END_DECLS
 
-#endif /* PLIBSYS_HEADER_PTREEAVL_H */
+#endif /* PLIBSYS_HEADER_PERROR_PRIVATE_H */

@@ -18,7 +18,7 @@
 #include "pmem.h"
 #include "perror.h"
 #include "pstring.h"
-#include "plibsys-private.h"
+#include "perror-private.h"
 
 #ifndef P_OS_WIN
 #  include <errno.h>

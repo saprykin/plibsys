@@ -24,7 +24,7 @@
 
 #include "pmacros.h"
 #include "ptypes.h"
-#include "plibsys-private.h"
+#include "ptree-private.h"
 
 P_BEGIN_DECLS
 
