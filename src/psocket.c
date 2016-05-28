@@ -1047,7 +1047,7 @@ p_socket_receive (const PSocket	*socket,
 						error) == FALSE)
 			return -1;
 
-		if ((ret = recv (socket->fd, buffer, buflen, 0)) < 0) {
+		if ((ret = recv (socket->fd, buffer, (socklen_t) buflen, 0)) < 0) {
 			err_code = pp_socket_get_errno ();
 
 #if !defined (P_OS_WIN) && defined (EINTR)
@@ -1108,7 +1108,7 @@ p_socket_receive_from (const PSocket	*socket,
 
 		if ((ret = recvfrom (socket->fd,
 				     buffer,
-				     buflen,
+				     (socklen_t) buflen,
 				     0,
 				     (struct sockaddr *) &sa,
 				     &optlen)) < 0) {
@@ -1170,7 +1170,7 @@ p_socket_send (const PSocket	*socket,
 
 		if ((ret = send (socket->fd,
 				 buffer,
-				 buflen,
+				 (socklen_t) buflen,
 				 P_SOCKET_DEFAULT_SEND_FLAGS)) < 0) {
 			err_code = pp_socket_get_errno ();
 
@@ -1238,7 +1238,7 @@ p_socket_send_to (const PSocket		*socket,
 
 		if ((ret = sendto (socket->fd,
 				   buffer,
-				   buflen,
+				   (socklen_t) buflen,
 				   0,
 				   (struct sockaddr *) &sa,
 				   optlen)) < 0) {
