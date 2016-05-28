@@ -280,7 +280,7 @@ p_dir_get_next_entry (PDir	*dir,
 	ret->name = p_strdup (dirent_st.d_name);
 #endif
 
-	path_len = (psize) strlen (dir->path);
+	path_len = strlen (dir->path);
 
 	if (P_UNLIKELY ((entry_path = p_malloc0 (path_len + strlen (ret->name) + 2)) == NULL)) {
 		P_WARNING ("PDir: failed to allocate memory for stat()");
