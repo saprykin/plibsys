@@ -54,9 +54,9 @@ p_strchomp (const pchar *str)
 	if (P_UNLIKELY (str == NULL))
 		return NULL;
 
-	ptr = str;
+	ptr       = str;
 	pos_start = 0;
-	pos_end = ((pssize) strlen (str)) - 1;
+	pos_end   = ((pssize) strlen (str)) - 1;
 
 	while (pos_start < pos_end && isspace (* ((const puchar *) ptr++)))
 		++pos_start;
@@ -153,8 +153,8 @@ p_strtod (const pchar *str)
 	}
 
 	/* Handle exponent, if any */
-	frac	= 0;
-	scale	= 1.0;
+	frac  = 0;
+	scale = 1.0;
 
 	if ((*strp == 'e') || (*strp == 'E')) {
 		/* Get sign of exponent, if any */
