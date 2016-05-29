@@ -27,41 +27,35 @@
 #endif
 
 struct PTimeProfiler_ {
-	puint64		counter;
-	pboolean	hasMonotonicClock;
+	puint64 counter;
 };
 
-static puint64 pp_time_profiler_current_ticks (const PTimeProfiler *profiler);
-static puint64 pp_time_profiler_current_tick_gtod ();
+typedef puint64 (* PPOSIXTicksFunc) (void);
+
+static PPOSIXTicksFunc pp_time_profiler_ticks_func = NULL;
+
+static puint64 pp_time_profiler_get_ticks_clock ();
+static puint64 pp_time_profiler_get_ticks_gtod ();
 
 static puint64
-pp_time_profiler_current_ticks (const PTimeProfiler *profiler)
+pp_time_profiler_get_ticks_clock ()
 {
-#if _POSIX_MONOTONIC_CLOCK >= 0
 	struct timespec	ts;
-#endif
 
-#if _POSIX_MONOTONIC_CLOCK >= 0
-	if (P_LIKELY (profiler->hasMonotonicClock == TRUE)) {
-		if (P_UNLIKELY (clock_gettime (CLOCK_MONOTONIC, &ts) != 0)) {
-			P_ERROR ("PTimeProfiler: Failed to get time using clock_gettime()");
-			return pp_time_profiler_current_tick_gtod ();
-		} else
-			return (puint64) (ts.tv_sec * 1000000 + ts.tv_nsec / 1000);
+	if (P_UNLIKELY (clock_gettime (CLOCK_MONOTONIC, &ts) != 0)) {
+		P_ERROR ("PTimeProfiler: failed to get time using clock_gettime()");
+		return pp_time_profiler_get_ticks_gtod ();
 	} else
-		return pp_time_profiler_current_tick_gtod ();
-#else
-	return pp_time_profiler_current_tick_gtod ();
-#endif
+		return (puint64) (ts.tv_sec * 1000000 + ts.tv_nsec / 1000);
 }
 
 static puint64
-pp_time_profiler_current_tick_gtod ()
+pp_time_profiler_get_ticks_gtod ()
 {
 	struct timeval tv;
 
 	if (P_UNLIKELY (gettimeofday (&tv, NULL) != 0)) {
-		P_ERROR ("PTimeProfiler: Failed to get time using gettimeofday()");
+		P_ERROR ("PTimeProfiler: failed to get time using gettimeofday()");
 		return 0;
 	}
 
@@ -71,23 +65,19 @@ pp_time_profiler_current_tick_gtod ()
 P_LIB_API PTimeProfiler *
 p_time_profiler_new ()
 {
-	PTimeProfiler	*ret;
+	PTimeProfiler *ret;
 
-	if (P_UNLIKELY ((ret = p_malloc0 (sizeof (PTimeProfiler))) == NULL))
+	if (P_UNLIKELY (pp_time_profiler_ticks_func == NULL)) {
+		P_ERROR ("PTimeProfiler: tick counter is not properly initialized");
 		return NULL;
+	}
 
-#if _POSIX_MONOTONIC_CLOCK == 0
-	if (P_LIKELY (sysconf (_SC_MONOTONIC_CLOCK) > 0))
-		ret->hasMonotonicClock = TRUE;
-	else
-		ret->hasMonotonicClock = FALSE;
-#elif _POSIX_MONOTONIC_CLOCK > 0
-	ret->hasMonotonicClock = TRUE;
-#else
-	ret->hasMonotonicClock = FALSE;
-#endif
+	if (P_UNLIKELY ((ret = p_malloc0 (sizeof (PTimeProfiler))) == NULL)) {
+		P_ERROR ("PTimeProfiler: failed to allocate memory");
+		return NULL;
+	}
 
-	ret->counter = pp_time_profiler_current_ticks (ret);
+	ret->counter = pp_time_profiler_ticks_func ();
 
 	return ret;
 }
@@ -98,7 +88,7 @@ p_time_profiler_reset (PTimeProfiler *profiler)
 	if (P_UNLIKELY (profiler == NULL))
 		return;
 
-	profiler->counter = pp_time_profiler_current_ticks (profiler);
+	profiler->counter = pp_time_profiler_ticks_func ();
 }
 
 P_LIB_API puint64
@@ -107,24 +97,32 @@ p_time_profiler_elapsed_usecs (const PTimeProfiler *profiler)
 	if (P_UNLIKELY (profiler == NULL))
 		return 0;
 
-	return pp_time_profiler_current_ticks (profiler) - profiler->counter;
+	return pp_time_profiler_ticks_func () - profiler->counter;
 }
 
 P_LIB_API void
 p_time_profiler_free (PTimeProfiler *profiler)
 {
-	if (P_UNLIKELY (profiler == NULL))
-		return;
-
 	p_free (profiler);
 }
 
 void
 p_time_profiler_init (void)
 {
+#if (_POSIX_MONOTONIC_CLOCK == 0) && defined (_SC_MONOTONIC_CLOCK)
+	if (P_LIKELY (sysconf (_SC_MONOTONIC_CLOCK) > 0))
+		pp_time_profiler_ticks_func = (PPOSIXTicksFunc) pp_time_profiler_get_ticks_clock;
+	else
+		pp_time_profiler_ticks_func = (PPOSIXTicksFunc) pp_time_profiler_get_ticks_gtod;
+#elif _POSIX_MONOTONIC_CLOCK > 0
+	pp_time_profiler_ticks_func = (PPOSIXTicksFunc) pp_time_profiler_get_ticks_clock;
+#else
+	pp_time_profiler_ticks_func = (PPOSIXTicksFunc) pp_time_profiler_get_ticks_gtod;
+#endif
 }
 
 void
 p_time_profiler_shutdown (void)
 {
+	pp_time_profiler_ticks_func = NULL;
 }
