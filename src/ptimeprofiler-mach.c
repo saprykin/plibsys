@@ -21,34 +21,42 @@
 #include <mach/mach_time.h>
 
 struct PTimeProfiler_ {
-	puint64	counter;
-	double	mach_timebase;
+	puint64 counter;
 };
 
-static puint64 pp_time_profiler_current_ticks (const PTimeProfiler *profiler);
+static puint64 pp_time_profiler_freq_num   = 0;
+static puint64 pp_time_profiler_freq_denom = 0;
+
+static puint64 pp_time_profiler_current_ticks ();
 
 static puint64
-pp_time_profiler_current_ticks (const PTimeProfiler *profiler)
+pp_time_profiler_current_ticks ()
 {
-	return (puint64) (mach_absolute_time () * profiler->mach_timebase);
+	puint64 val = mach_absolute_time ();
+
+	val /= 1000;
+	val *= pp_time_profiler_freq_num;
+	val /= pp_time_profiler_freq_denom;
+
+	return val;
 }
 
 P_LIB_API PTimeProfiler *
 p_time_profiler_new ()
 {
-	PTimeProfiler			*ret;
-	mach_timebase_info_data_t	tb;
+	PTimeProfiler *ret;
 
-	if (P_UNLIKELY ((ret = p_malloc0 (sizeof (PTimeProfiler))) == NULL))
+	if (P_UNLIKELY (pp_time_profiler_freq_denom == 0)) {
+		P_ERROR ("PTimeProfiler: tick counter is not properly initialized");
 		return NULL;
+	}
 
-	if (P_UNLIKELY (mach_timebase_info (&tb) != KERN_SUCCESS || tb.denom == 0)) {
-		P_ERROR ("PTimeProfiler: Failed to get clock frequency using mach_timebase_info()");
-		ret->mach_timebase = 0.0;
-	} else
-		ret->mach_timebase = (double) tb.numer / (double) tb.denom / 1000.0;
+	if (P_UNLIKELY ((ret = p_malloc0 (sizeof (PTimeProfiler))) == NULL)) {
+		P_ERROR ("PTimeProfiler: failed to allocate memory");
+		return NULL;
+	}
 
-	ret->counter = pp_time_profiler_current_ticks (ret);
+	ret->counter = pp_time_profiler_current_ticks ();
 
 	return ret;
 }
@@ -59,7 +67,7 @@ p_time_profiler_reset (PTimeProfiler *profiler)
 	if (P_UNLIKELY (profiler == NULL))
 		return;
 
-	profiler->counter = pp_time_profiler_current_ticks (profiler);
+	profiler->counter = pp_time_profiler_current_ticks ();
 }
 
 P_LIB_API puint64
@@ -68,24 +76,32 @@ p_time_profiler_elapsed_usecs (const PTimeProfiler *profiler)
 	if (P_UNLIKELY (profiler == NULL))
 		return 0;
 
-	return pp_time_profiler_current_ticks (profiler) - profiler->counter;
+	return pp_time_profiler_current_ticks () - profiler->counter;
 }
 
 P_LIB_API void
 p_time_profiler_free (PTimeProfiler *profiler)
 {
-	if (P_UNLIKELY (profiler == NULL))
-		return;
-
 	p_free (profiler);
 }
 
 void
 p_time_profiler_init (void)
 {
+	mach_timebase_info_data_t tb;
+
+	if (P_UNLIKELY (mach_timebase_info (&tb) != KERN_SUCCESS || tb.denom == 0)) {
+		P_ERROR ("PTimeProfiler: failed to get clock frequency using mach_timebase_info()");
+		return;
+	}
+
+	pp_time_profiler_freq_num   = (puint64) tb.numer;
+	pp_time_profiler_freq_denom = (puint64) tb.denom;
 }
 
 void
 p_time_profiler_shutdown (void)
 {
+	pp_time_profiler_freq_num   = 0;
+	pp_time_profiler_freq_denom = 0;
 }
