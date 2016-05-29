@@ -15,8 +15,8 @@
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "pmem.h"
 #include "ptimeprofiler.h"
+#include "ptimeprofiler-private.h"
 
 #include <unistd.h>
 #include <time.h>
@@ -25,10 +25,6 @@
 #ifndef _POSIX_MONOTONIC_CLOCK
 #  define _POSIX_MONOTONIC_CLOCK (-1)
 #endif
-
-struct PTimeProfiler_ {
-	puint64 counter;
-};
 
 typedef puint64 (* PPOSIXTicksFunc) (void);
 
@@ -62,48 +58,16 @@ pp_time_profiler_get_ticks_gtod ()
 	return (puint64) (tv.tv_sec * 1000000 + tv.tv_usec);
 }
 
-P_LIB_API PTimeProfiler *
-p_time_profiler_new ()
+puint64
+p_time_profiler_get_ticks_internal ()
 {
-	PTimeProfiler *ret;
-
-	if (P_UNLIKELY (pp_time_profiler_ticks_func == NULL)) {
-		P_ERROR ("PTimeProfiler: tick counter is not properly initialized");
-		return NULL;
-	}
-
-	if (P_UNLIKELY ((ret = p_malloc0 (sizeof (PTimeProfiler))) == NULL)) {
-		P_ERROR ("PTimeProfiler: failed to allocate memory");
-		return NULL;
-	}
-
-	ret->counter = pp_time_profiler_ticks_func ();
-
-	return ret;
+	return pp_time_profiler_ticks_func ();
 }
 
-P_LIB_API void
-p_time_profiler_reset (PTimeProfiler *profiler)
+puint64
+p_time_profiler_elapsed_usecs_internal (const PTimeProfiler *profiler)
 {
-	if (P_UNLIKELY (profiler == NULL))
-		return;
-
-	profiler->counter = pp_time_profiler_ticks_func ();
-}
-
-P_LIB_API puint64
-p_time_profiler_elapsed_usecs (const PTimeProfiler *profiler)
-{
-	if (P_UNLIKELY (profiler == NULL))
-		return 0;
-
 	return pp_time_profiler_ticks_func () - profiler->counter;
-}
-
-P_LIB_API void
-p_time_profiler_free (PTimeProfiler *profiler)
-{
-	p_free (profiler);
 }
 
 void

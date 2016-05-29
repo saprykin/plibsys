@@ -95,6 +95,7 @@ set (PLIBSYS_PRIVATE_HDRS
 	perror-private.h
 	pipc-private.h
 	plibsys-private.h
+	ptimeprofiler-private.h
 	ptree-avl.h
 	ptree-bst.h
 	ptree-rb.h
@@ -123,6 +124,7 @@ set (PLIBSYS_SRCS
 	psocket.c
 	psocketaddress.c
 	pstring.c
+	ptimeprofiler.c
 	ptree.c
 	ptree-avl.c
 	ptree-bst.c

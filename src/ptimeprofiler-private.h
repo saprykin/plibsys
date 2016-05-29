@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2016 Alexander Saprykin <xelfium@gmail.com>
+ * Copyright (C) 2016 Alexander Saprykin <xelfium@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,36 +15,23 @@
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "ptimeprofiler.h"
-#include "ptimeprofiler-private.h"
+#if !defined (PLIBSYS_H_INSIDE) && !defined (PLIBSYS_COMPILATION)
+#  error "Header files shouldn't be included directly, consider using <plibsys.h> instead."
+#endif
 
-#include <time.h>
+#ifndef PLIBSYS_HEADER_PTIMEPROFILER_PRIVATE_H
+#define PLIBSYS_HEADER_PTIMEPROFILER_PRIVATE_H
 
-puint64
-p_time_profiler_get_ticks_internal ()
-{
-	pint64 val;
+#include "pmacros.h"
+#include "ptypes.h"
 
-	if (P_UNLIKELY ((val = (pint64) time (NULL)) == -1)) {
-		P_ERROR ("PTimeProfiler: failed to get time using time()");
-		return 0;
-	}
+P_BEGIN_DECLS
 
-	return (puint64) (val * 1000000);
-}
+/** Time profiler opaque data structure. */
+struct PTimeProfiler_ {
+	puint64 counter; /**< Ticks counter. */
+};
 
-puint64
-p_time_profiler_elapsed_usecs_internal (const PTimeProfiler *profiler)
-{
-	return p_time_profiler_get_ticks_internal () - profiler->counter;
-}
+P_END_DECLS
 
-void
-p_time_profiler_init (void)
-{
-}
-
-void
-p_time_profiler_shutdown (void)
-{
-}
+#endif /* PLIBSYS_HEADER_PTIMEPROFILER_PRIVATE_H */

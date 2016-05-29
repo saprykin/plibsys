@@ -15,54 +15,23 @@
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "pmem.h"
 #include "ptimeprofiler.h"
+#include "ptimeprofiler-private.h"
 
 #include <unistd.h>
 #include <time.h>
 #include <sys/time.h>
 
-struct PTimeProfiler_ {
-	puint64	counter;
-};
-
-P_LIB_API PTimeProfiler *
-p_time_profiler_new ()
+puint64
+p_time_profiler_get_ticks_internal ()
 {
-	PTimeProfiler *ret;
-
-	if (P_UNLIKELY ((ret = p_malloc0 (sizeof (PTimeProfiler))) == NULL)) {
-		P_ERROR ("PTimeProfiler: failed to allocate memory");
-		return NULL;
-	}
-
-	ret->counter = (puint64) gethrtime ();
-
-	return ret;
+	return (puint64) gethrtime ();
 }
 
-P_LIB_API void
-p_time_profiler_reset (PTimeProfiler *profiler)
+puint64
+p_time_profiler_elapsed_usecs_internal (const PTimeProfiler *profiler)
 {
-	if (P_UNLIKELY (profiler == NULL))
-		return;
-
-	profiler->counter = (puint64) gethrtime ();
-}
-
-P_LIB_API puint64
-p_time_profiler_elapsed_usecs (const PTimeProfiler *profiler)
-{
-	if (P_UNLIKELY (profiler == NULL))
-		return 0;
-
 	return (((puint64) gethrtime ()) - profiler->counter) / 1000;
-}
-
-P_LIB_API void
-p_time_profiler_free (PTimeProfiler *profiler)
-{
-	p_free (profiler);
 }
 
 void

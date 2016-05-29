@@ -15,74 +15,32 @@
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "pmem.h"
 #include "ptimeprofiler.h"
+#include "ptimeprofiler-private.h"
 
 #include <mach/mach_time.h>
-
-struct PTimeProfiler_ {
-	puint64 counter;
-};
 
 static puint64 pp_time_profiler_freq_num   = 0;
 static puint64 pp_time_profiler_freq_denom = 0;
 
-static puint64 pp_time_profiler_current_ticks ();
-
-static puint64
-pp_time_profiler_current_ticks ()
+puint64
+p_time_profiler_get_ticks_internal ()
 {
 	puint64 val = mach_absolute_time ();
 
+	/* To prevent overflow */
 	val /= 1000;
+
 	val *= pp_time_profiler_freq_num;
 	val /= pp_time_profiler_freq_denom;
 
 	return val;
 }
 
-P_LIB_API PTimeProfiler *
-p_time_profiler_new ()
+puint64
+p_time_profiler_elapsed_usecs_internal (const PTimeProfiler *profiler)
 {
-	PTimeProfiler *ret;
-
-	if (P_UNLIKELY (pp_time_profiler_freq_denom == 0)) {
-		P_ERROR ("PTimeProfiler: tick counter is not properly initialized");
-		return NULL;
-	}
-
-	if (P_UNLIKELY ((ret = p_malloc0 (sizeof (PTimeProfiler))) == NULL)) {
-		P_ERROR ("PTimeProfiler: failed to allocate memory");
-		return NULL;
-	}
-
-	ret->counter = pp_time_profiler_current_ticks ();
-
-	return ret;
-}
-
-P_LIB_API void
-p_time_profiler_reset (PTimeProfiler *profiler)
-{
-	if (P_UNLIKELY (profiler == NULL))
-		return;
-
-	profiler->counter = pp_time_profiler_current_ticks ();
-}
-
-P_LIB_API puint64
-p_time_profiler_elapsed_usecs (const PTimeProfiler *profiler)
-{
-	if (P_UNLIKELY (profiler == NULL))
-		return 0;
-
-	return pp_time_profiler_current_ticks () - profiler->counter;
-}
-
-P_LIB_API void
-p_time_profiler_free (PTimeProfiler *profiler)
-{
-	p_free (profiler);
+	return p_time_profiler_get_ticks_internal () - profiler->counter;
 }
 
 void
