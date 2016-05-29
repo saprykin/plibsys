@@ -21,8 +21,8 @@
 #include <mach/mach_time.h>
 
 struct PTimeProfiler_ {
-	puint64		counter;
-	double		mach_timebase;
+	puint64	counter;
+	double	mach_timebase;
 };
 
 static puint64 pp_time_profiler_current_ticks (const PTimeProfiler *profiler);
@@ -78,4 +78,14 @@ p_time_profiler_free (PTimeProfiler *profiler)
 		return;
 
 	p_free (profiler);
+}
+
+void
+p_time_profiler_init (void)
+{
+}
+
+void
+p_time_profiler_shutdown (void)
+{
 }

@@ -118,3 +118,13 @@ p_time_profiler_free (PTimeProfiler *profiler)
 
 	p_free (profiler);
 }
+
+void
+p_time_profiler_init (void)
+{
+}
+
+void
+p_time_profiler_shutdown (void)
+{
+}

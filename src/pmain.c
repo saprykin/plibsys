@@ -26,6 +26,8 @@ extern void p_socket_init_once		(void);
 extern void p_socket_close_once		(void);
 extern void p_uthread_init		(void);
 extern void p_uthread_shutdown		(void);
+extern void p_time_profiler_init	(void);
+extern void p_time_profiler_shutdown	(void);
 
 static pboolean pp_plibsys_inited = FALSE;
 
@@ -41,6 +43,7 @@ p_libsys_init (void)
 	p_atomic_thread_init ();
 	p_socket_init_once ();
 	p_uthread_init ();
+	p_time_profiler_init ();
 }
 
 P_LIB_API void
@@ -58,6 +61,7 @@ p_libsys_shutdown (void)
 
 	pp_plibsys_inited = FALSE;
 
+	p_time_profiler_shutdown ();
 	p_uthread_shutdown ();
 	p_socket_close_once ();
 	p_atomic_thread_shutdown ();

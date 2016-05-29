@@ -29,10 +29,12 @@ struct PTimeProfiler_ {
 P_LIB_API PTimeProfiler *
 p_time_profiler_new ()
 {
-	PTimeProfiler	*ret;
+	PTimeProfiler *ret;
 
-	if (P_UNLIKELY ((ret = p_malloc0 (sizeof (PTimeProfiler))) == NULL))
+	if (P_UNLIKELY ((ret = p_malloc0 (sizeof (PTimeProfiler))) == NULL)) {
+		P_ERROR ("PTimeProfiler: failed to allocate memory");
 		return NULL;
+	}
 
 	ret->counter = (puint64) gethrtime ();
 
@@ -60,8 +62,15 @@ p_time_profiler_elapsed_usecs (const PTimeProfiler *profiler)
 P_LIB_API void
 p_time_profiler_free (PTimeProfiler *profiler)
 {
-	if (P_UNLIKELY (profiler == NULL))
-		return;
-
 	p_free (profiler);
+}
+
+void
+p_time_profiler_init (void)
+{
+}
+
+void
+p_time_profiler_shutdown (void)
+{
 }

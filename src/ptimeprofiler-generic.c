@@ -21,7 +21,7 @@
 #include <time.h>
 
 struct PTimeProfiler_ {
-	puint64		counter;
+	puint64	counter;
 };
 
 static puint64 pp_time_profiler_current_ticks (const PTimeProfiler *profiler);
@@ -77,4 +77,14 @@ p_time_profiler_free (PTimeProfiler *profiler)
 		return;
 
 	p_free (profiler);
+}
+
+void
+p_time_profiler_init (void)
+{
+}
+
+void
+p_time_profiler_shutdown (void)
+{
 }

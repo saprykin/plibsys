@@ -164,15 +164,6 @@ if ((PLIBSYS_TARGET_OS STREQUAL windows) AND NOT (PLIBSYS_TARGET_OS STREQUAL cyg
 	check_c_source_compiles (
 				 "#include <windows.h>
 				 int main () {
-					(void) GetTickCount64 ();
-					return 0;
-				 }"
-				 PLIBSYS_HAS_GETTICKCOUNT_64
-	)
-
-	check_c_source_compiles (
-				 "#include <windows.h>
-				 int main () {
 					CONDITION_VARIABLE cv;
 					InitializeConditionVariable (&cv);
 					return 0;
@@ -180,15 +171,11 @@ if ((PLIBSYS_TARGET_OS STREQUAL windows) AND NOT (PLIBSYS_TARGET_OS STREQUAL cyg
 				 PLIBSYS_HAS_VISTA_CV
 	)
 
-	if (PLIBSYS_HAS_GETTICKCOUNT_64)
-		add_definitions (-DPLIBSYS_HAS_GETTICKCOUNT_64)
-	endif()
-
 	if (PLIBSYS_HAS_VISTA_CV)
 		add_definitions (-DPLIBSYS_HAS_VISTA_CV)
 	endif()
 
-	if (PLIBSYS_HAS_VISTA_CV OR PLIBSYS_HAS_GETTICKCOUNT_64)
+	if (PLIBSYS_HAS_VISTA_CV)
 		add_definitions (-D_WIN32_WINNT=0x0600)
 		add_definitions (-DNTDDI_VERSION=0x06000000)
 	else()
