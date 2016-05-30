@@ -82,7 +82,7 @@ BOOST_AUTO_TEST_CASE (ptimeprofiler_general_test)
 	profiler = p_time_profiler_new ();
 	BOOST_REQUIRE (profiler != NULL);
 
-	p_uthread_sleep (10);
+	p_uthread_sleep (50);
 	prev_val = p_time_profiler_elapsed_usecs (profiler);
 	BOOST_CHECK (prev_val > 0);
 
