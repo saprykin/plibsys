@@ -52,7 +52,9 @@ p_libsys_init (void)
 P_LIB_API void
 p_libsys_init_full (const PMemVTable *vtable)
 {
-	p_mem_set_vtable (vtable);
+	if (p_mem_set_vtable (vtable) == FALSE)
+		P_ERROR ("INIT: Failed to initialize memory table");
+
 	p_libsys_init ();
 }
 
