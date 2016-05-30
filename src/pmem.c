@@ -21,9 +21,7 @@
 #include "pmem.h"
 #include "perror-private.h"
 
-#ifdef P_OS_WIN
-#  include <windows.h>
-#else
+#ifndef P_OS_WIN
 #  include <unistd.h>
 #  include <sys/types.h>
 #  include <sys/mman.h>

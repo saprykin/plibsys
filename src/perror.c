@@ -22,8 +22,6 @@
 
 #ifndef P_OS_WIN
 #  include <errno.h>
-#else
-#  include <windows.h>
 #endif
 
 struct PError_ {

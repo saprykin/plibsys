@@ -8,22 +8,26 @@
 #cmakedefine PLIBSYS_IS_BIGENDIAN
 
 #ifdef PLIBSYS_NEED_WINDOWS_H
-#include <winsock2.h>
-#include <windows.h>
+#  ifndef _WIN32_WINNT
+#    define _WIN32_WINNT 0x501
+#  endif
+#  include <winsock2.h>
+#  include <ws2tcpip.h>
+#  include <windows.h>
 #endif
 
 #include <pmacros.h>
 
 #ifdef PLIBSYS_NEED_FLOAT_H
-#include <float.h>
+#  include <float.h>
 #endif
 
 #ifdef PLIBSYS_NEED_LIMITS_H
-#include <limits.h>
+#  include <limits.h>
 #endif
 
 #ifdef PLIBSYS_NEED_VALUES_H
-#include <values.h>
+#  include <values.h>
 #endif
 
 P_BEGIN_DECLS
@@ -47,9 +51,9 @@ P_BEGIN_DECLS
 #define PLIBSYS_SIZEOF_LONG @PLIBSYS_SIZEOF_LONG@
 
 #ifdef PLIBSYS_IS_BIGENDIAN
-#define P_BYTE_ORDER P_BIG_ENDIAN
+#  define P_BYTE_ORDER P_BIG_ENDIAN
 #else
-#define P_BYTE_ORDER P_LITTLE_ENDIAN
+#  define P_BYTE_ORDER P_LITTLE_ENDIAN
 #endif
 
 P_END_DECLS

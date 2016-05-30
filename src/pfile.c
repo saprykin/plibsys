@@ -18,10 +18,8 @@
 #include "pfile.h"
 #include "perror-private.h"
 
-#ifdef P_OS_WIN
-#include <windows.h>
-#else
-#include <unistd.h>
+#ifndef P_OS_WIN
+#  include <unistd.h>
 #endif
 
 P_LIB_API pboolean

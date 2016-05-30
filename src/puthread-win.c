@@ -25,7 +25,6 @@
 #include <time.h>
 #include <string.h>
 
-#include <windows.h>
 #include <process.h>
 
 typedef HANDLE puthread_hdl;

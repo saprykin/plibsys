@@ -53,11 +53,7 @@
 #include <pmacros.h>
 #include <ptypes.h>
 
-#ifdef P_OS_WIN
-#  include <winsock2.h>
-#  include <ws2tcpip.h>
-#  include <windows.h>
-#else
+#ifndef P_OS_WIN
 #  include <sys/types.h>
 #  include <sys/socket.h>
 #  include <netinet/in.h>

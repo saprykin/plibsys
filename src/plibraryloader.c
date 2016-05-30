@@ -21,9 +21,7 @@
 #include "pstring.h"
 #include "perror-private.h"
 
-#ifdef P_OS_WIN
-#  include <windows.h>
-#else
+#ifndef P_OS_WIN
 #  include <dlfcn.h>
 #endif
 

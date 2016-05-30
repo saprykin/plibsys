@@ -23,8 +23,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <windows.h>
-
 struct PDir_ {
 	WIN32_FIND_DATAA	find_data;
 	HANDLE			search_handle;

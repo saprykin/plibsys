@@ -26,8 +26,6 @@
 
 #include <stdlib.h>
 
-#include <windows.h>
-
 typedef void (WINAPI * InitializeConditionVariableFunc) (ppointer cv);
 typedef BOOL (WINAPI * SleepConditionVariableCSFunc) (ppointer cv, PCRITICAL_SECTION cs, DWORD ms);
 typedef void (WINAPI * WakeConditionVariableFunc) (ppointer cv);

@@ -23,8 +23,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <windows.h>
-
 #define P_SEM_SUFFIX		"_p_sem_object"
 #define P_SEM_INVALID_HDL	NULL
 

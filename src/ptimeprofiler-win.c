@@ -20,8 +20,6 @@
 
 #include <time.h>
 
-#include <windows.h>
-
 typedef puint64 (WINAPI * PWin32TicksFunc) (void);
 typedef puint64 (WINAPI * PWin32ElapsedFunc) (puint64 last_counter);
 

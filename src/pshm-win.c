@@ -24,8 +24,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <windows.h>
-
 #define P_SHM_INVALID_HDL	NULL
 #define P_SHM_SUFFIX		"_p_shm_object"
 

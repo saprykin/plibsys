@@ -17,9 +17,7 @@
 
 #include "pprocess.h"
 
-#ifdef P_OS_WIN
-#  include <windows.h>
-#else
+#ifndef P_OS_WIN
 #  include <sys/types.h>
 #  include <signal.h>
 #  include <unistd.h>

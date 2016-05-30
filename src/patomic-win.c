@@ -18,8 +18,6 @@
 
 #include "patomic.h"
 
-#include <windows.h>
-
 /* Prepare MemoryBarrier() */
 #if defined (P_CC_WATCOM) || defined (P_CC_BORLAND)
 #  if defined (_M_X64) || defined (_M_AMD64)

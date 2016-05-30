@@ -20,8 +20,6 @@
 
 #include <stdlib.h>
 
-#include <windows.h>
-
 typedef CRITICAL_SECTION mutex_hdl;
 
 struct PMutex_ {

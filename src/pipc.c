@@ -30,8 +30,6 @@
 #  include <sys/stat.h>
 #  include <sys/types.h>
 #  include <sys/ipc.h>
-#else
-#  include <windows.h>
 #endif
 
 #ifndef P_OS_WIN

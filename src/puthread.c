@@ -218,9 +218,7 @@ p_uthread_unref (PUThread *thread)
 	}
 }
 
-#ifdef P_OS_WIN
-#  include <windows.h>
-#else
+#ifndef P_OS_WIN
 #  include <errno.h>
 #  if !defined (PLIBSYS_HAS_NANOSLEEP)
 #    include <sys/select.h>
