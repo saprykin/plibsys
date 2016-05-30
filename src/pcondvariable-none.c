@@ -58,3 +58,13 @@ p_cond_variable_broadcast (PCondVariable *cond)
 	P_UNUSED (cond);
 	return FALSE;
 }
+
+void
+p_cond_variable_init (void)
+{
+}
+
+void
+p_cond_variable_shutdown (void)
+{
+}

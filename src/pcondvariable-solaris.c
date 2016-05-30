@@ -102,3 +102,13 @@ p_cond_variable_broadcast (PCondVariable *cond)
 
 	return TRUE;
 }
+
+void
+p_cond_variable_init (void)
+{
+}
+
+void
+p_cond_variable_shutdown (void)
+{
+}

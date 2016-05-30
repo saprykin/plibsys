@@ -28,14 +28,174 @@
 
 #include <windows.h>
 
+typedef void (WINAPI * InitializeConditionVariableFunc) (ppointer cv);
+typedef BOOL (WINAPI * SleepConditionVariableCSFunc) (ppointer cv, PCRITICAL_SECTION cs, DWORD ms);
+typedef void (WINAPI * WakeConditionVariableFunc) (ppointer cv);
+typedef void (WINAPI * WakeAllConditionVariableFunc) (ppointer cv);
+
+typedef pboolean (* PWin32CondInit) (PCondVariable *cond);
+typedef void (* PWin32CondClose) (PCondVariable *cond);
+typedef pboolean (* PWin32CondWait) (PCondVariable *cond, PMutex *mutex);
+typedef pboolean (* PWin32CondSignal) (PCondVariable *cond);
+typedef pboolean (* PWin32CondBrdcast) (PCondVariable *cond);
+
+static PWin32CondInit    pp_cond_variable_init_func    = NULL;
+static PWin32CondClose   pp_cond_variable_close_func   = NULL;
+static PWin32CondWait    pp_cond_variable_wait_func    = NULL;
+static PWin32CondSignal  pp_cond_variable_signal_func  = NULL;
+static PWin32CondBrdcast pp_cond_variable_brdcast_func = NULL;
+
+typedef struct PCondVariableVistaTable_ {
+	InitializeConditionVariableFunc	cv_init;
+	SleepConditionVariableCSFunc	cv_wait;
+	WakeConditionVariableFunc	cv_wake;
+	WakeAllConditionVariableFunc	cv_brdcast;
+} PCondVariableVistaTable;
+
+typedef struct PCondVariableXP_ {
+	HANDLE	waiters_sema;
+	pint	waiters_count;
+} PCondVariableXP;
+
 struct PCondVariable_ {
-#ifdef PLIBSYS_HAS_VISTA_CV
-	CONDITION_VARIABLE	cv;
-#else
-	HANDLE			waiters_sema;
-	pint			waiters_count;
-#endif
+	ppointer cv;
 };
+
+static PCondVariableVistaTable pp_cond_variable_vista_table = {NULL, NULL, NULL, NULL};
+
+/* CONDITION_VARIABLE routines */
+static pboolean pp_cond_variable_init_vista (PCondVariable *cond);
+static void pp_cond_variable_close_vista (PCondVariable *cond);
+static pboolean pp_cond_variable_wait_vista (PCondVariable *cond, PMutex *mutex);
+static pboolean pp_cond_variable_signal_vista (PCondVariable *cond);
+static pboolean pp_cond_variable_broadcast_vista (PCondVariable *cond);
+
+/* Windows XP emulation routines */
+static pboolean pp_cond_variable_init_xp (PCondVariable *cond);
+static void pp_cond_variable_close_xp (PCondVariable *cond);
+static pboolean pp_cond_variable_wait_xp (PCondVariable *cond, PMutex *mutex);
+static pboolean pp_cond_variable_signal_xp (PCondVariable *cond);
+static pboolean pp_cond_variable_broadcast_xp (PCondVariable *cond);
+
+/* CONDITION_VARIABLE routines */
+
+static pboolean
+pp_cond_variable_init_vista (PCondVariable *cond)
+{
+	cond->cv = NULL;
+	pp_cond_variable_vista_table.cv_init (cond);
+	return TRUE;
+}
+
+static void
+pp_cond_variable_close_vista (PCondVariable *cond)
+{
+	P_UNUSED (cond);
+}
+
+static pboolean
+pp_cond_variable_wait_vista (PCondVariable *cond, PMutex *mutex)
+{
+	return pp_cond_variable_vista_table.cv_wait (cond,
+						     (PCRITICAL_SECTION) mutex,
+						     INFINITE) != 0 ? TRUE : FALSE;
+}
+
+static pboolean
+pp_cond_variable_signal_vista (PCondVariable *cond)
+{
+	pp_cond_variable_vista_table.cv_wake (cond);
+	return TRUE;
+}
+
+static pboolean
+pp_cond_variable_broadcast_vista (PCondVariable *cond)
+{
+
+	pp_cond_variable_vista_table.cv_brdcast (cond);
+	return TRUE;
+}
+
+/* Windows XP emulation routines */
+
+static pboolean
+pp_cond_variable_init_xp (PCondVariable *cond)
+{
+	PCondVariableXP *cv_xp;
+
+	if ((cond->cv = p_malloc0 (sizeof (PCondVariableXP))) == NULL) {
+		P_ERROR ("PCondVariable: failed to allocate memory");
+		return FALSE;
+	}
+
+	cv_xp = ((PCondVariableXP *) cond->cv);
+
+	cv_xp->waiters_count = 0;
+	cv_xp->waiters_sema  = CreateSemaphoreA (NULL, 0, MAXLONG, NULL);
+
+	if (P_UNLIKELY (cv_xp->waiters_sema == NULL)) {
+		P_ERROR ("PCondVariable: failed to initialize semaphore");
+		return FALSE;
+	}
+
+	return TRUE;
+}
+
+static void
+pp_cond_variable_close_xp (PCondVariable *cond)
+{
+	CloseHandle (((PCondVariableXP *) cond->cv)->waiters_sema);
+}
+
+static pboolean
+pp_cond_variable_wait_xp (PCondVariable *cond, PMutex *mutex)
+{
+	PCondVariableXP	*cv_xp = ((PCondVariableXP *) cond->cv);
+	DWORD		wait;
+
+	cv_xp->waiters_count++;
+
+	p_mutex_unlock (mutex);
+	wait = WaitForSingleObjectEx (cv_xp->waiters_sema, INFINITE, FALSE);
+	p_mutex_lock (mutex);
+
+	if (wait != WAIT_OBJECT_0)
+		--cv_xp->waiters_count;
+
+	if (wait == WAIT_FAILED)
+		return FALSE;
+
+	return wait == WAIT_OBJECT_0 ? TRUE : FALSE;
+}
+
+static pboolean
+pp_cond_variable_signal_xp (PCondVariable *cond)
+{
+	PCondVariableXP *cv_xp = ((PCondVariableXP *) cond->cv);
+
+	if (cv_xp->waiters_count > 0) {
+		cv_xp->waiters_count--;
+		return ReleaseSemaphore (cv_xp->waiters_sema, 1, 0) != 0 ? TRUE : FALSE;
+	}
+
+	return TRUE;
+}
+
+static pboolean
+pp_cond_variable_broadcast_xp (PCondVariable *cond)
+{
+	PCondVariableXP	*cv_xp = ((PCondVariableXP *) cond->cv);
+	pint		waiters;
+
+	waiters = cv_xp->waiters_count;
+
+	if (waiters > 0) {
+		cv_xp->waiters_count = 0;
+		return ReleaseSemaphore (cv_xp->waiters_sema, waiters, 0) != 0 ? TRUE : FALSE;
+	}
+
+	return TRUE;
+}
 
 P_LIB_API PCondVariable *
 p_cond_variable_new (void)
@@ -47,18 +207,11 @@ p_cond_variable_new (void)
 		return NULL;
 	}
 
-#ifdef PLIBSYS_HAS_VISTA_CV
-	InitializeConditionVariable (&ret->cv);
-#else
-	ret->waiters_count	= 0;
-	ret->waiters_sema	= CreateSemaphoreA (NULL, 0, MAXLONG, NULL);
-
-	if (P_UNLIKELY (ret->waiters_sema == NULL)) {
-		P_ERROR ("PCondVariable: failed to initialize semaphore");
+	if (pp_cond_variable_init_func (ret) != TRUE) {
+		P_ERROR ("PCondVariable: failed to initialize");
 		p_free (ret);
 		return NULL;
 	}
-#endif
 
 	return ret;
 }
@@ -69,10 +222,7 @@ p_cond_variable_free (PCondVariable *cond)
 	if (P_UNLIKELY (cond == NULL))
 		return;
 
-#ifndef PLIBSYS_HAS_VISTA_CV
-	CloseHandle (cond->waiters_sema);
-#endif
-
+	pp_cond_variable_close_func (cond);
 	p_free (cond);
 }
 
@@ -80,30 +230,10 @@ P_LIB_API pboolean
 p_cond_variable_wait (PCondVariable	*cond,
 		      PMutex		*mutex)
 {
-#ifndef PLIBSYS_HAS_VISTA_CV
-	DWORD wait;
-#endif
-
 	if (P_UNLIKELY (cond == NULL || mutex == NULL))
 		return FALSE;
 
-#ifdef PLIBSYS_HAS_VISTA_CV
-	return SleepConditionVariableCS (&cond->cv, (PCRITICAL_SECTION) mutex, INFINITE) != 0 ? TRUE : FALSE;
-#else
-	cond->waiters_count++;
-
-	p_mutex_unlock (mutex);
-	wait = WaitForSingleObjectEx (cond->waiters_sema, INFINITE, FALSE);
-	p_mutex_lock (mutex);
-
-	if (wait != WAIT_OBJECT_0)
-		--cond->waiters_count;
-
-	if (wait == WAIT_FAILED)
-		return FALSE;
-
-	return wait == WAIT_OBJECT_0 ? TRUE : FALSE;
-#endif
+	return pp_cond_variable_wait_func (cond, mutex);
 }
 
 P_LIB_API pboolean
@@ -112,38 +242,63 @@ p_cond_variable_signal (PCondVariable *cond)
 	if (P_UNLIKELY (cond == NULL))
 		return FALSE;
 
-#ifdef PLIBSYS_HAS_VISTA_CV
-	WakeConditionVariable (&cond->cv);
-#else
-	if (cond->waiters_count > 0) {
-		cond->waiters_count--;
-		return ReleaseSemaphore (cond->waiters_sema, 1, 0) != 0 ? TRUE : FALSE;
-	}
-#endif
-
-	return TRUE;
+	return pp_cond_variable_signal_func (cond);
 }
 
 P_LIB_API pboolean
 p_cond_variable_broadcast (PCondVariable *cond)
 {
-#ifndef PLIBSYS_HAS_VISTA_CV
-	pint waiters;
-#endif
-
 	if (P_UNLIKELY (cond == NULL))
 		return FALSE;
 
-#ifdef PLIBSYS_HAS_VISTA_CV
-	WakeAllConditionVariable (&cond->cv);
-#else
-	waiters = cond->waiters_count;
+	return pp_cond_variable_brdcast_func (cond);
+}
 
-	if (waiters > 0) {
-		cond->waiters_count = 0;
-		return ReleaseSemaphore (cond->waiters_sema, waiters, 0) != 0 ? TRUE : FALSE;
+void
+p_cond_variable_init (void)
+{
+	HMODULE hmodule;
+
+	hmodule = GetModuleHandleA ("kernel32.dll");
+
+	if (P_UNLIKELY (hmodule == NULL)) {
+		P_ERROR ("PCondVariable: failed to load kernel32.dll module");
+		return;
 	}
-#endif
 
-	return TRUE;
+	pp_cond_variable_vista_table.cv_init = (InitializeConditionVariableFunc) GetProcAddress (hmodule,
+												 "InitializeConditionVariable");
+
+	if (P_LIKELY (pp_cond_variable_vista_table.cv_init != NULL)) {
+		pp_cond_variable_vista_table.cv_wait    = (SleepConditionVariableCSFunc) GetProcAddress (hmodule,
+													 "SleepConditionVariableCS");
+		pp_cond_variable_vista_table.cv_wake    = (WakeConditionVariableFunc) GetProcAddress (hmodule,
+												      "WakeConditionVariable");
+		pp_cond_variable_vista_table.cv_brdcast = (WakeAllConditionVariableFunc) GetProcAddress (hmodule,
+													 "WakeAllConditionVariable");
+
+		pp_cond_variable_init_func    = pp_cond_variable_init_vista;
+		pp_cond_variable_close_func   = pp_cond_variable_close_vista;
+		pp_cond_variable_wait_func    = pp_cond_variable_wait_vista;
+		pp_cond_variable_signal_func  = pp_cond_variable_signal_vista;
+		pp_cond_variable_brdcast_func = pp_cond_variable_broadcast_vista;
+	} else {
+		pp_cond_variable_init_func    = pp_cond_variable_init_xp;
+		pp_cond_variable_close_func   = pp_cond_variable_close_xp;
+		pp_cond_variable_wait_func    = pp_cond_variable_wait_xp;
+		pp_cond_variable_signal_func  = pp_cond_variable_signal_xp;
+		pp_cond_variable_brdcast_func = pp_cond_variable_broadcast_xp;
+	}
+}
+
+void
+p_cond_variable_shutdown (void)
+{
+	memset (&pp_cond_variable_vista_table, 0, sizeof (pp_cond_variable_vista_table));
+
+	pp_cond_variable_init_func    = NULL;
+	pp_cond_variable_close_func   = NULL;
+	pp_cond_variable_wait_func    = NULL;
+	pp_cond_variable_signal_func  = NULL;
+	pp_cond_variable_brdcast_func = NULL;
 }

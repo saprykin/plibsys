@@ -161,31 +161,6 @@ set (PLIBSYS_PLATFORM_SRCS
 set (CMAKE_REQUIRED_DEFINITIONS "${CMAKE_REQUIRED_DEFINITIONS} ${PLIBSYS_PLATFORM_DEFINES}")
 set (CMAKE_REQUIRED_LIBRARIES ${CMAKE_REQUIRED_LIBRARIES} ${PLIBSYS_PLATFORM_LINK_LIBRARIES})
 
-if ((PLIBSYS_TARGET_OS STREQUAL windows) AND NOT (PLIBSYS_TARGET_OS STREQUAL cygwin)
-				      	 AND NOT (PLIBSYS_TARGET_OS STREQUAL msys))
-	check_c_source_compiles (
-				 "#include <windows.h>
-				 int main () {
-					CONDITION_VARIABLE cv;
-					InitializeConditionVariable (&cv);
-					return 0;
-				 }"
-				 PLIBSYS_HAS_VISTA_CV
-	)
-
-	if (PLIBSYS_HAS_VISTA_CV)
-		add_definitions (-DPLIBSYS_HAS_VISTA_CV)
-	endif()
-
-	if (PLIBSYS_HAS_VISTA_CV)
-		add_definitions (-D_WIN32_WINNT=0x0600)
-		add_definitions (-DNTDDI_VERSION=0x06000000)
-	else()
-		add_definitions (-D_WIN32_WINNT=0x0501)
-		add_definitions (-DNTDDI_VERSION=0x05010000)
-	endif()
-endif()
-
 set (PLIBSYS_ATOMIC_LOCK_FREE no)
 
 if (NOT PLIBSYS_ATOMIC_MODEL)
