@@ -21,18 +21,18 @@
 #include <time.h>
 
 typedef puint64 (WINAPI * PWin32TicksFunc) (void);
-typedef puint64 (WINAPI * PWin32ElapsedFunc) (puint64 last_counter);
+typedef puint64 (* PWin32ElapsedFunc) (puint64 last_counter);
 
 static PWin32TicksFunc   pp_time_profiler_ticks_func   = NULL;
 static PWin32ElapsedFunc pp_time_profiler_elapsed_func = NULL;
 static puint64           pp_time_profiler_freq         = 0;
 
-static puint64 pp_time_profiler_get_hr_ticks (void);
+static puint64 WINAPI pp_time_profiler_get_hr_ticks (void);
 static puint64 pp_time_profiler_elapsed_hr (puint64 last_counter);
 static puint64 pp_time_profiler_elapsed_tick64 (puint64 last_counter);
 static puint64 pp_time_profiler_elapsed_tick (puint64 last_counter);
 
-static puint64
+static puint64 WINAPI
 pp_time_profiler_get_hr_ticks (void)
 {
 	LARGE_INTEGER tcounter;
