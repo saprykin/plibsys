@@ -22,8 +22,8 @@
 
 #include <windows.h>
 
-typedef puint64 (* PWin32TicksFunc) (void);
-typedef puint64 (* PWin32ElapsedFunc) (puint64 last_counter);
+typedef puint64 (WINAPI * PWin32TicksFunc) (void);
+typedef puint64 (WINAPI * PWin32ElapsedFunc) (puint64 last_counter);
 
 static PWin32TicksFunc   pp_time_profiler_ticks_func   = NULL;
 static PWin32ElapsedFunc pp_time_profiler_elapsed_func = NULL;
@@ -67,7 +67,7 @@ pp_time_profiler_elapsed_tick (puint64 last_counter)
 
 	high_bit = 0;
 	val      = pp_time_profiler_ticks_func ();
-		
+
 	if (P_UNLIKELY (val < last_counter))
 		high_bit = 1;
 
@@ -121,7 +121,7 @@ p_time_profiler_init (void)
 			pp_time_profiler_ticks_func   = (PWin32TicksFunc) GetProcAddress (hmodule, "GetTickCount");
 			pp_time_profiler_elapsed_func = (PWin32ElapsedFunc) pp_time_profiler_elapsed_tick;
 		}
-		
+
 		if (P_UNLIKELY (pp_time_profiler_ticks_func == NULL)) {
 			P_ERROR ("PTimeProfiler: failed to load any reliable tick counter");
 			pp_time_profiler_elapsed_func = NULL;
