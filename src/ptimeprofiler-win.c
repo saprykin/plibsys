@@ -69,7 +69,7 @@ pp_time_profiler_elapsed_tick (puint64 last_counter)
 	if (P_UNLIKELY (val < last_counter))
 		high_bit = 1;
 
-	return (val | (high_bit << 32)) - last_counter;
+	return ((val | (high_bit << 32)) - last_counter) * 1000;
 }
 
 puint64
