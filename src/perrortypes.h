@@ -64,7 +64,7 @@ typedef enum PErrorIO_ {
 	P_ERROR_IO_CONNECTION_REFUSED	= 512,	/**< Connection refused.				*/
 	P_ERROR_IO_NOT_CONNECTED	= 513,	/**< Connection required first.				*/
 	P_ERROR_IO_QUOTA		= 514,  /**< User quota exceeded.				*/
-	P_ERROR_IO_IS_DIRECTORY		= 515,  /**< Trying to open directory for writting.		*/
+	P_ERROR_IO_IS_DIRECTORY		= 515,  /**< Trying to open directory for writing.		*/
 	P_ERROR_IO_NOT_DIRECTORY	= 516,  /**< Component of the path prefix is not a directory.	*/
 	P_ERROR_IO_NAMETOOLONG		= 517,  /**< Specified name is too long.			*/
 	P_ERROR_IO_EXISTS		= 518,  /**< Specified entry already exists.			*/
