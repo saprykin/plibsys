@@ -20,19 +20,19 @@
  * @brief Hash table
  * @author Alexander Saprykin
  *
- * A hash table is a data structure used to map keys to values. Hash table
- * consists of several internal slots which holds a list of values. Hash
- * function is used to compute an index in array of the slots from a given key.
- * Hash function itself is fast and it takes a constant time to compute internal
- * slot index.
+ * A hash table is a data structure used to map keys to values. The hash table
+ * consists of several internal slots which hold a list of values. A hash
+ * function is used to compute an index in the array of the slots from a given
+ * key. The hash function itself is fast and it takes a constant time to compute
+ * the internal slot index.
  *
- * When the number of pairs in a hash table is small the lookup and insert
+ * When the number of pairs in the hash table is small the lookup and insert
  * (remove) operations are very fast and have an average complexity O(1),
  * because every slot holds almost the only one pair. As the number of internal
  * slots is fixed, the increasing number of pairs will lead to degraded
- * performance and an average complexity of the operations can drop to O(N) in
+ * performance and the average complexity of the operations can drop to O(N) in
  * the worst case. This is because the more pairs are inserted the more longer
- * list of values is placed in every slot.
+ * the list of values is placed in every slot.
  *
  * This is a simple hash table implementation which is not intended for heavy
  * usage (several thousands), see #PTree if you need best performance on large
@@ -64,15 +64,15 @@ typedef struct PHashTable_ PHashTable;
 
 /**
  * @brief Initializes a new hash table.
- * @return Pointer to a newly initialized #PHashTable structure in case of
+ * @return Pointer to the newly initialized #PHashTable structure in case of
  * success, NULL otherwise.
  * @since 0.0.1
- * @note Free with p_hash_table_free() after using.
+ * @note Free with p_hash_table_free() after usage.
  */
 P_LIB_API PHashTable *	p_hash_table_new		(void);
 
 /**
- * @brief Inserts new key-value pair into the hash table.
+ * @brief Inserts a new key-value pair into a hash table.
  * @param table Initialized hash table.
  * @param key Key to insert.
  * @param value Value to insert.
@@ -86,7 +86,7 @@ P_LIB_API void		p_hash_table_insert		(PHashTable		*table,
 							 ppointer		value);
 
 /**
- * @brief Searches for a specifed key in the hash table.
+ * @brief Searches for a specifed key in a hash table.
  * @param table Hash table to lookup in.
  * @param key Key to lookup for.
  * @return Value related to its key pair (can be NULL), (#ppointer) -1 if no
@@ -97,9 +97,10 @@ P_LIB_API ppointer	p_hash_table_lookup		(const PHashTable	*table,
 							 pconstpointer		key);
 
 /**
- * @brief Gives the list of all stored keys in a hash table.
+ * @brief Gives a list of all the stored keys in a hash table.
  * @param table Hash table to collect keys from.
- * @return List of all the stored keys, list can be empty if no keys were found.
+ * @return List of all the stored keys, the list can be empty if no keys were
+ * found.
  * @since 0.0.1
  * @note You should manually free returned list with p_list_free() after using
  * it.
@@ -107,9 +108,9 @@ P_LIB_API ppointer	p_hash_table_lookup		(const PHashTable	*table,
 P_LIB_API PList *	p_hash_table_keys		(const PHashTable	*table);
 
 /**
- * @brief Gives the list of all stored values in a hash table.
+ * @brief Gives a list of all the stored values in a hash table.
  * @param table Hash table to collect values from.
- * @return List of all the stored values, list can be empty if no keys were
+ * @return List of all the stored values, the list can be empty if no keys were
  * found.
  * @since 0.0.1
  * @note You should manually free returned list with p_list_free() after using
@@ -118,7 +119,7 @@ P_LIB_API PList *	p_hash_table_keys		(const PHashTable	*table);
 P_LIB_API PList *	p_hash_table_values		(const PHashTable	*table);
 
 /**
- * @brief Frees previously initialized #PHashTable.
+ * @brief Frees a previously initialized #PHashTable.
  * @param table Hash table to free.
  * @since 0.0.1
  */
@@ -126,7 +127,7 @@ P_LIB_API void		p_hash_table_free		(PHashTable		*table);
 
 /**
  * @brief Removes @a key from a hash table.
- * @param table Hash table to remove key from.
+ * @param table Hash table to remove the key from.
  * @param key Key to remove (if exists).
  * @since 0.0.1
  */
@@ -134,19 +135,19 @@ P_LIB_API void		p_hash_table_remove		(PHashTable		*table,
 							 pconstpointer		key);
 
 /**
- * @brief Searches for a specifed key in the hash table by its value.
+ * @brief Searches for a specifed key in a hash table by its value.
  * @param table Hash table to lookup in.
  * @param val Value to lookup keys for.
  * @param func Function to compare table's values with @a val, if NULL then
  * values will be compared as pointers.
  * @return List of keys with @a val (can be NULL), NULL if no keys were found.
  * @since 0.0.1
- * @note Caller is responsible to call p_list_free() on returned list after
- * the usage.
+ * @note Caller is responsible to call p_list_free() on the returned list after
+ * usage.
  *
- * Compare function should return 0 if a value from the hash table (first
- * parameter) is accepted related to the given lookup value (second parameter),
- * and -1 or 1 otherwise.
+ * The compare function should return 0 if a value from the hash table (the
+ * first parameter) is accepted related to the given lookup value (the second
+ * parameter), and -1 or 1 otherwise.
  */
 P_LIB_API PList *	p_hash_table_lookup_by_value	(const PHashTable	*table,
 							 pconstpointer		val,

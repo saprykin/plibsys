@@ -27,31 +27,32 @@
  *
  * Each section has a list of key-value pairs. Empty sections are not permitted
  * (they will be skipped). Every key-value pair is represented with a line in
- * a `key = value` format. If section has several values with the same key the
- * last one will be used. Value is parsed by the first in-order '=' symbol. All
- * the following '=' occurrences belong to the value.
+ * a `key = value` format. If a section has several values with the same key the
+ * last one will be used. A value is parsed by the first in-order '=' symbol.
+ * All the following '=' occurrences belong to the value.
  *
  * All symbols after '#' and ';' (even at the line ending) are the comments and
  * wouldn't be read. If you want to use them in values take the value inside ""
- * or '' symbols. Section name line are not allowed to use comment symbols after
- * the section name in square brackets itself.
+ * or '' symbols. A section name line is not allowed to use the comment symbols
+ * after the section name in square brackets itself.
  *
- * Integer values can be written in a usual form.
+ * Integer values can be written in the usual form.
  *
  * Floating point values can be written in any commonly used notation (i.e.
- * with decimal point, in exponential form using 'e' character). The only valid
- * decimal point symbol is a '.'. There is no locale dependency on a decimal
- * point.
+ * with the decimal point, in the exponential form using the 'e' character). The
+ * only valid decimal point symbol is a '.'. There is no locale dependency on
+ * the decimal point.
  *
- * Boolean values can be written in a form of 'true/false' or 'TRUE/FALSE', or
+ * Boolean values can be written in the form of 'true/false' or 'TRUE/FALSE', or
  * simply '0/1'.
  *
  * Any value can be interpreted as a string at any moment. Actually all the
  * values are stored internally as strings.
  *
- * List of values can be stored between {} symbols separated with spaces. List
- * only supports string values, so you should convert them to numbers manually.
- * List doesn't support strings with spaces - such strings will be splitted.
+ * A list of values can be stored between the {} symbols separated with spaces.
+ * The list only supports string values, so you should convert them to numbers
+ * manually. The list doesn't support strings with spaces - such strings will be
+ * splitted.
  *
  * To parse a file, create #PIniFile with p_ini_file_new() and then parse it
  * with p_ini_file_parse() routine.
@@ -101,7 +102,7 @@ typedef struct PIniFile_ PIniFile;
 
 /**
  * @brief Creates a new #PIniFile for parsing.
- * @param path Path to file to parse.
+ * @param path Path to a file to parse.
  * @return Newly allocated #PIniFile in case of success, NULL otherwise.
  * @since 0.0.1
  */
@@ -127,37 +128,37 @@ P_LIB_API pboolean	p_ini_file_parse		(PIniFile	*file,
 /**
  * @brief Checks whether #PIniFile was already parsed or not.
  * @param file #PIniFile to check.
- * @return TRUE if file was already parsed, FALSE otherwise.
+ * @return TRUE if the file was already parsed, FALSE otherwise.
  * @since 0.0.1
  */
 P_LIB_API pboolean	p_ini_file_is_parsed		(const PIniFile	*file);
 
 /**
- * @brief Gets all sections from the given #PIniFile file.
+ * @brief Gets all the sections from a given #PIniFile file.
  * @param file #PIniFile to get sections from. @a file should be parsed before.
  * @return #PList of section names.
  * @since 0.0.1
  * @note It's a caller responsibility to p_free() each returned string and to
- * free returned list with p_list_free().
+ * free the returned list with p_list_free().
  */
 P_LIB_API PList	*	p_ini_file_sections		(const PIniFile	*file);
 
 /**
- * @brief Gets all keys from the given #PIniFile file's section.
+ * @brief Gets all the keys from a given #PIniFile file's section.
  * @param file #PIniFile to get keys from. @a file should be parsed before.
  * @param section Section name to get keys from.
  * @return #PList of key names.
  * @since 0.0.1
  * @note It's a caller responsibility to p_free() each returned string and to
- * free returned list with p_list_free().
+ * free the returned list with p_list_free().
  */
 P_LIB_API PList *	p_ini_file_keys			(const PIniFile	*file,
 							 const pchar	*section);
 
 /**
- * @brief Checks whether the key exists.
+ * @brief Checks whether a key exists.
  * @param file #PIniFile to check in. @a file should be parsed before.
- * @param section Section to check key in.
+ * @param section Section to check the key in.
  * @param key Key to check.
  * @return TRUE if @a key exists, FALSE otherwise.
  * @since 0.0.1
@@ -169,13 +170,14 @@ P_LIB_API pboolean	p_ini_file_is_key_exists	(const PIniFile	*file,
 /**
  * @brief Gets specified parameter's value as a string. @a file should be parsed
  * before.
- * @param file #PIniFile to get value from.
- * @param section Section to get from.
- * @param key Key to get value from.
+ * @param file #PIniFile to get the value from.
+ * @param section Section to get the value from.
+ * @param key Key to get the value from.
  * @param default_val Default value to return if no specified key exists.
  * @return Key's value in case of success, @a default_value otherwise.
  * @since 0.0.1
- * @note It's a caller responsibility to p_free() returned string after usage.
+ * @note It's a caller responsibility to p_free() the returned string after
+ * usage.
  */
 P_LIB_API pchar *	p_ini_file_parameter_string	(const PIniFile	*file,
 							 const pchar	*section,
@@ -183,11 +185,11 @@ P_LIB_API pchar *	p_ini_file_parameter_string	(const PIniFile	*file,
 							 const pchar	*default_val);
 
 /**
- * @brief Gets specified parameter's value as an integer. @a file should
- * be parsed before.
- * @param file #PIniFile to get value from.
- * @param section Section to get from.
- * @param key Key to get value from.
+ * @brief Gets specified parameter's value as an integer. @a file should be
+ * parsed before.
+ * @param file #PIniFile to get the value from.
+ * @param section Section to get the value from.
+ * @param key Key to get the value from.
  * @param default_val Default value to return if no specified key exists.
  * @return Key's value in case of success, @a default_value otherwise.
  * @since 0.0.1
@@ -200,9 +202,9 @@ P_LIB_API pint		p_ini_file_parameter_int	(const PIniFile	*file,
 /**
  * @brief Gets specified parameter's value as a floating point. @a file should
  * be parsed before.
- * @param file #PIniFile to get value from.
- * @param section Section to get from.
- * @param key Key to get value from.
+ * @param file #PIniFile to get the value from.
+ * @param section Section to get the value from.
+ * @param key Key to get the value from.
  * @param default_val Default value to return if no specified key exists.
  * @return Key's value in case of success, @a default_value otherwise.
  * @since 0.0.1
@@ -214,9 +216,9 @@ P_LIB_API double	p_ini_file_parameter_double	(const PIniFile	*file,
 /**
  * @brief Gets specified parameter's value as a boolean. @a file should
  * be parsed before.
- * @param file #PIniFile to get value from.
- * @param section Section to get from.
- * @param key Key to get value from.
+ * @param file #PIniFile to get the value from.
+ * @param section Section to get the value from.
+ * @param key Key to get the value from.
  * @param default_val Default value to return if no specified key exists.
  * @return Key's value in case of success, @a default_value otherwise.
  * @since 0.0.1
@@ -228,16 +230,16 @@ P_LIB_API pboolean	p_ini_file_parameter_boolean	(const PIniFile	*file,
 							 pboolean	default_val);
 
 /**
- * @brief Gets specified parameter's value as a list of strings separated
- * with the spaces or tabs. @a file should be parsed before.
- * @param file #PIniFile to get value from.
- * @param section Section to get from.
- * @param key Key to get value from.
+ * @brief Gets specified parameter's value as a list of strings separated with
+ * the spaces or tabs. @a file should be parsed before.
+ * @param file #PIniFile to get the value from.
+ * @param section Section to get the value from.
+ * @param key Key to get the value from.
  * @return #PList of strings. NULL will be returned if no parameter with the
  * given name exists.
  * @since 0.0.1
  * @note It's a caller responsibility to p_free() each returned string and to
- * free returned list with p_list_free().
+ * free the returned list with p_list_free().
  */
 P_LIB_API PList *	p_ini_file_parameter_list	(const PIniFile	*file,
 							 const pchar	*section,

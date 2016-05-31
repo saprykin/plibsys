@@ -23,8 +23,8 @@
  * To check file existance use p_file_is_exists(). To remove an exisiting file
  * use p_file_remove().
  *
- * #P_DIR_SEPARATOR provides platform independent directory separator symbol
- * which you can use to form a file or directory path.
+ * #P_DIR_SEPARATOR provides a platform independent directory separator symbol
+ * which you can use to form file or directory path.
  */
 
 #if !defined (PLIBSYS_H_INSIDE) && !defined (PLIBSYS_COMPILATION)
@@ -51,25 +51,25 @@
 P_BEGIN_DECLS
 
 /**
- * @brief Checks whether the file exists or not.
+ * @brief Checks whether a file exists or not.
  * @param file File name to check.
- * @return TRUE if file exists, FALSE otherwise.
+ * @return TRUE if the file exists, FALSE otherwise.
  * @since 0.0.1
  *
- * On Windows this call doesn't resolve symbolic links, while
- * on UNIX systems does.
+ * On Windows this call doesn't resolve symbolic links, while on UNIX systems
+ * does.
  */
 P_LIB_API pboolean p_file_is_exists	(const pchar	*file);
 
 /**
- * @brief Removes file from the disk.
+ * @brief Removes a file from the disk.
  * @param file File name to remove.
  * @param[out] error Error report object, NULL to ignore.
- * @return TRUE if file was successully removed, FALSE otherwise.
+ * @return TRUE if the file was successully removed, FALSE otherwise.
  * @since 0.0.1
  *
- * This call doesn't resolve symbolic links and remove a symbolic link
- * if the given path points to it.
+ * This call doesn't resolve symbolic links and remove a symbolic link if the
+ * given path points to it.
  */
 P_LIB_API pboolean p_file_remove	(const pchar	*file,
 					 PError		**error);

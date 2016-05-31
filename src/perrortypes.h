@@ -24,9 +24,9 @@
  * belong to one of the domains described in #PErrorDomain. Think of an error
  * domain as a logical subsystem.
  *
- * Every error domain has its own enumeration with the list of possible
- * error codes. System error codes are converted to specified domains using
- * internal routines.
+ * Every error domain has its own enumeration with the list of possible error
+ * codes. System error codes are converted to specified domains using internal
+ * routines.
  */
 
 #if !defined (PLIBSYS_H_INSIDE) && !defined (PLIBSYS_COMPILATION)

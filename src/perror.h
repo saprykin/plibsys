@@ -32,8 +32,8 @@
  * }
  * @endcode
  * Note that you should not initialize a new #PError object before passing the
- * pointer into API call. Simply initialize it with zero and check result after.
- * Therefore you need to free memory if error occurred.
+ * pointer into API call. Simply initialize it with zero and check the result
+ * after. Therefore you need to free memory if an error occurred.
  */
 
 #if !defined (PLIBSYS_H_INSIDE) && !defined (PLIBSYS_COMPILATION)
@@ -53,20 +53,18 @@ P_BEGIN_DECLS
 typedef struct PError_ PError;
 
 /**
- * @brief Initializes new empty #PError.
- * @return Newly initialized #PError object in case of success,
- * NULL otherwise.
+ * @brief Initializes a new empty #PError.
+ * @return Newly initialized #PError object in case of success, NULL otherwise.
  * @since 0.0.1
  */
 P_LIB_API PError *	p_error_new		();
 
 /**
- * @brief Initializes new #PError with data.
+ * @brief Initializes a new #PError with data.
  * @param code Error code.
  * @param native_code Native error code, leave 0 to ignore.
  * @param message Error message.
- * @return Newly initialized #PError object in case of success,
- * NULL otherwise.
+ * @return Newly initialized #PError object in case of success, NULL otherwise.
  * @since 0.0.1
  */
 P_LIB_API PError *	p_error_new_literal	(pint		code,
@@ -74,34 +72,34 @@ P_LIB_API PError *	p_error_new_literal	(pint		code,
 						 const pchar	*message);
 
 /**
- * @brief Gets error message.
- * @param error #PError object to get message from.
+ * @brief Gets an error message.
+ * @param error #PError object to get the message from.
  * @return Error message in case of success, NULL otherwise.
  * @since 0.0.1
  */
 P_LIB_API const pchar *	p_error_get_message	(PError		*error);
 
 /**
- * @brief Gets error code.
- * @param error #PError object to get code from.
+ * @brief Gets an error code.
+ * @param error #PError object to get the code from.
  * @return Error code in case of success, 0 otherwise.
  * @since 0.0.1
  */
 P_LIB_API pint		p_error_get_code	(PError		*error);
 
 /**
- * @brief Gets platform native error code, if any.
- * @param error #PError object to get native code from.
+ * @brief Gets a platform native error code, if any.
+ * @param error #PError object to get the native code from.
  * @return Error code in case of success, 0 otherwise.
  * @since 0.0.1
- * @note In some situations there can be no native code error,
- * i.e. when internal library call failed. Do not rely on this code.
+ * @note In some situations there can be no native code error, i.e. when an
+ * internal library call failed. Do not rely on this code.
  */
 P_LIB_API pint		p_error_get_native_code	(PError		*error);
 
 /**
- * @brief Gets error domain.
- * @param error #PError object to get domain from.
+ * @brief Gets an error domain.
+ * @param error #PError object to get the domain from.
  * @return Error domain in case of success, #P_ERROR_DOMAIN_NONE otherwise.
  * @since 0.0.1
  */
@@ -110,17 +108,16 @@ P_LIB_API PErrorDomain	p_error_get_domain	(PError		*error);
 /**
  * @brief Creates a copy of a #PError object.
  * @param error #PError object to copy.
- * @return Newly created #PError object in case of success,
- * NULL otherwise.
+ * @return Newly created #PError object in case of success, NULL otherwise.
  * @since 0.0.1
  * @note The caller is responsible to free memory of the created object
- * after the usage.
+ * after usage.
  */
 P_LIB_API PError *	p_error_copy		(PError		*error);
 
 /**
  * @brief Sets error data.
- * @param error #PError object to set data for.
+ * @param error #PError object to set the data for.
  * @param code Error code.
  * @param native_code Native error code, leave 0 to ignore.
  * @param message Error message.
@@ -132,17 +129,17 @@ P_LIB_API void		p_error_set_error	(PError		*error,
 						 const pchar	*message);
 
 /**
- * @brief Sets error data through the double pointer.
- * @param error #PError object to set data for.
+ * @brief Sets error data through a double pointer.
+ * @param error #PError object to set the data for.
  * @param code Error code.
  * @param native_code Native error code, leave 0 to ignore.
  * @param message Error message.
  * @since 0.0.1
  *
- * If @a error is NULL it does nothing. If @a error is not NULL then
- * @a *error should be NULL, otherwise it does nothing. It creates a
- * #PError object, sets error data and assigns it to @a *error. The caller
- * is responsible to free memory of the created object after the usage.
+ * If @a error is NULL it does nothing. If @a error is not NULL then @a *error
+ * should be NULL, otherwise it does nothing. It creates a #PError object, sets
+ * error data and assigns it to @a *error. The caller is responsible to free
+ * memory of the created object after usage.
  */
 P_LIB_API void		p_error_set_error_p	(PError		**error,
 						 pint		code,
@@ -150,8 +147,8 @@ P_LIB_API void		p_error_set_error_p	(PError		**error,
 						 const pchar	*message);
 
 /**
- * @brief Sets error code.
- * @param error #PError object to set data for.
+ * @brief Sets an error code.
+ * @param error #PError object to set the code for.
  * @param code Error code.
  * @since 0.0.1
  */
@@ -159,8 +156,8 @@ P_LIB_API void		p_error_set_code	(PError		*error,
 						 pint		code);
 
 /**
- * @brief Sets platform native error code.
- * @param error #PError object to set data for.
+ * @brief Sets a platform native error code.
+ * @param error #PError object to set the native error code for.
  * @param native_code Platform native error code.
  * @since 0.0.1
  */
@@ -168,8 +165,8 @@ P_LIB_API void		p_error_set_native_code	(PError		*error,
 						 pint		native_code);
 
 /**
- * @brief Sets error message.
- * @param error #PError object to set data for.
+ * @brief Sets an error message.
+ * @param error #PError object to set the message for.
  * @param message Error message.
  * @since 0.0.1
  */
@@ -178,14 +175,14 @@ P_LIB_API void		p_error_set_message	(PError		*error,
 
 /**
  * @brief Clears error data.
- * @param error #PError object to clear data for.
+ * @param error #PError object to clear the data for.
  * @since 0.0.1
  * @note Error code is reseted to 0.
  */
 P_LIB_API void		p_error_clear		(PError		*error);
 
 /**
- * @brief Frees previously initialized error object.
+ * @brief Frees a previously initialized error object.
  * @param error #PError object to free.
  * @since 0.0.1
  */
