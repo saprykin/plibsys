@@ -26,19 +26,19 @@
  * performed atomically and can't be preempted by another thread.
  *
  * Lock-free atomic operations require software and hardware support. Usually
- * lock-free atomic operations are implemented on low-level using assembly
+ * lock-free atomic operations are implemented with low-level using assembly
  * inlines. Some of the compilers provide built-in routines to perform atomic
  * operations. You can use p_atomic_is_lock_free() call to check whether such a
  * support is provided or not.
  *
  * If there is no hardware or software support for lock-free atomic operations
- * then they can be simulated (though in rather slower manner) using thread
+ * then they can be simulated (though in rather slower manner) using a thread
  * global synchronization primitive (i.e. mutex), but it could block threads
  * while performing atomic operations on distinct variables from distinct
  * threads.
  *
- * Windows platform provides all required lock-free operations in most cases,
- * so it always has lock-free support.
+ * The Windows platform provides all required lock-free operations in most
+ * cases, so it always has lock-free support.
  */
 
 #if !defined (PLIBSYS_H_INSIDE) && !defined (PLIBSYS_COMPILATION)
@@ -59,7 +59,8 @@ P_BEGIN_DECLS
  * @return Integer value.
  * @since 0.0.1
  *
- * This call acts as a full compiler and hardware memory barrier (before the get).
+ * This call acts as a full compiler and hardware memory barrier (before the
+ * get).
  */
 P_LIB_API pint		p_atomic_int_get			(const volatile pint	*atomic);
 
@@ -69,7 +70,8 @@ P_LIB_API pint		p_atomic_int_get			(const volatile pint	*atomic);
  * @param val New #pint value.
  * @since 0.0.1
  *
- * This call acts as a full compiler and hardware memory barrier (after the set).
+ * This call acts as a full compiler and hardware memory barrier (after the
+ * set).
  */
 P_LIB_API void		p_atomic_int_set			(volatile pint		*atomic,
 								 pint			val);
@@ -86,7 +88,8 @@ P_LIB_API void		p_atomic_int_set			(volatile pint		*atomic,
 P_LIB_API void		p_atomic_int_inc			(volatile pint		*atomic);
 
 /**
- * @brief Decrements #pint value from @a atomic by 1 and tests the result for zero.
+ * @brief Decrements #pint value from @a atomic by 1 and tests the result for
+ * zero.
  * @param[in, out] atomic Pointer to #pint to decrement the value.
  * @return TRUE if the new value is equal to zero, FALSE otherwise.
  * @since 0.0.1
@@ -134,8 +137,8 @@ P_LIB_API pint		p_atomic_int_add			(volatile pint		*atomic,
 								 pint			val);
 
 /**
- * @brief Atomically performs bitwise 'and' operation of @a atomic value
- * and @a val storing result back in @a atomic.
+ * @brief Atomically performs the bitwise 'and' operation of @a atomic value
+ * and @a val storing the result back in @a atomic.
  * @param[in, out] atomic Pointer to #puint.
  * @param val #puint to perform bitwise 'and' with @a atomic value.
  * @return Old @a atomic value before the operation.
@@ -150,8 +153,8 @@ P_LIB_API puint		p_atomic_int_and			(volatile puint		*atomic,
 								 puint			val);
 
 /**
- * @brief Atomically performs bitwise 'or' operation of @a atomic value
- * and @a val storing result back in @a atomic.
+ * @brief Atomically performs the bitwise 'or' operation of @a atomic value
+ * and @a val storing the result back in @a atomic.
  * @param[in, out] atomic Pointer to #puint.
  * @param val #puint to perform bitwise 'or' with @a atomic value.
  * @return Old @a atomic value before the operation.
@@ -166,8 +169,8 @@ P_LIB_API puint		p_atomic_int_or				(volatile puint		*atomic,
 								 puint			val);
 
 /**
- * @brief Atomically performs bitwise 'xor' operation of @a atomic value
- * and @a val storing result back in @a atomic.
+ * @brief Atomically performs the bitwise 'xor' operation of @a atomic value
+ * and @a val storing the result back in @a atomic.
  * @param[in, out] atomic Pointer to #puint.
  * @param val #puint to perform bitwise 'xor' with @a atomic value.
  * @return Old @a atomic value before the operation.
@@ -238,8 +241,8 @@ P_LIB_API pssize	p_atomic_pointer_add			(volatile void		*atomic,
 								 pssize			val);
 
 /**
- * @brief Atomically performs bitwise 'and' operation of #ppointer-sized
- * @a atomic value and @a val storing result back in @a atomic.
+ * @brief Atomically performs the bitwise 'and' operation of #ppointer-sized
+ * @a atomic value and @a val storing the result back in @a atomic.
  * @param[in, out] atomic Pointer to #ppointer-size value.
  * @param val #psize to perform bitwise 'and' with @a atomic value.
  * @return Old @a atomic value before the operation.
@@ -254,8 +257,8 @@ P_LIB_API psize		p_atomic_pointer_and			(volatile void		*atomic,
 								 psize			val);
 
 /**
- * @brief Atomically performs bitwise 'or' operation of #ppointer-sized
- * @a atomic value and @a val storing result back in @a atomic.
+ * @brief Atomically performs the bitwise 'or' operation of #ppointer-sized
+ * @a atomic value and @a val storing the result back in @a atomic.
  * @param[in, out] atomic Pointer to #ppointer-size value.
  * @param val #psize to perform bitwise 'or' with @a atomic value.
  * @return Old @a atomic value before the operation.
@@ -270,8 +273,8 @@ P_LIB_API psize		p_atomic_pointer_or			(volatile void		*atomic,
 								 psize			val);
 
 /**
- * @brief Atomically performs bitwise 'xor' operation of #ppointer-sized
- * @a atomic value and @a val storing result back in @a atomic.
+ * @brief Atomically performs the bitwise 'xor' operation of #ppointer-sized
+ * @a atomic value and @a val storing the result back in @a atomic.
  * @param[in, out] atomic Pointer to #ppointer-size value.
  * @param val #psize to perform bitwise 'xor' with @a atomic value.
  * @return Old @a atomic value before the operation.

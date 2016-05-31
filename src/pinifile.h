@@ -20,10 +20,10 @@
  * @brief INI file parser
  * @author Alexander Saprykin
  *
- * INI file is usually used for storing configuration information. It consists
- * of sections: every section starts with a line containing the name in square
- * brackets (i.e. [section_name]). After that line all the following parameters
- * will belong to that section until another section begins.
+ * An INI file is usually used for storing configuration information. It
+ * consists of sections: every section starts with a line containing the name in
+ * square brackets (i.e. [section_name]). After that line all the following
+ * parameters will belong to that section until another section begins.
  *
  * Each section has a list of key-value pairs. Empty sections are not permitted
  * (they will be skipped). Every key-value pair is represented with a line in

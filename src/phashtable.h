@@ -20,7 +20,7 @@
  * @brief Hash table
  * @author Alexander Saprykin
  *
- * Hash table is a data structure used to map keys to values. Hash table
+ * A hash table is a data structure used to map keys to values. Hash table
  * consists of several internal slots which holds a list of values. Hash
  * function is used to compute an index in array of the slots from a given key.
  * Hash function itself is fast and it takes a constant time to compute internal

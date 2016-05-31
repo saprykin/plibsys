@@ -20,7 +20,7 @@
  * @brief Process information
  * @author Alexander Saprykin
  *
- * Process is an executing unit in operating system with its own address space.
+ * A process is an executing unit in operating system with its own address space.
  * Every process can be identified with a unique identifier called PID. To get
  * a PID of the currently running process call p_process_get_current_pid(). To
  * check whether a process with a given PID is running up use

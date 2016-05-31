@@ -20,7 +20,7 @@
  * @brief Mutex routines
  * @author Alexander Saprykin
  *
- * Mutex is a mutual exclusive (hence mutex) synchronization primitive which
+ * A mutex is a mutual exclusive (hence mutex) synchronization primitive which
  * allows access to critical section only to one of the concurrently running
  * threads. It is used to protected shared data structures from concurrent
  * modifications which could lead to unpredictable behavior.

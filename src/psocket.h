@@ -20,7 +20,7 @@
  * @brief Socket implementation
  * @author Alexander Saprykin
  *
- * Socket is a communication primitive usually working over a network. You can
+ * A socket is a communication primitive usually working over a network. You can
  * send data to someone's socket by its address and receive data as well through
  * the same socket. This is one of the most popular and standardizated way for
  * network communication supported by vast majority of all the modern operating

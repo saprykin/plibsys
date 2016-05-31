@@ -57,7 +57,7 @@ pint		p_ipc_unix_get_ftok_key		(const pchar	*file_name);
  * Windows and a file name to use with ftok () for UNIX-like systems.
  * @param name Object name.
  * @param posix TRUE if the key will be used for the POSIX IPC calls,
- * otherwise FALSE. This parameter is not used on Windows platform.
+ * otherwise FALSE. This parameter is not used on the Windows platform.
  * @return Platform independent key for IPC usage.
  */
 pchar *		p_ipc_get_platform_key		(const pchar	*name,
