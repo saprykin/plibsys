@@ -35,9 +35,9 @@
  * the list of values is placed in every slot.
  *
  * This is a simple hash table implementation which is not intended for heavy
- * usage (several thousands), see #PTree if you need best performance on large
- * data sets. This implementation doesn't support multi-inserts when several
- * values belong to the same key.
+ * usage (several thousands), see #PTree if you need the best performance on
+ * large data sets. This implementation doesn't support multi-inserts when
+ * several values belong to the same key.
  *
  * Note that #PHashTable stores keys and values only as pointers, so you need
  * to free used memory manually, p_hash_table_free() will not do it in any way.
@@ -98,23 +98,23 @@ P_LIB_API ppointer	p_hash_table_lookup		(const PHashTable	*table,
 
 /**
  * @brief Gives a list of all the stored keys in a hash table.
- * @param table Hash table to collect keys from.
+ * @param table Hash table to collect the keys from.
  * @return List of all the stored keys, the list can be empty if no keys were
  * found.
  * @since 0.0.1
- * @note You should manually free returned list with p_list_free() after using
- * it.
+ * @note You should manually free the returned list with p_list_free() after
+ * using it.
  */
 P_LIB_API PList *	p_hash_table_keys		(const PHashTable	*table);
 
 /**
  * @brief Gives a list of all the stored values in a hash table.
- * @param table Hash table to collect values from.
+ * @param table Hash table to collect the values from.
  * @return List of all the stored values, the list can be empty if no keys were
  * found.
  * @since 0.0.1
- * @note You should manually free returned list with p_list_free() after using
- * it.
+ * @note You should manually free the returned list with p_list_free() after
+ * using it.
  */
 P_LIB_API PList *	p_hash_table_values		(const PHashTable	*table);
 
@@ -140,7 +140,8 @@ P_LIB_API void		p_hash_table_remove		(PHashTable		*table,
  * @param val Value to lookup keys for.
  * @param func Function to compare table's values with @a val, if NULL then
  * values will be compared as pointers.
- * @return List of keys with @a val (can be NULL), NULL if no keys were found.
+ * @return List of the keys with @a val (can be NULL), NULL if no keys were
+ * found.
  * @since 0.0.1
  * @note Caller is responsible to call p_list_free() on the returned list after
  * usage.

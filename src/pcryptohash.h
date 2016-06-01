@@ -21,17 +21,17 @@
  * @author Alexander Saprykin
  *
  * A cryptographic hash function is an algorithm which performs a transformation
- * of the income data to the hash value.
+ * of the income data to a hash value.
  *
  * One of the main requirements to all of the cryptographic hashing algorithms
- * is that any (even considerably small) change in the input data must lead to
+ * is that any (even a considerably small) change in the input data must lead to
  * notable changes in the result hash value. It is the so called avalanche
  * effect. It helps to avoid collisions (the same hash value for different
  * input arrays).
  *
- * The cryptographic hash function is designed to be one-way so you couldn't
+ * The cryptographic hash function is designed to be a one-way so you couldn't
  * revert the output hash value to the input data back. The length of the
- * resulting hash is a constant value depending on the algorithm used.
+ * resulting hash is a constant value depending on the algorithm being used.
  *
  * A cryptographic hash works with the incoming data using fixed length blocks
  * so it is possible to feed as many data as required.
@@ -43,10 +43,10 @@
  *
  * Use p_crypto_hash_new() to initialize a new hash context with one of the
  * mentioned above types. Data for hashing can be added in several chunks using
- * p_crypto_hash_update() routine. You can add more chunks as long as the hash
- * context is open.
+ * the p_crypto_hash_update() routine. You can add more chunks as long as the
+ * hash context is open.
  *
- * The hash context becomes closed in two cases: p_crypto_hash_get_string() or
+ * The hash context becomes close in two cases: p_crypto_hash_get_string() or
  * p_crypto_hash_get_digest() was called. After that you can only get a hash in
  * a hexidemical string or in a raw representation.
  *
@@ -65,7 +65,7 @@
 
 P_BEGIN_DECLS
 
-/** Opaque data structure for handling cryptographic hash context. */
+/** Opaque data structure for handling a cryptographic hash context. */
 typedef struct PCryptoHash_ PCryptoHash;
 
 /** Cryptographic hash function types for #PCryptoHash. */
@@ -78,8 +78,8 @@ typedef enum PCryptoHashType_ {
 /**
  * @brief Initializes a new #PCryptoHash context.
  * @param type Hash function type to use, can't be changed later.
- * @return Newly initialized #PCryptoHash context in case of success,
- * NULL otherwise.
+ * @return Newly initialized #PCryptoHash context in case of success, NULL
+ * otherwise.
  * @since 0.0.1
  */
 P_LIB_API PCryptoHash *		p_crypto_hash_new		(PCryptoHashType	type);
@@ -90,7 +90,7 @@ P_LIB_API PCryptoHash *		p_crypto_hash_new		(PCryptoHashType	type);
  * @param data Data to add for hashing.
  * @param len Data length, in bytes.
  * @note After calling p_crypto_hash_get_string() or p_crypto_hash_get_digest()
- * the hash couldn't be updated anymore as it becomes closed.
+ * the hash couldn't be updated anymore as it becomes close.
  * @since 0.0.1
  */
 P_LIB_API void			p_crypto_hash_update		(PCryptoHash		*hash,
@@ -102,9 +102,9 @@ P_LIB_API void			p_crypto_hash_update		(PCryptoHash		*hash,
  * @param hash #PCryptoHash context to reset.
  * @since 0.0.1
  *
- * After reset the hash context becomes open for updating, but all previously
+ * After a reset the hash context becomes open for updating, but all previously
  * added data will be lost. A hash function type couldn't be changed during or
- * after resets.
+ * after the resets.
  */
 P_LIB_API void			p_crypto_hash_reset		(PCryptoHash		*hash);
 
@@ -137,8 +137,8 @@ P_LIB_API void			p_crypto_hash_get_digest	(PCryptoHash		*hash,
 /**
  * @brief Gets a hash digest length depending on its type.
  * @param hash #PCryptoHash context to get the length for.
- * @return Length (in bytes) of the given hash depending on its type in
- * case of success, -1 otherwise.
+ * @return Length (in bytes) of the given hash depending on its type in case of
+ * success, -1 otherwise.
  * @note This length doesn't match a string hash representation.
  * @since 0.0.1
  */

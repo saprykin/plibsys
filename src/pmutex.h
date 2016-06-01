@@ -21,11 +21,11 @@
  * @author Alexander Saprykin
  *
  * A mutex is a mutual exclusive (hence mutex) synchronization primitive which
- * allows access to critical section only to one of the concurrently running
+ * allows access to a critical section only to one of the concurrently running
  * threads. It is used to protected shared data structures from concurrent
  * modifications which could lead to unpredictable behavior.
  *
- * When entering a critical section thread must call p_mutex_lock() to get a
+ * When entering a critical section a thread must call p_mutex_lock() to get a
  * lock. If another thread is already holding the lock all other threads will
  * be suspended until the lock is released with p_mutex_unlock(). After
  * releasing the lock one of the waiting threads is resumed to continue
@@ -40,15 +40,15 @@
  *
  * p_mutex_unlock (mutex);
  * @endcode
- * You can also think of a mutex as a binary semaphore.
+ * You can also think of the mutex as a binary semaphore.
  *
  * It is implementation dependent whether recursive locking or non-locked mutex
  * unlocking is allowed, but such actions can lead to unpredictable behavior.
  * Do not rely on such behavior in cross-platform applications.
  *
- * This is a thread scoped mutex implementation. You could not share this mutex
- * outside process adress space, but you can share it between the threads of the
- * same process.
+ * This is the thread scoped mutex implementation. You could not share this
+ * mutex outside the process adress space, but you can share it between the
+ * threads of the same process.
  */
 
 #if !defined (PLIBSYS_H_INSIDE) && !defined (PLIBSYS_COMPILATION)
@@ -68,7 +68,7 @@ typedef struct PMutex_ PMutex;
 
 /**
  * @brief Creates a new #PMutex object.
- * @return Pointer to a newly created #PMutex object.
+ * @return Pointer to the newly created #PMutex object.
  * @since 0.0.1
  */
 P_LIB_API PMutex *	p_mutex_new	(void);
@@ -78,10 +78,11 @@ P_LIB_API PMutex *	p_mutex_new	(void);
  * @param mutex #PMutex to lock.
  * @return TRUE in case of success, FALSE otherwise.
  * @since 0.0.1
- * @warning Do not lock the mutex recursively - it may lead to application
+ * @warning Do not lock the mutex recursively - it may lead to an application
  * deadlock (implementation dependent).
  *
- * Forces calling thread to sleep until @a mutex becomes available for locking.
+ * Forces the calling thread to sleep until @a mutex becomes available for
+ * locking.
  */
 P_LIB_API pboolean	p_mutex_lock	(PMutex *mutex);
 
@@ -90,7 +91,7 @@ P_LIB_API pboolean	p_mutex_lock	(PMutex *mutex);
  * @param mutex #PMutex to lock.
  * @return TRUE in case of success, FALSE otherwise.
  * @since 0.0.1
- * @warning Do not lock the mutex recursively - it may lead to application
+ * @warning Do not lock the mutex recursively - it may lead to an application
  * deadlock (implementation dependent).
  *
  * Tries to lock @a mutex and returns immediately if it is not available for

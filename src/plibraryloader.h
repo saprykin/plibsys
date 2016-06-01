@@ -21,23 +21,24 @@
  * @author Alexander Saprykin
  *
  * All modern operating systems support dynamic loadable objects. Such objects
- * compiled with special flags and can be loaded by other programs and libraries
- * later at the runtime. These loadable objects often called as the shared
- * libraries, though some platforms even allow to treat the program binary as a
- * loadable object, too.
+ * are compiled with special flags and can be loaded by other programs and
+ * libraries later at the runtime. These loadable objects often called as the
+ * shared libraries, though some platforms even allow to treat the program
+ * binary as a loadable object, too.
  *
  * When the program is linked with a shared library its dependency would be
- * resolved by operating system automatically before starting the program. But
- * in some circumstances you may need to load a shared library object explicitly
- * (i.e. implementing a plugin subsystem, checking for API availability).
+ * resolved by the operating system automatically before starting the program.
+ * But in some circumstances you may need to load a shared library object
+ * explicitly (i.e. implementing a plugin subsystem, checking for API
+ * availability).
  *
  * All functions and variables which a shared library is exporting are called
- * symbols. Usually only exported symbols are available from outside the shared
- * library. Actually all those symbols represent a library API.
+ * symbols. Usually only the exported symbols are available from outside the
+ * shared library. Actually all those symbols represent a library API.
  *
  * Use p_library_loader_new() to load a shared library and
  * p_library_loader_get_symbol() to retrieve a pointer to a symbol within it.
- * Close library after usage with p_library_loader_free().
+ * Close the library after usage with p_library_loader_free().
  */
 
 #if !defined (PLIBSYS_H_INSIDE) && !defined (PLIBSYS_COMPILATION)
@@ -64,23 +65,23 @@ typedef void (*PFuncAddr) (void);
  * @return Pointer to #PLibraryLoader in case of success, NULL otherwise.
  * @since 0.0.1
  *
- * If you are loading an already loaded shared library, operating system
+ * If you are loading the already loaded shared library, an operating system
  * increments corresponding reference count and decrements it after freeing
- * #PLibraryLoader, thus shared library would be unloaded from the address space
- * only when counter becomes zero.
+ * #PLibraryLoader, thus the shared library would be unloaded from the address
+ * space only when the counter becomes zero.
  */
 P_LIB_API PLibraryLoader *	p_library_loader_new		(const pchar	*path);
 
 /**
  * @brief Gets a pointer to a symbol in the loaded shared library.
- * @param loader Pointer to loaded shared library handle.
+ * @param loader Pointer to the loaded shared library handle.
  * @param sym Name of the symbol.
  * @return Pointer to the symbol in case of success, NULL otherwise.
  * @since 0.0.1
  *
- * Since symbol may have a NULL value, returned NULL value from this call
- * actually doesn't mean the failed result. You can additionally check error
- * result using p_library_loader_get_last_error().
+ * Since the symbol may have a NULL value, the returned NULL value from this
+ * call actually doesn't mean the failed result. You can additionally check the
+ * error result using p_library_loader_get_last_error().
  */
 P_LIB_API PFuncAddr		p_library_loader_get_symbol	(PLibraryLoader	*loader,
 								 const pchar	*sym);
@@ -93,17 +94,17 @@ P_LIB_API PFuncAddr		p_library_loader_get_symbol	(PLibraryLoader	*loader,
 P_LIB_API void			p_library_loader_free		(PLibraryLoader	*loader);
 
 /**
- * @brief Gets last occurred error.
+ * @brief Gets the last occurred error.
  * @return Human readable error string in case of success, NULL otherwise.
  * @since 0.0.1
  * @note Caller takes ownership of the returned string.
  *
- * A NULL result may indicate that no error was occurred since the last call.
+ * The NULL result may indicate that no error was occurred since the last call.
  *
  * Different operating systems have different behavior on error indicating.
- * Some systems reset error status before the call, some do not. Some
- * systems write successful call result (usually zero) to error status,
- * thus resetting the error from the previous call.
+ * Some systems reset an error status before the call, some do not. Some
+ * systems write the successful call result (usually zero) to the error status,
+ * thus resetting an error from the previous call.
  */
 P_LIB_API pchar *		p_library_loader_get_last_error	(void);
 

@@ -17,7 +17,7 @@
 
 /**
  * @file perror.h
- * @brief An error report system
+ * @brief Error report system
  * @author Alexander Saprykin
  *
  * An error report system is used to notify a caller about fatal situations
@@ -32,7 +32,7 @@
  * }
  * @endcode
  * Note that you should not initialize a new #PError object before passing the
- * pointer into API call. Simply initialize it with zero and check the result
+ * pointer into an API call. Simply initialize it with zero and check the result
  * after. Therefore you need to free memory if an error occurred.
  */
 
@@ -110,8 +110,8 @@ P_LIB_API PErrorDomain	p_error_get_domain	(PError		*error);
  * @param error #PError object to copy.
  * @return Newly created #PError object in case of success, NULL otherwise.
  * @since 0.0.1
- * @note The caller is responsible to free memory of the created object
- * after usage.
+ * @note The caller is responsible to free memory of the created object after
+ * usage.
  */
 P_LIB_API PError *	p_error_copy		(PError		*error);
 

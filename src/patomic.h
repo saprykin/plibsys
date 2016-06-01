@@ -28,8 +28,8 @@
  * Lock-free atomic operations require software and hardware support. Usually
  * lock-free atomic operations are implemented with low-level using assembly
  * inlines. Some of the compilers provide built-in routines to perform atomic
- * operations. You can use p_atomic_is_lock_free() call to check whether such a
- * support is provided or not.
+ * operations. You can use the p_atomic_is_lock_free() call to check whether
+ * such a support is provided or not.
  *
  * If there is no hardware or software support for lock-free atomic operations
  * then they can be simulated (though in rather slower manner) using a thread
@@ -37,7 +37,7 @@
  * while performing atomic operations on distinct variables from distinct
  * threads.
  *
- * The Windows platform provides all required lock-free operations in most
+ * The Windows platform provides all the required lock-free operations in most
  * cases, so it always has lock-free support.
  */
 
@@ -65,7 +65,7 @@ P_BEGIN_DECLS
 P_LIB_API pint		p_atomic_int_get			(const volatile pint	*atomic);
 
 /**
- * @brief Sets integer value to @a atomic.
+ * @brief Sets #pint value to @a atomic.
  * @param[out] atomic Pointer to #pint to set the value for.
  * @param val New #pint value.
  * @since 0.0.1

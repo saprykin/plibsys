@@ -20,26 +20,27 @@
  * @brief Memory management
  * @author Alexander Saprykin
  *
- * Usually system routines for memory management are used: malloc(), realloc(),
- * free() and so on. But it is highly encouraged to use a more general approach:
- * p_malloc(), p_malloc0(), p_realloc() and p_free() family of memory management
- * routines. It gives you several advantages:
- * - automatical checking of all input parameters for NULL values;
- * - ability to use custom memory allocator.
+ * Usually the system routines for memory management are used: malloc(),
+ * realloc(), free() and so on. But it is highly encouraged to use a more
+ * general approach: p_malloc(), p_malloc0(), p_realloc() and p_free() family of
+ * memory management routines. It gives you several advantages:
+ * - automatical checking of all input parameters for the NULL values;
+ * - ability to use a custom memory allocator.
  * You can also mix these two families of calls, but it is not recommended.
  *
  * By default p_* routines are mapped to system calls, thus only NULL-checking
- * is additionally performed. If you want to use custom memory allocator fill in
- * #PMemVTable structure and pass it to the p_mem_set_vtable(). To restore
- * system calls back use p_mem_restore_vtable().
+ * is additionally performed. If you want to use the custom memory allocator,
+ * then fill in #PMemVTable structure and pass it to the p_mem_set_vtable(). To
+ * restore system calls back use p_mem_restore_vtable().
  *
- * Be careful when using custom memory allocator: all memory chunks allocated
- * with custom allocator must be freed with the same allocator. If a custom
- * allocator was installed after the library initialization call p_libsys_init()
- * you must to restore original allocator before calling p_libsys_shutdown().
+ * Be careful when using the custom memory allocator: all memory chunks
+ * allocated with the custom allocator must be freed with the same allocator. If
+ * the custom allocator was installed after the library initialization call
+ * p_libsys_init() then you must to restore the original allocator before
+ * calling p_libsys_shutdown().
  *
  * Use p_mem_mmap() to allocate system memory using memory mapping and
- * p_mem_munmap() to release mapped memory.
+ * p_mem_munmap() to release the mapped memory.
  */
 
 #if !defined (PLIBSYS_H_INSIDE) && !defined (PLIBSYS_COMPILATION)
@@ -64,26 +65,26 @@ typedef struct PMemVTable_ {
 } PMemVTable;
 
 /**
- * @brief Allocates memory block for the specified number of bytes.
+ * @brief Allocates a memory block for the specified number of bytes.
  * @param n_bytes Size of the memory block in bytes.
- * @return Pointer to a newly allocated memory block in case of success, NULL
+ * @return Pointer to the newly allocated memory block in case of success, NULL
  * otherwise.
  * @since 0.0.1
  */
 P_LIB_API ppointer	p_malloc		(psize			n_bytes);
 
 /**
- * @brief Allocates memory block for the specified number of bytes and fills it
- * with zeros.
+ * @brief Allocates a memory block for the specified number of bytes and fills
+ * it with zeros.
  * @param n_bytes Size of the memory block in bytes.
- * @return Pointer to a newly allocated memory block filled with zeros in case
+ * @return Pointer to the newly allocated memory block filled with zeros in case
  * of success, NULL otherwise.
  * @since 0.0.1
  */
 P_LIB_API ppointer	p_malloc0		(psize			n_bytes);
 
 /**
- * @brief Changes memory block size.
+ * @brief Changes the memory block size.
  * @param mem Pointer to the memory block.
  * @param n_bytes New size for @a mem block.
  * @return Pointer to a newlly allocated memory block in case of success (if
@@ -94,25 +95,25 @@ P_LIB_API ppointer	p_realloc		(ppointer		mem,
 						 psize			n_bytes);
 
 /**
- * @brief Frees memory block by its pointer.
+ * @brief Frees a memory block by its pointer.
  * @param mem Pointer to the memory block to free.
  * @since 0.0.1
  *
- * You should only call this function for pointers which were obtained using
- * p_malloc(), p_malloc0() and p_realloc() routines, otherwise behavior is
+ * You should only call this function for the pointers which were obtained using
+ * the p_malloc(), p_malloc0() and p_realloc() routines, otherwise behavior is
  * unpredictable.
  *
- * Checks pointer for NULL value.
+ * Checks the pointer for the NULL value.
  */
 P_LIB_API void		p_free			(ppointer		mem);
 
 /**
  * @brief Sets custom memory management routines.
  * @param table Table of the memory routines to use.
- * @return TRUE if table was accepted, FALSE otherwise.
+ * @return TRUE if the table was accepted, FALSE otherwise.
  * @note All members of @a table must be non-NULL.
  * @note This call is not thread-safe.
- * @warning Do not forget to set original memory management routines before
+ * @warning Do not forget to set the original memory management routines before
  * calling p_libsys_shutdown() if you have used p_mem_set_vtable() after the
  * library initialization.
  * @since 0.0.1
@@ -132,24 +133,25 @@ P_LIB_API pboolean	p_mem_set_vtable	(const PMemVTable	*table);
 P_LIB_API void		p_mem_restore_vtable	(void);
 
 /**
- * @brief Gets memory mapped block from the system.
+ * @brief Gets a memory mapped block from the system.
  * @param n_bytes Size of the memory block in bytes.
  * @param[out] error Error report object, NULL to ignore.
- * @return Pointer to allocated memory block in case of success, NULL otherwise.
+ * @return Pointer to the allocated memory block in case of success, NULL
+ * otherwise.
  * @since 0.0.1
  *
  * Note that some systems can allocate memory only in chunks of the page size,
- * so if @a n_bytes is less than page size it will try to allocate a chunk of
- * memory equal to page size instead.
+ * so if @a n_bytes is less than the page size it will try to allocate a chunk
+ * of memory equal to the page size instead.
  *
- * On most systems returned memory is mapped to null or swap device.
+ * On most systems returned memory is mapped to the null or swap device.
  */
 P_LIB_API ppointer	p_mem_mmap		(psize			n_bytes,
 						 PError			**error);
 
 /**
  * @brief Unmaps memory back to the system.
- * @param mem Pointer to the memory block previously allocated using
+ * @param mem Pointer to a memory block previously allocated using the
  * p_mem_mmap() call.
  * @param n_bytes Size of the memory block in bytes.
  * @param[out] error Error report object, NULL to ignore.

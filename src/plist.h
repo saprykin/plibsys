@@ -25,14 +25,14 @@
  * next node. Every node has a link only to the next node, hence list is a
  * singly linked (in a single direction).
  *
- * As singly linked list is a linear collection of the nodes with the sequential
- * access, it has O(N) average complexity for appending, removing and searching
- * operations. Prepending a node takes O(1) constant time. Thus it is not
- * intended for heavy usage, please refer to #PHashTable or #PTree if you are
- * working with large data sets.
+ * As the singly linked list is a linear collection of the nodes with the
+ * sequential access, it has an O(N) average complexity for appending, removing
+ * and searching operations. Prepending a node takes O(1) constant time. Thus it
+ * is not intended for heavy usage, please refer to #PHashTable or #PTree if you
+ * are working with large data sets.
  *
  * Before the first usage you must initialize a #PList variable to NULL. After
- * that you can use p_list_append(), p_list_prepend(), p_list_remove() and
+ * that you can use the p_list_append(), p_list_prepend(), p_list_remove() and
  * p_list_reverse() routines to update that variable:
  * @code
  * PList       *list;
@@ -45,7 +45,7 @@
  * @endcode
  * #PList stores only the pointers to the data, so you must free used memory
  * manually, p_list_free() only frees list's internal memory, not the data it
- * stores the pointers for. The best approach to free used memory is a
+ * stores the pointers for. The best approach to free used memory is the
  * p_list_foreach() routine:
  * @code
  * PList    *list;
@@ -84,30 +84,27 @@ P_BEGIN_DECLS
 /** Typedef for a list node. */
 typedef struct PList_ PList;
 
-/**
- * @struct _PList
- * @brief Node for a singly linked list.
- */
+/** Node for a singly linked list. */
 struct PList_ {
 	ppointer	data;	/**< Pointer to the node data.	*/
 	PList		*next;	/**< Next list node.		*/
 };
 
 /**
- * @brief Appends data to the list.
+ * @brief Appends data to a list.
  * @param list #PList for appending the data.
  * @param data Data to append.
  * @return Pointer to the updated list in case of success, @a list otherwise.
  * @since 0.0.1
  *
- * Before appending first node to the list, @a list argument must be initialized
- * with NULL. Otherwise behavior is unpredictable.
+ * Before appending the first node to the list, @a list argument must be
+ * initialized with NULL. Otherwise behavior is unpredictable.
  */
 P_LIB_API PList *	p_list_append	(PList		*list,
 					 ppointer	data) P_GNUC_WARN_UNUSED_RESULT;
 
 /**
- * @brief Removes data from the list.
+ * @brief Removes data from a list.
  * @param list List to remove the data from.
  * @param data Data to remove.
  * @return Pointer to the updated list in case of success, @a list otherwise.
@@ -121,15 +118,15 @@ P_LIB_API PList *	p_list_remove	(PList		*list,
 					 ppointer	data) P_GNUC_WARN_UNUSED_RESULT;
 
 /**
- * @brief Calls specified function for the each list node.
+ * @brief Calls a specified function for each list node.
  * @param list List to go through.
  * @param func Pointer for the callback function.
  * @param user_data User defined data, may be NULL.
  * @since 0.0.1
  *
- * This function goes through the whole @a list and calls @a func for the each
- * node. @a func will receive pointer to the node's data and @a user_data. You
- * can use it to free the data:
+ * This function goes through the whole @a list and calls @a func for each node.
+ * The @a func will receive pointer to the node's data and @a user_data. You can
+ * use it to free the data:
  * @code
  * p_list_foreach (list, (PFunc) free, NULL);
  * p_list_free (list);
@@ -144,14 +141,14 @@ P_LIB_API void		p_list_foreach	(PList		*list,
  * @param list List to free.
  * @since 0.0.1
  *
- * This function frees only list's internal memory, not the data in the pointers
- * stored in the nodes. Don't forget to free all the data stored in the list
- * manually.
+ * This function frees only the list's internal memory, not the data in the
+ * pointers stored in the nodes. Don't forget to free all the data stored in the
+ * list manually.
  */
 P_LIB_API void		p_list_free	(PList		*list);
 
 /**
- * @brief Gets the last node in the list.
+ * @brief Gets the last node in a list.
  * @param list List to get the node from.
  * @return Pointer to the last @a list node, NULL if the @a list is empty.
  * @since 0.0.1
@@ -169,7 +166,7 @@ P_LIB_API PList *	p_list_last	(PList		*list);
 P_LIB_API psize		p_list_length	(const PList	*list);
 
 /**
- * @brief Prepends data to the list.
+ * @brief Prepends data to a list.
  * @param list #PList for prepending the data.
  * @param data Data to prepend.
  * @return Pointer to the updated list in case of success, @a list otherwise.

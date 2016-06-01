@@ -21,7 +21,7 @@
  * @author Alexander Saprykin
  *
  * A condition variable is an inter-thread synchronization primitive, often
- * used in classical 'producers-consumers' concurrent data access models.
+ * used in the classical 'producers-consumers' concurrent data access models.
  *
  * The main idea is to notify waiting thread(s) for some events before they
  * can enter a critical section. Hence the name of the primitive: a thread
@@ -30,7 +30,7 @@
  * lock.
  *
  * Several threads can be notified at once, but only one of them can enter the
- * critical section. The order of threads in that case is implementation
+ * critical section. The order of the threads in that case is implementation
  * dependent.
  *
  * As the thread enters the critical section upon a condition it still requires
@@ -53,7 +53,7 @@
  * to continue executing the critical section.
  *
  * It is implementation dependent whether a thread will receive a missed signal
- * (when notification from the one thread was emitted prior another thread has
+ * (when a notification from the one thread was emitted prior another thread has
  * been called for waiting), so do not rely on this behavior.
  */
 
@@ -101,22 +101,22 @@ P_LIB_API pboolean		p_cond_variable_wait		(PCondVariable	*cond,
 								 PMutex		*mutex);
 
 /**
- * @brief Emitts a signal on a given condition variable for the one waiting
+ * @brief Emitts a signal on a given condition variable for one waiting
  * thread.
- * @param cond Condition variable to emit signal on.
+ * @param cond Condition variable to emit the signal on.
  * @return TRUE on success, FALSE otherwise.
  * @since 0.0.1
  *
  * After emitting the signal only the one thread waiting for it will be waken
  * up. Do not rely on a queue concept for waiting threads. Though the
  * implementation is intended to be much close to a queue, it's not fairly
- * enough. Due that any thread can be waken up, even if it just called
- * p_cond_variable_wait() while there were other waiting threads.
+ * enough. Due that any thread can be waken up, even if it has just called
+ * p_cond_variable_wait() while there are other waiting threads.
  */
 P_LIB_API pboolean		p_cond_variable_signal		(PCondVariable	*cond);
 
 /**
- * @brief Emitts a signal on the given condition variable for all the waiting
+ * @brief Emitts a signal on a given condition variable for all the waiting
  * threads.
  * @param cond Condition variable to emit the signal on.
  * @return TRUE on success, FALSE otherwise.

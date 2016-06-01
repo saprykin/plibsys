@@ -29,7 +29,7 @@
  *
  * First you need to open a directory for iterating through its content entries
  * using p_dir_new(). After that every next entry inside the directory can be
- * read with p_dir_get_next_entry() call until it returns NULL (though it's
+ * read with the p_dir_get_next_entry() call until it returns NULL (though it's
  * better to check an error code to be sure no error occurred).
  *
  * Also some directory manipulation routines are provided to create, remove and
@@ -59,7 +59,7 @@ typedef enum PDirEntryType_ {
 	P_DIR_ENTRY_TYPE_OTHER	= 3	/**< Other.	*/
 } PDirEntryType;
 
-/** Structure with a directory entry information. */
+/** Structure with directory entry information. */
 typedef struct PDirEntry_ {
 	char		*name;	/**< Name.	*/
 	PDirEntryType	type;	/**< Type.	*/
@@ -68,8 +68,8 @@ typedef struct PDirEntry_ {
 /**
  * @brief Creates a new #PDir object.
  * @param path Directory path.
- * @return Pointer to the newly created #PDir object in case of success,
- * NULL otherwise.
+ * @return Pointer to the newly created #PDir object in case of success, NULL
+ * otherwise.
  * @param[out] error Error report object, NULL to ignore.
  * @since 0.0.1
  * @note If you want to create a new directory on a filesystem, use
@@ -79,7 +79,7 @@ P_LIB_API PDir *	p_dir_new		(const pchar	*path,
 						 PError		**error);
 
 /**
- * @brief Creates a new directory on filesystem.
+ * @brief Creates a new directory on a filesystem.
  * @param path Directory path.
  * @param mode Directory permissions to use, ignored on Windows.
  * @param[out] error Error report object, NULL to ignore.

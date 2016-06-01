@@ -45,7 +45,7 @@ pchar *		p_ipc_unix_get_temp_dir		(void);
 pint		p_ipc_unix_create_key_file	(const pchar	*file_name);
 
 /**
- * @brief Wrapps ftok() UNIX call for a uniquer IPC key.
+ * @brief Wrapps the ftok() UNIX call for a unique IPC key.
  * @param file_name File name for ftok() call.
  * @return Key in case of success, -1 otherwise.
  */
@@ -56,8 +56,8 @@ pint		p_ipc_unix_get_ftok_key		(const pchar	*file_name);
  * @brief Generates a platform independent key for IPC usage, an object name for
  * Windows and a file name to use with ftok () for UNIX-like systems.
  * @param name Object name.
- * @param posix TRUE if the key will be used for the POSIX IPC calls,
- * otherwise FALSE. This parameter is not used on the Windows platform.
+ * @param posix TRUE if the key will be used for the POSIX IPC calls, otherwise
+ * FALSE. This parameter is not used on the Windows platform.
  * @return Platform independent key for IPC usage.
  */
 pchar *		p_ipc_get_platform_key		(const pchar	*name,

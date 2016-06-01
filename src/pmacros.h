@@ -501,7 +501,7 @@
 
 /**
  * @def P_GNUC_WARN_UNUSED_RESULT
- * @brief Gives a warning if a result returned from the function is not being
+ * @brief Gives a warning if the result returned from a function is not being
  * used.
  */
 
@@ -527,8 +527,8 @@
 
 /**
  * @def P_NO_RETURN
- * @brief Notifies a compiler that function will never return a value (i.e.
- * due to abort () call).
+ * @brief Notifies a compiler that a function will never return a value (i.e.
+ * due to the abort () call).
  */
 
 #if defined (__STDC_VERSION__) && (__STDC_VERSION__ >= 201112L)
@@ -546,13 +546,13 @@
 
 /**
  * @def P_LIKELY
- * @brief Hints a compiler that condition is likely to be true so it can perform
- * code optimizations.
+ * @brief Hints a compiler that a condition is likely to be true so it can
+ * perform code optimizations.
  */
 
 /**
  * @def P_UNLIKELY
- * @brief Hints a compiler that condition is likely to be false so it can
+ * @brief Hints a compiler that a condition is likely to be false so it can
  * perform code optimizations.
  */
 
@@ -569,7 +569,7 @@
 
 /**
  * @def P_UNUSED
- * @brief Macro to by-pass compiler warning on unused variables.
+ * @brief Macro to by-pass a compiler warning on an unused variables.
  */
 #define P_UNUSED(a) ((void) a)
 

@@ -23,7 +23,7 @@
  * Before using the library you must to initialize it properly. Use
  * p_libsys_init() to initialize the library. Please note that you need to call
  * it only once, not in every thread. This call is not MT-safe (because it also
- * initializes threading subsystem itself), so it is best to place it the
+ * initializes the threading subsystem itself), so it is best to place it in the
  * program's main thread, when the program starts.
  *
  * The only difference between p_libsys_init() and p_libsys_init_full() is that
@@ -31,14 +31,15 @@
  * internal library call. This way you can ensure to use provided memory
  * management everywhere (even for library initialization).
  *
- * When you do not need the library anymore release used resourses with
+ * When you do not need the library anymore release used resourses with the
  * p_libsys_shutdown() routine. You should only call it once, too. This call is
- * not MT-safe (because it also deinitializes threading subsystem itself), so it
- * is best to place it the program's main thread, when the program finishes.
+ * not MT-safe (because it also deinitializes the threading subsystem itself),
+ * so it is best to place it in the program's main thread, when the program
+ * finishes.
  *
- * It is not recommended to call initialization and deinitialization routines
- * on Windows in DllMain() call because it may require libraries other than
- * kernel32.dll.
+ * It is not recommended to call the initialization and deinitialization
+ * routines on Windows in the DllMain() call because it may require libraries
+ * other than kernel32.dll.
  */
 
 /**
@@ -96,7 +97,7 @@
  * pmutex.h Mutex
  * @endlink
  * - @link
- * pcondvariable.h Conditional variable
+ * pcondvariable.h Condition variable
  * @endlink
  * - @link
  * pspinlock.h Spinlock
