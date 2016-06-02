@@ -148,7 +148,7 @@ P_LIB_API void		p_list_foreach	(PList		*list,
 P_LIB_API void		p_list_free	(PList		*list);
 
 /**
- * @brief Gets the last node in a list.
+ * @brief Gets the last node from the list.
  * @param list List to get the node from.
  * @return Pointer to the last @a list node, NULL if the @a list is empty.
  * @since 0.0.1

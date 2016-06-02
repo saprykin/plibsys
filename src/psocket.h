@@ -291,11 +291,11 @@ P_LIB_API pboolean		p_socket_get_keepalive		(const PSocket		*socket);
  * @param socket #PSocket to check the blocking mode for.
  * @return TRUE if @a socket is in the blocking mode, FALSE otherwise.
  * @note A blocking socket will wait for an I/O operation to be completed before
- * returning to caller function.
+ * returning to the caller function.
  * @since 0.0.1
  * @sa p_socket_set_blocking()
  *
- * An underlying socket descriptor is always set to the non-blocking mode by
+ * The underlying socket descriptor is always set to the non-blocking mode by
  * default and #PSocket emulates the blocking mode if required.
  */
 P_LIB_API pboolean		p_socket_get_blocking		(PSocket 		*socket);
@@ -309,7 +309,7 @@ P_LIB_API pboolean		p_socket_get_blocking		(PSocket 		*socket);
  *
  * This parameter only has meaning for the connection oriented sockets. The
  * backlog parameter specifies how much pending connections from other clients
- * can be stored in the internal (system) queue. If the socket has already
+ * can be stored in the internal (system) queue. If the socket has already the
  * number of pending connections equal to the backlog parameter, and another
  * client attempts to connect on that time, it (client) will either be refused
  * or retransmitted. This behavior is system and protocol dependent.
@@ -436,7 +436,7 @@ P_LIB_API void			p_socket_set_keepalive		(PSocket 		*socket,
  * @brief Sets a @a socket blocking mode.
  * @param socket #PSocket to set the blocking mode for.
  * @param blocking Whether to set the @a socket into the blocking mode.
- * @note The blocking socket will wait for an I/O operation to be completed
+ * @note A blocking socket will wait for an I/O operation to be completed
  * before returning to the caller function.
  * @note On some operating systems a blocking timeout may be less than threads
  * scheduling granularity, so the actual timeout can be greater than specified
@@ -706,7 +706,7 @@ P_LIB_API pboolean		p_socket_close			(PSocket		*socket,
  * @param shutdown_write Whether to shutdown the outcoming data transfer link.
  * @param[out] error Error report object, NULL to ignore.
  * @return TRUE in case of success, FALSE otherwise.
- * @note Shutdown of any link is possible only on the socket in a connecte
+ * @note Shutdown of any link is possible only on the socket in a connected
  * state, otherwise the call will fail.
  * @since 0.0.1
  *

@@ -152,7 +152,7 @@ P_LIB_API pssize	p_shm_buffer_write		(PShmBuffer	*buf,
 							 PError		**error);
 
 /**
- * @brief Gets free space in a shared memory buffer.
+ * @brief Gets free space in the shared memory buffer.
  * @param buf #PShmBuffer to check space in.
  * @param[out] error Error report object, NULL to ignore.
  * @return Free space in bytes in case of success, -1 otherwise.
@@ -162,7 +162,7 @@ P_LIB_API pssize	p_shm_buffer_get_free_space	(PShmBuffer	*buf,
 							 PError		**error);
 
 /**
- * @brief Gets used space in a shared memory buffer.
+ * @brief Gets used space in the shared memory buffer.
  * @param buf #PShmBuffer to check space in.
  * @param[out] error Error report object, NULL to ignore.
  * @return Used space in bytes in case of success, -1 otherwise.
@@ -172,7 +172,7 @@ P_LIB_API pssize	p_shm_buffer_get_used_space	(PShmBuffer	*buf,
 							 PError		**error);
 
 /**
- * @brief Clears all data in a buffer and fills it with zeros.
+ * @brief Clears all data in the buffer and fills it with zeros.
  * @param buf #PShmBuffer to clear.
  * @since 0.0.1
  */

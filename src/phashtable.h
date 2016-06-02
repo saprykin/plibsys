@@ -86,7 +86,7 @@ P_LIB_API void		p_hash_table_insert		(PHashTable		*table,
 							 ppointer		value);
 
 /**
- * @brief Searches for a specifed key in a hash table.
+ * @brief Searches for a specifed key in the hash table.
  * @param table Hash table to lookup in.
  * @param key Key to lookup for.
  * @return Value related to its key pair (can be NULL), (#ppointer) -1 if no
@@ -97,7 +97,7 @@ P_LIB_API ppointer	p_hash_table_lookup		(const PHashTable	*table,
 							 pconstpointer		key);
 
 /**
- * @brief Gives a list of all the stored keys in a hash table.
+ * @brief Gives a list of all the stored keys in the hash table.
  * @param table Hash table to collect the keys from.
  * @return List of all the stored keys, the list can be empty if no keys were
  * found.
@@ -108,7 +108,7 @@ P_LIB_API ppointer	p_hash_table_lookup		(const PHashTable	*table,
 P_LIB_API PList *	p_hash_table_keys		(const PHashTable	*table);
 
 /**
- * @brief Gives a list of all the stored values in a hash table.
+ * @brief Gives a list of all the stored values in the hash table.
  * @param table Hash table to collect the values from.
  * @return List of all the stored values, the list can be empty if no keys were
  * found.
@@ -135,7 +135,7 @@ P_LIB_API void		p_hash_table_remove		(PHashTable		*table,
 							 pconstpointer		key);
 
 /**
- * @brief Searches for a specifed key in a hash table by its value.
+ * @brief Searches for a specifed key in the hash table by its value.
  * @param table Hash table to lookup in.
  * @param val Value to lookup keys for.
  * @param func Function to compare table's values with @a val, if NULL then
