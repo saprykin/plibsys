@@ -20,17 +20,17 @@
  * @brief Multithreading support
  * @author Alexander Saprykin
  *
- * Thread is a system execution unit which is managed independently by a
+ * A thread is a system execution unit which is managed independently by the
  * scheduler of the operating system. It allows to do things in parallel or
  * concurrently.
  *
  * #PUThread provides a convinient way of multithreading support using native
- * routines to provide best performance on a target system.
+ * routines to provide the best performance on the target system.
  *
- * To create a thread use p_uthread_create() or p_uthread_create_full() routines.
- * Joinable threads allow to wait until their execution is finished before
- * proceeding further. Thus you can synchronize threads execution within the
- * main thread.
+ * To create the thread use the p_uthread_create() or p_uthread_create_full()
+ * routines. Joinable threads allow to wait until their execution is finished
+ * before proceeding further. Thus you can synchronize threads' execution within
+ * the main thread.
  *
  * A reference counter mechanism is used to keep track of a #PUThread structure.
  * It means that the structure will be freed automatically when the reference
@@ -47,32 +47,32 @@
  * Thread priorities are unreliable: not all operating systems respect thread
  * priorities in favour of process ones. Priorities may be ignored for bound
  * threads (every thread bound to a kernel light-weight thread as 1:1), other
- * systems may require administrative privileges to change a thread priority
+ * systems may require administrative privileges to change the thread priority
  * (i.e. Linux). Windows always respects thread priorities.
  *
- * To put a current thread (even if it was not created using #PUThread routines)
- * in sleep state use p_uthread_sleep().
+ * To put the current thread (even if it was not created using the #PUThread
+ * routines) in a sleep state use p_uthread_sleep().
  *
- * You can give a hint to a scheduler that a current thread do not need an
- * execution time with p_uthread_yield() routine. This is useful when some of
- * the threads are in the idle state so you do not want to waste a CPU time.
- * This only tells to a scheduler to skip current scheduling cycle for the
+ * You can give a hint to the scheduler that the current thread do not need an
+ * execution time with the p_uthread_yield() routine. This is useful when some
+ * of the threads are in an idle state so you do not want to waste a CPU time.
+ * This only tells to the scheduler to skip the current scheduling cycle for the
  * calling thread, though the scheduler can ingnore it.
  *
- * Thread local storage (TLS) is provided. A TLS key's value can be accessed
- * through a reference key defined as #PUThreadKey. TLS reference key is a some
- * sort of a token which has an associated value. But every thread has its own
- * token value though using the same token object.
+ * A thread local storage (TLS) is provided. The TLS key's value can be accessed
+ * through a reference key defined as a #PUThreadKey. A TLS reference key is
+ * some sort of a token which has an associated value. But every thread has its
+ * own token value though using the same token object.
  *
- * After creating a TLS reference key every thread can use it to access a
- * local-specific value. Use p_uthread_local_new() call to create a TLS
+ * After creating the TLS reference key every thread can use it to access a
+ * local-specific value. Use the p_uthread_local_new() call to create the TLS
  * reference key and pass it to every thread which needs local-specific values.
  * You can also provide a destroy notification function which would be called
- * upon a TLS key removal which is usually performed on a thread exit.
+ * upon a TLS key removal which is usually performed on the thread exit.
  *
  * There are two calls to set a TLS key's value: p_uthread_set_local() and
- * p_uthread_replace_local(). The only difference is that former one calls
- * provided destroy notification function before replacing the old value.
+ * p_uthread_replace_local(). The only difference is that the former one calls
+ * the provided destroy notification function before replacing the old value.
  */
 
 #if !defined (PLIBSYS_H_INSIDE) && !defined (PLIBSYS_COMPILATION)
@@ -87,7 +87,7 @@
 
 P_BEGIN_DECLS
 
-/** Typedef for #PUThread running method. */
+/** Typedef for a #PUThread running method. */
 typedef ppointer (*PUThreadFunc) (ppointer arg);
 
 /** Thread opaque data type. */
@@ -112,7 +112,7 @@ typedef enum PUThreadPriority_ {
  * @brief Creates a new #PUThread and starts it.
  * @param func Main thread function to run.
  * @param data Pointer to pass into the thread main function, may be NULL.
- * @param joinable Whether to create joinable thread or not.
+ * @param joinable Whether to create a joinable thread or not.
  * @param prio Thread priority.
  * @param stack_size Thread stack size, in bytes. Leave zero to use a default
  * value.
@@ -132,7 +132,7 @@ P_LIB_API PUThread *	p_uthread_create_full	(PUThreadFunc		func,
  * p_uthread_create_full().
  * @param func Main thread function to run.
  * @param data Pointer to pass into the thread main function, may be NULL.
- * @param joinable Whether to create joinable thread or not.
+ * @param joinable Whether to create a joinable thread or not.
  * @return Pointer to #PUThread in case of success, NULL otherwise.
  * @since 0.0.1
  * @note Unreference the returned value after use with p_uthread_unref(). You do
@@ -150,16 +150,16 @@ P_LIB_API PUThread *	p_uthread_create	(PUThreadFunc		func,
 P_LIB_API void		p_uthread_exit		(pint			code);
 
 /**
- * @brief Waits for selected thread to become finished. Thread must be joinable
- * to return non-negative result.
+ * @brief Waits for the selected thread to become finished.
  * @param thread Thread to wait for.
  * @return Thread exit code in case of success, -1 otherwise.
  * @since 0.0.1
+ * @note Thread must be joinable to return the non-negative result.
  */
 P_LIB_API pint		p_uthread_join		(PUThread		*thread);
 
 /**
- * @brief Sleeps the current thread (caller) for specified amount of time.
+ * @brief Sleeps the current thread (caller) for a specified amount of time.
  * @param msec Milliseconds to sleep.
  * @return 0 in case of success, -1 otherwise.
  * @since 0.0.1
@@ -167,8 +167,8 @@ P_LIB_API pint		p_uthread_join		(PUThread		*thread);
 P_LIB_API pint		p_uthread_sleep		(puint32		msec);
 
 /**
- * @brief Sets thread priority.
- * @param thread Thread to set priority for.
+ * @brief Sets a thread priority.
+ * @param thread Thread to set the priority for.
  * @param prio Priority to set.
  * @return TRUE in case of success, FALSE otherwise.
  * @since 0.0.1
@@ -177,12 +177,12 @@ P_LIB_API pboolean	p_uthread_set_priority	(PUThread		*thread,
 						 PUThreadPriority	prio);
 
 /**
- * @brief Tells scheduler to skip the current (caller) thread in the current
+ * @brief Tells the scheduler to skip the current (caller) thread in the current
  * planning stage.
  * @since 0.0.1
  *
- * Scheduler shouldn't give time ticks for the current thread during the current
- * period, but it may ignore this call.
+ * The scheduler shouldn't give time ticks for the current thread during the
+ * current period, but it may ignore this call.
  */
 P_LIB_API void		p_uthread_yield		(void);
 
@@ -192,7 +192,7 @@ P_LIB_API void		p_uthread_yield		(void);
  * @since 0.0.1
  *
  * This is a platform-dependent type. You shouldn't treat it as a number, it
- * only gives you a uniquer ID of the thread accross the system.
+ * only gives you the uniquer ID of the thread accross the system.
  */
 P_LIB_API P_HANDLE	p_uthread_current_id	(void);
 
@@ -203,7 +203,7 @@ P_LIB_API P_HANDLE	p_uthread_current_id	(void);
  * @note This call doesn't not increment the reference counter of the returned
  * structure.
  *
- * A thread structure will be returned even for a thread which was created
+ * A thread structure will be returned even for the thread which was created
  * outside the library. But you should not use thread manipulation routines over
  * that structure.
  */
@@ -236,12 +236,12 @@ P_LIB_API void		p_uthread_unref		(PUThread		*thread);
 P_LIB_API PUThreadKey *	p_uthread_local_new	(PDestroyFunc		free_func);
 
 /**
- * @brief Frees TLS reference key.
+ * @brief Frees a TLS reference key.
  * @param key TLS reference key to free.
  * @since 0.0.1
  *
- * It doesn't remove a TLS key itself but only removes a reference used to
- * access a TLS slot.
+ * It doesn't remove the TLS key itself but only removes a reference used to
+ * access the TLS slot.
  */
 P_LIB_API void		p_uthread_local_free	(PUThreadKey		*key);
 
@@ -251,7 +251,7 @@ P_LIB_API void		p_uthread_local_free	(PUThreadKey		*key);
  * @return TLS value for the given key.
  * @since 0.0.1
  * @note This call may fail only in case of abnormal use or program behavior,
- * NULL value will be returned to tolerance the failure.
+ * the NULL value will be returned to tolerance the failure.
  */
 P_LIB_API ppointer	p_uthread_get_local	(PUThreadKey		*key);
 
@@ -262,7 +262,7 @@ P_LIB_API ppointer	p_uthread_get_local	(PUThreadKey		*key);
  * @since 0.0.1
  * @note This call may fail only in case of abnormal use or program behavior.
  *
- * It doesn't call a destructor notification function provided with
+ * It doesn't call the destructor notification function provided with
  * p_uthread_local_new().
  */
 P_LIB_API void		p_uthread_set_local	(PUThreadKey		*key,
@@ -275,8 +275,8 @@ P_LIB_API void		p_uthread_set_local	(PUThreadKey		*key,
  * @since 0.0.1
  * @note This call may fail only in case of abnormal use or program behavior.
  *
- * This call does perform a notification function provided with
- * p_uthread_local_new() on an old TLS value. This is the only difference with
+ * This call does perform the notification function provided with
+ * p_uthread_local_new() on the old TLS value. This is the only difference with
  * p_uthread_set_local().
  */
 P_LIB_API void		p_uthread_replace_local	(PUThreadKey		*key,
