@@ -20,25 +20,26 @@
  * @brief Socket address wrapper
  * @author Alexander Saprykin
  *
- * Socket address is usually represented by a network address (IPv4 or IPv6) and
- * a port number (though some other naming schemes and parameters are possible).
+ * A socket address is usually represented by a network address (IPv4 or IPv6)
+ * and a port number (though some other naming schemes and parameters are
+ * possible).
  *
  * Socket address parameters are stored inside a special system (native)
- * structure in a binary (raw) form. Native structure varies with operating
- * system and network protocol. #PSocketAddress acts like a thin wrapper around
- * that native address structure and unifies manipulation of socket address
- * data.
+ * structure in the binary (raw) form. The native structure varies with an
+ * operating system and a network protocol. #PSocketAddress acts like a thin
+ * wrapper around that native address structure and unifies manipulation of
+ * socket address data.
  *
  * #PSocketAddress supports IPv4 and IPv6 addresses which consist of an IP
  * address and a port number. IPv6 support is system dependent and doesn't
- * provided for all platforms. Sometimes you may also need to enable IPv6
+ * provided for all the platforms. Sometimes you may also need to enable IPv6
  * support in the system to make it working.
  *
- * Convenient methods to create special addresses are provided: for loopback
- * interface use p_socket_address_new_loopback(), for any-address interface
+ * Convenient methods to create special addresses are provided: for the loopback
+ * interface use p_socket_address_new_loopback(), for the any-address interface
  * use p_socket_address_new_any().
  *
- * If you want to get an underlying native address structure for further usage
+ * If you want to get the underlying native address structure for further usage
  * in system calls use p_socket_address_to_native(), and
  * p_socket_address_new_from_native() for a vice versa conversion.
  */
@@ -76,8 +77,8 @@ typedef enum PSocketFamily_ {
 typedef struct PSocketAddress_ PSocketAddress;
 
 /**
- * @brief Creates new #PSocketAddress from native socket address raw data.
- * @param native Pointer to native socket address raw data.
+ * @brief Creates new #PSocketAddress from the native socket address raw data.
+ * @param native Pointer to the native socket address raw data.
  * @param len Raw data length, in bytes.
  * @return Pointer to #PSocketAddress in case of success, NULL otherwise.
  * @since 0.0.1
@@ -87,16 +88,16 @@ P_LIB_API PSocketAddress *	p_socket_address_new_from_native	(pconstpointer		nati
 
 /**
  * @brief Creates new #PSocketAddress.
- * @param address String representation of the address (i.e. "172.146.45.5").
+ * @param address String representation of an address (i.e. "172.146.45.5").
  * @param port Port number.
  * @return Pointer to #PSocketAddress in case of success, NULL otherwise.
  * @since 0.0.1
  * @note It tries to automatically detect a socket family.
  *
- * If @a address is an IPv6 address, it can also contain a scope index separated
- * from the address by a '%' literal). Most target platforms should correctly
- * parse such an address though some old operating systems may fail in case of
- * lack of the getaddrinfo() call.
+ * If the @a address is an IPv6 address, it can also contain a scope index
+ * separated from the address by the '%' literal). Most target platforms should
+ * correctly parse such an address though some old operating systems may fail in
+ * case of lack of the getaddrinfo() call.
  */
 P_LIB_API PSocketAddress *	p_socket_address_new			(const pchar		*address,
 									 puint16		port);
@@ -130,7 +131,7 @@ P_LIB_API PSocketAddress *	p_socket_address_new_loopback		(PSocketFamily		family
 									 puint16		port);
 
 /**
- * @brief Converts #PSocketAddress to native socket address raw data.
+ * @brief Converts #PSocketAddress to the native socket address raw data.
  * @param addr #PSocketAddress to convert.
  * @param[out] dest Output buffer for raw data.
  * @param destlen Length in bytes of the @a dest buffer.
@@ -142,34 +143,33 @@ P_LIB_API pboolean		p_socket_address_to_native		(const PSocketAddress	*addr,
 									 psize			destlen);
 
 /**
- * @brief Gets the size of native socket address raw data, in bytes.
+ * @brief Gets the size of the native socket address raw data, in bytes.
  * @param addr #PSocketAddress to get the size of native address raw data for.
- * @return Size of native socket address raw data in case of success, 0
+ * @return Size of the native socket address raw data in case of success, 0
  * otherwise.
  * @since 0.0.1
  */
 P_LIB_API psize			p_socket_address_get_native_size	(const PSocketAddress	*addr);
 
 /**
- * @brief Gets the family of the socket address.
- * @param addr #PSocketAddress to get a family for.
+ * @brief Gets a family of a socket address.
+ * @param addr #PSocketAddress to get the family for.
  * @return #PSocketFamily of the socket address.
  * @since 0.0.1
  */
 P_LIB_API PSocketFamily		p_socket_address_get_family		(const PSocketAddress	*addr);
 
 /**
- * @brief Gets a socket address in the string representation, i.e.
- * "172.146.45.5".
+ * @brief Gets a socket address in a string representation, i.e. "172.146.45.5".
  * @param addr #PSocketAddress to get address string for.
  * @return Pointer to the string representation of the socket address in case of
- * success, NULL otherwise. Caller takes ownership of the returned pointer.
+ * success, NULL otherwise. The caller takes ownership of the returned pointer.
  * @since 0.0.1
  */
 P_LIB_API pchar *		p_socket_address_get_address		(const PSocketAddress	*addr);
 
 /**
- * @brief Gets a port number of the socket address.
+ * @brief Gets a port number of a socket address.
  * @param addr #PSocketAddress to get the port number for.
  * @return Port number in case of success, 0 otherwise.
  * @since 0.0.1
@@ -187,8 +187,8 @@ P_LIB_API puint32		p_socket_address_get_flow_info		(const PSocketAddress	*addr);
 
 /**
  * @brief Gets an IPv6 set of interfaces for a scope.
- * @param addr #PSocketAddress to get a set of interfaces for.
- * @return Index that identifies a set of interfaces for a scope.
+ * @param addr #PSocketAddress to get the set of interfaces for.
+ * @return Index that identifies the set of interfaces for a scope.
  * @since 0.0.1
  * @note This call is valid only for an IPv6 address, otherwise 0 is returned.
  */
@@ -206,8 +206,8 @@ P_LIB_API void			p_socket_address_set_flow_info		(PSocketAddress		*addr,
 
 /**
  * @brief Sets an IPv6 set of interfaces for a scope.
- * @param addr #PSocketAddress to set a set of interfaces for.
- * @param scope_id Index that identifies a set of interfaces for a scope.
+ * @param addr #PSocketAddress to set the set of interfaces for.
+ * @param scope_id Index that identifies the set of interfaces for a scope.
  * @since 0.0.1
  * @note This call is valid only for an IPv6 address.
  */
@@ -215,27 +215,28 @@ P_LIB_API void			p_socket_address_set_scope_id		(PSocketAddress		*addr,
 									 puint32		scope_id);
 
 /**
- * @brief Checks whether a given socket address is the any-address
- * representation. Such address is a 0.0.0.0.
+ * @brief Checks whether a given socket address is an any-address
+ * representation. Such an address is a 0.0.0.0.
  * @param addr #PSocketAddress to check.
- * @return TRUE if @a addr is the any-address representation, FALSE otherwise.
+ * @return TRUE if the @a addr is the any-address representation, FALSE
+ * otherwise.
  * @since 0.0.1
  * @sa p_socket_address_new_any()
  */
 P_LIB_API pboolean		p_socket_address_is_any			(const PSocketAddress	*addr);
 
 /**
- * @brief Checks whether a given socket address is for loopback interface. Such
- * address is a 127.x.x.x.
+ * @brief Checks whether a given socket address is for the loopback interface.
+ * Such an address is a 127.x.x.x.
  * @param addr #PSocketAddress to check.
- * @return TRUE if @a addr is for loopback interface, FALSE otherwise.
+ * @return TRUE if the @a addr is for the loopback interface, FALSE otherwise.
  * @since 0.0.1
  * @sa p_socket_address_new_loopback()
  */
 P_LIB_API pboolean		p_socket_address_is_loopback		(const PSocketAddress	*addr);
 
 /**
- * @brief Frees socket address structure and its resources.
+ * @brief Frees a socket address structure and its resources.
  * @param addr #PSocketAddress to free.
  * @since 0.0.1
  */
