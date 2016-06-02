@@ -41,8 +41,8 @@ P_BEGIN_DECLS
 /**
  * @brief Copies a string.
  * @param str String with the trailing zero to copy.
- * @return Copy of the @a str in case of success, NULL otherwise. Caller takes
- * ownership of the returned string.
+ * @return Copy of the @a str in case of success, NULL otherwise. The caller
+ * takes ownership of the returned string.
  * @since 0.0.1
  */
 P_LIB_API pchar *	p_strdup	(const pchar	*str);
@@ -50,8 +50,8 @@ P_LIB_API pchar *	p_strdup	(const pchar	*str);
 /**
  * @brief Removes trailing and leading whitespaces.
  * @param str String with the trailing zero to process.
- * @return Newlly allocated string in case of success, NULL otherwise. Caller
- * takes ownership of the returned string.
+ * @return Newlly allocated string in case of success, NULL otherwise. The
+ * caller takes ownership of the returned string.
  * @since 0.0.1
  */
 P_LIB_API pchar *	p_strchomp	(const pchar	*str);
@@ -64,9 +64,9 @@ P_LIB_API pchar *	p_strchomp	(const pchar	*str);
  * @return Pointer to a splitted zero-terminated string in case of success, NULL
  * otherwise.
  * @since 0.0.1
- * @note @a str is modified by this call, so take care for that. The returned
- * pointer points on the @a str substring, so you do not need to call p_free()
- * on it.
+ * @note The @a str is modified by this call, so take care for that. The
+ * returned pointer points on a @a str substring, so you do not need to call
+ * p_free() on it.
  *
  * The common usage of this call is following:
  * @code
@@ -81,12 +81,12 @@ P_LIB_API pchar *	p_strchomp	(const pchar	*str);
  *     token = p_strtok (NULL, delim, &buf);
  * }
  * @endcode
- * Take an attention that you need to pass the original string only once, after
+ * Take attention that you need to pass the original string only once, after
  * that you should pass NULL instead. You can also pass different delimiters
  * each time.
  *
- * Some platforms do not support third parameter and it can be remained unused.
- * In that case this call wouldn't be thread-safe.
+ * Some platforms do not support the third parameter and it can be remained
+ * unused. In that case this call wouldn't be thread-safe.
  */
 P_LIB_API pchar *	p_strtok	(pchar		*str,
 					 const pchar	*delim,
