@@ -20,27 +20,28 @@
  * @brief Light-weight atomic spinlock
  * @author Alexander Saprykin
  *
- * Spinlock is an inter-thread synchronization primitive based on atomic
- * operations. It allows to guard critical section from concurrent access of
- * multiple threads at once. It is very similar to mutex in semantics, but
- * inside it provides more light-weight and fast locking mechanism without
+ * A spinlock is an inter-thread synchronization primitive based on atomic
+ * operations. It allows to guard a critical section from concurrent access of
+ * multiple threads at once. It is very similar to a mutex in semantics, but
+ * inside it provides a more light-weight and fast locking mechanism without
  * thread sleeping and undesirable context switching. Thus spinlocks should be
  * used only for small code sections, otherwise long-time spinning can cause
  * extensive CPU time waste by waiting threads.
  *
- * As spinlock is based on atomic operations it would have the real meaning
- * only if an underlying atomic model is lock-free (not simulated using mutex).
- * You can check if the atomic model is lock-free with p_atomic_is_lock_free().
- * Otherwise usage of spinlocks will be the same as ordinary mutex.
+ * As the spinlock is based on atomic operations it would have the real meaning
+ * only if an underlying atomic model is lock-free (not simulated using the
+ * mutex). You can check if the atomic model is lock-free with
+ * p_atomic_is_lock_free(). Otherwise usage of spinlocks will be the same as the
+ * ordinary mutex.
  *
  * To create a new spinlock primitive the p_spinlock_new() routine should be
- * called, to delete an unused spinlock primitive use the p_spinlock_free().
+ * called, to delete the unused spinlock primitive use p_spinlock_free().
  *
  * Use p_spinlock_lock() or p_spinlock_trylock() to synchronize access at the
- * beginning of a critical section. Only one thread is allowed to pass this
- * call, others will wait for the p_spinlock_unlock() call which marks the end
- * of the critical section. This way critical section code is guarded against
- * concurrent access of multiple threads at once.
+ * beginning of the critical section. Only the one thread is allowed to pass
+ * this call, others will wait for the p_spinlock_unlock() call which marks the
+ * end of the critical section. This way the critical section code is guarded
+ * against concurrent access of multiple threads at once.
  */
 
 #if !defined (PLIBSYS_H_INSIDE) && !defined (PLIBSYS_COMPILATION)
@@ -60,7 +61,7 @@ typedef struct PSpinLock_ PSpinLock;
 
 /**
  * @brief Creates a new #PSpinLock object.
- * @return Pointer to a newly created #PSpinLock object.
+ * @return Pointer to the newly created #PSpinLock object.
  * @since 0.0.1
  */
 P_LIB_API PSpinLock *	p_spinlock_new		(void);
@@ -71,19 +72,19 @@ P_LIB_API PSpinLock *	p_spinlock_new		(void);
  * @return TRUE in case of success, FALSE otherwise.
  * @since 0.0.1
  *
- * Thread will not sleep in this call if another thread is holding the lock,
+ * A thread will not sleep in this call if another thread is holding the lock,
  * instead it will try to lock @a spinlock in an infinite loop.
  *
  * If the atomic model is not lock-free this call will have the same effect
  * as p_mutex_lock().
  *
- * Do not lock a spinlock recursively - this may lead to application
- * deadlock
+ * Do not lock a spinlock recursively - this may lead to an application
+ * deadlock.
  */
 P_LIB_API pboolean	p_spinlock_lock		(PSpinLock *spinlock);
 
 /**
- * @brief Tries to lock  aspinlock immediately.
+ * @brief Tries to lock a spinlock immediately.
  * @param spinlock #PSpinLock to lock.
  * @return TRUE in case of success, FALSE otherwise.
  * @since 0.0.1
@@ -94,7 +95,7 @@ P_LIB_API pboolean	p_spinlock_lock		(PSpinLock *spinlock);
  * If the atomic model is not lock-free this call will have the same effect
  * as p_mutex_trylock().
  *
- * Do not lock a spinlock recursively - this may lead to application
+ * Do not lock a spinlock recursively - this may lead to an application
  * deadlock.
  */
 P_LIB_API pboolean	p_spinlock_trylock	(PSpinLock *spinlock);
