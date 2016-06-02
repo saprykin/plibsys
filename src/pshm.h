@@ -29,7 +29,7 @@
  * exchange implementation is process-wide so you can transfer data not only
  * between the threads. But it makes this IPC method (actually like any other
  * IPC method, as well) relatively heavy. Consider using other approaches
- * instead if you do not need to cross a process boundary.
+ * instead if you do not need to cross the process boundary.
  *
  * A shared memory segment doesn't provide any synchronization primitives itself
  * which means that several processes or threads can concurrently write and read
