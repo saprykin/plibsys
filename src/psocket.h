@@ -133,8 +133,8 @@
  * p_socket_free (sock);
  * p_libsys_shutdown ();
  * @endcode
- * Here a UDP socket was created, bound to the localhost address and port 5432.
- * Do not forget to close the socket and free memory after its usage.
+ * Here a UDP socket was created, bound to the localhost address and the port
+ * 5432. Do not forget to close the socket and free memory after its usage.
  */
 
 #if !defined (PLIBSYS_H_INSIDE) && !defined (PLIBSYS_COMPILATION)
@@ -272,14 +272,14 @@ P_LIB_API PSocketProtocol	p_socket_get_protocol		(const PSocket		*socket);
  * @since 0.0.1
  * @sa p_socket_set_keepalive()
  *
- * This option only has effect for the connection oriented sockets. After a
- * connection has been established between the sockets, they periodically send
+ * This option only has effect for connection oriented sockets. After a
+ * connection has been established between two sockets, they periodically send
  * ping packets to each other to make sure that the connection is alive. A
  * time interval between alive packets is system dependent and varies from
  * several minutes to several hours.
  *
- * The main usage of this option is to detect dead clients on the server side
- * and close such the broken sockets to free resources for actual clients which
+ * The main usage of this option is to detect dead clients on a server side and
+ * close such the broken sockets to free resources for the actual clients which
  * may want to connect to the server. Some servers may let clients to be idle
  * for a long time, so such an option helps to detect died clients faster
  * without sending them real data. It's some kind of garbage collecting.
@@ -341,102 +341,104 @@ P_LIB_API pint			p_socket_get_listen_backlog	(const PSocket 		*socket);
 P_LIB_API pint			p_socket_get_timeout		(const PSocket		*socket);
 
 /**
- * @brief Gets @a socket local (bound) address.
- * @param socket #PSocket to get a local address for.
+ * @brief Gets a @a socket local (bound) address.
+ * @param socket #PSocket to get the local address for.
  * @param[out] error Error report object, NULL to ignore.
  * @return #PSocketAddress with the socket local address in case of success,
  * NULL otherwise.
  * @since 0.0.1
  * @sa p_socket_bind()
  *
- * If @a socket was not bound explicitly with p_socket_bind() or implicitly with
- * p_socket_connect(), the call will fail.
+ * If the @a socket was not bound explicitly with p_socket_bind() or implicitly
+ * with p_socket_connect(), the call will fail.
  */
 P_LIB_API PSocketAddress *	p_socket_get_local_address	(const PSocket 		*socket,
 								 PError			**error);
 
 /**
- * @brief Gets @a socket remote endpoint address.
- * @param socket #PSocket to get a remote endpoint address for.
+ * @brief Gets a @a socket remote endpoint address.
+ * @param socket #PSocket to get the remote endpoint address for.
  * @param[out] error Error report object, NULL to ignore.
  * @return #PSocketAddress with the socket endpoint remote address in case of
  * success, NULL otherwise.
  * @since 0.0.1
  * @sa p_socket_connect()
  *
- * If @a socket was not connected to the endpoint address with
+ * If the @a socket was not connected to the endpoint address with
  * p_socket_connect(), the call will fail.
  */
 P_LIB_API PSocketAddress *	p_socket_get_remote_address	(const PSocket 		*socket,
 								 PError			**error);
 
 /**
- * @brief Checks whether @a socket is connected.
+ * @brief Checks whether a @a socket is connected.
  * @param socket #PSocket to check a connection for.
- * @return TRUE if @a socket is connected, FALSE otherwise.
+ * @return TRUE if the @a socket is connected, FALSE otherwise.
  * @since 0.0.1
  * @sa p_socket_connect(), p_socket_check_connect_result()
  *
- * This function doesn't check if socket is still connected, it only checks
- * whether p_socket_connect() call was successfully performed on the @a socket.
+ * This function doesn't check if the socket is still connected, it only checks
+ * whether the p_socket_connect() call was successfully performed on the
+ * @a socket.
  */
 P_LIB_API pboolean		p_socket_is_connected		(const PSocket		*socket);
 
 /**
- * @brief Checks whether @a socket is closed.
+ * @brief Checks whether a @a socket is closed.
  * @param socket #PSocket to check a closed state.
- * @return TRUE if @a socket is closed, FALSE otherwise.
+ * @return TRUE if the @a socket is closed, FALSE otherwise.
  * @since 0.0.1
  * @sa p_socket_close(), p_socket_shutdown()
  *
- * If a socket is in non-blocking mode this call will not return TRUE until
- * p_socket_check_connect_result() is called. A socket will be closed if
+ * If the socket is in a non-blocking mode this call will not return TRUE until
+ * p_socket_check_connect_result() is called. The socket will be closed if
  * p_socket_shutdown() is called for both the directions.
  */
 P_LIB_API pboolean		p_socket_is_closed		(const PSocket		*socket);
 
 /**
  * @brief Checks a connection state after calling p_socket_connect().
- * @param socket #PSocket to check a connection state for.
+ * @param socket #PSocket to check the connection state for.
  * @param[out] error Error report object, NULL to ignore.
  * @return TRUE if was no error, FALSE otherwise.
  * @since 0.0.1
  * @sa p_socket_io_condition_wait()
  *
- * Usually this call is used after calling p_socket_connect() on a socket in
- * non-blocking mode to check a connection state. If call returns FALSE result
- * then connection checking call has failed or there was an error during the
- * connection and you should check the last error using @a error object.
+ * Usually this call is used after calling p_socket_connect() on a socket in a
+ * non-blocking mode to check the connection state. If call returns the FALSE
+ * result then the connection checking call has failed or there was an error
+ * during the connection and you should check the last error using an @a error
+ * object.
  *
- * If socket is still pending for a connection you will get
+ * If the socket is still pending for the connection you will get the
  * #P_ERROR_IO_IN_PROGRESS error code.
  *
  * After calling p_socket_connect() on a non-blocking socket, you can wait for
  * a connection operation to be finished using p_socket_io_condition_wait()
- * with #P_SOCKET_IO_CONDITION_POLLOUT option.
+ * with the #P_SOCKET_IO_CONDITION_POLLOUT option.
  */
 P_LIB_API pboolean		p_socket_check_connect_result	(PSocket		*socket,
 								 PError			**error);
 
 /**
- * @brief Sets @a socket SO_KEEPALIVE flag.
- * @param socket #PSocket to set SO_KEEPALIVE flag for.
- * @param keepalive Value for SO_KEEPALIVE flag.
+ * @brief Sets the @a socket SO_KEEPALIVE flag.
+ * @param socket #PSocket to set the SO_KEEPALIVE flag for.
+ * @param keepalive Value for the SO_KEEPALIVE flag.
  * @since 0.0.1
  * @sa p_socket_get_keepalive()
  *
- * See p_socket_get_keepalive() documentation for description of this option.
+ * See p_socket_get_keepalive() documentation for a description of this option.
  */
 P_LIB_API void			p_socket_set_keepalive		(PSocket 		*socket,
 								 pboolean		keepalive);
 
 /**
- * @brief Sets @a socket blocking mode.
- * @param socket #PSocket to set a blocking mode for.
- * @param blocking Whether to set @a socket into the blocking mode.
- * @note Blocking socket will wait for I/O operation to be completed before
- * returning to caller function.
- * @note On some operating systems blocking timeout may be less than threads
+ * @brief Sets a @a socket blocking mode.
+ * @param socket #PSocket to set the blocking mode for.
+ * @param blocking Whether to set the @a socket into the blocking mode.
+ * @note The blocking socket will wait for an I/O operation to be completed
+ * before returning to the caller function.
+ * @note On some operating systems a blocking timeout may be less than threads
  * scheduling granularity, so the actual timeout can be greater than specified
  * one.
  * @since 0.0.1
@@ -446,75 +448,75 @@ P_LIB_API void			p_socket_set_blocking		(PSocket 		*socket,
 								 pboolean		blocking);
 
 /**
- * @brief Sets @a socket listen backlog parameter.
- * @param socket #PSocket to set listen backlog parameter for.
- * @param backlog Value for listen backlog parameter.
+ * @brief Sets a @a socket listen backlog parameter.
+ * @param socket #PSocket to set the listen backlog parameter for.
+ * @param backlog Value for the listen backlog parameter.
  * @note This parameter can take effect only if it was set before calling
  * p_socket_listen(). Otherwise it will be ignored by underlying socket
  * system calls.
  * @since 0.0.1
  * @sa p_socket_get_listen_backlog()
  *
- * See p_socket_get_listen_backlog() documentation for description of this
+ * See p_socket_get_listen_backlog() documentation for a description of this
  * option.
  */
 P_LIB_API void			p_socket_set_listen_backlog	(PSocket		*socket,
 								 pint			backlog);
 
 /**
- * @brief Sets @a socket timeout value for the blocking I/O operations.
- * @param socket #PSocket to set @a timeout for.
+ * @brief Sets a @a socket timeout value for blocking I/O operations.
+ * @param socket #PSocket to set the @a timeout for.
  * @param timeout Timeout value in milliseconds.
  * @since 0.0.1
  * @sa p_socket_get_timeoout(), p_socket_io_condition_wait()
  *
- * See p_socket_get_timeout() documentation for description of this option.
+ * See p_socket_get_timeout() documentation for a description of this option.
  */
 P_LIB_API void			p_socket_set_timeout		(PSocket		*socket,
 								 pint			timeout);
 
 /**
- * @brief Binds @a socket to a given local address.
+ * @brief Binds a @a socket to a given local address.
  * @param socket #PSocket to bind.
- * @param address #PSocketAddress to bind given @a socket to.
+ * @param address #PSocketAddress to bind the given @a socket to.
  * @param allow_reuse Whether to allow socket's address reusing.
  * @param[out] error Error report object, NULL to ignore.
  * @return TRUE in case of success, FALSE otherwise.
  * @since 0.0.1
  * @sa p_socket_get_local_address()
  *
- * @a allow_reuse option allows to resolve address conflicts for several bound
- * sockets. It controls SO_REUSEADDR socket flag.
+ * The @a allow_reuse option allows to resolve address conflicts for several
+ * bound sockets. It controls the SO_REUSEADDR socket flag.
  *
- * In common case two or more sockets can't be bound to the same address
- * (network address and port) for the same data transfer protocol (i.e. TCP or
- * UDP) because they will be in a conflicted state for data receiving. But
- * socket can be also bound for any network interface (i.e. 0.0.0.0 network
- * address) and particular port. If you will try to bind another socket without
- * @a allow_reuse option to a particular network address (i.e. 127.0.0.1) and
- * the same port, p_socket_bind() call will fail.
+ * In a common case two or more sockets can't be bound to the same address
+ * (a network address and a port) for the same data transfer protocol (i.e. TCP
+ * or UDP) because they will be in a conflicted state for data receiving. But
+ * the socket can be also bound for the any network interface (i.e. 0.0.0.0
+ * network address) and a particular port. If you will try to bind another
+ * socket without the @a allow_reuse option to a particular network address
+ * (i.e. 127.0.0.1) and the same port, the p_socket_bind() call will fail.
  *
- * With @a allow_reuse option system will resolve this conflict: socket will be
- * bound to a particular address and port (and will receive data targeted to
- * this particular address) while the first socket will be receiving all other
- * data matching bound address.
+ * With the @a allow_reuse option the system will resolve this conflict: the
+ * socket will be bound to the particular address and port (and will receive
+ * data targeted to this particular address) while the first socket will be
+ * receiving all other data matching the bound address.
  *
  * This option is system dependent, some systems do not support it. Also some
- * systems have option to reuse address port (SO_REUSEPORT) in the same way,
+ * systems have option to reuse the address port (SO_REUSEPORT) in the same way,
  * too.
  *
- * Connection oriented sockets have another problem - a so called linger time.
+ * Connection oriented sockets have another problem - the so called linger time.
  * It is a time required by the system to properly close a socket connection
  * (and this process can be quite complicated). This time can be measured from
- * several minutes to several hours (!). Socket in such a state is half-dead,
- * but it holds the bound address and attempt to bind another socket on this
- * address will fail. @a allow_reuse option allows to bind another socket on
- * such a half-dead address, but behavior can be unexpected, it's better to
- * refer to the system documentation for that.
+ * several minutes to several hours (!). The socket in such a state is
+ * half-dead, but it holds the bound address and attempt to bind another socket
+ * on this address will fail. The @a allow_reuse option allows to bind another
+ * socket on such a half-dead address, but behavior can be unexpected, it's
+ * better to refer to the system documentation for that.
  *
- * In general case, a server socket should be bound with @a allow_reuse set to
- * TRUE, while a client socket shouldn't set this option to TRUE. If you restart
- * client quickly with the same address it can fail to bind.
+ * In general case, a server socket should be bound with the @a allow_reuse set
+ * to TRUE, while a client socket shouldn't set this option to TRUE. If you
+ * restart the client quickly with the same address it can fail to bind.
  */
 P_LIB_API pboolean		p_socket_bind			(const PSocket 		*socket,
 								 PSocketAddress		*address,
@@ -522,63 +524,65 @@ P_LIB_API pboolean		p_socket_bind			(const PSocket 		*socket,
 								 PError			**error);
 
 /**
- * @brief Connects @a socket to a given remote address.
+ * @brief Connects a @a socket to a given remote address.
  * @param socket #PSocket to connect.
- * @param address #PSocketAddress to connect @a socket to.
+ * @param address #PSocketAddress to connect the @a socket to.
  * @param[out] error Error report object, NULL to ignore.
  * @return TRUE in case of success, FALSE otherwise.
  * @since 0.0.1
  * @sa p_socket_is_connected(), p_socket_check_connect_result(),
  * p_socket_get_remote_address(), p_socket_io_condition_wait()
  *
- * Calling this method on a connection-less socket will bind it to a remote
- * address and p_socket_send() method can be used instead of p_socket_send_to(),
- * so you do not need to specify the remote (target) address each time you need
- * to send data. Socket will also discards incoming data from other addresses.
- * Repeat call will re-bind it to another remote address.
+ * Calling this method on the connection-less socket will bind it to the remote
+ * address and the p_socket_send() method can be used instead of
+ * p_socket_send_to(), so you do not need to specify the remote (target) address
+ * each time you need to send data. The socket will also discard incoming data
+ * from other addresses. The same call again will re-bind it to another remote
+ * address.
  *
- * For a connection oriented socket it tries to establish connection with the
- * listening remote socket. Calling this method twice will have no effect and
- * will fail.
+ * For the connection oriented socket it tries to establish a connection with
+ * a listening remote socket. The same call again will have no effect and will
+ * fail.
  *
- * If @a socket is in a non-blocking mode, then you can wait for a connection
- * using p_socket_io_condition_wait() with #P_SOCKET_IO_CONDITION_POLLOUT
- * parameter. You should check a connection result after that using
- * p_socket_check_connect_result().
+ * If the @a socket is in a non-blocking mode, then you can wait for the
+ * connection using p_socket_io_condition_wait() with the
+ * #P_SOCKET_IO_CONDITION_POLLOUT parameter. You should check the connection
+ * result after that using p_socket_check_connect_result().
  */
 P_LIB_API pboolean		p_socket_connect		(PSocket		*socket,
 								 PSocketAddress		*address,
 								 PError			**error);
 
 /**
- * @brief Puts @a socket into the listen state.
+ * @brief Puts a @a socket into a listening state.
  * @param socket #PSocket to start listening.
  * @param[out] error Error report object, NULL to ignore.
  * @return TRUE in case of success, FALSE otherwise.
  * @since 0.0.1
  * @sa p_socket_get_listen_backlog(), p_socket_set_listen_backlog()
  *
- * This call has meaning only for the connection oriented sockets. Before
- * starting to accept incoming connections, socket must be put into the passive
- * mode using p_socket_listen(). After that p_socket_accept() can be used to
+ * This call has meaning only for connection oriented sockets. Before starting
+ * to accept incoming connections, the socket must be put into the passive mode
+ * using p_socket_listen(). After that p_socket_accept() can be used to
  * accept incoming connections.
  *
- * Maximum number of pending connections defined by the backlog parameter, see
- * p_socket_get_listen_backlog() documentation for more information. Backlog
- * parameter must be set before calling p_socket_listen() to take effect.
+ * Maximum number of pending connections is defined by the backlog parameter,
+ * see p_socket_get_listen_backlog() documentation for more information. The
+ * backlog parameter must be set before calling p_socket_listen() to take
+ * effect.
  */
 P_LIB_API pboolean		p_socket_listen			(PSocket 		*socket,
 								 PError			**error);
 
 /**
- * @brief Accepts @a socket incoming connection.
- * @param socket #PSocket to accept an incoming connection from.
+ * @brief Accepts a @a socket incoming connection.
+ * @param socket #PSocket to accept the incoming connection from.
  * @param[out] error Error report object, NULL to ignore.
- * @return New #PSocket with accepted connection in case of success, NULL
+ * @return New #PSocket with the accepted connection in case of success, NULL
  * otherwise.
  * @since 0.0.1
  *
- * This call has meaning only for the connection oriented sockets. Socket can
+ * This call has meaning only for connection oriented sockets. The socket can
  * accept new incoming connections only after calling p_socket_bind() and
  * p_socket_listen().
  */
@@ -592,17 +596,17 @@ P_LIB_API PSocket *		p_socket_accept			(const PSocket		*socket,
  * @param buflen Length of @a buffer.
  * @param[out] error Error report object, NULL to ignore.
  * @return Size in bytes of written data in case of success, -1 otherwise.
- * @note If @a socket is in a blocking mode, then the caller will be blocked
- * until data arrived.
+ * @note If the @a socket is in a blocking mode, then the caller will be blocked
+ * until data arrives.
  * @since 0.0.1
  * @sa p_socket_receive_from(), p_socket_connect()
  *
- * If @a buflen is less than received data size, only @a buflen bytes of data
- * will be written to @a buffer, and excess bytes may be discarded depending on
- * the socket message type.
+ * If the @a buflen is less than the received data size, only @a buflen bytes of
+ * data will be written to the @a buffer, and excess bytes may be discarded
+ * depending on a socket message type.
  *
- * This call is normally used only with a connected socket,
- * see p_socket_connect().
+ * This call is normally used only with the a connected socket, see
+ * p_socket_connect().
  */
 P_LIB_API pssize		p_socket_receive		(const PSocket		*socket,
 								 pchar			*buffer,
@@ -612,20 +616,20 @@ P_LIB_API pssize		p_socket_receive		(const PSocket		*socket,
 /**
  * @brief Receives data from a given @a socket and saves a remote address.
  * @param socket #PSocket to receive data from.
- * @param[out] address Pointer to store a remote address in case of success, may
- * be NULL. Caller is responsible to free it after usage.
+ * @param[out] address Pointer to store the remote address in case of success,
+ * may be NULL. The caller is responsible to free it after usage.
  * @param buffer Buffer to write received data in.
  * @param buflen Length of @a buffer.
  * @param[out] error Error report object, NULL to ignore.
  * @return Size in bytes of written data in case of success, -1 otherwise.
- * @note If @a socket is in a blocking mode, then the caller will be blocked
- * until data arrived.
+ * @note If the @a socket is in a blocking mode, then the caller will be blocked
+ * until data arrives.
  * @since 0.0.1
  * @sa p_socket_receive()
  *
- * If @a buflen is less than received data size, only @a buflen bytes of data
- * will be written to @a buffer, and excess bytes may be discarded depending on
- * the socket message type.
+ * If the @a buflen is less than the received data size, only @a buflen bytes of
+ * data will be written to the @a buffer, and excess bytes may be discarded
+ * depending on a socket message type.
  *
  * This call is normally used only with a connection-less socket.
  */
@@ -642,14 +646,14 @@ P_LIB_API pssize		p_socket_receive_from		(const PSocket 		*socket,
  * @param buflen Length of @a buffer.
  * @param[out] error Error report object, NULL to ignore.
  * @return Size in bytes of sent data in case of success, -1 otherwise.
- * @note If @a socket is in a blocking mode, then the caller will be blocked
+ * @note If the @a socket is in a blocking mode, then the caller will be blocked
  * until data sent.
  * @since 0.0.1
  * @sa p_socket_send_to()
  *
- * Do not use this call for the connection-less sockets which are not connected
- * to remote address using p_socket_connect() because it will always fail,
- * use p_socket_send_to() instead.
+ * Do not use this call for connection-less sockets which are not connected to a
+ * remote address using p_socket_connect() because it will always fail, use
+ * p_socket_send_to() instead.
  */
 P_LIB_API pssize		p_socket_send			(const PSocket		*socket,
 								 const pchar		*buffer,
@@ -664,15 +668,15 @@ P_LIB_API pssize		p_socket_send			(const PSocket		*socket,
  * @param buflen Length of @a buffer.
  * @param[out] error Error report object, NULL to ignore.
  * @return Size in bytes of sent data in case of success, -1 otherwise.
- * @note If @a socket is in a blocking mode, then the caller will be blocked
+ * @note If the @a socket is in a blocking mode, then the caller will be blocked
  * until data sent.
  * @since 0.0.1
  * @sa p_socket_send()
  *
- * This call is used when dealing with the connection-less sockets. You can bind
+ * This call is used when dealing with connection-less sockets. You can bind
  * such a socket to a remote address using p_socket_connect() and use
- * p_socket_send() instead. If you are working with the connection oriented
- * sockets use p_socket_send() after establishing a connection.
+ * p_socket_send() instead. If you are working with connection oriented sockets
+ * then use p_socket_send() after establishing a connection.
  */
 P_LIB_API pssize		p_socket_send_to		(const PSocket		*socket,
 								 PSocketAddress		*address,
@@ -681,7 +685,7 @@ P_LIB_API pssize		p_socket_send_to		(const PSocket		*socket,
 								 PError			**error);
 
 /**
- * @brief Closes @a socket.
+ * @brief Closes a @a socket.
  * @param socket #PSocket to close.
  * @param[out] error Error report object, NULL to ignore.
  * @return TRUE in case of success, FALSE otherwise.
@@ -698,17 +702,17 @@ P_LIB_API pboolean		p_socket_close			(PSocket		*socket,
 /**
  * @brief Shutdowns a full-duplex @a socket data transfer link.
  * @param socket #PSocket to shutdown link.
- * @param shutdown_read Whether to shutdown an incoming data transfer link.
- * @param shutdown_write Whether to shutdown an outcoming data transfer link.
+ * @param shutdown_read Whether to shutdown the incoming data transfer link.
+ * @param shutdown_write Whether to shutdown the outcoming data transfer link.
  * @param[out] error Error report object, NULL to ignore.
  * @return TRUE in case of success, FALSE otherwise.
- * @note Shutdown of any link is possible only on socket in a connected state,
- * otherwise call will fail.
+ * @note Shutdown of any link is possible only on the socket in a connecte
+ * state, otherwise the call will fail.
  * @since 0.0.1
  *
- * After shutdowning data transfer link couldn't be restored in any direction.
- * It is often used to gracefully close a connection for a connection oriented
- * socket.
+ * After shutdowning the data transfer link couldn't be restored in any
+ * direction. It is often used to gracefully close a connection for a connection
+ * oriented socket.
  */
 P_LIB_API pboolean		p_socket_shutdown		(PSocket		*socket,
 								 pboolean		shutdown_read,
@@ -716,7 +720,7 @@ P_LIB_API pboolean		p_socket_shutdown		(PSocket		*socket,
 								 PError			**error);
 
 /**
- * @brief Closes @a socket (if not closed yet) and frees its resources.
+ * @brief Closes a @a socket (if not closed yet) and frees its resources.
  * @param socket #PSocket to free resources from.
  * @since 0.0.1
  * @sa p_socket_close()
@@ -724,10 +728,10 @@ P_LIB_API pboolean		p_socket_shutdown		(PSocket		*socket,
 P_LIB_API void			p_socket_free			(PSocket 		*socket);
 
 /**
- * @brief Sets @a socket buffer size for a given data transfer direction.
- * @param socket #PSocket to set buffer size for.
- * @param dir Direction to set buffer size on.
- * @param size Size in bytes of the buffer to set.
+ * @brief Sets the @a socket buffer size for a given data transfer direction.
+ * @param socket #PSocket to set the buffer size for.
+ * @param dir Direction to set the buffer size on.
+ * @param size Size of the buffer to set, in bytes.
  * @param[out] error Error report object, NULL to ignore.
  * @return TRUE in case of success, FALSE otherwise.
  * @since 0.0.1
