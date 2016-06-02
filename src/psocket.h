@@ -24,7 +24,7 @@
  * send data to someone's socket by its address and receive data as well through
  * the same socket. This is one of the most popular and standardizated way for
  * network communication supported by vast majority of all the modern operating
- * systems. It also hides all details of underlying networking protocols and
+ * systems. It also hides all the details of underlying networking protocols and
  * other layers, providing a unified and transparent approach for communication.
  *
  * There are two kinds of socket:
@@ -32,8 +32,8 @@
  * - connection-less (or datagram sockets, i.e. UDP).
  *
  * Connection oriented sockets work with data in a stream, connection-less
- * sockets work with data using independent packets (datagrams). Former
- * guarantees delivery, while latter doesn't (actually some connection-less
+ * sockets work with data using independent packets (datagrams). The former
+ * guarantees delivery, while the latter doesn't (actually some connection-less
  * protocols provide delivery quarantee, i.e. SCTP).
  *
  * #PSocket supports INET and INET6 address families which specify network
@@ -43,62 +43,64 @@
  *
  * #PSocket supports different underlying data transfer protocols: TCP, UDP and
  * others. Note that not all protocols can be used with any socket type, i.e.
- * you can use TCP protocol with a stream socket, but you can't use UDP protocol
- * with a stream socket. You can specify #P_SOCKET_PROTOCOL_DEFAULT protocol
- * when creating socket and appropriate best matching socket type will be
- * selected.
+ * you can use the TCP protocol with a stream socket, but you can't use the UDP
+ * protocol with the stream socket. You can specify #P_SOCKET_PROTOCOL_DEFAULT
+ * protocol when creating a socket and appropriate the best matching socket type
+ * will be selected.
  *
  * In a common socket communication case server and client sides are involved.
  * Depending on whether sockets are connection oriented, there are slightly
  * different action sequences for data exchanging.
  *
- * For connection oriented sockets server side acts as following:
- * - creates socket using p_socket_new();
- * - binds socket to a particular local address using p_socket_bind();
+ * For connection oriented sockets the server side acts as following:
+ * - creates a socket using p_socket_new();
+ * - binds the socket to a particular local address using p_socket_bind();
  * - starts to listen incoming connections using p_socket_listen();
- * - takes incoming connection from the internal queue using p_socket_accept().
+ * - takes an incoming connection from the internal queue using
+ * p_socket_accept().
  *
- * Client side acts as following:
- * - creates socket using p_socket_new();
- * - binds socket to a particular local address using p_socket_bind();
- * - connects to server using p_socket_connect().
+ * The client side acts as following:
+ * - creates a socket using p_socket_new();
+ * - binds the socket to a particular local address using p_socket_bind();
+ * - connects to the server using p_socket_connect().
  *
- * After connection was successfully established, both sides can send and
- * receive data from each other using p_socket_send() and p_socket_receive().
- * Binding of the client socket is actually optional.
+ * After the connection was successfully established, both the sides can send
+ * and receive data from each other using p_socket_send() and
+ * p_socket_receive(). Binding of the client socket is actually optional.
  *
  * When using connection-less sockets, all is a bit simpler. There is no server
  * side or client side - anyone can send and receive data without establishing a
  * connection. Just create a socket, bind it to a local address and send/receive
  * data using p_socket_send_to() and p_socket_receive(). You can also call
- * p_socket_connect() on connection-less socket to prevent passing the target
+ * p_socket_connect() on a connection-less socket to prevent passing the target
  * address each time when sending data and then use p_socket_send() instead of
  * p_socket_send_to(). This time binding is required.
  *
  * #PSocket can operate in blocking and non-blocking (async) modes. By default
- * it is in blocking mode. When using #PSocket in blocking mode each
- * non-immediate call on it will block caller thread until I/O operation will be
- * completed. For example, p_socket_accept() call can wait for incoming
- * connection for some time, and calling it on a blocking socket will prevent
- * caller thread from further execution until it receives a new incoming
- * connection. In non-blocking mode any call will return immediately and you
- * must check its result. You can set socket mode using p_socket_set_blocking().
+ * it is in the blocking mode. When using #PSocket in the blocking mode each
+ * non-immediate call on it will block a caller thread until an I/O operation
+ * will be completed. For example, the p_socket_accept() call can wait for an
+ * incoming connection for some time, and calling it on a blocking socket will
+ * prevent the caller thread from further execution until it receives the new
+ * incoming connection. In the non-blocking mode any call will return
+ * immediately and you must check its result. You can set the socket mode using
+ * p_socket_set_blocking().
  *
  * #PSocket always puts a socket descriptor (or SOCKET handle on Windows) into
- * a non-blocking mode and emulates blocking mode if required. If you need to
- * perform some hacks and need blocking behavior from the descriptor for some
- * reason, use p_socket_get_fd() to get an internal socket descriptor
- * (SOCKET handle on Windows).
+ * the non-blocking mode and emulates the blocking mode if required. If you need
+ * to perform some hacks and need blocking behavior from the descriptor for some
+ * reason, use p_socket_get_fd() to get an internal socket descriptor (SOCKET
+ * handle on Windows).
  *
- * Close-on-exec flag is always set on a socket desciptor. Use p_socket_get_fd()
- * to overwrite this behavior.
+ * The close-on-exec flag is always set on the socket desciptor. Use
+ * p_socket_get_fd() to overwrite this behavior.
  *
- * #PSocket ignores SIGPIPE signal on UNIX systems if possible. Take it into
+ * #PSocket ignores the SIGPIPE signal on UNIX systems if possible. Take it into
  * account if you want to handle this signal.
  *
- * Note that before using #PSocket API you must call p_libsys_init() in order to
- * initialize system resources (on UNIX this will do nothing, but on Windows
- * this routine is required). Usually this routine should be called on a
+ * Note that before using the #PSocket API you must call p_libsys_init() in
+ * order to initialize system resources (on UNIX this will do nothing, but on
+ * Windows this routine is required). Usually this routine should be called on a
  * program's start.
  *
  * Here is an example of #PSocket usage:
@@ -132,7 +134,7 @@
  * p_libsys_shutdown ();
  * @endcode
  * Here a UDP socket was created, bound to the localhost address and port 5432.
- * Do not forget to close socket and free memory after its usage.
+ * Do not forget to close the socket and free memory after its usage.
  */
 
 #if !defined (PLIBSYS_H_INSIDE) && !defined (PLIBSYS_COMPILATION)
@@ -148,7 +150,7 @@
 
 P_BEGIN_DECLS
 
-/** Socket protocols specified by IANA.  */
+/** Socket protocols specified by the IANA.  */
 typedef enum PSocketProtocol_ {
 	P_SOCKET_PROTOCOL_UNKNOWN	= -1,	/**< Unknown protocol.	*/
 	P_SOCKET_PROTOCOL_DEFAULT	= 0,	/**< Default protocol.	*/
@@ -181,18 +183,18 @@ typedef enum PSocketIOCondition_ {
 typedef struct PSocket_ PSocket;
 
 /**
- * @brief Creates a new #PSocket from a file descriptor.
- * @param fd File descriptor to create a socket from.
+ * @brief Creates a new #PSocket object from a file descriptor.
+ * @param fd File descriptor to create the socket from.
  * @param[out] error Error report object, NULL to ignore.
  * @return Pointer to #PSocket in case of success, NULL otherwise.
  * @since 0.0.1
  * @sa p_socket_new(), p_socket_get_fd()
  *
- * Given file descriptor @a fd will be put in non-blocking mode. #PSocket will
- * emulate blocking mode if required.
+ * The given file descriptor @a fd will be put in a non-blocking mode. #PSocket
+ * will emulate a blocking mode if required.
  *
- * If socket was not bound yet then on some systems (i.e. Windows) call may
- * fail to get socket family from the descriptor thus failing to construct a
+ * If the socket was not bound yet then on some systems (i.e. Windows) call may
+ * fail to get a socket family from the descriptor thus failing to construct the
  * #PSocket object.
  */
 P_LIB_API PSocket *		p_socket_new_from_fd		(pint 			fd,
@@ -206,14 +208,14 @@ P_LIB_API PSocket *		p_socket_new_from_fd		(pint 			fd,
  * @param[out] error Error report object, NULL to ignore.
  * @return Pointer to #PSocket in case of success, NULL otherwise.
  * @since 0.0.1
- * @note If all given parameters are not compatible with each other, then
+ * @note If all the given parameters are not compatible with each other, then
  * the function will fail. Use #P_SOCKET_PROTOCOL_DEFAULT to automatically
  * match the best protocol for a particular @a type.
  * @sa #PSocketFamily, #PSocketType, #PSocketProtocol, p_socket_new_from_fd()
  *
- * @a protocol is passing directly to operating system socket() call,
- * #PSocketProtocol has the same values as system definitions. You can pass any
- * existing protocol value to this call if you know it exactly.
+ * The @a protocol is passed directly to the operating system socket() call,
+ * #PSocketProtocol has the same values as the system definitions. You can pass
+ * any existing protocol value to this call if you know it exactly.
  */
 P_LIB_API PSocket *		p_socket_new 			(PSocketFamily		family,
 								 PSocketType		type,
@@ -221,8 +223,8 @@ P_LIB_API PSocket *		p_socket_new 			(PSocketFamily		family,
 								 PError			**error);
 
 /**
- * @brief Gets underlying file descriptor of the @a socket.
- * @param socket #PSocket to get file descriptor for.
+ * @brief Gets an underlying file descriptor of a @a socket.
+ * @param socket #PSocket to get the file descriptor for.
  * @return File descriptor in case of success, -1 otherwise.
  * @since 0.0.1
  * @sa p_socket_new_from_fd()
@@ -230,22 +232,23 @@ P_LIB_API PSocket *		p_socket_new 			(PSocketFamily		family,
 P_LIB_API pint			p_socket_get_fd 		(const PSocket		*socket);
 
 /**
- * @brief Gets @a socket address family.
- * @param socket #PSocket to get address family for.
- * @return #PSocketFamily in case of success, #P_SOCKET_FAMILY_UNKNOWN otherwise.
+ * @brief Gets a @a socket address family.
+ * @param socket #PSocket to get the address family for.
+ * @return #PSocketFamily in case of success, #P_SOCKET_FAMILY_UNKNOWN
+ * otherwise.
  * @since 0.0.1
  * @sa #PSocketFamily, p_socket_new()
  *
- * Socket address family specifies address space which will be used to
- * communicate with other sockets. For now, INET and INET6 families are
- * supported. INET6 family is available only if the operating system supports
- * it.
+ * The socket address family specifies address space which will be used to
+ * communicate with other sockets. For now, the INET and INET6 families are
+ * supported. The INET6 family is available only if the operating system
+ * supports it.
  */
 P_LIB_API PSocketFamily		p_socket_get_family 		(const PSocket		*socket);
 
 /**
- * @brief Gets @a socket type.
- * @param socket #PSocket to get type for.
+ * @brief Gets a @a socket type.
+ * @param socket #PSocket to get the type for.
  * @return #PSocketType in case of success, #P_SOCKET_TYPE_UNKNOWN otherwise.
  * @since 0.0.1
  * @sa #PSocketType, p_socket_new()
@@ -253,8 +256,8 @@ P_LIB_API PSocketFamily		p_socket_get_family 		(const PSocket		*socket);
 P_LIB_API PSocketType		p_socket_get_type 		(const PSocket		*socket);
 
 /**
- * @brief Gets @a socket data transfer protocol.
- * @param socket #PSocket to get data transfer protocol for.
+ * @brief Gets a @a socket data transfer protocol.
+ * @param socket #PSocket to get the data transfer protocol for.
  * @return #PSocketProtocol in case of success, #P_SOCKET_PROTOCOL_UNKNOWN
  * otherwise.
  * @since 0.0.1
@@ -263,15 +266,15 @@ P_LIB_API PSocketType		p_socket_get_type 		(const PSocket		*socket);
 P_LIB_API PSocketProtocol	p_socket_get_protocol		(const PSocket		*socket);
 
 /**
- * @brief Checks whether SO_KEEPALIVE flag is enabled.
- * @param socket #PSocket to check SO_KEEPALIVE flag for.
- * @return TRUE if SO_KEEPALIVE flag is enabled, FALSE otherwise.
+ * @brief Checks whether the SO_KEEPALIVE flag is enabled.
+ * @param socket #PSocket to check the SO_KEEPALIVE flag for.
+ * @return TRUE if the SO_KEEPALIVE flag is enabled, FALSE otherwise.
  * @since 0.0.1
  * @sa p_socket_set_keepalive()
  *
  * This option only has effect for the connection oriented sockets. After a
  * connection has been established between the sockets, they periodically send
- * ping packets to each other to make sure that the connection is alive. The
+ * ping packets to each other to make sure that the connection is alive. A
  * time interval between alive packets is system dependent and varies from
  * several minutes to several hours.
  *
@@ -284,32 +287,32 @@ P_LIB_API PSocketProtocol	p_socket_get_protocol		(const PSocket		*socket);
 P_LIB_API pboolean		p_socket_get_keepalive		(const PSocket		*socket);
 
 /**
- * @brief Checks whether @a socket is used in blocking mode.
- * @param socket #PSocket to check blocking mode for.
- * @return TRUE if @a socket is in blocking mode, FALSE otherwise.
- * @note Blocking socket will wait for I/O operation to be completed before
+ * @brief Checks whether @a socket is used in a blocking mode.
+ * @param socket #PSocket to check the blocking mode for.
+ * @return TRUE if @a socket is in the blocking mode, FALSE otherwise.
+ * @note A blocking socket will wait for an I/O operation to be completed before
  * returning to caller function.
  * @since 0.0.1
  * @sa p_socket_set_blocking()
  *
- * Underlying socket descriptor is always set to a non-blocking mode by default
- * and #PSocket emulates a blocking mode if required.
+ * An underlying socket descriptor is always set to the non-blocking mode by
+ * default and #PSocket emulates the blocking mode if required.
  */
 P_LIB_API pboolean		p_socket_get_blocking		(PSocket 		*socket);
 
 /**
- * @brief Gets @a socket listen backlog parameter.
- * @param socket #PSocket to get listen backlog parameter for.
+ * @brief Gets a @a socket listen backlog parameter.
+ * @param socket #PSocket to get the listen backlog parameter for.
  * @return Listen backlog parameter in case of success, -1 otherwise.
  * @since 0.0.1
  * @sa p_socket_set_listen_backlog(), p_socket_listen()
  *
- * This parameter only has meaning for the connection oriented sockets. Backlog
- * parameter specifies how much pending connections from other clients can be
- * stored in the internal (system) queue. If socket has already number of
- * pending connections equal to the backlog parameter, and another client
- * attempts to connect on that time, it (client) will either be refused or
- * retransmitted. This behavior is system and protocol dependent.
+ * This parameter only has meaning for the connection oriented sockets. The
+ * backlog parameter specifies how much pending connections from other clients
+ * can be stored in the internal (system) queue. If the socket has already
+ * number of pending connections equal to the backlog parameter, and another
+ * client attempts to connect on that time, it (client) will either be refused
+ * or retransmitted. This behavior is system and protocol dependent.
  *
  * Some systems may not allow to set it to high values. By default #PSocket
  * attempts to set it to 5.
@@ -317,23 +320,23 @@ P_LIB_API pboolean		p_socket_get_blocking		(PSocket 		*socket);
 P_LIB_API pint			p_socket_get_listen_backlog	(const PSocket 		*socket);
 
 /**
- * @brief Gets @a socket timeout for blocking I/O operations.
- * @param socket #PSocket to get timeout for.
+ * @brief Gets a @a socket timeout for blocking I/O operations.
+ * @param socket #PSocket to get the timeout for.
  * @return Timeout for blocking I/O operations in milliseconds, -1 in case of
  * fail.
  * @since 0.0.1
  * @sa p_socket_set_timeout(), p_socket_io_condition_wait()
  *
- * For a blocking socket timeout value means maximum amount of the time for
- * which blocking call will be waiting until newtwork I/O operation completed.
- * If operation is not finished after timeout, blocking call returns with an
- * error set to #P_ERROR_IO_TIMED_OUT.
+ * For a blocking socket a timeout value means maximum amount of time for which
+ * a blocking call will wait until a newtwork I/O operation completes. If the
+ * operation is not finished after the timeout, the blocking call returns with
+ * the error set to #P_ERROR_IO_TIMED_OUT.
  *
- * For a non-blocking socket timeout affects only on
+ * For a non-blocking socket the timeout affects only on the
  * p_socket_io_condition_wait() maximum waiting time.
  *
- * Zero timeout means that operation which requires time to complete network I/O
- * will be blocked until operation finished or error occurred.
+ * Zero timeout means that the operation which requires a time to complete
+ * network I/O will be blocked until the operation finishes or error occurres.
  */
 P_LIB_API pint			p_socket_get_timeout		(const PSocket		*socket);
 

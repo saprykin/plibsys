@@ -22,10 +22,10 @@
  *
  * A semaphore is a synchronization primitive which controls access to shared
  * data from the concurrently running threads. Unlike a mutex (which is a
- * particular case of binary semaphore) it allows concurrent access not to only
- * one thread.
+ * particular case of a binary semaphore) it allows concurrent access not to
+ * only the one thread.
  *
- * The semaphore has a counter which means a number of available resources
+ * The semaphore has a counter which means the number of available resources
  * (units). Before entering a critical section a thread must perform the so
  * called P (acquire) operation: if the counter is positive it decrements the
  * counter by 1 and continues execution; otherwise the thread is suspended until
@@ -45,20 +45,20 @@
  * instead if you do not need to cross a process boundary.
  *
  * A process-wide semaphore is identified by its name across the system, thus it
- * is also called the named semaphore. Use p_semaphore_new() to open the named
+ * is also called a named semaphore. Use p_semaphore_new() to open the named
  * semaphore and p_semaphore_free() to close it.
  *
  * Please note the following platform specific differences:
  *
  * - Windows doesn't own IPC objects (processes own them), which means that a
  * semaphore will be removed from the system after the last process or thread
- * closes it (or after terminating all the processes and threads holding opened
+ * closes it (or after terminating all the processes and threads holding open
  * semaphore).
  *
  * - UNIX systems own IPC objects. Because of that UNIX IPC objects can survive
  * an application crash: an already used semaphore can be opened in a locked
  * state and an application can fail into a deadlock or an inconsistent state.
- * This could happen if you have not closed all the opened semaphores explicitly
+ * This could happen if you have not closed all the open semaphores explicitly
  * before terminating the application.
  *
  * - IRIX allows to open several instances of a semaphore within the single
@@ -86,8 +86,8 @@ P_BEGIN_DECLS
 
 /** Enum with semaphore creation modes. */
 typedef enum PSemaphoreAccessMode_ {
-	P_SEM_ACCESS_OPEN	= 0,	/**< Open existing semaphore or create one with a given value.	*/
-	P_SEM_ACCESS_CREATE	= 1	/**< Create semaphore, reset to a given value if exists.	*/
+	P_SEM_ACCESS_OPEN	= 0,	/**< Opens an existing semaphore or creates one with a given value.	*/
+	P_SEM_ACCESS_CREATE	= 1	/**< Creates semaphore, resets to a given value if exists.		*/
 } PSemaphoreAccessMode;
 
 /** Semaphore opaque data structure. */
@@ -99,15 +99,15 @@ typedef struct PSemaphore_ PSemaphore;
  * @param init_val Initial semaphore value.
  * @param mode Creation mode.
  * @param[out] error Error report object, NULL to ignore.
- * @return Pointer to a newly created #PSemaphore object in case of success,
+ * @return Pointer to the newly created #PSemaphore object in case of success,
  * NULL otherwise.
  * @since 0.0.1
  *
- * @a init_val used only in one of following cases: a semaphore with the such
- * name doesn't exist, or the semaphore with the such name exists but @a mode
- * specified as #P_SEM_ACCESS_CREATE (non-Windows platforms only). In other
- * cases @a init_val is ignored. @a name is system-wide, so any other process
- * can open that semaphore passing the same name.
+ * The @a init_val is used only in one of following cases: a semaphore with the
+ * such name doesn't exist, or the semaphore with the such name exists but
+ * @a mode specified as #P_SEM_ACCESS_CREATE (non-Windows platforms only). In
+ * other cases @a init_val is ignored. The @a name is system-wide, so any other
+ * process can open that semaphore passing the same name.
  */
 P_LIB_API PSemaphore *	p_semaphore_new			(const pchar		*name,
 							 pint			init_val,
@@ -127,7 +127,7 @@ P_LIB_API PSemaphore *	p_semaphore_new			(const pchar		*name,
  * The common usage of this call is upon application startup to ensure that the
  * semaphore from the previous crash will be unlinked from the system. To do
  * that, call p_semaphore_new(), take ownership of the semaphore object and
- * remove it with p_semaphore_free() call. After that, create it again.
+ * remove it with the p_semaphore_free() call. After that, create it again.
  *
  * You can also do the same thing upon semaphore creation passing
  * #P_SEM_ACCESS_CREATE to p_semaphore_new(). The only difference is that you
