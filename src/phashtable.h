@@ -27,12 +27,12 @@
  * the internal slot index.
  *
  * When the number of pairs in the hash table is small the lookup and insert
- * (remove) operations are very fast and have an average complexity O(1),
- * because every slot holds almost the only one pair. As the number of internal
- * slots is fixed, the increasing number of pairs will lead to degraded
- * performance and the average complexity of the operations can drop to O(N) in
- * the worst case. This is because the more pairs are inserted the more longer
- * the list of values is placed in every slot.
+ * (remove) operations are very fast and have average complexity O(1), because
+ * every slot holds almost the only one pair. As the number of internal slots is
+ * fixed, the increasing number of pairs will lead to degraded performance and
+ * the average complexity of the operations can drop to O(N) in the worst case.
+ * This is because the more pairs are inserted the more longer the list of
+ * values is placed in every slot.
  *
  * This is a simple hash table implementation which is not intended for heavy
  * usage (several thousands), see #PTree if you need the best performance on
