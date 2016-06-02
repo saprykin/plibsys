@@ -36,10 +36,10 @@
  *
  * To check data type limits use P_MIN* and P_MAX* macros.
  *
- * If you need to check system endianness compare P_BYTE_ORDER definition with
- * #P_LITTLE_ENDIAN or #P_BIG_ENDIAN macros.
+ * If you need to check system endianness compare the P_BYTE_ORDER definition
+ * with the #P_LITTLE_ENDIAN or #P_BIG_ENDIAN macro.
  *
- * To convert between the little and big endian byte orders use Px_TO_LE,
+ * To convert between the little and big endian byte orders use the Px_TO_LE,
  * Px_TO_BE, Px_FROM_LE and Px_FROM_BE macros. Macros for the network<->host
  * byte order conversion are also provided: #p_ntohl, #p_ntohs, #p_ntohs and
  * #p_ntohl. All the described above macros depend on the target system
@@ -1075,7 +1075,7 @@ typedef pboolean (*PTraverseFunc) (ppointer key,
 
 /**
  * @brief General purpose function.
- * @param data Main argument related to context value.
+ * @param data Main argument related to a context value.
  * @param user_data Additional (maybe NULL) user-provided data.
  * @since 0.0.1
  */
@@ -1092,8 +1092,8 @@ typedef void (*PDestroyFunc) (ppointer data);
  * @brief Compares two values.
  * @param a First value to compare.
  * @param b Second value to compare.
- * @return -1 if the first value is less than second, 1 if the first value is
- * greater than second, 0 otherwise.
+ * @return -1 if the first value is less than the second, 1 if the first value
+ * is greater than the second, 0 otherwise.
  * @since 0.0.1
  */
 typedef pint (*PCompareFunc) (pconstpointer a, pconstpointer b);
@@ -1103,8 +1103,8 @@ typedef pint (*PCompareFunc) (pconstpointer a, pconstpointer b);
  * @param a First value to compare.
  * @param b Second value to compare.
  * @param data Addition data, may be NULL.
- * @return -1 if the first value is less than second, 1 if the first value is
- * greater than second, 0 otherwise.
+ * @return -1 if the first value is less than the second, 1 if the first value
+ * is greater than the second, 0 otherwise.
  * @since 0.0.1
  */
 typedef pint (*PCompareDataFunc) (pconstpointer a, pconstpointer b, ppointer data);
