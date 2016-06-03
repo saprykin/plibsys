@@ -76,6 +76,7 @@ set (PLIBSYS_PUBLIC_HDRS
 	pmem.h
 	pmutex.h
 	pprocess.h
+	prwlock.h
 	psemaphore.h
 	pshm.h
 	pshmbuffer.h
@@ -151,6 +152,7 @@ endif()
 set (PLIBSYS_PLATFORM_SRCS
 	pcondvariable-${PLIBSYS_THREAD_MODEL}.c
 	pmutex-${PLIBSYS_THREAD_MODEL}.c
+	prwlock-${PLIBSYS_THREAD_MODEL}.c
 	psemaphore-${PLIBSYS_IPC_MODEL}.c
 	pshm-${PLIBSYS_IPC_MODEL}.c
 	puthread-${PLIBSYS_THREAD_MODEL}.c

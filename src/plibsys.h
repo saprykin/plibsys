@@ -36,6 +36,7 @@
 #include "pmem.h"
 #include "pmutex.h"
 #include "pprocess.h"
+#include "prwlock.h"
 #include "psemaphore.h"
 #include "pshm.h"
 #include "pshmbuffer.h"
