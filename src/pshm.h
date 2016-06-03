@@ -94,7 +94,7 @@ typedef struct PShm_ PShm;
  * @param size Size of the memory segment in bytes, can't be changed later.
  * @param perms Memory segment permissions, see #PShmAccessPerms.
  * @param[out] error Error report object, NULL to ignore.
- * @return Pointer to the newly created #PShm object in case of success, NULL
+ * @return Pointer to a newly created #PShm object in case of success, NULL
  * otherwise.
  * @since 0.0.1
  */

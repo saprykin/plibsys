@@ -68,7 +68,7 @@ typedef struct PDirEntry_ {
 /**
  * @brief Creates a new #PDir object.
  * @param path Directory path.
- * @return Pointer to the newly created #PDir object in case of success, NULL
+ * @return Pointer to a newly created #PDir object in case of success, NULL
  * otherwise.
  * @param[out] error Error report object, NULL to ignore.
  * @since 0.0.1

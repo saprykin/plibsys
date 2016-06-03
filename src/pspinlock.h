@@ -61,7 +61,7 @@ typedef struct PSpinLock_ PSpinLock;
 
 /**
  * @brief Creates a new #PSpinLock object.
- * @return Pointer to the newly created #PSpinLock object.
+ * @return Pointer to a newly created #PSpinLock object.
  * @since 0.0.1
  */
 P_LIB_API PSpinLock *	p_spinlock_new		(void);

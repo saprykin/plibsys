@@ -81,7 +81,7 @@
  * non-immediate call on it will block a caller thread until an I/O operation
  * will be completed. For example, the p_socket_accept() call can wait for an
  * incoming connection for some time, and calling it on a blocking socket will
- * prevent the caller thread from further execution until it receives the new
+ * prevent the caller thread from further execution until it receives a new
  * incoming connection. In the non-blocking mode any call will return
  * immediately and you must check its result. You can set the socket mode using
  * p_socket_set_blocking().

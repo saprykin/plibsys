@@ -68,7 +68,7 @@ typedef struct PMutex_ PMutex;
 
 /**
  * @brief Creates a new #PMutex object.
- * @return Pointer to the newly created #PMutex object.
+ * @return Pointer to a newly created #PMutex object.
  * @since 0.0.1
  */
 P_LIB_API PMutex *	p_mutex_new	(void);

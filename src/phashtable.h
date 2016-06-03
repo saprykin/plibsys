@@ -64,7 +64,7 @@ typedef struct PHashTable_ PHashTable;
 
 /**
  * @brief Initializes a new hash table.
- * @return Pointer to the newly initialized #PHashTable structure in case of
+ * @return Pointer to a	 newly initialized #PHashTable structure in case of
  * success, NULL otherwise.
  * @since 0.0.1
  * @note Free with p_hash_table_free() after usage.

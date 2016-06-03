@@ -67,7 +67,7 @@ typedef struct PMemVTable_ {
 /**
  * @brief Allocates a memory block for the specified number of bytes.
  * @param n_bytes Size of the memory block in bytes.
- * @return Pointer to the newly allocated memory block in case of success, NULL
+ * @return Pointer to a newly allocated memory block in case of success, NULL
  * otherwise.
  * @since 0.0.1
  */
@@ -77,7 +77,7 @@ P_LIB_API ppointer	p_malloc		(psize			n_bytes);
  * @brief Allocates a memory block for the specified number of bytes and fills
  * it with zeros.
  * @param n_bytes Size of the memory block in bytes.
- * @return Pointer to the newly allocated memory block filled with zeros in case
+ * @return Pointer to a newly allocated memory block filled with zeros in case
  * of success, NULL otherwise.
  * @since 0.0.1
  */

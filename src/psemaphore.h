@@ -99,7 +99,7 @@ typedef struct PSemaphore_ PSemaphore;
  * @param init_val Initial semaphore value.
  * @param mode Creation mode.
  * @param[out] error Error report object, NULL to ignore.
- * @return Pointer to the newly created #PSemaphore object in case of success,
+ * @return Pointer to a newly created #PSemaphore object in case of success,
  * NULL otherwise.
  * @since 0.0.1
  *
