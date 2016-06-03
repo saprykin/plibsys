@@ -15,7 +15,6 @@
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "pmem.h"
 #include "pshm.h"
 
 #include <stdlib.h>

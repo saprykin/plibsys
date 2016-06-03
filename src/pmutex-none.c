@@ -15,7 +15,6 @@
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "pmem.h"
 #include "pmutex.h"
 
 #include <stdlib.h>
@@ -40,6 +39,7 @@ P_LIB_API pboolean
 p_mutex_trylock (PMutex *mutex)
 {
 	P_UNUSED (mutex);
+
 	return FALSE;
 }
 
@@ -47,6 +47,7 @@ P_LIB_API pboolean
 p_mutex_unlock (PMutex *mutex)
 {
 	P_UNUSED (mutex);
+
 	return FALSE;
 }
 

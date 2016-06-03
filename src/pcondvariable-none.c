@@ -15,7 +15,6 @@
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "pmem.h"
 #include "pcondvariable.h"
 
 #include <stdlib.h>
@@ -42,6 +41,7 @@ p_cond_variable_wait (PCondVariable	*cond,
 {
 	P_UNUSED (cond);
 	P_UNUSED (mutex);
+
 	return FALSE;
 }
 
@@ -49,6 +49,7 @@ P_LIB_API pboolean
 p_cond_variable_signal (PCondVariable *cond)
 {
 	P_UNUSED (cond);
+
 	return FALSE;
 }
 
@@ -56,6 +57,7 @@ P_LIB_API pboolean
 p_cond_variable_broadcast (PCondVariable *cond)
 {
 	P_UNUSED (cond);
+
 	return FALSE;
 }
 
