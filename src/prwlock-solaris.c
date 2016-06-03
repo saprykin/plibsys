@@ -19,59 +19,101 @@
 #include "prwlock.h"
 
 #include <stdlib.h>
+#include <thread.h>
+
+typedef rwlock_t rwlock_hdl;
 
 struct PRWLock_ {
-	pint	hdl;
+	rwlock_hdl	hdl;
 }
 
 P_LIB_API PRWLock *
 p_rwlock_new (void)
 {
-	return NULL;
+	PRWLock *ret;
+
+	if (P_UNLIKELY ((ret = p_malloc0 (sizeof (PRWLock))) == NULL)) {
+		P_ERROR ("PRWLock: failed to allocate memory");
+		return NULL;
+	}
+
+	if (P_UNLIKELY (rwlock_init (&ret->hdl, USYNC_THREAD, NULL) != 0)) {
+		P_ERROR ("PRWLock: failed to initialize rwlock object");
+		p_free (ret);
+		return NULL;
+	}
+
+	return ret;
 }
 
 P_LIB_API pboolean
 p_rwlock_reader_lock (PRWLock *lock)
 {
-	P_UNUSED (lock);
+	if (P_UNLIKELY (lock == NULL))
+		return FALSE;
 
-	return FALSE;
+	if (P_UNLIKELY (rw_rdlock (&lock->hdl) == 0))
+		return TRUE;
+	else {
+		P_ERROR ("PRWLock: failed to lock rwlock in read mode");
+		return FALSE;
+	}
 }
 
 P_LIB_API pboolean
 p_rwlock_reader_trylock (PRWLock *lock)
 {
-	P_UNUSED (lock);
+	if (P_UNLIKELY (lock == NULL))
+		return FALSE;
 
-	return FALSE;
+	return (rw_tryrdlock (&lock->hdl) == 0) ? TRUE : FALSE;
 }
 
 P_LIB_API pboolean
 p_rwlock_writer_lock (PRWLock *lock)
 {
-	P_UNUSED (lock);
+	if (P_UNLIKELY (lock == NULL))
+		return FALSE;
 
-	return FALSE;
+	if (P_UNLIKELY (rw_wrlock (&lock->hdl) == 0))
+		return TRUE;
+	else {
+		P_ERROR ("PRWLock: failed to lock rwlock in write mode");
+		return FALSE;
+	}
 }
 
 P_LIB_API pboolean
 p_rwlock_writer_trylock (PRWLock *lock)
 {
-	P_UNUSED (lock);
+	if (P_UNLIKELY (lock == NULL))
+		return FALSE;
 
-	return FALSE;
+	return (rw_trywrlock (&lock->hdl) == 0) ? TRUE : FALSE;
 }
 
 P_LIB_API pboolean
 p_rwlock_unlock (PRWLock *lock)
 {
-	P_UNUSED (lock);
+	if (P_UNLIKELY (lock == NULL))
+		return FALSE;
 
-	return FALSE;
+	if (P_LIKELY (rw_unlock (&lock->hdl) == 0))
+		return TRUE;
+	else {
+		P_ERROR ("PRWLock: failed to unlock rwlock object");
+		return FALSE;
+	}
 }
 
 P_LIB_API void
 p_rwlock_free (PRWLock *lock)
 {
-	P_UNUSED (lock);
+	if (P_UNLIKELY (lock == NULL))
+		return;
+
+	if (P_UNLIKELY (rwlock_destroy (&lock->hdl) != 0))
+		P_ERROR ("PRWLock: error while destroying rwlock object");
+
+	p_free (lock);
 }
