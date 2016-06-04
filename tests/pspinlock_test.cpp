@@ -84,9 +84,9 @@ BOOST_AUTO_TEST_CASE (pspinlock_nomem_test)
 
 	PMemVTable vtable;
 
-	vtable.free	= pmem_free;
-	vtable.malloc	= pmem_alloc;
-	vtable.realloc	= pmem_realloc;
+	vtable.free    = pmem_free;
+	vtable.malloc  = pmem_alloc;
+	vtable.realloc = pmem_realloc;
 
 	BOOST_CHECK (p_mem_set_vtable (&vtable) == TRUE);
 	BOOST_CHECK (p_spinlock_new () == NULL);
@@ -98,7 +98,7 @@ BOOST_AUTO_TEST_CASE (pspinlock_nomem_test)
 
 BOOST_AUTO_TEST_CASE (pspinlock_general_test)
 {
-	PUThread	*thr1, *thr2;
+	PUThread *thr1, *thr2;
 
 	p_libsys_init ();
 

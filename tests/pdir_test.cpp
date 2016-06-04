@@ -31,9 +31,9 @@
 
 #define PDIR_ENTRY_DIR		"test_2"
 #define PDIR_ENTRY_FILE		"test_file.txt"
-#define PDIR_TEST_DIR		"."P_DIR_SEPARATOR"pdir_test_dir"
-#define PDIR_TEST_DIR_IN	"."P_DIR_SEPARATOR"pdir_test_dir"P_DIR_SEPARATOR"test_2"
-#define PDIR_TEST_FILE		"."P_DIR_SEPARATOR"pdir_test_dir"P_DIR_SEPARATOR"test_file.txt"
+#define PDIR_TEST_DIR		"." P_DIR_SEPARATOR "pdir_test_dir"
+#define PDIR_TEST_DIR_IN	"." P_DIR_SEPARATOR "pdir_test_dir" P_DIR_SEPARATOR "test_2"
+#define PDIR_TEST_FILE		"." P_DIR_SEPARATOR "pdir_test_dir" P_DIR_SEPARATOR "test_file.txt"
 
 extern "C" ppointer pmem_alloc (psize nbytes)
 {
@@ -61,9 +61,9 @@ BOOST_AUTO_TEST_CASE (pdir_nomem_test)
 
 	PMemVTable vtable;
 
-	vtable.free	= pmem_free;
-	vtable.malloc	= pmem_alloc;
-	vtable.realloc	= pmem_realloc;
+	vtable.free    = pmem_free;
+	vtable.malloc  = pmem_alloc;
+	vtable.realloc = pmem_realloc;
 
 	BOOST_CHECK (p_mem_set_vtable (&vtable) == TRUE);
 
@@ -83,9 +83,9 @@ BOOST_AUTO_TEST_CASE (pdir_nomem_test)
 	PDir *dir = p_dir_new (PDIR_TEST_DIR"/", NULL);
 	BOOST_CHECK (dir != NULL);
 
-	vtable.free	= pmem_free;
-	vtable.malloc	= pmem_alloc;
-	vtable.realloc	= pmem_realloc;
+	vtable.free    = pmem_free;
+	vtable.malloc  = pmem_alloc;
+	vtable.realloc = pmem_realloc;
 
 	BOOST_CHECK (p_mem_set_vtable (&vtable) == TRUE);
 
@@ -107,13 +107,13 @@ BOOST_AUTO_TEST_CASE (pdir_general_test)
 	p_libsys_init ();
 
 	BOOST_CHECK (p_dir_new (NULL, NULL) == NULL);
-	BOOST_CHECK (p_dir_new ("."P_DIR_SEPARATOR"pdir_test_dir_new", NULL) == NULL);
+	BOOST_CHECK (p_dir_new ("." P_DIR_SEPARATOR "pdir_test_dir_new", NULL) == NULL);
 	BOOST_CHECK (p_dir_create (NULL, -1, NULL) == FALSE);
-	BOOST_CHECK (p_dir_create ("."P_DIR_SEPARATOR"pdir_test_dir_new"P_DIR_SEPARATOR"test_dir", -1, NULL) == FALSE);
+	BOOST_CHECK (p_dir_create ("." P_DIR_SEPARATOR "pdir_test_dir_new" P_DIR_SEPARATOR "test_dir", -1, NULL) == FALSE);
 	BOOST_CHECK (p_dir_remove (NULL, NULL) == FALSE);
-	BOOST_CHECK (p_dir_remove ("."P_DIR_SEPARATOR"pdir_test_dir_new", NULL) == FALSE);
+	BOOST_CHECK (p_dir_remove ("." P_DIR_SEPARATOR "pdir_test_dir_new", NULL) == FALSE);
 	BOOST_CHECK (p_dir_is_exists (NULL) == FALSE);
-	BOOST_CHECK (p_dir_is_exists ("."P_DIR_SEPARATOR"pdir_test_dir_new") == FALSE);
+	BOOST_CHECK (p_dir_is_exists ("." P_DIR_SEPARATOR "pdir_test_dir_new") == FALSE);
 	BOOST_CHECK (p_dir_get_path (NULL) == NULL);
 	BOOST_CHECK (p_dir_get_next_entry (NULL, NULL) == NULL);
 	BOOST_CHECK (p_dir_rewind (NULL, NULL) == FALSE);

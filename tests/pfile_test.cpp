@@ -31,7 +31,7 @@
 #  include <boost/test/unit_test.hpp>
 #endif
 
-#define PFILE_TEST_FILE "."P_DIR_SEPARATOR"pfile_test_file.txt"
+#define PFILE_TEST_FILE "." P_DIR_SEPARATOR "pfile_test_file.txt"
 
 BOOST_AUTO_TEST_SUITE (BOOST_TEST_MODULE)
 
@@ -42,7 +42,7 @@ BOOST_AUTO_TEST_CASE (pfile_general_test)
 	BOOST_CHECK (p_file_remove (NULL, NULL) == FALSE);
 
 	BOOST_CHECK (p_file_is_exists (PFILE_TEST_FILE) == FALSE);
-	BOOST_CHECK (p_file_remove ("."P_DIR_SEPARATOR"pfile_test_file_remove.txt", NULL) == FALSE);
+	BOOST_CHECK (p_file_remove ("." P_DIR_SEPARATOR" pfile_test_file_remove.txt", NULL) == FALSE);
 
 	FILE *file = fopen (PFILE_TEST_FILE, "w");
 	BOOST_REQUIRE (file != NULL);

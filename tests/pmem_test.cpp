@@ -63,9 +63,9 @@ BOOST_AUTO_TEST_CASE (pmem_general_test)
 
 	p_libsys_init ();
 
-	vtable.free	= NULL;
-	vtable.malloc	= NULL;
-	vtable.realloc	= NULL;
+	vtable.free    = NULL;
+	vtable.malloc  = NULL;
+	vtable.realloc = NULL;
 
 	BOOST_CHECK (p_malloc (0) == NULL);
 	BOOST_CHECK (p_malloc0 (0) == NULL);
@@ -74,9 +74,9 @@ BOOST_AUTO_TEST_CASE (pmem_general_test)
 	BOOST_CHECK (p_mem_set_vtable (&vtable) == FALSE);
 	p_free (NULL);
 
-	vtable.free	= pmem_free;
-	vtable.malloc	= pmem_alloc;
-	vtable.realloc	= pmem_realloc;
+	vtable.free    = pmem_free;
+	vtable.malloc  = pmem_alloc;
+	vtable.realloc = pmem_realloc;
 
 	BOOST_CHECK (p_mem_set_vtable (&vtable) == TRUE);
 

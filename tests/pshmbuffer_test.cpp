@@ -62,7 +62,7 @@ static void * shm_buffer_test_write_thread (void *)
 			}
 		}
 
-		if (op_result < sizeof (test_str))
+		if ((psize) op_result < sizeof (test_str))
 			continue;
 
 		op_result = p_shm_buffer_write (buffer, (ppointer) test_str, sizeof (test_str), NULL);
@@ -117,7 +117,7 @@ static void * shm_buffer_test_read_thread (void *)
 			}
 		}
 
-		if (op_result < sizeof (test_str))
+		if ((psize) op_result < sizeof (test_str))
 			continue;
 
 		op_result = p_shm_buffer_read (buffer, (ppointer) test_buf, sizeof (test_buf), NULL);
@@ -183,9 +183,9 @@ BOOST_AUTO_TEST_CASE (pshmbuffer_nomem_test)
 
 	PMemVTable vtable;
 
-	vtable.free	= pmem_free;
-	vtable.malloc	= pmem_alloc;
-	vtable.realloc	= pmem_realloc;
+	vtable.free    = pmem_free;
+	vtable.malloc  = pmem_alloc;
+	vtable.realloc = pmem_realloc;
 
 	BOOST_CHECK (p_mem_set_vtable (&vtable) == TRUE);
 
@@ -271,7 +271,7 @@ BOOST_AUTO_TEST_CASE (pshmbuffer_thread_test)
 {
 	p_libsys_init ();
 
-	PShmBuffer *	buffer = NULL;
+	PShmBuffer	*buffer = NULL;
 	PUThread	*thr1, *thr2;
 
 	/* Buffer may be from the previous test on UNIX systems */

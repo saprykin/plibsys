@@ -68,7 +68,7 @@ static void free_with_check (ppointer mem)
 
 static void * test_thread_func (void *data)
 {
-	pint *counter =  static_cast < pint * > (data);
+	pint *counter = static_cast < pint * > (data);
 
 	if ((*counter) == 1) {
 		thread1_id  = p_uthread_current_id ();
@@ -98,7 +98,7 @@ static void * test_thread_func (void *data)
 
 static void * test_thread_nonjoinable_func (void *data)
 {
-	pint *counter =  static_cast < pint * > (data);
+	pint *counter = static_cast < pint * > (data);
 
 	is_threads_working = TRUE;
 
@@ -176,9 +176,9 @@ BOOST_AUTO_TEST_CASE (puthread_nomem_test)
 
 	PMemVTable vtable;
 
-	vtable.free	= pmem_free;
-	vtable.malloc	= pmem_alloc;
-	vtable.realloc	= pmem_realloc;
+	vtable.free    = pmem_free;
+	vtable.malloc  = pmem_alloc;
+	vtable.realloc = pmem_realloc;
 
 	BOOST_CHECK (p_mem_set_vtable (&vtable) == TRUE);
 

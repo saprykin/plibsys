@@ -405,8 +405,8 @@ stress_tree_test (PTree *tree, int node_count)
 
 	memset (&tree_data, 0, sizeof (tree_data));
 
-	pint *keys   = (pint *) p_malloc0 (node_count * sizeof (pint));
-	pint *values = (pint *) p_malloc0 (node_count * sizeof (pint));
+	pint *keys   = (pint *) p_malloc0 ((psize) node_count * sizeof (pint));
+	pint *values = (pint *) p_malloc0 ((psize) node_count * sizeof (pint));
 
 	BOOST_REQUIRE (keys != NULL);
 	BOOST_REQUIRE (values != NULL);
@@ -492,9 +492,9 @@ BOOST_AUTO_TEST_CASE (ptree_nomem_test)
 		PTree *tree = p_tree_new ((PTreeType) i, (PCompareFunc) compare_keys);
 		BOOST_CHECK (tree != NULL);
 
-		vtable.free	= pmem_free;
-		vtable.malloc	= pmem_alloc;
-		vtable.realloc	= pmem_realloc;
+		vtable.free    = pmem_free;
+		vtable.malloc  = pmem_alloc;
+		vtable.realloc = pmem_realloc;
 
 		BOOST_CHECK (p_mem_set_vtable (&vtable) == TRUE);
 

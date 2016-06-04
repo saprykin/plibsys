@@ -52,7 +52,7 @@ extern "C" void pmem_free (ppointer block)
 
 static void * mutex_test_thread (void *)
 {
-	pint	i;
+	pint i;
 
 	for (i = 0; i < 1000; ++i) {
 		if (!p_mutex_trylock (global_mutex)) {
@@ -84,9 +84,9 @@ BOOST_AUTO_TEST_CASE (pmutex_nomem_test)
 
 	PMemVTable vtable;
 
-	vtable.free	= pmem_free;
-	vtable.malloc	= pmem_alloc;
-	vtable.realloc	= pmem_realloc;
+	vtable.free    = pmem_free;
+	vtable.malloc  = pmem_alloc;
+	vtable.realloc = pmem_realloc;
 
 	BOOST_CHECK (p_mem_set_vtable (&vtable) == TRUE);
 	BOOST_CHECK (p_mutex_new () == NULL);
@@ -98,7 +98,7 @@ BOOST_AUTO_TEST_CASE (pmutex_nomem_test)
 
 BOOST_AUTO_TEST_CASE (pmutex_general_test)
 {
-	PUThread	*thr1, *thr2;
+	PUThread *thr1, *thr2;
 
 	p_libsys_init ();
 

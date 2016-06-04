@@ -442,7 +442,7 @@ static void * tcp_socket_sender_thread (void *arg)
 					  NULL);
 
 		if (send_now > 0)
-			send_total += send_now;
+			send_total += (psize) send_now;
 
 		if (send_total == sizeof (socket_data)) {
 			send_total = 0;
@@ -547,7 +547,7 @@ static void * tcp_socket_receiver_thread (void *arg)
 					     NULL);
 
 		if (recv_now > 0)
-			recv_total += recv_now;
+			recv_total += (psize) recv_now;
 
 		if (recv_total == sizeof (recv_buffer)) {
 			recv_total = 0;
@@ -600,9 +600,9 @@ BOOST_AUTO_TEST_CASE (psocket_nomem_test)
 
 	PMemVTable vtable;
 
-	vtable.free	= pmem_free;
-	vtable.malloc	= pmem_alloc;
-	vtable.realloc	= pmem_realloc;
+	vtable.free    = pmem_free;
+	vtable.malloc  = pmem_alloc;
+	vtable.realloc = pmem_realloc;
 
 	BOOST_CHECK (p_mem_set_vtable (&vtable) == TRUE);
 

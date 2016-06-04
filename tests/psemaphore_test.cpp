@@ -30,8 +30,8 @@
 #endif
 
 #ifndef P_OS_MSYS
-static pint semaphore_test_val	= 10;
-static pint is_thread_exit	= 0;
+static pint semaphore_test_val = 10;
+static pint is_thread_exit     = 0;
 
 static void clean_error (PError **error)
 {
@@ -106,7 +106,6 @@ extern "C" void pmem_free (ppointer block)
 	P_UNUSED (block);
 }
 
-
 BOOST_AUTO_TEST_SUITE (BOOST_TEST_MODULE)
 
 BOOST_AUTO_TEST_CASE (psemaphore_nomem_test)
@@ -115,9 +114,9 @@ BOOST_AUTO_TEST_CASE (psemaphore_nomem_test)
 
 	PMemVTable vtable;
 
-	vtable.free	= pmem_free;
-	vtable.malloc	= pmem_alloc;
-	vtable.realloc	= pmem_realloc;
+	vtable.free    = pmem_free;
+	vtable.malloc  = pmem_alloc;
+	vtable.realloc = pmem_realloc;
 
 	BOOST_CHECK (p_mem_set_vtable (&vtable) == TRUE);
 
