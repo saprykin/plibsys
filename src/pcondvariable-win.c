@@ -26,15 +26,15 @@
 
 #include <stdlib.h>
 
-typedef void (WINAPI * InitializeConditionVariableFunc) (ppointer cv);
-typedef BOOL (WINAPI * SleepConditionVariableCSFunc) (ppointer cv, PCRITICAL_SECTION cs, DWORD ms);
-typedef void (WINAPI * WakeConditionVariableFunc) (ppointer cv);
-typedef void (WINAPI * WakeAllConditionVariableFunc) (ppointer cv);
+typedef VOID (WINAPI * InitializeConditionVariableFunc) (ppointer cv);
+typedef BOOL (WINAPI * SleepConditionVariableCSFunc)    (ppointer cv, PCRITICAL_SECTION cs, DWORD ms);
+typedef VOID (WINAPI * WakeConditionVariableFunc)       (ppointer cv);
+typedef VOID (WINAPI * WakeAllConditionVariableFunc)    (ppointer cv);
 
-typedef pboolean (* PWin32CondInit) (PCondVariable *cond);
-typedef void (* PWin32CondClose) (PCondVariable *cond);
-typedef pboolean (* PWin32CondWait) (PCondVariable *cond, PMutex *mutex);
-typedef pboolean (* PWin32CondSignal) (PCondVariable *cond);
+typedef pboolean (* PWin32CondInit)    (PCondVariable *cond);
+typedef void     (* PWin32CondClose)   (PCondVariable *cond);
+typedef pboolean (* PWin32CondWait)    (PCondVariable *cond, PMutex *mutex);
+typedef pboolean (* PWin32CondSignal)  (PCondVariable *cond);
 typedef pboolean (* PWin32CondBrdcast) (PCondVariable *cond);
 
 static PWin32CondInit    pp_cond_variable_init_func    = NULL;
@@ -80,8 +80,8 @@ static pboolean pp_cond_variable_broadcast_xp (PCondVariable *cond);
 static pboolean
 pp_cond_variable_init_vista (PCondVariable *cond)
 {
-	cond->cv = NULL;
 	pp_cond_variable_vista_table.cv_init (cond);
+
 	return TRUE;
 }
 
@@ -89,6 +89,8 @@ static void
 pp_cond_variable_close_vista (PCondVariable *cond)
 {
 	P_UNUSED (cond);
+
+	return TRUE;
 }
 
 static pboolean
@@ -103,14 +105,15 @@ static pboolean
 pp_cond_variable_signal_vista (PCondVariable *cond)
 {
 	pp_cond_variable_vista_table.cv_wake (cond);
+
 	return TRUE;
 }
 
 static pboolean
 pp_cond_variable_broadcast_vista (PCondVariable *cond)
 {
-
 	pp_cond_variable_vista_table.cv_brdcast (cond);
+
 	return TRUE;
 }
 
@@ -122,7 +125,7 @@ pp_cond_variable_init_xp (PCondVariable *cond)
 	PCondVariableXP *cv_xp;
 
 	if ((cond->cv = p_malloc0 (sizeof (PCondVariableXP))) == NULL) {
-		P_ERROR ("PCondVariable: failed to allocate memory");
+		P_ERROR ("PCondVariable: failed to allocate memory (internal)");
 		return FALSE;
 	}
 
@@ -133,6 +136,8 @@ pp_cond_variable_init_xp (PCondVariable *cond)
 
 	if (P_UNLIKELY (cv_xp->waiters_sema == NULL)) {
 		P_ERROR ("PCondVariable: failed to initialize semaphore");
+		p_free (cond->cv);
+		cond->cv = NULL;
 		return FALSE;
 	}
 
@@ -143,6 +148,7 @@ static void
 pp_cond_variable_close_xp (PCondVariable *cond)
 {
 	CloseHandle (((PCondVariableXP *) cond->cv)->waiters_sema);
+	p_free (cond->cv);
 }
 
 static pboolean

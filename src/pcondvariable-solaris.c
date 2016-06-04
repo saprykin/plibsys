@@ -25,7 +25,7 @@
 #include <synch.h>
 
 struct PCondVariable_ {
-	cond_t	hdl;
+	cond_t hdl;
 };
 
 P_LIB_API PCondVariable *

@@ -20,7 +20,7 @@
 #include <stdlib.h>
 
 struct PCondVariable_ {
-	pint	hdl;
+	pint hdl;
 };
 
 P_LIB_API PCondVariable *

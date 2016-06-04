@@ -24,7 +24,7 @@
 #include <pthread.h>
 
 struct PCondVariable_ {
-	pthread_cond_t	hdl;
+	pthread_cond_t hdl;
 };
 
 P_LIB_API PCondVariable *
