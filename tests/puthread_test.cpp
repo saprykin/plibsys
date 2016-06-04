@@ -60,7 +60,7 @@ extern "C" void pmem_free (ppointer block)
 	P_UNUSED (block);
 }
 
-static void free_with_check (ppointer mem)
+extern "C" void free_with_check (ppointer mem)
 {
 	p_free (mem);
 	p_atomic_int_inc (&free_counter);
