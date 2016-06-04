@@ -197,7 +197,7 @@ P_LIB_API puint32		p_socket_address_get_scope_id		(const PSocketAddress	*addr);
 /**
  * @brief Sets IPv6 traffic class and flow information.
  * @param addr #PSocketAddress to set flow information for.
- * @param flow_info Flow information to set.
+ * @param flowinfo Flow information to set.
  * @since 0.0.1
  * @note This call is valid only for an IPv6 address.
  */
