@@ -503,6 +503,7 @@
  * @def P_GNUC_WARN_UNUSED_RESULT
  * @brief Gives a warning if the result returned from a function is not being
  * used.
+ * @since 0.0.1
  */
 
 #if (__GNUC__ > 3 || (__GNUC__ == 3 && __GNUC_MINOR__ >= 4)) || \
@@ -515,6 +516,7 @@
 /**
  * @def P_LIB_API
  * @brief Exports a symbol from a shared library.
+ * @since 0.0.1
  */
 
 #if defined(P_CC_MSVC) || defined(P_CC_BORLAND) || defined(P_CC_WATCOM)
@@ -529,6 +531,7 @@
  * @def P_NO_RETURN
  * @brief Notifies a compiler that a function will never return a value (i.e.
  * due to the abort () call).
+ * @since 0.0.1
  */
 
 #if defined (__STDC_VERSION__) && (__STDC_VERSION__ >= 201112L)
@@ -548,12 +551,14 @@
  * @def P_LIKELY
  * @brief Hints a compiler that a condition is likely to be true so it can
  * perform code optimizations.
+ * @since 0.0.1
  */
 
 /**
  * @def P_UNLIKELY
  * @brief Hints a compiler that a condition is likely to be false so it can
  * perform code optimizations.
+ * @since 0.0.1
  */
 
 #if (defined(P_CC_GNU) && (__GNUC__ > 2 && __GNUC_MINOR__ > 0)) || \
@@ -569,7 +574,8 @@
 
 /**
  * @def P_UNUSED
- * @brief Macro to by-pass a compiler warning on an unused variables.
+ * @brief Macro to by-pass a compiler warning on unused variables.
+ * @since 0.0.1
  */
 #define P_UNUSED(a) ((void) a)
 
@@ -577,6 +583,7 @@
  * @def P_WARNING
  * @brief Prints a warning message.
  * @param msg Message to print.
+ * @since 0.0.1
  */
 #define P_WARNING(msg) printf ("** Warning: %s **\n", msg)
 
@@ -584,6 +591,7 @@
  * @def P_ERROR
  * @brief Prints an error message.
  * @param msg Message to print.
+ * @since 0.0.1
  */
 #define P_ERROR(msg) printf ("** Error: %s **\n", msg)
 
@@ -591,6 +599,7 @@
  * @def P_DEBUG
  * @brief Prints a debug message.
  * @param msg Message to print.
+ * @since 0.0.1
  */
 #define P_DEBUG(msg) printf ("** Debug: %s **\n", msg)
 
@@ -657,12 +666,14 @@
 /**
  * @def P_BEGIN_DECLS
  * @brief Starts .h file declarations to be exported as C functions.
+ * @since 0.0.1
  */
 
 /**
  * @def P_END_DECLS
  * @brief Closes .h file declarations to be exported as C functions, should be
  * always used after #P_BEGIN_DECLS.
+ * @since 0.0.1
  */
 
 #ifdef __cplusplus
