@@ -250,27 +250,19 @@ static pboolean
 pp_rwlock_start_read_try_xp (PRWLock *lock)
 {
 	PRWLockXP	*rwl_xp = ((PRWLockXP *) lock->lock);
-	int		i;
 	puint32		tmp_lock;
 	puint32		counter;
 
-	for (i = 0; i < P_RWLOCK_XP_MAX_SPIN; ++i) {
-		tmp_lock = (puint32) p_atomic_int_get ((const volatile pint *) &rwl_xp->lock);
+	tmp_lock = (puint32) p_atomic_int_get ((const volatile pint *) &rwl_xp->lock);
 		
-		if (P_RWLOCK_XP_IS_WRITER (tmp_lock))
-			return FALSE;
+	if (P_RWLOCK_XP_IS_WRITER (tmp_lock))
+		return FALSE;
 
-		counter = P_RWLOCK_XP_SET_READERS (tmp_lock, P_RWLOCK_XP_READER_COUNT (tmp_lock) + 1);
+	counter = P_RWLOCK_XP_SET_READERS (tmp_lock, P_RWLOCK_XP_READER_COUNT (tmp_lock) + 1);
 
-		if (p_atomic_int_compare_and_exchange ((volatile pint *) &rwl_xp->lock,
-						       (pint) counter,
-						       (pint) tmp_lock) == TRUE)
-			return TRUE;
-		else
-			continue;
-	}
-
-	return FALSE;
+	return p_atomic_int_compare_and_exchange ((volatile pint *) &rwl_xp->lock,
+						  (pint) counter,
+						  (pint) tmp_lock);
 }
 
 static pboolean
