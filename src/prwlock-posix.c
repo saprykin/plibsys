@@ -131,3 +131,13 @@ p_rwlock_free (PRWLock *lock)
 
 	p_free (lock);
 }
+
+void
+p_rwlock_init (void)
+{
+}
+
+void
+p_rwlock_shutdown (void)
+{
+}
