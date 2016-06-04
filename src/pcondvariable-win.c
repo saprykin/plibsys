@@ -89,8 +89,6 @@ static void
 pp_cond_variable_close_vista (PCondVariable *cond)
 {
 	P_UNUSED (cond);
-
-	return TRUE;
 }
 
 static pboolean
@@ -211,7 +209,7 @@ p_cond_variable_new (void)
 		return NULL;
 	}
 
-	if (pp_cond_variable_init_func (ret) != TRUE) {
+	if (P_UNLIKELY (pp_cond_variable_init_func (ret) != TRUE)) {
 		P_ERROR ("PCondVariable: failed to initialize");
 		p_free (ret);
 		return NULL;
