@@ -23,6 +23,8 @@
 
 #include "plibsys.h"
 
+#include <string.h>
+
 #ifdef PLIBSYS_TESTS_STATIC
 #  include <boost/test/included/unit_test.hpp>
 #else
@@ -93,6 +95,8 @@ BOOST_AUTO_TEST_CASE (pmain_vtable_test)
 	BOOST_CHECK (alloc_counter > 0);
 	BOOST_CHECK (realloc_counter > 0);
 	BOOST_CHECK (free_counter > 0);
+
+	BOOST_CHECK (strcmp (p_libsys_version (), PLIBSYS_VERSION_STR) == 0);
 
 	p_libsys_shutdown ();
 }

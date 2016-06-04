@@ -32,6 +32,7 @@ extern void p_time_profiler_init	(void);
 extern void p_time_profiler_shutdown	(void);
 
 static pboolean pp_plibsys_inited = FALSE;
+static pchar pp_plibsys_version[] = PLIBSYS_VERSION_STR;
 
 P_LIB_API void
 p_libsys_init (void)
@@ -72,6 +73,12 @@ p_libsys_shutdown (void)
 	p_socket_close_once ();
 	p_atomic_thread_shutdown ();
 	p_mem_shutdown ();
+}
+
+P_LIB_API const pchar *
+p_libsys_version (void)
+{
+	return (const pchar *) pp_plibsys_version;
 }
 
 #ifdef P_OS_WIN
