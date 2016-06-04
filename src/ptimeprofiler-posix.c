@@ -30,19 +30,23 @@ typedef puint64 (* PPOSIXTicksFunc) (void);
 
 static PPOSIXTicksFunc pp_time_profiler_ticks_func = NULL;
 
-#if _POSIX_MONOTONIC_CLOCK >= 0
+#if (_POSIX_MONOTONIC_CLOCK >= 0) || defined (P_OS_IRIX)
 static puint64 pp_time_profiler_get_ticks_clock ();
 #endif
 
 static puint64 pp_time_profiler_get_ticks_gtod ();
 
-#if _POSIX_MONOTONIC_CLOCK >= 0
+#if (_POSIX_MONOTONIC_CLOCK >= 0) || defined (P_OS_IRIX)
 static puint64
 pp_time_profiler_get_ticks_clock ()
 {
 	struct timespec	ts;
 
+#ifdef P_OS_IRIX
+	if (P_UNLIKELY (clock_gettime (CLOCK_SGI_CYCLE, &ts) != 0)) {
+#else
 	if (P_UNLIKELY (clock_gettime (CLOCK_MONOTONIC, &ts) != 0)) {
+#endif
 		P_ERROR ("PTimeProfiler: failed to get time using clock_gettime()");
 		return pp_time_profiler_get_ticks_gtod ();
 	} else
@@ -78,7 +82,9 @@ p_time_profiler_elapsed_usecs_internal (const PTimeProfiler *profiler)
 void
 p_time_profiler_init (void)
 {
-#if (_POSIX_MONOTONIC_CLOCK == 0) && defined (_SC_MONOTONIC_CLOCK)
+#ifdef P_OS_IRIX
+	pp_time_profiler_ticks_func = (PPOSIXTicksFunc) pp_time_profiler_get_ticks_clock;
+#elif (_POSIX_MONOTONIC_CLOCK == 0) && defined (_SC_MONOTONIC_CLOCK)
 	if (P_LIKELY (sysconf (_SC_MONOTONIC_CLOCK) > 0))
 		pp_time_profiler_ticks_func = (PPOSIXTicksFunc) pp_time_profiler_get_ticks_clock;
 	else
