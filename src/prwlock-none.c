@@ -21,7 +21,7 @@
 
 struct PRWLock_ {
 	pint hdl;
-}
+};
 
 P_LIB_API PRWLock *
 p_rwlock_new (void)

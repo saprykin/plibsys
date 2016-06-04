@@ -25,7 +25,7 @@ typedef rwlock_t rwlock_hdl;
 
 struct PRWLock_ {
 	rwlock_hdl hdl;
-}
+};
 
 static pboolean pp_rwlock_unlock_any (PRWLock *lock);
 
