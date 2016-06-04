@@ -140,6 +140,18 @@ BOOST_AUTO_TEST_CASE (pmacros_general_test)
 	if (P_UNLIKELY (rand_number == 0))
 		P_DEBUG ("Unlikely condition triggered");
 
+	/* Test version macros */
+	BOOST_CHECK (PLIBSYS_VERSION_MAJOR >= 0);
+	BOOST_CHECK (PLIBSYS_VERSION_MINOR >= 0);
+	BOOST_CHECK (PLIBSYS_VERSION_PATCH >= 0);
+	BOOST_CHECK (PLIBSYS_VERSION >= 0);
+
+#if !defined (PLIBSYS_VERSION_STR)
+	BOOST_CHECK (false);
+#endif
+
+	BOOST_CHECK (PLIBSYS_VERSION >= PLIBSYS_VERSION_CHECK (0, 0, 1));
+
 	p_libsys_shutdown ();
 }
 

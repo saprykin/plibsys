@@ -27,7 +27,7 @@
  * Provided macros can be divided into the three groups:
  * - operating system detection (P_OS_x);
  * - compiler detection (P_CC_x);
- * - other general macros (compiler hints, attributes, etc.).
+ * - other general macros (compiler hints, attributes, version, etc.).
  *
  * Macros from the first two groups are defined only for the particularly
  * detected operating systems and compilers. Macros from the latter group are
@@ -593,6 +593,66 @@
  * @param msg Message to print.
  */
 #define P_DEBUG(msg) printf ("** Debug: %s **\n", msg)
+
+#ifdef DOXYGEN
+#  define PLIBSYS_VERSION_MAJOR
+#  define PLIBSYS_VERSION_MINOR
+#  define PLIBSYS_VERSION_PATCH
+#  define PLIBSYS_VERSION_STR
+#  define PLIBSYS_VERSION
+#endif
+
+/**
+ * @def PLIBSYS_VERSION_MAJOR
+ * @brief Library major version number.
+ * @since 0.0.1
+ * @note This is the version against which the application is compiled.
+ */
+
+/**
+ * @def PLIBSYS_VERSION_MINOR
+ * @brief Library minor version number.
+ * @since 0.0.1
+ * @note This is the version against which the application is compiled.
+ */
+
+/**
+ * @def PLIBSYS_VERSION_PATCH
+ * @brief Library patch version number.
+ * @since 0.0.1
+ * @note This is the version against which the application is compiled.
+ */
+
+/**
+ * @def PLIBSYS_VERSION_STR
+ * @brief Library full version in the string form, i.e. "0.0.1".
+ * @since 0.0.1
+ * @note This is the version against which the application is compiled.
+ */
+
+/**
+ * @def PLIBSYS_VERSION
+ * @brief Library full version in the form 0xMMNNPP (MM = major, NN = minor,
+ * PP = patch), i.e. 0x000001.
+ * @since 0.0.1
+ * @note This is the version against which the application is compiled.
+ */
+
+/**
+ * @def PLIBSYS_VERSION_CHECK
+ * @brief Makes a library version number which can be used to check the library
+ * version against which the application is compiled.
+ * @param major Major version number to check.
+ * @param minor Minor version number to check.
+ * @param patch Minor version number to check.
+ * @since 0.0.1
+ *
+ * @code
+ * if (PLIBSYS_VERSION >= PLIBSYS_VERSION_CHECK (0, 0, 1))
+ * ...
+ * @endcode
+ */
+#define PLIBSYS_VERSION_CHECK(major, minor, patch) ((major << 16) | (minor << 8) | (patch))
 
 /**
  * @def P_BEGIN_DECLS
