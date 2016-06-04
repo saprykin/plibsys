@@ -30,7 +30,7 @@
 #define P_RWLOCK_XP_SET_WRITER(lock) ((lock) | 0x40000000)
 #define P_RWLOCK_XP_UNSET_WRITER(lock) ((lock) & (~0x40000000))
 #define P_RWLOCK_XP_SET_READERS(lock, readers) (((lock) & (~0x00007FFF)) | (readers))
-#define P_RWLOCK_XP_READER_COUNT(lock) ((lock & 0x00007FFF))
+#define P_RWLOCK_XP_READER_COUNT(lock) ((lock) & 0x00007FFF)
 #define P_RWLOCK_XP_SET_WAITING(lock, waiting) (((lock) & (~0x3FFF8000)) | ((waiting) << 15))
 #define P_RWLOCK_XP_WAITING_COUNT(lock) (((lock) & 0x3FFF8000) >> 15)
 
@@ -211,8 +211,8 @@ pp_rwlock_start_read_xp (PRWLock *lock)
 			counter = P_RWLOCK_XP_SET_READERS (tmp_lock, P_RWLOCK_XP_READER_COUNT (tmp_lock) + 1);
 
 			if (p_atomic_int_compare_and_exchange ((volatile pint *) &rwl_xp->lock,
-							       (pint) counter,
-							       (pint) tmp_lock) == TRUE)
+							       (pint) tmp_lock,
+							       (pint) counter) == TRUE)
 				return TRUE;
 			else
 				continue;
@@ -225,8 +225,8 @@ pp_rwlock_start_read_xp (PRWLock *lock)
 			counter = P_RWLOCK_XP_SET_WAITING (tmp_lock, P_RWLOCK_XP_WAITING_COUNT (tmp_lock) + 1);
 
 			if (p_atomic_int_compare_and_exchange ((volatile pint *) &rwl_xp->lock,
-							       (pint) counter,
-							       (pint) tmp_lock) != TRUE)
+							       (pint) tmp_lock,
+							       (pint) counter) != TRUE)
 				continue;
 
 			i = 0;
@@ -238,8 +238,8 @@ pp_rwlock_start_read_xp (PRWLock *lock)
 				tmp_lock = p_atomic_int_get ((const volatile pint *) &rwl_xp->lock);
 				counter  = P_RWLOCK_XP_SET_WAITING (tmp_lock, P_RWLOCK_XP_WAITING_COUNT (tmp_lock) - 1);
 			} while (p_atomic_int_compare_and_exchange ((volatile pint *) &rwl_xp->lock,
-								    (pint) counter,
-								    (pint) tmp_lock) != TRUE);
+								    (pint) tmp_lock,
+								    (pint) counter) != TRUE);
 		}
 	}
 
@@ -261,8 +261,8 @@ pp_rwlock_start_read_try_xp (PRWLock *lock)
 	counter = P_RWLOCK_XP_SET_READERS (tmp_lock, P_RWLOCK_XP_READER_COUNT (tmp_lock) + 1);
 
 	return p_atomic_int_compare_and_exchange ((volatile pint *) &rwl_xp->lock,
-						  (pint) counter,
-						  (pint) tmp_lock);
+						  (pint) tmp_lock,
+						  (pint) counter);
 }
 
 static pboolean
@@ -288,8 +288,8 @@ pp_rwlock_end_read_xp (PRWLock *lock)
 		counter = P_RWLOCK_XP_SET_READERS (tmp_lock, counter - 1);
 
 		if (p_atomic_int_compare_and_exchange ((volatile pint *) &rwl_xp->lock,
-						       (pint) counter,
-						       (pint) tmp_lock) == TRUE)
+						       (pint) tmp_lock,
+						       (pint) counter) == TRUE)
 			break;
 	}
 
@@ -311,8 +311,8 @@ pp_rwlock_start_write_xp (PRWLock *lock)
 			counter = P_RWLOCK_XP_SET_WRITER (tmp_lock);
 
 			if (p_atomic_int_compare_and_exchange ((volatile pint *) &rwl_xp->lock,
-							       (pint) counter,
-							       (pint) tmp_lock) == TRUE)
+							       (pint) tmp_lock,
+							       (pint) counter) == TRUE)
 				return TRUE;
 			else
 				continue;
@@ -325,8 +325,8 @@ pp_rwlock_start_write_xp (PRWLock *lock)
 			counter = P_RWLOCK_XP_SET_WAITING (tmp_lock, P_RWLOCK_XP_WAITING_COUNT (tmp_lock) + 1);
 
 			if (p_atomic_int_compare_and_exchange ((volatile pint *) &rwl_xp->lock,
-							       (pint) counter,
-							       (pint) tmp_lock) != TRUE)
+							       (pint) tmp_lock,
+							       (pint) counter) != TRUE)
 				continue;
 
 			i = 0;
@@ -338,8 +338,8 @@ pp_rwlock_start_write_xp (PRWLock *lock)
 				tmp_lock = p_atomic_int_get ((const volatile pint *) &rwl_xp->lock);
 				counter  = P_RWLOCK_XP_SET_WAITING (tmp_lock, P_RWLOCK_XP_WAITING_COUNT (tmp_lock) - 1);
 			} while (p_atomic_int_compare_and_exchange ((volatile pint *) &rwl_xp->lock,
-								    (pint) counter,
-								    (pint) tmp_lock) != TRUE);
+								    (pint) tmp_lock,
+								    (pint) counter) != TRUE);
 		}
 	}
 
@@ -356,8 +356,8 @@ pp_rwlock_start_write_try_xp (PRWLock *lock)
 
 	if (P_RWLOCK_XP_IS_CLEAR (tmp_lock)) {
 		return p_atomic_int_compare_and_exchange ((volatile pint *) &rwl_xp->lock,
-							  (pint) P_RWLOCK_XP_SET_WRITER (tmp_lock),
-							  (pint) tmp_lock);
+							  (pint) tmp_lock,
+							  (pint) P_RWLOCK_XP_SET_WRITER (tmp_lock));
 	}
 
 	return FALSE;
@@ -385,8 +385,8 @@ pp_rwlock_end_write_xp (PRWLock *lock)
 		}
 
 		if (p_atomic_int_compare_and_exchange ((volatile pint *) &rwl_xp->lock,
-						       (pint) P_RWLOCK_XP_UNSET_WRITER (tmp_lock),
-						       (pint) tmp_lock) == TRUE)
+						       (pint) tmp_lock,
+						       (pint) P_RWLOCK_XP_UNSET_WRITER (tmp_lock)) == TRUE)
 			break;
 	}
 
