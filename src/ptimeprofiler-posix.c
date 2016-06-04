@@ -30,9 +30,13 @@ typedef puint64 (* PPOSIXTicksFunc) (void);
 
 static PPOSIXTicksFunc pp_time_profiler_ticks_func = NULL;
 
+#if _POSIX_MONOTONIC_CLOCK >= 0
 static puint64 pp_time_profiler_get_ticks_clock ();
+#endif
+
 static puint64 pp_time_profiler_get_ticks_gtod ();
 
+#if _POSIX_MONOTONIC_CLOCK >= 0
 static puint64
 pp_time_profiler_get_ticks_clock ()
 {
@@ -44,6 +48,7 @@ pp_time_profiler_get_ticks_clock ()
 	} else
 		return (puint64) (ts.tv_sec * 1000000 + ts.tv_nsec / 1000);
 }
+#endif
 
 static puint64
 pp_time_profiler_get_ticks_gtod ()
