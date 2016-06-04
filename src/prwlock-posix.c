@@ -24,8 +24,24 @@
 typedef pthread_rwlock_t rwlock_hdl;
 
 struct PRWLock_ {
-	rwlock_hdl	hdl;
+	rwlock_hdl hdl;
 };
+
+static pboolean pp_rwlock_unlock_any (PRWLock *lock);
+
+static pboolean
+pp_rwlock_unlock_any (PRWLock *lock)
+{
+	if (P_UNLIKELY (lock == NULL))
+		return FALSE;
+
+	if (P_LIKELY (pthread_rwlock_unlock (&lock->hdl) == 0))
+		return TRUE;
+	else {
+		P_ERROR ("PRWLock: failed to unlock rwlock object");
+		return FALSE;
+	}
+}
 
 P_LIB_API PRWLock *
 p_rwlock_new (void)
@@ -71,6 +87,12 @@ p_rwlock_reader_trylock (PRWLock *lock)
 }
 
 P_LIB_API pboolean
+p_rwlock_reader_unlock (PRWLock *lock)
+{
+	return pp_rwlock_unlock_any (lock);
+}
+
+P_LIB_API pboolean
 p_rwlock_writer_lock (PRWLock *lock)
 {
 	if (P_UNLIKELY (lock == NULL))
@@ -94,17 +116,9 @@ p_rwlock_writer_trylock (PRWLock *lock)
 }
 
 P_LIB_API pboolean
-p_rwlock_unlock (PRWLock *lock)
+p_rwlock_writer_unlock (PRWLock *lock)
 {
-	if (P_UNLIKELY (lock == NULL))
-		return FALSE;
-
-	if (P_LIKELY (pthread_rwlock_unlock (&lock->hdl) == 0))
-		return TRUE;
-	else {
-		P_ERROR ("PRWLock: failed to unlock rwlock object");
-		return FALSE;
-	}
+	return pp_rwlock_unlock_any (lock);
 }
 
 P_LIB_API void
