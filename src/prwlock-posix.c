@@ -74,7 +74,6 @@ p_rwlock_reader_lock (PRWLock *lock)
 		P_ERROR ("PRWLock: failed to lock rwlock in read mode");
 		return FALSE;
 	}
-
 }
 
 P_LIB_API pboolean
