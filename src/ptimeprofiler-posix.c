@@ -82,15 +82,13 @@ p_time_profiler_elapsed_usecs_internal (const PTimeProfiler *profiler)
 void
 p_time_profiler_init (void)
 {
-#ifdef P_OS_IRIX
+#if defined (P_OS_IRIX) || (_POSIX_MONOTONIC_CLOCK > 0)
 	pp_time_profiler_ticks_func = (PPOSIXTicksFunc) pp_time_profiler_get_ticks_clock;
 #elif (_POSIX_MONOTONIC_CLOCK == 0) && defined (_SC_MONOTONIC_CLOCK)
 	if (P_LIKELY (sysconf (_SC_MONOTONIC_CLOCK) > 0))
 		pp_time_profiler_ticks_func = (PPOSIXTicksFunc) pp_time_profiler_get_ticks_clock;
 	else
 		pp_time_profiler_ticks_func = (PPOSIXTicksFunc) pp_time_profiler_get_ticks_gtod;
-#elif _POSIX_MONOTONIC_CLOCK > 0
-	pp_time_profiler_ticks_func = (PPOSIXTicksFunc) pp_time_profiler_get_ticks_clock;
 #else
 	pp_time_profiler_ticks_func = (PPOSIXTicksFunc) pp_time_profiler_get_ticks_gtod;
 #endif
