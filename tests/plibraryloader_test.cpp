@@ -79,7 +79,10 @@ BOOST_AUTO_TEST_CASE (plibraryloader_nomem_test)
 
 	int argCount = boost::unit_test::framework::master_test_suite().argc;
 
+	/* FreeBSD may cause a segfault :https://reviews.freebsd.org/D5112 */
+#ifndef P_OS_FREEBSD
 	BOOST_CHECK (p_library_loader_new ("." P_DIR_SEPARATOR "p_empty_file.txt") == NULL);
+#endif
 	BOOST_CHECK (p_library_loader_new (boost::unit_test::framework::master_test_suite().argv[argCount - 1]) == NULL);
 
 #ifdef P_OS_WIN
