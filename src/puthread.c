@@ -82,7 +82,16 @@ p_uthread_init (void)
 void
 p_uthread_shutdown (void)
 {
+	PUThread *cur_thread;
+
 	if (P_LIKELY (pp_uthread_specific_data != NULL)) {
+		cur_thread = p_uthread_get_local (pp_uthread_specific_data);
+
+		if (P_UNLIKELY (cur_thread != NULL)) {
+			p_uthread_unref (cur_thread);
+			p_uthread_set_local (pp_uthread_specific_data, NULL);
+		}
+
 		p_uthread_local_free (pp_uthread_specific_data);
 		pp_uthread_specific_data = NULL;
 	}
