@@ -28,7 +28,11 @@
 #include <time.h>
 
 #ifdef PLIBSYS_HAS_POSIX_SCHEDULING
-#  include <sched.h>
+#  ifdef P_OS_AIX
+#    include <sys/sched.h>
+#  else
+#    include <sched.h>
+#  endif
 #endif
 
 /* Some systems without native pthreads may lack some of the constants,

@@ -372,7 +372,7 @@ if (NOT PLIBSYS_TARGET_OS STREQUAL windows OR PLIBSYS_TARGET_OS STREQUAL cygwin
 endif()
 
 if (PLIBSYS_THREAD_MODEL STREQUAL posix)
-	if (PLIBSYS_TARGET_OS STREQUAL darwin)
+	if (PLIBSYS_TARGET_OS MATCHES "darwin|aix")
 		add_definitions (-DPLIBSYS_HAS_POSIX_SCHEDULING)
 	else()
 		# Check for thread scheduling
