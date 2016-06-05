@@ -247,7 +247,7 @@ BOOST_AUTO_TEST_CASE (puthread_general_test)
 
 	p_uthread_ref (thr1);
 
-	BOOST_CHECK (p_uthread_set_priority (thr1, P_UTHREAD_PRIORITY_NORMAL) == TRUE);
+	p_uthread_set_priority (thr1, P_UTHREAD_PRIORITY_NORMAL);
 
 	BOOST_REQUIRE (thr1 != NULL);
 	BOOST_REQUIRE (thr2 != NULL);
