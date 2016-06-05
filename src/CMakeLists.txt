@@ -372,35 +372,38 @@ if (NOT PLIBSYS_TARGET_OS STREQUAL windows OR PLIBSYS_TARGET_OS STREQUAL cygwin
 endif()
 
 if (PLIBSYS_THREAD_MODEL STREQUAL posix)
+	# Some systems only need the difinition to be available
 	if (PLIBSYS_TARGET_OS MATCHES "darwin|aix")
+		set (PLIBSYS_SCHED_CHECK "defined (_POSIX_THREAD_PRIORITY_SCHEDULING)")
+	else()
+		set (PLIBSYS_SCHED_CHECK "defined (_POSIX_THREAD_PRIORITY_SCHEDULING) && (_POSIX_THREAD_PRIORITY_SCHEDULING - 0 >= 0)")
+	endif()
+
+	# Check for thread scheduling
+	message (STATUS "Checking whether POSIX thread scheduling presents")
+
+	check_c_source_compiles (
+				 "#include <unistd.h>
+				  #include <pthread.h>
+				  #include <sched.h>
+
+				 int main () {
+				 	#if ${PLIBSYS_SCHED_CHECK}
+					  sched_get_priority_min (0);
+					  sched_get_priority_max (0);
+					#else
+					  stop_compile_here
+					#endif
+					return 0;
+				 }"
+				 PLIBSYS_HAS_POSIX_SCHEDULING
+				)
+
+	if (PLIBSYS_HAS_POSIX_SCHEDULING)
+		message (STATUS "Checking whether POSIX thread scheduling presents - yes")
 		add_definitions (-DPLIBSYS_HAS_POSIX_SCHEDULING)
 	else()
-		# Check for thread scheduling
-		message (STATUS "Checking whether POSIX thread scheduling presents")
-
-		check_c_source_compiles (
-					 "#include <unistd.h>
-					  #include <pthread.h>
-					  #include <sched.h>
-
-					 int main () {
-					 	#if defined (_POSIX_THREAD_PRIORITY_SCHEDULING) && (_POSIX_THREAD_PRIORITY_SCHEDULING - 0 >= 0)
-						  sched_get_priority_min (0);
-						  sched_get_priority_max (0);
-						#else
-						  stop_compile_here
-						#endif
-						return 0;
-					 }"
-					 PLIBSYS_HAS_POSIX_SCHEDULING
-					)
-
-		if (PLIBSYS_HAS_POSIX_SCHEDULING)
-			message (STATUS "Checking whether POSIX thread scheduling presents - yes")
-			add_definitions (-DPLIBSYS_HAS_POSIX_SCHEDULING)
-		else()
-			message (STATUS "Checking whether POSIX thread scheduling presents - no")
-		endif()
+		message (STATUS "Checking whether POSIX thread scheduling presents - no")
 	endif()
 
 	# Check for thread stack size
