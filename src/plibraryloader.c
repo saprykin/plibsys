@@ -52,8 +52,8 @@ pp_library_loader_clean_handle (plibrary_handle handle)
 P_LIB_API PLibraryLoader *
 p_library_loader_new (const pchar *path)
 {
-	PLibraryLoader *	loader;
-	plibrary_handle		handle;
+	PLibraryLoader	*loader;
+	plibrary_handle	handle;
 
 	loader = NULL;
 
@@ -138,7 +138,7 @@ p_library_loader_get_last_error (void)
 		LocalFree (msg_buf);
 	}
 #else
-	pchar *	msg;
+	pchar *msg;
 
 	msg = dlerror ();
 
