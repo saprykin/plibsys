@@ -430,7 +430,7 @@ if (PLIBSYS_THREAD_MODEL STREQUAL posix)
 endif()
 
 if ((PLIBSYS_TARGET_OS STREQUAL windows) AND NOT (PLIBSYS_TARGET_OS STREQUAL cygwin)
-				         AND NOT (PLIBSYS_TARGET_OS STREQUAL msys))
+					 AND NOT (PLIBSYS_TARGET_OS STREQUAL msys))
 	set (PLIBSYS_SOCKET_INCLUDES "#include <winsock2.h>
 				      #include <ws2tcpip.h>
 				      #include <windows.h>")
@@ -500,6 +500,28 @@ if (PLIBSYS_SOCKADDR_HAS_SA_LEN)
 else()
 	message (STATUS "Checking whether struct sockaddr has sa_len - no")
 endif()
+
+# Check sa_family_t type size in struct sockaddr
+set (CMAKE_EXTRA_INCLUDE_FILES_OLD ${CMAKE_EXTRA_INCLUDE_FILES})
+
+if ((PLIBSYS_TARGET_OS STREQUAL windows) AND NOT (PLIBSYS_TARGET_OS STREQUAL cygwin)
+					 AND NOT (PLIBSYS_TARGET_OS STREQUAL msys))
+	set (CMAKE_EXTRA_INCLUDE_FILES
+		winsock2.h
+		ws2tcpip.h
+		windows.h
+	)
+else()
+	set (CMAKE_EXTRA_INCLUDE_FILES
+		sys/types.h
+		sys/socket.h
+		netinet/in.h
+	)
+endif()
+
+check_type_size ("((struct sockaddr *) 0)->sa_family" PLIBSYS_SIZEOF_SAFAMILY_T LANGUAGE C)
+
+set (CMAKE_EXTRA_INCLUDE_FILES ${CMAKE_EXTRA_INCLUDE_FILES_OLD})
 
 add_library (plibsys SHARED ${PLIBSYS_SRCS} ${PLIBSYS_PLATFORM_SRCS} ${PLIBSYS_PUBLIC_HDRS} ${PLIBSYS_PRIVATE_HDRS})
 

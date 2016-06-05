@@ -48,7 +48,21 @@ struct sockaddr_storage {
 #  ifdef PLIBSYS_SOCKADDR_HAS_SA_LEN
 	puchar		ss_len;
 #  endif
+#  ifdef PLIBSYS_SIZEOF_SAFAMILY_T
+#    if (PLIBSYS_SIZEOF_SAFAMILY_T == 1)
 	puchar		ss_family;
+#    elif (PLIBSYS_SIZEOF_SAFAMILY_T == 2)
+	pushort		ss_family;
+#    else
+	puint		ss_family;
+#    endif
+#  else
+#    ifdef PLIBSYS_SOCKADDR_HAS_SA_LEN
+	puchar		ss_family;
+#    else
+	pushort		ss_family;
+#    endif
+#  endif
 	pchar		__ss_pad1[_PLIBSYS_SS_PAD1SIZE];
 	pint64		__ss_align;
 	pchar		__ss_pad2[_PLIBSYS_SS_PAD2SIZE];
