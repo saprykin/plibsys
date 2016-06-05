@@ -299,8 +299,6 @@ BOOST_AUTO_TEST_CASE (psocketaddress_general_test)
 	BOOST_CHECK (p_socket_address_get_family (addr) == P_SOCKET_FAMILY_INET6);
 	BOOST_CHECK (p_socket_address_get_port (addr) == 2345);
 	BOOST_CHECK (p_socket_address_get_native_size (addr) == native_size);
-	BOOST_CHECK (p_socket_address_get_flow_info (addr) == 1);
-	BOOST_CHECK (p_socket_address_get_scope_id (addr) == 1);
 
 	addr_str = p_socket_address_get_address (addr);
 
