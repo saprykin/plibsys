@@ -501,6 +501,48 @@ else()
 	message (STATUS "Checking whether struct sockaddr has sa_len - no")
 endif()
 
+# Check sin6_scope_id field in struct sockaddr_in6
+message (STATUS "Checking whether struct sockaddr_in6 has sin6_scope_id")
+
+check_c_source_compiles (
+			 "${PLIBSYS_SOCKET_INCLUDES}
+			  int main () {
+				struct sockaddr_in6 sock_addr;
+				sock_addr.sin6_scope_id = 0;
+
+				return 0;
+			  }"
+			  PLIBSYS_SOCKADDR_IN6_HAS_SCOPEID
+			)
+
+if (PLIBSYS_SOCKADDR_IN6_HAS_SCOPEID)
+	message (STATUS "Checking whether struct sockaddr_in6 has sin6_scope_id - yes")
+	add_definitions (-DPLIBSYS_SOCKADDR_IN6_HAS_SCOPEID)
+else()
+	message (STATUS "Checking whether struct sockaddr_in6 has sin6_scope_id - no")
+endif()
+
+# Check sin6_flowinfo field in struct sockaddr_in6
+message (STATUS "Checking whether struct sockaddr_in6 has sin6_flowinfo")
+
+check_c_source_compiles (
+			 "${PLIBSYS_SOCKET_INCLUDES}
+			  int main () {
+				struct sockaddr_in6 sock_addr;
+				sock_addr.sin6_flowinfo = 0;
+
+				return 0;
+			  }"
+			  PLIBSYS_SOCKADDR_IN6_HAS_FLOWINFO
+			)
+
+if (PLIBSYS_SOCKADDR_IN6_HAS_FLOWINFO)
+	message (STATUS "Checking whether struct sockaddr_in6 has sin6_flowinfo - yes")
+	add_definitions (-DPLIBSYS_SOCKADDR_IN6_HAS_FLOWINFO)
+else()
+	message (STATUS "Checking whether struct sockaddr_in6 has sin6_flowinfo - no")
+endif()
+
 # Check sa_family_t type size in struct sockaddr
 set (CMAKE_EXTRA_INCLUDE_FILES_OLD ${CMAKE_EXTRA_INCLUDE_FILES})
 

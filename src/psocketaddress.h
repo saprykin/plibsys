@@ -182,6 +182,7 @@ P_LIB_API puint16		p_socket_address_get_port		(const PSocketAddress	*addr);
  * @return IPv6 traffic class and flow information.
  * @since 0.0.1
  * @note This call is valid only for an IPv6 address, otherwise 0 is returned.
+ * @note Some operating systems may not support this property.
  */
 P_LIB_API puint32		p_socket_address_get_flow_info		(const PSocketAddress	*addr);
 
@@ -191,6 +192,7 @@ P_LIB_API puint32		p_socket_address_get_flow_info		(const PSocketAddress	*addr);
  * @return Index that identifies the set of interfaces for a scope.
  * @since 0.0.1
  * @note This call is valid only for an IPv6 address, otherwise 0 is returned.
+ * @note Some operating systems may not support this property.
  */
 P_LIB_API puint32		p_socket_address_get_scope_id		(const PSocketAddress	*addr);
 
@@ -200,6 +202,7 @@ P_LIB_API puint32		p_socket_address_get_scope_id		(const PSocketAddress	*addr);
  * @param flowinfo Flow information to set.
  * @since 0.0.1
  * @note This call is valid only for an IPv6 address.
+ * @note Some operating systems may not support this property.
  */
 P_LIB_API void			p_socket_address_set_flow_info		(PSocketAddress		*addr,
 									 puint32		flowinfo);
@@ -210,6 +213,7 @@ P_LIB_API void			p_socket_address_set_flow_info		(PSocketAddress		*addr,
  * @param scope_id Index that identifies the set of interfaces for a scope.
  * @since 0.0.1
  * @note This call is valid only for an IPv6 address.
+ * @note Some operating systems may not support this property.
  */
 P_LIB_API void			p_socket_address_set_scope_id		(PSocketAddress		*addr,
 									 puint32		scope_id);

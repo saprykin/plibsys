@@ -106,8 +106,12 @@ p_socket_address_new_from_native (pconstpointer	native,
 
 		ret->family   = P_SOCKET_FAMILY_INET6;
 		ret->port     = p_ntohs (((struct sockaddr_in *) native)->sin_port);
+#ifdef PLIBSYS_SOCKADDR_IN6_HAS_FLOWINFO
 		ret->flowinfo = ((struct sockaddr_in6 *) native)->sin6_flowinfo;
+#endif
+#ifdef PLIBSYS_SOCKADDR_IN6_HAS_SCOPEID
 		ret->scope_id = ((struct sockaddr_in6 *) native)->sin6_scope_id;
+#endif
 		return ret;
 	}
 #endif
@@ -146,7 +150,9 @@ p_socket_address_new (const pchar	*address,
 		hints.ai_family   = AF_UNSPEC;
 		hints.ai_socktype = SOCK_STREAM;
 		hints.ai_protocol = 0;
+#ifndef P_OS_UNIXWARE
 		hints.ai_flags    = AI_NUMERICHOST;
+#endif
 
 		if (P_UNLIKELY (getaddrinfo (address, NULL, &hints, &res) != 0))
 			return NULL;
@@ -313,8 +319,12 @@ p_socket_address_to_native (const PSocketAddress	*addr,
 		memcpy (&sin6->sin6_addr, &addr->addr.sin6_addr, sizeof (struct in6_addr));
 		sin6->sin6_family   = AF_INET6;
 		sin6->sin6_port     = p_htons (addr->port);
+#ifdef PLIBSYS_SOCKADDR_IN6_HAS_FLOWINFO
 		sin6->sin6_flowinfo = addr->flowinfo;
+#endif
+#ifdef PLIBSYS_SOCKADDR_IN6_HAS_SCOPEID
 		sin6->sin6_scope_id = addr->scope_id;
+#endif
 		return TRUE;
 	}
 #endif
