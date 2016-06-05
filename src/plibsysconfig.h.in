@@ -13,10 +13,15 @@
 #cmakedefine PLIBSYS_NEED_VALUES_H
 #cmakedefine PLIBSYS_IS_BIGENDIAN
 
+#define PLIBSYS_NTDDI_VERSION_FROM_WIN32_WINNT2(ver)    ver##0000
+#define PLIBSYS_NTDDI_VERSION_FROM_WIN32_WINNT(ver)     PLIBSYS_NTDDI_VERSION_FROM_WIN32_WINNT2(ver)
+
 #ifdef PLIBSYS_NEED_WINDOWS_H
-#  if !defined (_WIN32_WINNT) && !defined (NTDDI_VERSION)
+#  ifndef _WIN32_WINNT
 #    define _WIN32_WINNT 0x501
-#    define NTDDI_VERSION 0x5010000
+#  endif
+#  ifndef NTDDI_VERSION
+#    define NTDDI_VERSION PLIBSYS_NTDDI_VERSION_FROM_WIN32_WINNT(_WIN32_WINNT)
 #  endif
 #  include <winsock2.h>
 #  include <ws2tcpip.h>
