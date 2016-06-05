@@ -150,9 +150,9 @@ p_socket_address_new (const pchar	*address,
 		hints.ai_family   = AF_UNSPEC;
 		hints.ai_socktype = SOCK_STREAM;
 		hints.ai_protocol = 0;
-#ifndef P_OS_UNIXWARE
+#  ifndef P_OS_UNIXWARE
 		hints.ai_flags    = AI_NUMERICHOST;
-#endif
+#  endif
 
 		if (P_UNLIKELY (getaddrinfo (address, NULL, &hints, &res) != 0))
 			return NULL;
