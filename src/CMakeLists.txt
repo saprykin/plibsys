@@ -152,7 +152,6 @@ endif()
 set (PLIBSYS_PLATFORM_SRCS
 	pcondvariable-${PLIBSYS_THREAD_MODEL}.c
 	pmutex-${PLIBSYS_THREAD_MODEL}.c
-	prwlock-${PLIBSYS_THREAD_MODEL}.c
 	psemaphore-${PLIBSYS_IPC_MODEL}.c
 	pshm-${PLIBSYS_IPC_MODEL}.c
 	puthread-${PLIBSYS_THREAD_MODEL}.c
@@ -371,6 +370,8 @@ if (NOT PLIBSYS_TARGET_OS STREQUAL windows OR PLIBSYS_TARGET_OS STREQUAL cygwin
 	endif()
 endif()
 
+set (PLIBSYS_RWLOCK_MODEL ${PLIBSYS_THREAD_MODEL})
+
 if (PLIBSYS_THREAD_MODEL STREQUAL posix)
 	# Some systems only need the difinition to be available
 	if (PLIBSYS_TARGET_OS MATCHES "darwin|aix")
@@ -427,7 +428,35 @@ if (PLIBSYS_THREAD_MODEL STREQUAL posix)
 	else()
 		message (STATUS "Checking whether POSIX thread stack size is supported - no")
 	endif()
+
+	# Check for read-write lock support
+	message (STATUS "Checking whether POSIX read-write locks are supported")
+
+	check_c_source_compiles (
+				 "#include <pthread.h>
+
+				 int main () {
+					pthread_rwlock_t rwl;
+
+					pthread_rwlock_init (&rwl, 0);
+					pthread_rwlock_destroy (&rwl);
+					return 0;
+				 }"
+				 PLIBSYS_HAS_POSIX_RWLOCK
+				)
+
+	if (PLIBSYS_HAS_POSIX_RWLOCK)
+		message (STATUS "Checking whether POSIX read-write locks are supported - yes")
+	else()
+		message (STATUS "Checking whether POSIX read-write locks are supported - no")
+		set (PLIBSYS_RWLOCK_MODEL "general")
+	endif()
 endif()
+
+set (PLIBSYS_PLATFORM_SRCS
+	${PLIBSYS_PLATFORM_SRCS}
+	prwlock-${PLIBSYS_RWLOCK_MODEL}.c
+)
 
 if ((PLIBSYS_TARGET_OS STREQUAL windows) AND NOT (PLIBSYS_TARGET_OS STREQUAL cygwin)
 					 AND NOT (PLIBSYS_TARGET_OS STREQUAL msys))
