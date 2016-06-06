@@ -444,7 +444,7 @@ p_socket_address_get_flow_info (const PSocketAddress *addr)
 	if (P_UNLIKELY (addr == NULL))
 		return 0;
 
-#ifndef AF_INET6
+#if !defined (AF_INET6) || !defined (PLIBSYS_SOCKADDR_IN6_HAS_FLOWINFO)
 	return 0;
 #else
 	if (P_UNLIKELY (addr->family != P_SOCKET_FAMILY_INET6))
@@ -460,7 +460,7 @@ p_socket_address_get_scope_id (const PSocketAddress *addr)
 	if (P_UNLIKELY (addr == NULL))
 		return 0;
 
-#ifndef AF_INET6
+#if !defined (AF_INET6) || !defined (PLIBSYS_SOCKADDR_IN6_HAS_SCOPEID)
 	return 0;
 #else
 	if (P_UNLIKELY (addr->family != P_SOCKET_FAMILY_INET6))
@@ -472,12 +472,12 @@ p_socket_address_get_scope_id (const PSocketAddress *addr)
 
 P_LIB_API void
 p_socket_address_set_flow_info (PSocketAddress	*addr,
-				 puint32	flowinfo)
+				puint32		flowinfo)
 {
 	if (P_UNLIKELY (addr == NULL))
 		return;
 
-#ifndef AF_INET6
+#if !defined (AF_INET6) || !defined (PLIBSYS_SOCKADDR_IN6_HAS_FLOWINFO)
 	P_UNUSED (flowinfo);
 	return;
 #else
@@ -495,7 +495,7 @@ p_socket_address_set_scope_id (PSocketAddress	*addr,
 	if (P_UNLIKELY (addr == NULL))
 		return;
 
-#ifndef AF_INET6
+#if !defined (AF_INET6) || !defined (PLIBSYS_SOCKADDR_IN6_HAS_SCOPEID)
 	P_UNUSED (scope_id);
 	return;
 #else
