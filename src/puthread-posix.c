@@ -138,11 +138,13 @@ pp_uthread_get_tls_key (PUThreadKey *key)
 		if (P_UNLIKELY (p_atomic_pointer_compare_and_exchange ((ppointer) &key->key,
 								       NULL,
 								       (ppointer) thread_key) == FALSE)) {
+#ifndef P_OS_SCO
 			if (P_UNLIKELY (pthread_key_delete (*thread_key) != 0)) {
 				P_ERROR ("PUThread: failed to call pthread_key_delete()");
 				p_free (thread_key);
 				return NULL;
 			}
+#endif
 
 			p_free (thread_key);
 
@@ -369,14 +371,25 @@ p_uthread_local_free (PUThreadKey *key)
 P_LIB_API ppointer
 p_uthread_get_local (PUThreadKey *key)
 {
-	pthread_key_t *tls_key;
+	pthread_key_t	*tls_key;
+#ifdef P_OS_SCO
+	ppointer	value;
+#endif
 
 	if (P_UNLIKELY (key == NULL))
 		return NULL;
 
-	tls_key = pp_uthread_get_tls_key (key);
+	if (P_UNLIKELY ((tls_key = pp_uthread_get_tls_key (key)) == NULL))
+		return NULL;
 
-	return tls_key == NULL ? NULL : pthread_getspecific (*tls_key);
+#ifdef P_OS_SCO
+	if (P_UNLIKELY (pthread_getspecific (*tls_key, &value) != 0))
+		return NULL;
+
+	return value;
+#else
+	return pthread_getspecific (*tls_key);
+#endif
 }
 
 P_LIB_API void
@@ -411,7 +424,12 @@ p_uthread_replace_local	(PUThreadKey	*key,
 	if (P_UNLIKELY (tls_key == NULL))
 		return;
 
+#ifdef P_OS_SCO
+	if (P_UNLIKELY (pthread_getspecific (*tls_key, &old_value) != 0))
+		return;
+#else
 	old_value = pthread_getspecific (*tls_key);
+#endif
 
 	if (old_value != NULL && key->free_func != NULL)
 		key->free_func (old_value);
