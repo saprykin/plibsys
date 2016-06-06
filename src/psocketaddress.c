@@ -507,6 +507,34 @@ p_socket_address_set_scope_id (PSocketAddress	*addr,
 }
 
 P_LIB_API pboolean
+p_socket_address_is_flow_info_supported (void)
+{
+#ifdef AF_INET6
+#  ifdef PLIBSYS_SOCKADDR_IN6_HAS_FLOWINFO
+	return TRUE;
+#  else
+	return FALSE;
+#  endif
+#else
+	return FALSE;
+#endif
+}
+
+P_LIB_API pboolean
+p_socket_address_is_scope_id_supported (void)
+{
+#ifdef AF_INET6
+#  ifdef PLIBSYS_SOCKADDR_IN6_HAS_SCOPEID
+	return TRUE;
+#  else
+	return FALSE;
+#  endif
+#else
+	return FALSE;
+#endif
+}
+
+P_LIB_API pboolean
 p_socket_address_is_any (const PSocketAddress *addr)
 {
 	puint32 addr4;
