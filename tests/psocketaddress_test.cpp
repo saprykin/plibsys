@@ -300,6 +300,12 @@ BOOST_AUTO_TEST_CASE (psocketaddress_general_test)
 	BOOST_CHECK (p_socket_address_get_port (addr) == 2345);
 	BOOST_CHECK (p_socket_address_get_native_size (addr) == native_size);
 
+	if (p_socket_address_is_flow_info_supported ())
+		BOOST_CHECK (p_socket_address_get_flow_info (addr) == 1);
+
+	if (p_socket_address_is_scope_id_supported ())
+		BOOST_CHECK (p_socket_address_get_scope_id (addr) == 1);
+
 	addr_str = p_socket_address_get_address (addr);
 
 	BOOST_REQUIRE (addr_str != NULL);
