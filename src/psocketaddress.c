@@ -27,6 +27,10 @@
 #  include <arpa/inet.h>
 #endif
 
+#if defined (PLIBSYS_HAS_GETADDRINFO) && !defined (PLIBSYS_SOCKADDR_IN6_HAS_SCOPEID)
+#  undef PLIBSYS_HAS_GETADDRINFO
+#endif
+
 #ifdef PLIBSYS_HAS_GETADDRINFO
 #  include <netdb.h>
 #endif
