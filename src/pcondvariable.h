@@ -101,8 +101,7 @@ P_LIB_API pboolean		p_cond_variable_wait		(PCondVariable	*cond,
 								 PMutex		*mutex);
 
 /**
- * @brief Emitts a signal on a given condition variable for one waiting
- * thread.
+ * @brief Emitts a signal on a given condition variable for one waiting thread.
  * @param cond Condition variable to emit the signal on.
  * @return TRUE on success, FALSE otherwise.
  * @since 0.0.1
