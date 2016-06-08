@@ -20,6 +20,9 @@
 
 #include "pmem.h"
 #include "psocket.h"
+#ifdef P_OS_SCO
+#  include "ptimeprofiler.h"
+#endif
 #include "plibsys-private.h"
 #include "perror-private.h"
 
@@ -51,6 +54,9 @@ struct PSocket_ {
 	puint		listening	: 1;
 #ifdef P_OS_WIN
 	WSAEVENT	events;
+#endif
+#ifdef P_OS_SCO
+	PTimeProfiler	*timer;
 #endif
 };
 
@@ -358,6 +364,17 @@ p_socket_new_from_fd (pint	fd,
 	ret->timeout  = 0;
 	ret->blocking = TRUE;
 
+#ifdef P_OS_SCO
+	if (P_UNLIKELY ((ret->timer = p_time_profiler_new ()) == NULL)) {
+		p_error_set_error_p (error,
+				     (pint) P_ERROR_IO_NO_RESOURCES,
+				     0,
+				     "Failed to allocate memory for internal timer");
+		p_free (ret);
+		return NULL;
+	}
+#endif
+
 #ifdef P_OS_WIN
 	if (P_UNLIKELY ((ret->events = WSACreateEvent ()) == WSA_INVALID_EVENT)) {
 		p_error_set_error_p (error,
@@ -415,6 +432,25 @@ p_socket_new (PSocketFamily	family,
 		return NULL;
 	}
 
+	if (P_UNLIKELY ((ret = p_malloc0 (sizeof (PSocket))) == NULL)) {
+		p_error_set_error_p (error,
+				     (pint) P_ERROR_IO_NO_RESOURCES,
+				     0,
+				     "Failed to allocate memory for socket");
+		return NULL;
+	}
+
+#ifdef P_OS_SCO
+	if (P_UNLIKELY ((ret->timer = p_time_profiler_new ()) == NULL)) {
+		p_error_set_error_p (error,
+				     (pint) P_ERROR_IO_NO_RESOURCES,
+				     0,
+				     "Failed to allocate memory for internal timer");
+		p_free (ret);
+		return NULL;
+	}
+#endif
+
 #ifdef SOCK_CLOEXEC
 	native_type |= SOCK_CLOEXEC;
 #endif
@@ -423,6 +459,10 @@ p_socket_new (PSocketFamily	family,
 				     (pint) p_error_get_io_from_system (pp_socket_get_errno ()),
 				     (pint) pp_socket_get_errno (),
 				     "Failed to call socket() to create socket");
+#ifdef P_OS_SCO
+		p_time_profiler_free (ret->timer);
+#endif
+		p_free (ret);
 		return NULL;
 	}
 
@@ -437,28 +477,14 @@ p_socket_new (PSocketFamily	family,
 	}
 #endif
 
-	if (P_UNLIKELY ((ret = p_malloc0 (sizeof (PSocket))) == NULL)) {
-		p_error_set_error_p (error,
-				     (pint) P_ERROR_IO_NO_RESOURCES,
-				     0,
-				     "Failed to allocate memory for socket");
-#ifndef P_OS_WIN
-		close (fd);
-#else
-		closesocket (fd);
-#endif
-		return NULL;
-	}
-
 	ret->fd = fd;
 
-	if (P_UNLIKELY (pp_socket_set_fd_blocking (ret->fd, FALSE, error) == FALSE)) {
-#ifndef P_OS_WIN
-		close (fd);
-#else
-		closesocket (fd);
+#ifdef P_OS_WIN
+	ret->events = WSA_INVALID_EVENT;
 #endif
-		p_free (ret);
+
+	if (P_UNLIKELY (pp_socket_set_fd_blocking (ret->fd, FALSE, error) == FALSE)) {
+		p_socket_free (ret);
 		return NULL;
 	}
 
@@ -1392,6 +1418,12 @@ p_socket_free (PSocket *socket)
 #endif
 
 	p_socket_close (socket, NULL);
+
+#ifdef P_OS_SCO
+	if (P_LIKELY (socket->timer != NULL))
+		p_time_profiler_free (socket->timer);
+#endif
+
 	p_free (socket);
 }
 
@@ -1493,12 +1525,25 @@ p_socket_io_condition_wait (const PSocket	*socket,
 	else
 		pfd.events = POLLOUT;
 
+#ifdef P_OS_SCO
+	p_time_profiler_reset (socket->timer);
+#endif
+
 	while (TRUE) {
 		evret = poll (&pfd, 1, timeout);
 
 #ifdef EINTR
-		if (evret == -1 && pp_socket_get_errno () == EINTR)
+		if (evret == -1 && pp_socket_get_errno () == EINTR) {
+#  ifdef P_OS_SCO
+			if (timeout < 0 ||
+			    (p_time_profiler_elapsed_usecs (socket->timer) / 1000) < (puint64) timeout)
+				continue;
+			else
+				evret = 0;
+#  else
 			continue;
+#  endif
+		}
 #endif
 
 		if (evret == 1)
