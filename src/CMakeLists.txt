@@ -11,6 +11,11 @@ plibsys_detect_c_compiler (PLIBSYS_C_COMPILER)
 plibsys_detect_target_os (PLIBSYS_TARGET_OS)
 plibsys_detect_os_bits (PLIBSYS_OS_BITS)
 
+if ((PLIBSYS_TARGET_OS STREQUAL windows) AND NOT (PLIBSYS_TARGET_OS STREQUAL cygwin)
+					 AND NOT (PLIBSYS_TARGET_OS STREQUAL msys))
+	set (PLIBSYS_NATIVE_WINDOWS true)
+endif()
+
 if (PLIBSYS_COVERAGE)
 	if (PLIBSYS_C_COMPILER MATCHES "gcc|clang")
 		set (CMAKE_BUILD_TYPE "Debug")
@@ -283,15 +288,13 @@ endif()
 check_type_size ("size_t" PLIBSYS_SIZEOF_SIZE_T)
 check_type_size ("long" PLIBSYS_SIZEOF_LONG)
 
-if ((PLIBSYS_TARGET_OS STREQUAL windows) AND NOT (PLIBSYS_TARGET_OS STREQUAL cygwin)
-				         AND NOT (PLIBSYS_TARGET_OS STREQUAL msys))
+if (PLIBSYS_NATIVE_WINDOWS)
 	set (PLIBSYS_NEED_WINDOWS_H true)
 endif()
 
 configure_file (${CMAKE_CURRENT_SOURCE_DIR}/plibsysconfig.h.in ${CMAKE_BINARY_DIR}/plibsysconfig.h)
 
-if (NOT PLIBSYS_TARGET_OS STREQUAL windows OR PLIBSYS_TARGET_OS STREQUAL cygwin
-					   OR PLIBSYS_TARGET_OS STREQUAL msys)
+if (NOT PLIBSYS_NATIVE_WINDOWS)
 	# Check for anonymous mmap()
 	message (STATUS "Checking whether mmap has anonymous mapping")
 
@@ -458,8 +461,7 @@ set (PLIBSYS_PLATFORM_SRCS
 	prwlock-${PLIBSYS_RWLOCK_MODEL}.c
 )
 
-if ((PLIBSYS_TARGET_OS STREQUAL windows) AND NOT (PLIBSYS_TARGET_OS STREQUAL cygwin)
-					 AND NOT (PLIBSYS_TARGET_OS STREQUAL msys))
+if (PLIBSYS_NATIVE_WINDOWS)
 	set (PLIBSYS_SOCKET_INCLUDES "#include <winsock2.h>
 				      #include <ws2tcpip.h>
 				      #include <windows.h>")
@@ -575,8 +577,7 @@ endif()
 # Check sa_family_t type size in struct sockaddr
 set (CMAKE_EXTRA_INCLUDE_FILES_OLD ${CMAKE_EXTRA_INCLUDE_FILES})
 
-if ((PLIBSYS_TARGET_OS STREQUAL windows) AND NOT (PLIBSYS_TARGET_OS STREQUAL cygwin)
-					 AND NOT (PLIBSYS_TARGET_OS STREQUAL msys))
+if (PLIBSYS_NATIVE_WINDOWS)
 	set (CMAKE_EXTRA_INCLUDE_FILES
 		winsock2.h
 		ws2tcpip.h
@@ -649,12 +650,11 @@ else()
 	set (PLIBSYS_INSTALL_TARGETS plibsys)
 endif()
 
-if ((PLIBSYS_TARGET_OS STREQUAL windows) AND NOT (PLIBSYS_TARGET_OS STREQUAL cygwin)
-				         AND NOT (PLIBSYS_TARGET_OS STREQUAL msys))
+if (PLIBSYS_NATIVE_WINDOWS)
 	install (TARGETS ${PLIBSYS_INSTALL_TARGETS}
-		 DESTINATION lib
-		 RUNTIME DESTINATION lib
-		 COMPONENT Core
+		DESTINATION lib
+		RUNTIME DESTINATION lib
+		COMPONENT Core
 	)
 
 	if (NOT DEFINED CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS_NO_WARNINGS)
@@ -665,15 +665,15 @@ if ((PLIBSYS_TARGET_OS STREQUAL windows) AND NOT (PLIBSYS_TARGET_OS STREQUAL cyg
 	include (InstallRequiredSystemLibraries)
 
 	install (PROGRAMS ${CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS}
-		 DESTINATION lib
-		 COMPONENT Core
+		DESTINATION lib
+		COMPONENT Core
 	)
 endif()
 
 install (TARGETS ${PLIBSYS_INSTALL_TARGETS} EXPORT plibsys-targets
-	 DESTINATION lib
-	 LIBRARY DESTINATION lib
-	 COMPONENT Core
+	DESTINATION lib
+	LIBRARY DESTINATION lib
+	COMPONENT Core
 )
 install (TARGETS ${PLIBSYS_INSTALL_TARGETS}
 	 DESTINATION lib
