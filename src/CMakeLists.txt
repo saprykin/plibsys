@@ -101,6 +101,7 @@ set (PLIBSYS_PRIVATE_HDRS
 	perror-private.h
 	pipc-private.h
 	plibsys-private.h
+	psysclose-private.h
 	ptimeprofiler-private.h
 	ptree-avl.h
 	ptree-bst.h
@@ -138,6 +139,14 @@ set (PLIBSYS_SRCS
 	puthread.c
 )
 
+if (PLIBSYS_NATIVE_WINDOWS)
+	set (PLIBSYS_CLOSE_MODEL win)
+elseif (PLIBSYS_TARGET_OS STREQUAL darwin)
+	set (PLIBSYS_CLOSE_MODEL darwin)
+else()
+	set (PLIBSYS_CLOSE_MODEL unix)
+endif()
+
 if (PLIBSYS_THREAD_MODEL STREQUAL "")
 	set (PLIBSYS_THREAD_MODEL none)
 endif()
@@ -159,6 +168,7 @@ set (PLIBSYS_PLATFORM_SRCS
 	pmutex-${PLIBSYS_THREAD_MODEL}.c
 	psemaphore-${PLIBSYS_IPC_MODEL}.c
 	pshm-${PLIBSYS_IPC_MODEL}.c
+	psysclose-${PLIBSYS_CLOSE_MODEL}.c
 	puthread-${PLIBSYS_THREAD_MODEL}.c
 	ptimeprofiler-${PLIBSYS_TIME_PROFILER_MODEL}.c
 	pdir-${PLIBSYS_DIR_MODEL}.c
