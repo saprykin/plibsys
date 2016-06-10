@@ -28,8 +28,8 @@
 P_BEGIN_DECLS
 
 /**
- * @brief Safely closes a system descriptor.
- * @param fd System descriptor to close.
+ * @brief Safely closes a file descriptor.
+ * @param fd File descriptor to close.
  * @return -1 in case of success, 0 otherwise.
  */
 pint p_sys_close (pint fd);
