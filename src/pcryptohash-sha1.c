@@ -15,8 +15,6 @@
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
-/* TODO: convert to hex string */
-
 #include <string.h>
 #include <stdlib.h>
 

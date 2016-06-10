@@ -16,7 +16,6 @@
  */
 
 /* TODO: Handle NULL-terminated strings */
-/* TODO: Proper hex converting */
 
 #include "pmem.h"
 #include "pcryptohash.h"
@@ -24,7 +23,6 @@
 #include "pcryptohash-md5.h"
 #include "pcryptohash-sha1.h"
 
-#include <stdio.h>
 #include <string.h>
 
 /* Keep in sync with hash algorithms */
@@ -51,6 +49,22 @@ struct PCryptoHash_ {
 	void		(*reset)	(void *hash);
 	void		(*free)		(void *hash);
 };
+
+static pchar pp_crypto_hash_hex_str[]= "0123456789abcdef";
+
+static void
+pp_crypto_hash_digest_to_hex (const puchar *digest, puint len, pchar *out);
+
+static void
+pp_crypto_hash_digest_to_hex (const puchar *digest, puint len, pchar *out)
+{
+	puint i;
+
+	for (i = 0; i < len; ++i) {
+		*(out + (i << 1)    ) = pp_crypto_hash_hex_str[(digest[i] >> 4) & 0x0F];
+		*(out + (i << 1) + 1) = pp_crypto_hash_hex_str[(digest[i]     ) & 0x0F];
+	}
+}
 
 P_LIB_API PCryptoHash *
 p_crypto_hash_new (PCryptoHashType type)
@@ -119,7 +133,6 @@ P_LIB_API pchar *
 p_crypto_hash_get_string (PCryptoHash *hash)
 {
 	pchar		*ret;
-	puint		i;
 	const puchar	*digest;
 
 	if (P_UNLIKELY (hash == NULL || hash->reseted))
@@ -136,8 +149,7 @@ p_crypto_hash_get_string (PCryptoHash *hash)
 	if (P_UNLIKELY ((ret = p_malloc0 (hash->hash_len * 2 + 1)) == NULL))
 		return NULL;
 
-	for (i = 0; i < hash->hash_len; ++i)
-		sprintf (ret + i * 2, "%02x", digest[i]);
+	pp_crypto_hash_digest_to_hex (digest, hash->hash_len, ret);
 
 	return ret;
 }
