@@ -24,7 +24,7 @@
 pint
 p_sys_close (pint fd)
 {
-#ifdef EINTR
+#if defined (EINTR) && defined (P_OS_HPUX)
 	pint res, err_code;
 
 	for (;;) {
@@ -44,4 +44,3 @@ p_sys_close (pint fd)
 	return close (fd);
 #endif
 }
-
