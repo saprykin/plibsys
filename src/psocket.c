@@ -23,6 +23,7 @@
 #ifdef P_OS_SCO
 #  include "ptimeprofiler.h"
 #endif
+#include "psysclose-private.h"
 #include "plibsys-private.h"
 #include "perror-private.h"
 
@@ -1035,11 +1036,8 @@ p_socket_accept (const PSocket	*socket,
 #endif
 
 	if (P_UNLIKELY ((ret = p_socket_new_from_fd (res, error)) == NULL)) {
-#ifdef P_OS_WIN
-		closesocket (res);
-#else
-		close (res);
-#endif
+		if (P_UNLIKELY (p_sys_close (res) != 0))
+			P_WARNING ("PSocket: failed to close socket");
 	} else
 		ret->protocol = socket->protocol;
 
@@ -1298,8 +1296,7 @@ P_LIB_API pboolean
 p_socket_close (PSocket	*socket,
 		PError	**error)
 {
-	pint	res;
-	pint	err_code;
+	pint err_code;
 
 	if (P_UNLIKELY (socket == NULL)) {
 		p_error_set_error_p (error,
@@ -1312,46 +1309,23 @@ p_socket_close (PSocket	*socket,
 	if (socket->closed)
 		return TRUE;
 
-#if !defined (P_OS_WIN) && defined (EINTR)
-	for (;;) {
-		res = close (socket->fd);
-
-		if (P_LIKELY (res == 0))
-			break;
-
-		err_code = pp_socket_get_errno ();
-
-		if (err_code == EINTR)
-			continue;
-		else
-			break;
-	}
-#else
-#  ifdef P_OS_WIN
-	res = closesocket (socket->fd);
-#  else
-	res = close (socket->fd);
-#  endif
-
-	if (P_UNLIKELY (res != 0))
-		err_code = pp_socket_get_errno ();
-#endif
-
-	if (P_LIKELY (res == 0)) {
+	if (P_LIKELY (p_sys_close (socket->fd) == 0)) {
 		socket->connected = FALSE;
 		socket->closed    = TRUE;
 		socket->listening = FALSE;
 		socket->fd        = -1;
 
 		return TRUE;
+	} else {
+		err_code = pp_socket_get_errno ();
+
+		p_error_set_error_p (error,
+				     (pint) p_error_get_io_from_system (err_code),
+				     err_code,
+				     "Failed to close socket");
+
+		return FALSE;
 	}
-
-	p_error_set_error_p (error,
-			     (pint) p_error_get_io_from_system (err_code),
-			     err_code,
-			     "Failed to close socket");
-
-	return FALSE;
 }
 
 P_LIB_API pboolean
