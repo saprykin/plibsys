@@ -20,6 +20,7 @@
 #include "pshm.h"
 #include "perror-private.h"
 #include "pipc-private.h"
+#include "psysclose-private.h"
 
 #include <unistd.h>
 #include <stdlib.h>
@@ -97,7 +98,10 @@ pp_shm_create_handle (PShm	*shm,
 					     (pint) p_error_get_last_ipc (),
 					     p_error_get_last_error (),
 					     "Failed to call fstat() to get memory segment size");
-			close (fd);
+
+			if (P_UNLIKELY (p_sys_close (fd) != 0))
+				P_WARNING ("PShm: failed (1) to close segment file descriptor");
+
 			pp_shm_clean_handle (shm);
 			return FALSE;
 		}
@@ -109,7 +113,10 @@ pp_shm_create_handle (PShm	*shm,
 					     (pint) p_error_get_last_ipc (),
 					     p_error_get_last_error (),
 					     "Failed to call ftruncate() to set memory segment size");
-			close (fd);
+
+			if (P_UNLIKELY (p_sys_close (fd) != 0))
+				P_WARNING ("PShm: failed (2) to close segment file descriptor");
+
 			pp_shm_clean_handle (shm);
 			return FALSE;
 		}
@@ -123,13 +130,16 @@ pp_shm_create_handle (PShm	*shm,
 				     p_error_get_last_error (),
 				     "Failed to call mmap() to map memory segment");
 		shm->addr = NULL;
-		close (fd);
+
+		if (P_UNLIKELY (p_sys_close (fd) != 0))
+			P_WARNING ("PShm: failed (3) to close segment file descriptor");
+
 		pp_shm_clean_handle (shm);
 		return FALSE;
 	}
 
-	if (P_UNLIKELY (close (fd) == -1))
-		P_WARNING ("PShm: failed to close file descriptor");
+	if (P_UNLIKELY (p_sys_close (fd) != 0))
+		P_WARNING ("PShm: failed (4) to close segment file descriptor");
 
 	if (P_UNLIKELY ((shm->sem = p_semaphore_new (shm->platform_key, 1,
 						     is_exists ? P_SEM_ACCESS_OPEN : P_SEM_ACCESS_CREATE,

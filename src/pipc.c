@@ -19,6 +19,7 @@
 #include "psemaphore.h"
 #include "pcryptohash.h"
 #include "pstring.h"
+#include "psysclose-private.h"
 
 #include <stdlib.h>
 #include <string.h>
@@ -87,7 +88,7 @@ p_ipc_unix_create_key_file (const pchar *file_name)
 		/* file already exists */
 		return (errno == EEXIST) ? 1 : -1;
 	else
-		return close (fd);
+		return p_sys_close (fd);
 }
 
 pint

@@ -20,6 +20,7 @@
 
 #include "pmem.h"
 #include "perror-private.h"
+#include "psysclose-private.h"
 
 #ifndef P_OS_WIN
 #  include <unistd.h>
@@ -210,13 +211,14 @@ p_mem_mmap (psize	n_bytes,
 				     p_error_get_last_error (),
 				     "Failed to call mmap() to create file mapping");
 #  if !defined (PLIBSYS_MMAP_HAS_MAP_ANONYMOUS) && !defined (PLIBSYS_MMAP_HAS_MAP_ANON)
-		close (fd);
+		if (P_UNLIKELY (p_sys_close (fd) != 0))
+			P_WARNING ("PMem: failed to close file descriptor to /dev/zero");
 #  endif
 		return NULL;
 	}
 
 #  if !defined (PLIBSYS_MMAP_HAS_MAP_ANONYMOUS) && !defined (PLIBSYS_MMAP_HAS_MAP_ANON)
-	if (P_UNLIKELY (close (fd) == -1)) {
+	if (P_UNLIKELY (p_sys_close (fd) != 0)) {
 		p_error_set_error_p (error,
 				     (pint) p_error_get_last_io (),
 				     p_error_get_last_error (),
