@@ -1,5 +1,5 @@
 # Optional project name, if left empty the GitHub repository name will be used.
-PROJECT_NAME = PLibSYS
+PROJECT_NAME = plibsys
 
 # One or more directories and files that contain example code to be included.
 EXAMPLE_PATH =
@@ -13,7 +13,7 @@ EXCLUDE =
 EXCLUDE_PATTERNS = pcryptohash-*.*   \
                    ptree-*.*         \
                    plibsys.h         \
-                   plibsys-private.h \
+                   *-private.h       \
                    CMakeLists.txt
 
 # One or more symbols to exclude from document generation. Symbols can be
