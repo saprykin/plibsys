@@ -212,9 +212,6 @@ pp_crypto_hash_sha1_process (PHashSHA1		*ctx,
 void
 p_crypto_hash_sha1_reset (PHashSHA1 *ctx)
 {
-	if (P_UNLIKELY (ctx == NULL))
-		return;
-
 	memset (ctx->buf.buf, 0, 64);
 
 	ctx->len_low = 0;
@@ -246,9 +243,6 @@ p_crypto_hash_sha1_update (PHashSHA1	*ctx,
 			   psize	len)
 {
 	puint32	left, to_fill;
-
-	if (P_UNLIKELY (ctx == NULL || len == 0))
-		return;
 
 	left = ctx->len_low & 0x3F;
 	to_fill = 64 - left;
@@ -287,9 +281,6 @@ p_crypto_hash_sha1_finish (PHashSHA1 *ctx)
 	puint32	high, low;
 	pint	left, last;
 
-	if (P_UNLIKELY (ctx == NULL))
-		return;
-
 	left = ctx->len_low & 0x3F;
 	last = (left < 56) ? (56 - left) : (120 - left);
 
@@ -312,17 +303,11 @@ p_crypto_hash_sha1_finish (PHashSHA1 *ctx)
 const puchar *
 p_crypto_hash_sha1_digest (PHashSHA1 *ctx)
 {
-	if (P_UNLIKELY (ctx == NULL))
-		return NULL;
-
 	return (const puchar *) ctx->hash;
 }
 
 void
 p_crypto_hash_sha1_free (PHashSHA1 *ctx)
 {
-	if (P_UNLIKELY (ctx == NULL))
-		return;
-
 	p_free (ctx);
 }

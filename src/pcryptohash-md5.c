@@ -168,9 +168,6 @@ pp_crypto_hash_md5_process (PHashMD5		*ctx,
 void
 p_crypto_hash_md5_reset (PHashMD5 *ctx)
 {
-	if (P_UNLIKELY (ctx == NULL))
-		return;
-
 	memset (ctx->buf.buf, 0, 64);
 
 	ctx->len_low = 0;
@@ -201,9 +198,6 @@ p_crypto_hash_md5_update (PHashMD5	*ctx,
 			  psize		len)
 {
 	puint32	left, to_fill;
-
-	if (P_UNLIKELY (ctx == NULL || len == 0))
-		return;
 
 	left = ctx->len_low & 0x3F;
 	to_fill = 64 - left;
@@ -242,9 +236,6 @@ p_crypto_hash_md5_finish (PHashMD5 *ctx)
 	puint32	high, low;
 	pint	left, last;
 
-	if (P_UNLIKELY (ctx == NULL))
-		return;
-
 	left = ctx->len_low & 0x3F;
 	last = (left < 56) ? (56 - left) : (120 - left);
 
@@ -267,17 +258,11 @@ p_crypto_hash_md5_finish (PHashMD5 *ctx)
 const puchar *
 p_crypto_hash_md5_digest (PHashMD5 *ctx)
 {
-	if (P_UNLIKELY (ctx == NULL))
-		return NULL;
-
 	return (const puchar *) ctx->hash;
 }
 
 void
 p_crypto_hash_md5_free (PHashMD5 *ctx)
 {
-	if (P_UNLIKELY (ctx == NULL))
-		return;
-
 	p_free (ctx);
 }

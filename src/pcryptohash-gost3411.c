@@ -389,9 +389,6 @@ p_crypto_hash_gost3411_update (PHashGOST3411	*ctx,
 {
 	puint32	left, to_fill, len256[8];
 
-	if (P_UNLIKELY (ctx == NULL || len == 0))
-		return;
-
 	left = (ctx->len[0] & 0xFF) >> 3;
 	to_fill = 32 - left;
 
@@ -431,9 +428,6 @@ p_crypto_hash_gost3411_finish (PHashGOST3411 *ctx)
 {
 	puint32 left, last;
 
-	if (P_UNLIKELY (ctx == NULL))
-		return;
-
 	left = ctx->len[0] & 0xFF;
 	last = 32 - (left >> 3);
 
@@ -453,18 +447,12 @@ p_crypto_hash_gost3411_finish (PHashGOST3411 *ctx)
 const puchar *
 p_crypto_hash_gost3411_digest (PHashGOST3411 *ctx)
 {
-	if (P_UNLIKELY (ctx == NULL))
-		return NULL;
-
 	return (const puchar *) ctx->hash;
 }
 
 void
 p_crypto_hash_gost3411_reset (PHashGOST3411 *ctx)
 {
-	if (P_UNLIKELY (ctx == NULL))
-		return;
-
 	memset (ctx->buf, 0, 32);
 	memset (ctx->hash, 0, 32);
 	memset (ctx->len, 0, 32);
@@ -474,8 +462,5 @@ p_crypto_hash_gost3411_reset (PHashGOST3411 *ctx)
 void
 p_crypto_hash_gost3411_free (PHashGOST3411 *ctx)
 {
-	if (P_UNLIKELY (ctx == NULL))
-		return;
-
 	p_free (ctx);
 }
