@@ -17,7 +17,8 @@ PLibSYS gives you:
 * Platform independent data types
 * Threads: POSIX, Solaris and Win32
 * Mutexes: POSIX, Solaris and Win32
-* Conditional variables: POSIX, Solaris and Win32
+* Condition variables: POSIX, Solaris and Win32
+* Read-write locks: POSIX, Solaris and Win32
 * System-wide semaphores: POSIX, System V and Win32
 * System-wide shared memory: POSIX, System V and Win32
 * Optimized spinlock
@@ -52,8 +53,7 @@ with unit tests and was tested on the following platforms:
 * SCO OpenServer 5
 * Haiku
 
-It should also work on other *nix systems with or without minimal
-efforts.
+It should also work on other *nix systems with or without minimal efforts.
 
 ======= Compilers =======
 
