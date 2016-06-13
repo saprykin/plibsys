@@ -6,13 +6,13 @@
 [![](https://codedocs.xyz/saprykin/plibsys.svg)](https://codedocs.xyz/saprykin/plibsys/)
 [![](http://img.shields.io/:license-gpl2-blue.svg?style=flat)](http://www.gnu.org/licenses/gpl-2.0.html)
 
-======= About PLibSYS =======
+======= About plibsys =======
 
-PLibSYS is a cross-platform system C library with some helpful routines.
+plibsys is a cross-platform system C library with some helpful routines.
 
 ======= Features =======
 
-PLibSYS gives you:
+plibsys gives you:
 
 * Platform independent data types
 * Threads: POSIX, Solaris and Win32
@@ -35,7 +35,7 @@ PLibSYS gives you:
 
 ======= Platforms =======
 
-PLibSYS is a cross-platform, highly portable library, it is fully covered
+plibsys is a cross-platform, highly portable library, it is fully covered
 with unit tests and was tested on the following platforms:
 
 * GNU/Linux
@@ -57,7 +57,7 @@ It should also work on other *nix systems with or without minimal efforts.
 
 ======= Compilers =======
 
-PLibSYS was tested with the following compilers:
+plibsys was tested with the following compilers:
 
 * MSVC (x86, x64) 2003 and above
 * MinGW (x86, x64)
@@ -72,13 +72,11 @@ PLibSYS was tested with the following compilers:
 
 ======= Building =======
 
-Use CMake to build PLibSYS for any target platform.
+Use CMake to build plibsys for any target platform.
 
 ======= License =======
 
-PLibSYS is distributed under the terms of GNU GPLv2 or higher license.
-GNU LGPLv2 or higher license can be also used without any additional
-permissions from the authors.
+plibsys is distributed under the terms of GNU LGPLv2 or higher license.
 
 ======= More =======
 

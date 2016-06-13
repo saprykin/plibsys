@@ -1,7 +1,7 @@
 set (CMAKE_LEGACY_CYGWIN_WIN32 0)
 
 cmake_minimum_required (VERSION 2.8.0)
-project (PLibSYS C)
+project (plibsys C)
 
 set (PLIBSYS_VERSION_MAJOR 0)
 set (PLIBSYS_VERSION_MINOR 0)

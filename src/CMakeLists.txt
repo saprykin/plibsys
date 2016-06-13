@@ -46,7 +46,7 @@ if (PLIBSYS_TARGET_OS STREQUAL darwin)
 endif()
 
 if (NOT EXISTS "${PROJECT_SOURCE_DIR}/platforms/${PLIBSYS_TARGET_PLATFORM}/")
-	message (FATAL_ERROR "PLibSYS doesn't support unknown platform ${PLIBSYS_TARGET_PLATFORM}")
+	message (FATAL_ERROR "plibsys doesn't support unknown platform ${PLIBSYS_TARGET_PLATFORM}")
 endif()
 
 include (${PROJECT_SOURCE_DIR}/platforms/${PLIBSYS_TARGET_PLATFORM}/platform.cmake)
@@ -693,7 +693,7 @@ install (TARGETS ${PLIBSYS_INSTALL_TARGETS}
 install (FILES
 	${PLIBSYS_PUBLIC_HDRS}
 	${CMAKE_BINARY_DIR}/plibsysconfig.h
-	DESTINATION include/PLibSYS
+	DESTINATION include/plibsys
 	COMPONENT Core
 )
 
