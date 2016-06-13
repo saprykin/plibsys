@@ -100,6 +100,9 @@
  * pcondvariable.h Condition variable
  * @endlink
  * - @link
+ * prwlock.h Read-write lock
+ * @endlink
+ * - @link
  * pspinlock.h Spinlock
  * @endlink
  * - @link
