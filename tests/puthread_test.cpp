@@ -195,6 +195,8 @@ BOOST_AUTO_TEST_CASE (puthread_nomem_test)
 	BOOST_CHECK (p_uthread_current () == NULL);
 	BOOST_CHECK (p_uthread_local_new (NULL) == NULL);
 
+	p_uthread_exit (0);
+
 	p_uthread_set_local (thread_key, PINT_TO_POINTER (10));
 	BOOST_CHECK (p_uthread_get_local (thread_key) == NULL);
 	p_uthread_replace_local (thread_key, PINT_TO_POINTER (10));
@@ -221,6 +223,7 @@ BOOST_AUTO_TEST_CASE (puthread_bad_input_test)
 	p_uthread_ref (NULL);
 	p_uthread_unref (NULL);
 	p_uthread_local_free (NULL);
+	p_uthread_exit (0);
 
 	p_libsys_shutdown ();
 }
