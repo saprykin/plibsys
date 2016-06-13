@@ -128,9 +128,13 @@ BOOST_AUTO_TEST_CASE (psocketaddress_bad_input_test)
 	BOOST_CHECK (p_socket_address_get_family (NULL) == P_SOCKET_FAMILY_UNKNOWN);
 	BOOST_CHECK (p_socket_address_get_address (NULL) == NULL);
 	BOOST_CHECK (p_socket_address_get_port (NULL) == 0);
+	BOOST_CHECK (p_socket_address_get_flow_info (NULL) == 0);
+	BOOST_CHECK (p_socket_address_get_scope_id (NULL) == 0);
 	BOOST_CHECK (p_socket_address_is_any (NULL) == FALSE);
 	BOOST_CHECK (p_socket_address_is_loopback (NULL) == FALSE);
 
+	p_socket_address_set_flow_info (NULL, 0);
+	p_socket_address_set_scope_id (NULL, 0);
 	p_socket_address_free (NULL);
 
 	p_libsys_shutdown ();
