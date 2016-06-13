@@ -25,6 +25,15 @@
 #  include <dlfcn.h>
 #endif
 
+/* FreeBSD may cause a segfault: https://reviews.freebsd.org/D5112,
+ * DragonFlyBSD as well, so we need to check a file size before calling dlopen()
+ */
+#if defined (P_OS_FREEBSD) || defined (P_OS_DRAGONFLY)
+#  include <unistd.h>
+#  include <sys/types.h>
+#  include <sys/stat.h>
+#endif
+
 #ifdef P_OS_WIN
 	typedef HINSTANCE	plibrary_handle;
 #else
@@ -54,11 +63,26 @@ p_library_loader_new (const pchar *path)
 {
 	PLibraryLoader	*loader;
 	plibrary_handle	handle;
+#if defined (P_OS_FREEBSD) || defined (P_OS_DRAGONFLY)
+	struct stat	stat_buf;
+#endif
 
 	loader = NULL;
 
 	if (!p_file_is_exists (path))
 		return NULL;
+
+#if defined (P_OS_FREEBSD) || defined (P_OS_DRAGONFLY)
+	if (P_UNLIKELY (stat (path, &stat_buf) != 0)) {
+		P_ERROR ("PLibraryLoader: failed to call stat()");
+		return NULL;
+	}
+
+	if (P_UNLIKELY (stat_buf.st_size == 0)) {
+		P_ERROR ("PLibraryLoader: unable to handle zero-size file");
+		return NULL;
+	}
+#endif
 
 #ifdef P_OS_WIN
 	if (P_UNLIKELY ((handle = LoadLibraryA (path)) == NULL)) {
