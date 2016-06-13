@@ -63,7 +63,7 @@ BOOST_AUTO_TEST_CASE (pmain_general_test)
 
 BOOST_AUTO_TEST_CASE (pmain_double_test)
 {
-	p_libsys_init ();
+	p_libsys_init_full (NULL);
 	p_libsys_init ();
 	p_libsys_shutdown ();
 	p_libsys_shutdown ();
