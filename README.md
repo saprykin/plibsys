@@ -77,6 +77,8 @@ Use CMake to build PLibSYS for any target platform.
 ======= License =======
 
 PLibSYS is distributed under the terms of GNU GPLv2 or higher license.
+GNU LGPLv2 or higher license can be also used without any additional
+permissions from the authors.
 
 ======= More =======
 
