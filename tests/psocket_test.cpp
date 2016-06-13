@@ -841,6 +841,9 @@ BOOST_AUTO_TEST_CASE (psocket_general_udp_test)
 	BOOST_CHECK (p_socket_io_condition_wait (socket, P_SOCKET_IO_CONDITION_POLLIN, NULL) == FALSE);
 	BOOST_CHECK (p_socket_io_condition_wait (socket, P_SOCKET_IO_CONDITION_POLLOUT, NULL) == FALSE);
 
+	BOOST_CHECK (p_socket_set_buffer_size (socket, P_SOCKET_DIRECTION_RCV, 72 * 1024, NULL) == FALSE);
+	BOOST_CHECK (p_socket_set_buffer_size (socket, P_SOCKET_DIRECTION_SND, 72 * 1024, NULL) == FALSE);
+
 	p_socket_address_free (sock_addr);
 	p_socket_address_free (addr);
 	p_socket_free (socket);
@@ -923,6 +926,9 @@ BOOST_AUTO_TEST_CASE (psocket_general_tcp_test)
 
 	BOOST_CHECK (p_socket_io_condition_wait (socket, P_SOCKET_IO_CONDITION_POLLIN, NULL) == FALSE);
 	BOOST_CHECK (p_socket_io_condition_wait (socket, P_SOCKET_IO_CONDITION_POLLOUT, NULL) == FALSE);
+
+	BOOST_CHECK (p_socket_set_buffer_size (socket, P_SOCKET_DIRECTION_RCV, 72 * 1024, NULL) == FALSE);
+	BOOST_CHECK (p_socket_set_buffer_size (socket, P_SOCKET_DIRECTION_SND, 72 * 1024, NULL) == FALSE);
 
 	p_socket_address_free (sock_addr);
 	p_socket_address_free (addr);

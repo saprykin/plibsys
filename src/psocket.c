@@ -1418,6 +1418,9 @@ p_socket_set_buffer_size (const PSocket		*socket,
 		return FALSE;
 	}
 
+	if (P_UNLIKELY (pp_socket_check (socket, error) == FALSE))
+		return FALSE;
+
 	optname = (dir == P_SOCKET_DIRECTION_RCV) ? SO_RCVBUF : SO_SNDBUF;
 	optval  = (pint) size;
 
