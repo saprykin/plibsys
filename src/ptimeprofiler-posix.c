@@ -47,7 +47,7 @@ pp_time_profiler_get_ticks_clock ()
 #else
 	if (P_UNLIKELY (clock_gettime (CLOCK_MONOTONIC, &ts) != 0)) {
 #endif
-		P_ERROR ("PTimeProfiler: failed to get time using clock_gettime()");
+		P_ERROR ("PTimeProfiler::pp_time_profiler_get_ticks_clock: clock_gettime() failed");
 		return pp_time_profiler_get_ticks_gtod ();
 	} else
 		return (puint64) (ts.tv_sec * 1000000 + ts.tv_nsec / 1000);
@@ -60,7 +60,7 @@ pp_time_profiler_get_ticks_gtod ()
 	struct timeval tv;
 
 	if (P_UNLIKELY (gettimeofday (&tv, NULL) != 0)) {
-		P_ERROR ("PTimeProfiler: failed to get time using gettimeofday()");
+		P_ERROR ("PTimeProfiler::pp_time_profiler_get_ticks_gtod: gettimeofday() failed");
 		return 0;
 	}
 

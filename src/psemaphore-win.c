@@ -67,7 +67,7 @@ static void
 pp_semaphore_clean_handle (PSemaphore *sem)
 {
 	if (P_UNLIKELY (sem->sem_hdl != P_SEM_INVALID_HDL && CloseHandle (sem->sem_hdl) == 0))
-		P_ERROR ("PSemaphore: CloseHandle() failed");
+		P_ERROR ("PSemaphore::pp_semaphore_clean_handle: CloseHandle() failed");
 
 	sem->sem_hdl = P_SEM_INVALID_HDL;
 }

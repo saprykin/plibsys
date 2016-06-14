@@ -106,12 +106,12 @@ pp_semaphore_clean_handle (PSemaphore *sem)
 {
 	if (P_UNLIKELY (sem->sem_hdl != P_SEM_INVALID_HDL &&
 			sem_close (sem->sem_hdl) == -1))
-		P_ERROR ("PSemaphore: failed to perform sem_close()");
+		P_ERROR ("PSemaphore::pp_semaphore_clean_handle: sem_close() failed");
 
 	if (sem->sem_hdl != P_SEM_INVALID_HDL &&
 	    sem->sem_created == TRUE &&
 	    sem_unlink (sem->platform_key) == -1)
-		P_ERROR ("PSemaphore: failed to perform sem_unlink()");
+		P_ERROR ("PSemaphore::pp_semaphore_clean_handle: sem_unlink() failed");
 
 	sem->sem_created = FALSE;
 	sem->sem_hdl = P_SEM_INVALID_HDL;

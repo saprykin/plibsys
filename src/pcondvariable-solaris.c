@@ -34,12 +34,12 @@ p_cond_variable_new (void)
 	PCondVariable *ret;
 
 	if (P_UNLIKELY ((ret = p_malloc0 (sizeof (PCondVariable))) == NULL)) {
-		P_ERROR ("PCondVariable: failed to allocate memory");
+		P_ERROR ("PCondVariable::p_cond_variable_new: failed to allocate memory");
 		return NULL;
 	}
 
 	if (P_UNLIKELY (cond_init (&ret->hdl, NULL, NULL) != 0)) {
-		P_ERROR ("PCondVariable: failed to initialize conditional variable");
+		P_ERROR ("PCondVariable::p_cond_variable_new: failed to initialize");
 		p_free (ret);
 		return NULL;
 	}
@@ -54,7 +54,7 @@ p_cond_variable_free (PCondVariable *cond)
 		return;
 
 	if (P_UNLIKELY (cond_destroy (&cond->hdl) != 0))
-		P_WARNING ("PCondVariable: failed to destroy handler");
+		P_WARNING ("PCondVariable::p_cond_variable_free: cond_destroy() failed");
 
 	p_free (cond);
 }
@@ -68,7 +68,7 @@ p_cond_variable_wait (PCondVariable	*cond,
 
 	/* Cast is eligible since there is only one field in the PMutex structure */
 	if (P_UNLIKELY (cond_wait (&cond->hdl, (mutex_t *) mutex) != 0)) {
-		P_ERROR ("PCondVariable: failed to wait");
+		P_ERROR ("PCondVariable::p_cond_variable_wait: cond_wait() failed");
 		return FALSE;
 	}
 
@@ -82,7 +82,7 @@ p_cond_variable_signal (PCondVariable *cond)
 		return FALSE;
 
 	if (P_UNLIKELY (cond_signal (&cond->hdl) != 0)) {
-		P_ERROR ("PCondVariable: failed to signal");
+		P_ERROR ("PCondVariable::p_cond_variable_signal: cond_signal() failed");
 		return FALSE;
 	}
 
@@ -96,7 +96,7 @@ p_cond_variable_broadcast (PCondVariable *cond)
 		return FALSE;
 
 	if (P_UNLIKELY (cond_broadcast (&cond->hdl) != 0)) {
-		P_ERROR ("PCondVariable: failed to broadcast");
+		P_ERROR ("PCondVariable::p_cond_variable_broadcast: cond_broadcast() failed");
 		return FALSE;
 	}
 

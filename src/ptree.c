@@ -81,8 +81,10 @@ p_tree_new_full (PTreeType		type,
 	if (P_UNLIKELY (func == NULL))
 		return NULL;
 
-	if (P_UNLIKELY ((ret = p_malloc0 (sizeof (PTree))) == NULL))
+	if (P_UNLIKELY ((ret = p_malloc0 (sizeof (PTree))) == NULL)) {
+		P_ERROR ("PTree::p_tree_new_full: failed to allocate memory");
 		return NULL;
+	}
 
 	ret->type               = type;
 	ret->compare_func       = func;

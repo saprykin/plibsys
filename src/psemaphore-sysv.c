@@ -134,12 +134,12 @@ pp_semaphore_clean_handle (PSemaphore *sem)
 	if (sem->sem_hdl != P_SEM_INVALID_HDL &&
 	    sem->sem_created == TRUE &&
 	    semctl (sem->sem_hdl, 0, IPC_RMID) == -1)
-		P_ERROR ("PSemaphore: failed to perform IPC_RMID");
+		P_ERROR ("PSemaphore::pp_semaphore_clean_handle: semctl() with IPC_RMID failed");
 
 	if (sem->file_created == TRUE &&
 	    sem->platform_key != NULL &&
 	    unlink (sem->platform_key) == -1)
-		P_ERROR ("PSemaphore: failed to remove key file");
+		P_ERROR ("PSemaphore::pp_semaphore_clean_handle: unlink() failed");
 
 	sem->file_created = FALSE;
 	sem->sem_created  = FALSE;
@@ -231,7 +231,7 @@ p_semaphore_acquire (PSemaphore *sem,
 	if (P_UNLIKELY (ret == FALSE &&
 			(p_error_get_last_error () == EIDRM ||
 			 p_error_get_last_error () == EINVAL))) {
-		P_WARNING ("PSemaphore: trying to recreate");
+		P_WARNING ("PSemaphore::p_semaphore_acquire: trying to recreate");
 		pp_semaphore_clean_handle (sem);
 
 		if (P_UNLIKELY (pp_semaphore_create_handle (sem, error) == FALSE))
@@ -277,7 +277,7 @@ p_semaphore_release (PSemaphore *sem,
 	if (P_UNLIKELY (ret == FALSE &&
 			(p_error_get_last_error () == EIDRM ||
 			 p_error_get_last_error () == EINVAL))) {
-		P_WARNING ("PSemaphore: trying to recreate");
+		P_WARNING ("PSemaphore::p_semaphore_release: trying to recreate");
 		pp_semaphore_clean_handle (sem);
 
 		if (P_UNLIKELY (pp_semaphore_create_handle (sem, error) == FALSE))

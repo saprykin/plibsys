@@ -274,7 +274,7 @@ p_dir_free (PDir *dir)
 
 	if (P_LIKELY (dir->search_handle != INVALID_HANDLE_VALUE)) {
 		if (P_UNLIKELY (!FindClose (dir->search_handle)))
-			P_ERROR ("PDir: error while closing the directory");
+			P_ERROR ("PDir::p_dir_free: FindClose() failed");
 	}
 
 	p_free (dir->orig_path);

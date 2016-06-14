@@ -51,10 +51,10 @@ pp_library_loader_clean_handle (plibrary_handle handle)
 {
 #ifdef P_OS_WIN
 	if (P_UNLIKELY (!FreeLibrary (handle)))
-		P_ERROR ("PLibraryLoader: failed to call FreeLibrary()");
+		P_ERROR ("PLibraryLoader::pp_library_loader_clean_handle: FreeLibrary() failed");
 #else
 	if (P_UNLIKELY (dlclose (handle) != 0))
-		P_ERROR ("PLibraryLoader: failed to call dlclose()");
+		P_ERROR ("PLibraryLoader::pp_library_loader_clean_handle: dlclose() failed");
 #endif
 }
 
@@ -74,30 +74,30 @@ p_library_loader_new (const pchar *path)
 
 #if defined (P_OS_FREEBSD) || defined (P_OS_DRAGONFLY)
 	if (P_UNLIKELY (stat (path, &stat_buf) != 0)) {
-		P_ERROR ("PLibraryLoader: failed to call stat()");
+		P_ERROR ("PLibraryLoader::p_library_loader_new: stat() failed");
 		return NULL;
 	}
 
 	if (P_UNLIKELY (stat_buf.st_size == 0)) {
-		P_ERROR ("PLibraryLoader: unable to handle zero-size file");
+		P_ERROR ("PLibraryLoader::p_library_loader_new: unable to handle zero-size file");
 		return NULL;
 	}
 #endif
 
 #ifdef P_OS_WIN
 	if (P_UNLIKELY ((handle = LoadLibraryA (path)) == NULL)) {
-		P_ERROR ("PLibraryLoader: failed to call LoadLibraryA()");
+		P_ERROR ("PLibraryLoader::p_library_loader_new: LoadLibraryA() failed");
 		return NULL;
 	}
 #else
 	if (P_UNLIKELY ((handle = dlopen (path, RTLD_NOW)) == NULL)) {
-		P_ERROR ("PLibraryLoader: failed to call dlopen()");
+		P_ERROR ("PLibraryLoader::p_library_loader_new: dlopen() failed");
 		return NULL;
 	}
 #endif
 
 	if (P_UNLIKELY ((loader = p_malloc0 (sizeof (PLibraryLoader))) == NULL)) {
-		P_ERROR ("PLibraryLoader: failed to allocate memory");
+		P_ERROR ("PLibraryLoader::p_library_loader_new: failed to allocate memory");
 		pp_library_loader_clean_handle (handle);
 		return NULL;
 	}

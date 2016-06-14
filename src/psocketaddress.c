@@ -86,7 +86,7 @@ p_socket_address_new_from_native (pconstpointer	native,
 
 	if (family == AF_INET) {
 		if (len < sizeof (struct sockaddr_in)) {
-			P_WARNING ("PSocketAddress: not enough space to convert from native");
+			P_WARNING ("PSocketAddress::p_socket_address_new_from_native: invalid IPv4 native size");
 			p_free (ret);
 			return NULL;
 		}
@@ -99,7 +99,7 @@ p_socket_address_new_from_native (pconstpointer	native,
 #ifdef AF_INET6
 	else if (family == AF_INET6) {
 		if (len < sizeof (struct sockaddr_in6)) {
-			P_WARNING ("PSocketAddress: not enough space to convert from native");
+			P_WARNING ("PSocketAddress::p_socket_address_new_from_native: invalid IPv6 native size");
 			p_free (ret);
 			return NULL;
 		}
@@ -175,7 +175,7 @@ p_socket_address_new (const pchar	*address,
 #endif
 
 	if (P_UNLIKELY ((ret = p_malloc0 (sizeof (PSocketAddress))) == NULL)) {
-		P_ERROR ("PSocketAddress: failed to allocate memory");
+		P_ERROR ("PSocketAddress::p_socket_address_new: failed to allocate memory");
 		return NULL;
 	}
 
@@ -230,7 +230,7 @@ p_socket_address_new_any (PSocketFamily	family,
 #endif
 
 	if (P_UNLIKELY ((ret = p_malloc0 (sizeof (PSocketAddress))) == NULL)) {
-		P_ERROR ("PSocketAddress: failed to allocate memory");
+		P_ERROR ("PSocketAddress::p_socket_address_new_any: failed to allocate memory");
 		return NULL;
 	}
 
@@ -262,7 +262,7 @@ p_socket_address_new_loopback (PSocketFamily	family,
 #endif
 
 	if (P_UNLIKELY ((ret = p_malloc0 (sizeof (PSocketAddress))) == NULL)) {
-		P_ERROR ("PSocketAddress: failed to allocate memory");
+		P_ERROR ("PSocketAddress::p_socket_address_new_loopback: failed to allocate memory");
 		return NULL;
 	}
 
@@ -303,7 +303,7 @@ p_socket_address_to_native (const PSocketAddress	*addr,
 
 	if (addr->family == P_SOCKET_FAMILY_INET) {
 		if (P_UNLIKELY (destlen < sizeof (struct sockaddr_in))) {
-			P_WARNING ("PSocketAddress: not enough space to convert to native");
+			P_WARNING ("PSocketAddress::p_socket_address_to_native: invalid buffer size for IPv4");
 			return FALSE;
 		}
 
@@ -316,7 +316,7 @@ p_socket_address_to_native (const PSocketAddress	*addr,
 #ifdef AF_INET6
 	else if (addr->family == P_SOCKET_FAMILY_INET6) {
 		if (P_UNLIKELY (destlen < sizeof (struct sockaddr_in6))) {
-			P_ERROR ("PSocketAddress: not enough space to convert to native");
+			P_ERROR ("PSocketAddress::p_socket_address_to_native: invalid buffer size for IPv6");
 			return FALSE;
 		}
 
@@ -333,7 +333,7 @@ p_socket_address_to_native (const PSocketAddress	*addr,
 	}
 #endif
 	else {
-		P_WARNING ("PSocketAddress: unsupported socket address");
+		P_WARNING ("PSocketAddress::p_socket_address_to_native: unsupported socket address");
 		return FALSE;
 	}
 }
@@ -351,7 +351,7 @@ p_socket_address_get_native_size (const PSocketAddress *addr)
 		return sizeof (struct sockaddr_in6);
 #endif
 	else {
-		P_WARNING ("PSocketAddress: can't get native size for unsupported family");
+		P_WARNING ("PSocketAddress::p_socket_address_get_native_size: unsupported socket family");
 		return 0;
 	}
 }

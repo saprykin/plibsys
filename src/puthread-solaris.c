@@ -86,7 +86,7 @@ pp_uthread_get_tls_key (PUThreadKey *key)
 	if (P_LIKELY (thread_key == NULL)) {
 #endif
 		if (P_UNLIKELY ((thread_key = p_malloc0 (sizeof (thread_key_t))) == NULL)) {
-			P_ERROR ("PUThread: failed to allocate memory for a TLS key");
+			P_ERROR ("PUThread::pp_uthread_get_tls_key: failed to allocate memory");
 #ifndef P_OS_UNIXWARE
 			p_mutex_unlock (pp_uthread_tls_mutex);
 #endif
@@ -94,7 +94,7 @@ pp_uthread_get_tls_key (PUThreadKey *key)
 		}
 
 		if (P_UNLIKELY (thr_keycreate (thread_key, key->free_func) != 0)) {
-			P_ERROR ("PUThread: failed to call thr_keycreate()");
+			P_ERROR ("PUThread::pp_uthread_get_tls_key: thr_keycreate() failed");
 			p_free (thread_key);
 #ifndef P_OS_UNIXWARE
 			p_mutex_unlock (pp_uthread_tls_mutex);
@@ -106,7 +106,7 @@ pp_uthread_get_tls_key (PUThreadKey *key)
 								       NULL,
 								       (ppointer) thread_key) == FALSE)) {
 			if (P_UNLIKELY (thr_keydelete (*thread_key) != 0)) {
-				P_ERROR ("PUThread: failed to call thr_keydelete()");
+				P_ERROR ("PUThread::pp_uthread_get_tls_key: thr_keydelete() failed");
 				p_free (thread_key);
 				return NULL;
 			}
@@ -161,7 +161,7 @@ p_uthread_create_internal (PUThreadFunc		func,
 	psize		min_stack;
 
 	if (P_UNLIKELY ((ret = p_malloc0 (sizeof (PUThread))) == NULL)) {
-		P_ERROR ("PUThread: failed to allocate memory");
+		P_ERROR ("PUThread::p_uthread_create_internal: failed to allocate memory");
 		return NULL;
 	}
 
@@ -180,16 +180,16 @@ p_uthread_create_internal (PUThreadFunc		func,
 	flags |= joinable ? 0 : THR_DETACHED;
 
 	if (P_UNLIKELY (thr_create (NULL, stack_size, func, ret, flags, &ret->hdl) != 0)) {
-		P_ERROR ("PUThread: failed to call thr_create()");
+		P_ERROR ("PUThread::p_uthread_create_internal: thr_create() failed");
 		p_free (ret);
 		return NULL;
 	}
 
 	if (P_UNLIKELY (thr_setprio (ret->hdl, pp_uthread_get_unix_priority (prio)) != 0))
-		P_WARNING ("PUThread: failed to call thr_setprio()");
+		P_WARNING ("PUThread::p_uthread_create_internal: thr_setprio() failed");
 
 	if (P_UNLIKELY (thr_continue (ret->hdl) != 0)) {
-		P_ERROR ("PUThread: failed to call thr_continue()");
+		P_ERROR ("PUThread::p_uthread_create_internal: thr_continue() failed");
 		p_free (ret);
 		return NULL;
 	}
@@ -210,7 +210,7 @@ void
 p_uthread_wait_internal (PUThread *thread)
 {
 	if (P_UNLIKELY (thr_join (thread->hdl, NULL, NULL) != 0))
-		P_ERROR ("PUThread: failed to call thr_join()");
+		P_ERROR ("PUThread::p_uthread_wait_internal: thr_join() failed");
 }
 
 void
@@ -233,7 +233,7 @@ p_uthread_set_priority (PUThread		*thread,
 		return FALSE;
 
 	if (P_UNLIKELY (thr_setprio (thread->hdl, pp_uthread_get_unix_priority (prio)) != 0)) {
-		P_WARNING ("PUThread: failed to call(2) thr_setprio()");
+		P_WARNING ("PUThread::p_uthread_set_priority: thr_setprio() failed");
 		return FALSE;
 	}
 
@@ -254,7 +254,7 @@ p_uthread_local_new (PDestroyFunc free_func)
 	PUThreadKey *ret;
 
 	if (P_UNLIKELY ((ret = p_malloc0 (sizeof (PUThreadKey))) == NULL)) {
-		P_ERROR ("PUThread: failed to allocate memory for PUThreadKey");
+		P_ERROR ("PUThread::p_uthread_local_new: failed to allocate memory");
 		return NULL;
 	}
 
@@ -285,7 +285,7 @@ p_uthread_get_local (PUThreadKey *key)
 
 	if (P_LIKELY (tls_key != NULL)) {
 		if (P_UNLIKELY (thr_getspecific (*tls_key, &ret) != 0))
-			P_ERROR ("PUThread: failed to call thr_getspecific()");
+			P_ERROR ("PUThread::p_uthread_get_local: thr_getspecific() failed");
 	}
 
 	return ret;
@@ -304,7 +304,7 @@ p_uthread_set_local (PUThreadKey	*key,
 
 	if (P_LIKELY (tls_key != NULL)) {
 		if (P_UNLIKELY (thr_setspecific (*tls_key, value) != 0))
-			P_ERROR ("PUThread: failed to call thr_setspecific()");
+			P_ERROR ("PUThread::p_uthread_set_local: thr_setspecific() failed");
 	}
 }
 
@@ -324,7 +324,7 @@ p_uthread_replace_local	(PUThreadKey	*key,
 		return;
 
 	if (P_UNLIKELY (thr_getspecific (*tls_key, &old_value) != 0)) {
-		P_ERROR ("PUThread: failed to call(2) thr_getspecific()");
+		P_ERROR ("PUThread::p_uthread_replace_local: thr_getspecific() failed");
 		return;
 	}
 
@@ -332,5 +332,5 @@ p_uthread_replace_local	(PUThreadKey	*key,
 		key->free_func (old_value);
 
 	if (P_UNLIKELY (thr_setspecific (*tls_key, value) != 0))
-		P_ERROR ("PUThread: failed to call(2) thr_setspecific()");
+		P_ERROR ("PUThread::p_uthread_replace_local: thr_setspecific() failed");
 }

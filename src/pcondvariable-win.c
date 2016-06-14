@@ -123,7 +123,7 @@ pp_cond_variable_init_xp (PCondVariable *cond)
 	PCondVariableXP *cv_xp;
 
 	if ((cond->cv = p_malloc0 (sizeof (PCondVariableXP))) == NULL) {
-		P_ERROR ("PCondVariable: failed to allocate memory (internal)");
+		P_ERROR ("PCondVariable::pp_cond_variable_init_xp: failed to allocate memory (internal)");
 		return FALSE;
 	}
 
@@ -133,7 +133,7 @@ pp_cond_variable_init_xp (PCondVariable *cond)
 	cv_xp->waiters_sema  = CreateSemaphoreA (NULL, 0, MAXLONG, NULL);
 
 	if (P_UNLIKELY (cv_xp->waiters_sema == NULL)) {
-		P_ERROR ("PCondVariable: failed to initialize semaphore");
+		P_ERROR ("PCondVariable::pp_cond_variable_init_xp: failed to initialize semaphore");
 		p_free (cond->cv);
 		cond->cv = NULL;
 		return FALSE;
@@ -205,12 +205,12 @@ p_cond_variable_new (void)
 	PCondVariable *ret;
 
 	if (P_UNLIKELY ((ret = p_malloc0 (sizeof (PCondVariable))) == NULL)) {
-		P_ERROR ("PCondVariable: failed to allocate memory");
+		P_ERROR ("PCondVariable::p_cond_variable_new: failed to allocate memory");
 		return NULL;
 	}
 
 	if (P_UNLIKELY (pp_cond_variable_init_func (ret) != TRUE)) {
-		P_ERROR ("PCondVariable: failed to initialize");
+		P_ERROR ("PCondVariable::p_cond_variable_new: failed to initialize");
 		p_free (ret);
 		return NULL;
 	}
@@ -264,7 +264,7 @@ p_cond_variable_init (void)
 	hmodule = GetModuleHandleA ("kernel32.dll");
 
 	if (P_UNLIKELY (hmodule == NULL)) {
-		P_ERROR ("PCondVariable: failed to load kernel32.dll module");
+		P_ERROR ("PCondVariable::p_cond_variable_init: failed to load kernel32.dll module");
 		return;
 	}
 

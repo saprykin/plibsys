@@ -170,17 +170,17 @@ pp_rwlock_init_xp (PRWLock *lock)
 	PRWLockXP *rwl_xp;
 
 	if ((lock->lock = p_malloc0 (sizeof (PRWLockXP))) == NULL) {
-		P_ERROR ("PRWLock: failed to allocate memory (internal)");
+		P_ERROR ("PRWLock::pp_rwlock_init_xp: failed to allocate memory");
 		return FALSE;
 	}
 
 	rwl_xp = ((PRWLockXP *) lock->lock);
 
 	rwl_xp->lock  = 0;
-	rwl_xp->event = CreateEvent (NULL, FALSE, FALSE, NULL);
-	
+	rwl_xp->event = CreateEventA (NULL, FALSE, FALSE, NULL);
+
 	if (P_UNLIKELY (rwl_xp->event == NULL)) {
-		P_ERROR ("PRWLock: failed to create event");
+		P_ERROR ("PRWLock::pp_rwlock_init_xp: CreateEventA() failed");
 		p_free (lock->lock);
 		lock->lock = NULL;
 		return FALSE;
@@ -206,7 +206,7 @@ pp_rwlock_start_read_xp (PRWLock *lock)
 
 	for (i = 0; ; ++i) {
 		tmp_lock = (puint32) p_atomic_int_get ((const volatile pint *) &rwl_xp->lock);
-		
+
 		if (!P_RWLOCK_XP_IS_WRITER (tmp_lock)) {
 			counter = P_RWLOCK_XP_SET_READERS (tmp_lock, P_RWLOCK_XP_READER_COUNT (tmp_lock) + 1);
 
@@ -232,7 +232,7 @@ pp_rwlock_start_read_xp (PRWLock *lock)
 			i = 0;
 
 			if (P_UNLIKELY (WaitForSingleObject (rwl_xp->event, INFINITE) != WAIT_OBJECT_0))
-				P_WARNING ("PRWLock: failed to call WaitForSingleObject() for read, go ahead");
+				P_WARNING ("PRWLock::pp_rwlock_start_read_xp: WaitForSingleObject() failed, go ahead");
 
 			do {
 				tmp_lock = p_atomic_int_get ((const volatile pint *) &rwl_xp->lock);
@@ -254,7 +254,7 @@ pp_rwlock_start_read_try_xp (PRWLock *lock)
 	puint32		counter;
 
 	tmp_lock = (puint32) p_atomic_int_get ((const volatile pint *) &rwl_xp->lock);
-		
+
 	if (P_RWLOCK_XP_IS_WRITER (tmp_lock))
 		return FALSE;
 
@@ -282,7 +282,7 @@ pp_rwlock_end_read_xp (PRWLock *lock)
 		if (counter == 1 && P_RWLOCK_XP_WAITING_COUNT (tmp_lock) != 0) {
 			/* A duplicate wake up notification is possible */
 			if (P_UNLIKELY (SetEvent (rwl_xp->event) == 0))
-				P_WARNING ("PRWLock: failed to set wake up event after read");
+				P_WARNING ("PRWLock::pp_rwlock_end_read_xp: SetEvent() failed");
 		}
 
 		counter = P_RWLOCK_XP_SET_READERS (tmp_lock, counter - 1);
@@ -332,7 +332,7 @@ pp_rwlock_start_write_xp (PRWLock *lock)
 			i = 0;
 
 			if (P_UNLIKELY (WaitForSingleObject (rwl_xp->event, INFINITE) != WAIT_OBJECT_0))
-				P_WARNING ("PRWLock: failed to call WaitForSingleObject() for write, go ahead");
+				P_WARNING ("PRWLock::pp_rwlock_start_write_xp: WaitForSingleObject() failed, go ahead");
 
 			do {
 				tmp_lock = p_atomic_int_get ((const volatile pint *) &rwl_xp->lock);
@@ -381,7 +381,7 @@ pp_rwlock_end_write_xp (PRWLock *lock)
 
 			/* Only the one end-of-write call can be */
 			if (P_UNLIKELY (SetEvent (rwl_xp->event) == 0))
-				P_WARNING ("PRWLock: failed to set wake up event after write");
+				P_WARNING ("PRWLock::pp_rwlock_end_write_xp: SetEvent() failed");
 		}
 
 		if (p_atomic_int_compare_and_exchange ((volatile pint *) &rwl_xp->lock,
@@ -399,12 +399,12 @@ p_rwlock_new (void)
 	PRWLock *ret;
 
 	if (P_UNLIKELY ((ret = p_malloc0 (sizeof (PRWLock))) == NULL)) {
-		P_ERROR ("PRWLock: failed to allocate memory");
+		P_ERROR ("PRWLock::p_rwlock_new: failed to allocate memory");
 		return NULL;
 	}
 
 	if (P_UNLIKELY (pp_rwlock_init_func (ret) != TRUE)) {
-		P_ERROR ("PRWLock: failed to initialize");
+		P_ERROR ("PRWLock::p_rwlock_new: failed to initialize");
 		p_free (ret);
 		return NULL;
 	}
@@ -484,7 +484,7 @@ p_rwlock_init (void)
 	hmodule = GetModuleHandleA ("kernel32.dll");
 
 	if (P_UNLIKELY (hmodule == NULL)) {
-		P_ERROR ("PRWLock: failed to load kernel32.dll module");
+		P_ERROR ("PRWLock::p_rwlock_init: failed to load kernel32.dll module");
 		return;
 	}
 

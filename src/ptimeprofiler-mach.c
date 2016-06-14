@@ -49,7 +49,7 @@ p_time_profiler_init (void)
 	mach_timebase_info_data_t tb;
 
 	if (P_UNLIKELY (mach_timebase_info (&tb) != KERN_SUCCESS || tb.denom == 0)) {
-		P_ERROR ("PTimeProfiler: failed to get clock frequency using mach_timebase_info()");
+		P_ERROR ("PTimeProfiler::p_time_profiler_init: mach_timebase_info() failed");
 		return;
 	}
 

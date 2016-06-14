@@ -26,7 +26,7 @@ p_time_profiler_get_ticks_internal ()
 	pint64 val;
 
 	if (P_UNLIKELY ((val = (pint64) time (NULL)) == -1)) {
-		P_ERROR ("PTimeProfiler: failed to get time using time()");
+		P_ERROR ("PTimeProfiler::p_time_profiler_get_ticks_internal: time() failed");
 		return 0;
 	}
 

@@ -106,7 +106,7 @@ pp_socket_set_fd_blocking (pint		fd,
 
 #ifndef P_OS_WIN
 	if (P_UNLIKELY ((arg = fcntl (fd, F_GETFL, NULL)) < 0)) {
-		P_WARNING ("PSocket: error getting socket flags");
+		P_WARNING ("PSocket::pp_socket_set_fd_blocking: fcntl() failed");
 		arg = 0;
 	}
 
@@ -274,7 +274,7 @@ pp_socket_set_details_from_fd (PSocket	*socket,
 		 * actually a char on Windows, even if documentation claims it
 		 * to be a BOOL which is a typedef for int. */
 		if (optlen != sizeof (bool_val))
-			P_WARNING ("PSocket: failed to get socket keepalive flag");
+			P_WARNING ("PSocket::pp_socket_set_details_from_fd: getsockopt() with SO_KEEPALIVE failed");
 #endif
 		socket->keepalive = !!bool_val;
 	}  else
@@ -357,7 +357,7 @@ p_socket_new_from_fd (pint	fd,
 	flags = 1;
 
 	if (setsockopt (ret->fd, SOL_SOCKET, SO_NOSIGPIPE, &flags, sizeof (flags)) < 0)
-		P_WARNING ("PSocket: failed to set SO_NOSIGPIPE flag");
+		P_WARNING ("PSocket::p_socket_new_from_fd: setsockopt() with SO_NOSIGPIPE failed");
 #endif
 
 	p_socket_set_listen_backlog (ret, P_SOCKET_DEFAULT_BACKLOG);
@@ -474,7 +474,7 @@ p_socket_new (PSocketFamily	family,
 		flags |= FD_CLOEXEC;
 
 		if (P_UNLIKELY (fcntl (fd, F_SETFD, flags) < 0))
-			P_WARNING ("PSocket: Failed to set FD_CLOEXEC flag on socket descriptor");
+			P_WARNING ("PSocket::p_socket_new: fcntl() with FD_CLOEXEC failed");
 	}
 #endif
 
@@ -493,7 +493,7 @@ p_socket_new (PSocketFamily	family,
 	flags = 1;
 
 	if (setsockopt (ret->fd, SOL_SOCKET, SO_NOSIGPIPE, &flags, sizeof (flags)) < 0)
-		P_WARNING ("PSocket: failed to set SO_NOSIGPIPE flag");
+		P_WARNING ("PSocket::p_socket_new: setsockopt() with SO_NOSIGPIPE failed");
 #endif
 
 	ret->timeout  = 0;
@@ -740,7 +740,7 @@ p_socket_set_keepalive (PSocket		*socket,
 	value = !! (pint) keepalive;
 #endif
 	if (setsockopt (socket->fd, SOL_SOCKET, SO_KEEPALIVE, &value, sizeof (value)) < 0) {
-		P_WARNING ("PSocket: failed to set SO_KEEPALIVE flag");
+		P_WARNING ("PSocket::p_socket_set_keepalive: setsockopt() with SO_KEEPALIVE failed");
 		return;
 	}
 
@@ -823,7 +823,7 @@ p_socket_bind (const PSocket	*socket,
 #endif
 
 	if (setsockopt (socket->fd, SOL_SOCKET, SO_REUSEADDR, &value, sizeof (value)) < 0)
-		P_WARNING ("PSocket: failed to set SO_REUSEADDR flag");
+		P_WARNING ("PSocket::p_socket_bind: setsockopt() with SO_REUSEADDR failed");
 
 #ifdef SO_REUSEPORT
 	reuse_port = allow_reuse && (socket->type == P_SOCKET_TYPE_DATAGRAM);
@@ -835,7 +835,7 @@ p_socket_bind (const PSocket	*socket,
 #  endif
 
 	if (setsockopt (socket->fd, SOL_SOCKET, SO_REUSEPORT, &value, sizeof (value)) < 0)
-		P_WARNING ("PSocket: failed to set SO_REUSEPORT flag");
+		P_WARNING ("PSocket::p_socket_bind: setsockopt() with SO_REUSEPORT failed");
 #endif
 
 	if (P_UNLIKELY (p_socket_address_to_native (address, &addr, sizeof (addr)) == FALSE)) {
@@ -1031,13 +1031,13 @@ p_socket_accept (const PSocket	*socket,
 		flags |= FD_CLOEXEC;
 
 		if (P_UNLIKELY (fcntl (res, F_SETFD, flags) < 0))
-			P_WARNING ("PSocket: Failed to set FD_CLOEXEC flag on socket descriptor");
+			P_WARNING ("PSocket::p_socket_accept: fcntl() with FD_CLOEXEC failed");
 	}
 #endif
 
 	if (P_UNLIKELY ((ret = p_socket_new_from_fd (res, error)) == NULL)) {
 		if (P_UNLIKELY (p_sys_close (res) != 0))
-			P_WARNING ("PSocket: failed to close socket");
+			P_WARNING ("PSocket::p_socket_accept: p_sys_close() failed");
 	} else
 		ret->protocol = socket->protocol;
 

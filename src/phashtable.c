@@ -70,12 +70,12 @@ p_hash_table_new (void)
 	PHashTable *ret;
 
 	if (P_UNLIKELY ((ret = p_malloc0 (sizeof (PHashTable))) == NULL)) {
-		P_ERROR ("PHashTable: failed to allocate memory");
+		P_ERROR ("PHashTable::p_hash_table_new: failed(1) to allocate memory");
 		return NULL;
 	}
 
 	if (P_UNLIKELY ((ret->table = p_malloc0 (P_HASH_TABLE_SIZE * sizeof (PHashTableNode *))) == NULL)) {
-		P_ERROR ("PHashTable: failed to allocate memory");
+		P_ERROR ("PHashTable::p_hash_table_new: failed(2) to allocate memory");
 		p_free (ret);
 		return NULL;
 	}
@@ -96,7 +96,7 @@ p_hash_table_insert (PHashTable *table, ppointer key, ppointer value)
 
 	if ((node = pp_hash_table_find_node (table, key)) == NULL) {
 		if (P_UNLIKELY ((node = p_malloc0 (sizeof (PHashTableNode))) == NULL)) {
-			P_ERROR ("PHashTable: failed to allocate memory");
+			P_ERROR ("PHashTable::p_hash_table_insert: failed to allocate memory");
 			return;
 		}
 

@@ -75,7 +75,7 @@ p_rwlock_reader_lock (PRWLock *lock)
 		return FALSE;
 
 	if (P_UNLIKELY (p_mutex_lock (lock->mutex) == FALSE)) {
-		P_ERROR ("PRWLock::p_rwlock_reader_lock: failed to lock mutex");
+		P_ERROR ("PRWLock::p_rwlock_reader_lock: p_mutex_lock() failed");
 		return FALSE;
 	}
 
@@ -89,7 +89,7 @@ p_rwlock_reader_lock (PRWLock *lock)
 			wait_ok = p_cond_variable_wait (lock->read_cv, lock->mutex);
 
 			if (P_UNLIKELY (wait_ok == FALSE)) {
-				P_ERROR ("PRWLock::p_rwlock_reader_lock: failed to wait for read condition");
+				P_ERROR ("PRWLock::p_rwlock_reader_lock: p_cond_variable_wait() failed");
 				break;
 			}
 		}
@@ -103,7 +103,7 @@ p_rwlock_reader_lock (PRWLock *lock)
 							     P_RWLOCK_READER_COUNT (lock->active_threads) + 1);
 
 	if (P_UNLIKELY (p_mutex_unlock (lock->mutex) == FALSE)) {
-		P_ERROR ("PRWLock:;p_rwlock_reader_lock: failed to unlock mutex");
+		P_ERROR ("PRWLock::p_rwlock_reader_lock: p_mutex_unlock() failed");
 		return FALSE;
 	}
 
@@ -117,13 +117,13 @@ p_rwlock_reader_trylock (PRWLock *lock)
 		return FALSE;
 
 	if (P_UNLIKELY (p_mutex_lock (lock->mutex) == FALSE)) {
-		P_ERROR ("PRWLock::p_rwlock_reader_trylock: failed to lock mutex");
+		P_ERROR ("PRWLock::p_rwlock_reader_trylock: p_mutex_lock() failed");
 		return FALSE;
 	}
 
 	if (P_RWLOCK_WRITER_COUNT (lock->active_threads)) {
 		if (P_UNLIKELY (p_mutex_unlock (lock->mutex) == FALSE))
-			P_ERROR ("PRWLock::p_rwlock_reader_trylock(1): failed to unlock mutex");
+			P_ERROR ("PRWLock::p_rwlock_reader_trylock: p_mutex_unlock() failed(1)");
 
 		return FALSE;
 	}
@@ -132,7 +132,7 @@ p_rwlock_reader_trylock (PRWLock *lock)
 						     P_RWLOCK_READER_COUNT (lock->active_threads) + 1);
 
 	if (P_UNLIKELY (p_mutex_unlock (lock->mutex) == FALSE)) {
-		P_ERROR ("PRWLock::p_rwlock_reader_trylock(2): failed to unlock mutex");
+		P_ERROR ("PRWLock::p_rwlock_reader_trylock: p_mutex_unlock() failed(2)");
 		return FALSE;
 	}
 
@@ -149,7 +149,7 @@ p_rwlock_reader_unlock (PRWLock *lock)
 		return FALSE;
 
 	if (P_UNLIKELY (p_mutex_lock (lock->mutex) == FALSE)) {
-		P_ERROR ("PRWLock::p_rwlock_reader_unlock: failed to lock mutex");
+		P_ERROR ("PRWLock::p_rwlock_reader_unlock: p_mutex_lock() failed");
 		return FALSE;
 	}
 
@@ -157,7 +157,7 @@ p_rwlock_reader_unlock (PRWLock *lock)
 
 	if (P_UNLIKELY (reader_count == 0)) {
 		if (P_UNLIKELY (p_mutex_unlock (lock->mutex) == FALSE))
-			P_ERROR ("PRWLock::p_rwlock_reader_unlock(1): failed to unlock mutex");
+			P_ERROR ("PRWLock::p_rwlock_reader_unlock: p_mutex_unlock() failed(1)");
 
 		return TRUE;
 	}
@@ -170,10 +170,10 @@ p_rwlock_reader_unlock (PRWLock *lock)
 		signal_ok = p_cond_variable_signal (lock->write_cv);
 
 	if (P_UNLIKELY (signal_ok == FALSE))
-		P_ERROR ("PRWLock::p_rwlock_reader_unlock: failed to signal write condition");
+		P_ERROR ("PRWLock::p_rwlock_reader_unlock: p_cond_variable_signal() failed");
 
 	if (P_UNLIKELY (p_mutex_unlock (lock->mutex) == FALSE)) {
-		P_ERROR ("PRWLock::p_rwlock_reader_unlock(2): failed to unlock mutex");
+		P_ERROR ("PRWLock::p_rwlock_reader_unlock: p_mutex_unlock() failed(2)");
 		return FALSE;
 	}
 
@@ -189,7 +189,7 @@ p_rwlock_writer_lock (PRWLock *lock)
 		return FALSE;
 
 	if (P_UNLIKELY (p_mutex_lock (lock->mutex) == FALSE)) {
-		P_ERROR ("PRWLock::p_rwlock_writer_lock: failed to lock mutex");
+		P_ERROR ("PRWLock::p_rwlock_writer_lock: p_mutex_lock() failed");
 		return FALSE;
 	}
 
@@ -203,7 +203,7 @@ p_rwlock_writer_lock (PRWLock *lock)
 			wait_ok = p_cond_variable_wait (lock->write_cv, lock->mutex);
 
 			if (P_UNLIKELY (wait_ok == FALSE)) {
-				P_ERROR ("PRWLock::p_rwlock_writer_lock: failed to wait for write condition");
+				P_ERROR ("PRWLock::p_rwlock_writer_lock: p_cond_variable_wait() failed");
 				break;
 			}
 		}
@@ -216,7 +216,7 @@ p_rwlock_writer_lock (PRWLock *lock)
 		lock->active_threads = P_RWLOCK_SET_WRITERS (lock->active_threads, 1);
 
 	if (P_UNLIKELY (p_mutex_unlock (lock->mutex) == FALSE)) {
-		P_ERROR ("PRWLock::p_rwlock_writer_lock: failed to unlock mutex");
+		P_ERROR ("PRWLock::p_rwlock_writer_lock: p_mutex_unlock() failed");
 		return FALSE;
 	}
 
@@ -230,13 +230,13 @@ p_rwlock_writer_trylock (PRWLock *lock)
 		return FALSE;
 
 	if (P_UNLIKELY (p_mutex_lock (lock->mutex) == FALSE)) {
-		P_ERROR ("PRWLock::p_rwlock_writer_trylock: failed to lock mutex");
+		P_ERROR ("PRWLock::p_rwlock_writer_trylock: p_mutex_lock() failed");
 		return FALSE;
 	}
 
 	if (lock->active_threads) {
 		if (P_UNLIKELY (p_mutex_unlock (lock->mutex) == FALSE))
-			P_ERROR ("PRWLock::p_rwlock_writer_trylock(1): failed to unlock mutex");
+			P_ERROR ("PRWLock::p_rwlock_writer_trylock: p_mutex_unlock() failed(1)");
 
 		return FALSE;
 	}
@@ -244,7 +244,7 @@ p_rwlock_writer_trylock (PRWLock *lock)
 	lock->active_threads = P_RWLOCK_SET_WRITERS (lock->active_threads, 1);
 
 	if (P_UNLIKELY (p_mutex_unlock (lock->mutex) == FALSE)) {
-		P_ERROR ("PRWLock:;p_rwlock_writer_trylock(2): failed to unlock mutex");
+		P_ERROR ("PRWLock::p_rwlock_writer_trylock: p_mutex_unlock() failed(2)");
 		return FALSE;
 	}
 
@@ -260,7 +260,7 @@ p_rwlock_writer_unlock (PRWLock *lock)
 		return FALSE;
 
 	if (P_UNLIKELY (p_mutex_lock (lock->mutex) == FALSE)) {
-		P_ERROR ("PRWLock::p_rwlock_writer_unlock: failed to lock mutex");
+		P_ERROR ("PRWLock::p_rwlock_writer_unlock: p_mutex_lock() failed");
 		return FALSE;
 	}
 
@@ -270,18 +270,18 @@ p_rwlock_writer_unlock (PRWLock *lock)
 
 	if (P_RWLOCK_WRITER_COUNT (lock->waiting_threads)) {
 		if (P_UNLIKELY (p_cond_variable_signal (lock->write_cv) == FALSE)) {
-			P_ERROR ("PRWLock::p_rwlock_writer_unlock: failed to signal write condition");
+			P_ERROR ("PRWLock::p_rwlock_writer_unlock: p_cond_variable_signal() failed");
 			signal_ok = FALSE;
 		}
 	} else if (P_RWLOCK_READER_COUNT (lock->waiting_threads)) {
 		if (P_UNLIKELY (p_cond_variable_broadcast (lock->read_cv) == FALSE)) {
-			P_ERROR ("PRWLock::p_rwlock_writer_unlock: failed to broadcast read condition");
+			P_ERROR ("PRWLock::p_rwlock_writer_unlock: p_cond_variable_broadcast() failed");
 			signal_ok = FALSE;
 		}
 	}
 
 	if (P_UNLIKELY (p_mutex_unlock (lock->mutex) == FALSE)) {
-		P_ERROR ("PRWLock::p_rwlock_writer_unlock: failed to unlock mutex");
+		P_ERROR ("PRWLock::p_rwlock_writer_unlock: p_mutex_unlock() failed");
 		return FALSE;
 	}
 

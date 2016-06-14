@@ -25,7 +25,7 @@
 typedef mutex_t mutex_hdl;
 
 struct PMutex_ {
-	mutex_hdl	hdl;
+	mutex_hdl hdl;
 };
 
 P_LIB_API PMutex *
@@ -34,11 +34,15 @@ p_mutex_new (void)
 	PMutex *ret;
 
 	if ((P_UNLIKELY (ret = p_malloc0 (sizeof (PMutex))) == NULL)) {
-		P_ERROR ("PLMutex: failed to allocate memory");
+		P_ERROR ("PMutex::p_mutex_new: failed to allocate memory");
 		return NULL;
 	}
 
-	mutex_init (&ret->hdl, USYNC_THREAD, NULL);
+	if (P_UNLIKELY (mutex_init (&ret->hdl, USYNC_THREAD, NULL) != 0)) {
+		P_ERROR ("PMutex::p_mutex_new: mutex_init() failed");
+		p_free (ret);
+		return NULL;
+	}
 
 	return ret;
 }
@@ -52,7 +56,7 @@ p_mutex_lock (PMutex *mutex)
 	if (P_LIKELY (mutex_lock (&mutex->hdl) == 0))
 		return TRUE;
 	else {
-		P_ERROR ("PLMutex: failed to lock mutex object");
+		P_ERROR ("PMutex::p_mutex_lock: mutex_lock() failed");
 		return FALSE;
 	}
 }
@@ -75,7 +79,7 @@ p_mutex_unlock (PMutex *mutex)
 	if (P_LIKELY (mutex_unlock (&mutex->hdl) == 0))
 		return TRUE;
 	else {
-		P_ERROR ("PLMutex: failed to unlock mutex object");
+		P_ERROR ("PMutex::p_mutex_unlock: mutex_unlock() failed");
 		return FALSE;
 	}
 }
@@ -86,7 +90,8 @@ p_mutex_free (PMutex *mutex)
 	if (P_UNLIKELY (mutex == NULL))
 		return;
 
-	mutex_destroy (&mutex->hdl);
+	if (P_UNLIKELY (mutex_destroy (&mutex->hdl) != 0))
+		P_ERROR ("PMutex::p_mutex_unlock: mutex_destroy() failed");
 
 	p_free (mutex);
 }

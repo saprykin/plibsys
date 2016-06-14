@@ -38,7 +38,7 @@ pp_rwlock_unlock_any (PRWLock *lock)
 	if (P_LIKELY (rw_unlock (&lock->hdl) == 0))
 		return TRUE;
 	else {
-		P_ERROR ("PRWLock: failed to unlock rwlock object");
+		P_ERROR ("PRWLock::pp_rwlock_unlock_any: rw_unlock() failed");
 		return FALSE;
 	}
 }
@@ -49,12 +49,12 @@ p_rwlock_new (void)
 	PRWLock *ret;
 
 	if (P_UNLIKELY ((ret = p_malloc0 (sizeof (PRWLock))) == NULL)) {
-		P_ERROR ("PRWLock: failed to allocate memory");
+		P_ERROR ("PRWLock::p_rwlock_new: failed to allocate memory");
 		return NULL;
 	}
 
 	if (P_UNLIKELY (rwlock_init (&ret->hdl, USYNC_THREAD, NULL) != 0)) {
-		P_ERROR ("PRWLock: failed to initialize rwlock object");
+		P_ERROR ("PRWLock::p_rwlock_new: rwlock_init() failed");
 		p_free (ret);
 		return NULL;
 	}
@@ -71,7 +71,7 @@ p_rwlock_reader_lock (PRWLock *lock)
 	if (P_UNLIKELY (rw_rdlock (&lock->hdl) == 0))
 		return TRUE;
 	else {
-		P_ERROR ("PRWLock: failed to lock rwlock in read mode");
+		P_ERROR ("PRWLock::p_rwlock_reader_lock: rw_rdlock() failed");
 		return FALSE;
 	}
 }
@@ -100,7 +100,7 @@ p_rwlock_writer_lock (PRWLock *lock)
 	if (P_UNLIKELY (rw_wrlock (&lock->hdl) == 0))
 		return TRUE;
 	else {
-		P_ERROR ("PRWLock: failed to lock rwlock in write mode");
+		P_ERROR ("PRWLock::p_rwlock_writer_lock: rw_wrlock() failed");
 		return FALSE;
 	}
 }
@@ -127,7 +127,7 @@ p_rwlock_free (PRWLock *lock)
 		return;
 
 	if (P_UNLIKELY (rwlock_destroy (&lock->hdl) != 0))
-		P_ERROR ("PRWLock: error while destroying rwlock object");
+		P_ERROR ("PRWLock::p_rwlock_free: rwlock_destroy() failed");
 
 	p_free (lock);
 }
@@ -141,4 +141,3 @@ void
 p_rwlock_shutdown (void)
 {
 }
-

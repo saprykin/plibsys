@@ -154,7 +154,7 @@ p_uthread_exit (pint code)
 		return;
 
 	if (P_UNLIKELY (base_thread->ours == FALSE)) {
-		P_WARNING ("Trying to call p_uthread_exit() from an unknown thread");
+		P_WARNING ("PUThread::p_uthread_exit: p_uthread_exit() cannot be called from an unknown thread");
 		return;
 	}
 
@@ -188,7 +188,7 @@ p_uthread_current (void)
 
 	if (P_UNLIKELY (base_thread == NULL)) {
 		if (P_UNLIKELY ((base_thread = p_malloc0 (sizeof (PUThreadBase))) == NULL)) {
-			P_ERROR ("PUThread: failed to allocate memory for a thread local structure");
+			P_ERROR ("PUThread::p_uthread_current: failed to allocate memory");
 			return NULL;
 		}
 

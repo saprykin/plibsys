@@ -125,12 +125,12 @@ pp_uthread_get_tls_key (PUThreadKey *key)
 
 	if (P_UNLIKELY (thread_key == NULL)) {
 		if (P_UNLIKELY ((thread_key = p_malloc0 (sizeof (pthread_key_t))) == NULL)) {
-			P_ERROR ("PUThread: failed to allocate memory for a TLS key");
+			P_ERROR ("PUThread::pp_uthread_get_tls_key: failed to allocate memory");
 			return NULL;
 		}
 
 		if (P_UNLIKELY (pthread_key_create (thread_key, key->free_func) != 0)) {
-			P_ERROR ("PUThread: failed to call pthread_key_create()");
+			P_ERROR ("PUThread::pp_uthread_get_tls_key: pthread_key_create() failed");
 			p_free (thread_key);
 			return NULL;
 		}
@@ -140,7 +140,7 @@ pp_uthread_get_tls_key (PUThreadKey *key)
 								       (ppointer) thread_key) == FALSE)) {
 #ifndef P_OS_SCO
 			if (P_UNLIKELY (pthread_key_delete (*thread_key) != 0)) {
-				P_ERROR ("PUThread: failed to call pthread_key_delete()");
+				P_ERROR ("PUThread::pp_uthread_get_tls_key: pthread_key_delete() failed");
 				p_free (thread_key);
 				return NULL;
 			}
@@ -191,14 +191,14 @@ p_uthread_create_internal (PUThreadFunc		func,
 
 
 	if (P_UNLIKELY ((ret = p_malloc0 (sizeof (PUThread))) == NULL)) {
-		P_ERROR ("PUThread: failed to allocate memory");
+		P_ERROR ("PUThread::p_uthread_create_internal: failed to allocate memory");
 		return NULL;
 	}
 
 	ret->base.joinable = joinable;
 
 	if (P_UNLIKELY (pthread_attr_init (&attr) != 0)) {
-		P_ERROR ("PUThread: failed to call pthread_attr_init()");
+		P_ERROR ("PUThread::p_uthread_create_internal: pthread_attr_init() failed");
 		p_free (ret);
 		return NULL;
 	}
@@ -206,7 +206,7 @@ p_uthread_create_internal (PUThreadFunc		func,
 	if (P_UNLIKELY (pthread_attr_setdetachstate (&attr,
 						     joinable ? PTHREAD_CREATE_JOINABLE
 							      : PTHREAD_CREATE_DETACHED) != 0)) {
-		P_ERROR ("PUThread: failed to call pthread_attr_setdetachstate()");
+		P_ERROR ("PUThread::p_uthread_create_internal: pthread_attr_setdetachstate() failed");
 		pthread_attr_destroy (&attr);
 		p_free (ret);
 		return NULL;
@@ -215,7 +215,7 @@ p_uthread_create_internal (PUThreadFunc		func,
 #ifdef PLIBSYS_HAS_POSIX_SCHEDULING
 	if (prio == P_UTHREAD_PRIORITY_INHERIT) {
 		if (P_UNLIKELY (pthread_attr_setinheritsched (&attr, PTHREAD_INHERIT_SCHED) != 0))
-			P_WARNING ("PUThread: failed to call pthread_attr_setinheritsched()");
+			P_WARNING ("PUThread::p_uthread_create_internal: pthread_attr_setinheritsched() failed");
 	} else {
 		if (P_LIKELY (pthread_attr_getschedpolicy (&attr, &sched_policy) == 0)) {
 			if (P_LIKELY (pp_uthread_get_unix_priority (prio,
@@ -227,11 +227,11 @@ p_uthread_create_internal (PUThreadFunc		func,
 				if (P_LIKELY (pthread_attr_setinheritsched (&attr, PTHREAD_EXPLICIT_SCHED) != 0 ||
 					      pthread_attr_setschedpolicy (&attr, sched_policy) != 0 ||
 					      pthread_attr_setschedparam (&attr, &sched) != 0))
-					P_WARNING ("PUThread: failed to set thread priority");
+					P_WARNING ("PUThread::p_uthread_create_internal: failed to set priority");
 			} else
-				P_WARNING ("PUThread: failed to get native thread priority");
+				P_WARNING ("PUThread::p_uthread_create_internal: pp_uthread_get_unix_priority() failed");
 		} else
-			P_WARNING ("PUThread: failed to call pthread_attr_getschedpolicy()");
+			P_WARNING ("PUThread::p_uthread_create_internal: pthread_attr_getschedpolicy() failed");
 	}
 #endif
 
@@ -244,10 +244,10 @@ p_uthread_create_internal (PUThreadFunc		func,
 			if (P_UNLIKELY (stack_size < (psize) min_stack))
 				stack_size = (psize) min_stack;
 		} else
-			P_WARNING ("PUThread: failed to call sysconf() for _SC_THREAD_STACK_MIN");
+			P_WARNING ("PUThread::p_uthread_create_internal: sysconf() with _SC_THREAD_STACK_MIN failed");
 
 		if (P_UNLIKELY (pthread_attr_setstacksize (&attr, stack_size) != 0))
-			P_WARNING ("PUThread: failed to call pthread_attr_setstacksize()");
+			P_WARNING ("PUThread::p_uthread_create_internal: pthread_attr_setstacksize() failed");
 	}
 #  endif
 #endif
@@ -264,7 +264,7 @@ p_uthread_create_internal (PUThreadFunc		func,
 #endif
 
 	if (P_UNLIKELY (create_code != 0)) {
-		P_ERROR ("PUThread: failed to call pthread_create()");
+		P_ERROR ("PUThread::p_uthread_create_internal: pthread_create() failed");
 		pthread_attr_destroy (&attr);
 		p_free (ret);
 		return NULL;
@@ -286,7 +286,7 @@ void
 p_uthread_wait_internal (PUThread *thread)
 {
 	if (P_UNLIKELY (pthread_join (thread->hdl, NULL) != 0))
-		P_ERROR ("PUThread: failed to call pthread_join()");
+		P_ERROR ("PUThread::p_uthread_wait_internal: pthread_join() failed");
 }
 
 void
@@ -316,12 +316,12 @@ p_uthread_set_priority (PUThread		*thread,
 
 #ifdef PLIBSYS_HAS_POSIX_SCHEDULING
 	if (P_UNLIKELY (pthread_getschedparam (thread->hdl, &policy, &sched) != 0)) {
-		P_ERROR ("PUThread: failed to call pthread_getschedparam()");
+		P_ERROR ("PUThread::p_uthread_set_priority: pthread_getschedparam() failed");
 		return FALSE;
 	}
 
 	if (P_UNLIKELY (pp_uthread_get_unix_priority (prio, &policy, &native_prio) == FALSE)) {
-		P_ERROR ("PUThread: failed to get native thread priority (2)");
+		P_ERROR ("PUThread::p_uthread_set_priority: pp_uthread_get_unix_priority() failed");
 		return FALSE;
 	}
 
@@ -329,7 +329,7 @@ p_uthread_set_priority (PUThread		*thread,
 	sched.sched_priority = native_prio;
 
 	if (P_UNLIKELY (pthread_setschedparam (thread->hdl, policy, &sched) != 0)) {
-		P_ERROR ("PUThread: failed to call pthread_setschedparam()");
+		P_ERROR ("PUThread::p_uthread_set_priority: pthread_setschedparam() failed");
 		return FALSE;
 	}
 #endif
@@ -350,7 +350,7 @@ p_uthread_local_new (PDestroyFunc free_func)
 	PUThreadKey *ret;
 
 	if (P_UNLIKELY ((ret = p_malloc0 (sizeof (PUThreadKey))) == NULL)) {
-		P_ERROR ("PUThread: failed to allocate memory for PUThreadKey");
+		P_ERROR ("PUThread::p_uthread_local_new: failed to allocate memory");
 		return NULL;
 	}
 
@@ -405,7 +405,7 @@ p_uthread_set_local (PUThreadKey	*key,
 
 	if (P_LIKELY (tls_key != NULL)) {
 		if (P_UNLIKELY (pthread_setspecific (*tls_key, value) != 0))
-			P_ERROR ("PUThread: failed to call pthread_setspecific()");
+			P_ERROR ("PUThread::p_uthread_set_local: pthread_setspecific() failed");
 	}
 }
 
@@ -435,5 +435,5 @@ p_uthread_replace_local	(PUThreadKey	*key,
 		key->free_func (old_value);
 
 	if (P_UNLIKELY (pthread_setspecific (*tls_key, value) != 0))
-		P_ERROR ("PUThread: failed to call(2) pthread_setspecific()");
+		P_ERROR ("PUThread::p_uthread_replace_local: pthread_setspecific() failed");
 }

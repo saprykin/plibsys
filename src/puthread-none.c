@@ -52,7 +52,7 @@ p_uthread_create_internal (PUThreadFunc		func,
 	P_UNUSED (stack_size);
 
 	if (P_UNLIKELY ((ret = p_malloc0 (sizeof (PUThread))) == NULL)) {
-		P_ERROR ("PUThread: failed to allocate memory");
+		P_ERROR ("PUThread::p_uthread_create_internal: failed to allocate memory");
 		return NULL;
 	}
 

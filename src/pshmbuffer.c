@@ -308,19 +308,19 @@ p_shm_buffer_clear (PShmBuffer *buf)
 		return;
 
 	if (P_UNLIKELY ((addr = p_shm_get_address (buf->shm)) == NULL)) {
-		P_ERROR ("PShmBuffer: failed to get memory address");
+		P_ERROR ("PShmBuffer::p_shm_buffer_clear: p_shm_get_address() failed");
 		return;
 	}
 
 	size = p_shm_get_size (buf->shm);
 
 	if (P_UNLIKELY (p_shm_lock (buf->shm, NULL) == FALSE)) {
-		P_ERROR ("PShmBuffer: failed to lock memory for clearance");
+		P_ERROR ("PShmBuffer::p_shm_buffer_clear: p_shm_lock() failed");
 		return;
 	}
 
 	memset (addr, 0, size);
 
 	if (P_UNLIKELY (p_shm_unlock (buf->shm, NULL) == FALSE))
-		P_ERROR ("PShmBuffer: failed to unlock memory after clearance");
+		P_ERROR ("PShmBuffer::p_shm_buffer_clear: p_shm_unlock() failed");
 }

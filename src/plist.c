@@ -26,7 +26,7 @@ p_list_append (PList *list, ppointer data)
 	PList *item, *cur;
 
 	if (P_UNLIKELY ((item = p_malloc0 (sizeof (PList))) == NULL)) {
-		P_ERROR ("PList: failed to allocate memory");
+		P_ERROR ("PList::p_list_append: failed to allocate memory");
 		return list;
 	}
 
@@ -128,7 +128,7 @@ p_list_prepend	(PList *list, ppointer data)
 	PList *item;
 
 	if (P_UNLIKELY ((item = p_malloc0 (sizeof (PList))) == NULL)) {
-		P_ERROR ("PList: failed to allocate memory");
+		P_ERROR ("PList::p_list_prepend: failed to allocate memory");
 		return list;
 	}
 

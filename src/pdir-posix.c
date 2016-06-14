@@ -283,7 +283,7 @@ p_dir_get_next_entry (PDir	*dir,
 	path_len = strlen (dir->path);
 
 	if (P_UNLIKELY ((entry_path = p_malloc0 (path_len + strlen (ret->name) + 2)) == NULL)) {
-		P_WARNING ("PDir: failed to allocate memory for stat()");
+		P_WARNING ("PDir::p_dir_get_next_entry: failed to allocate memory for stat()");
 		ret->type = P_DIR_ENTRY_TYPE_OTHER;
 		return ret;
 	}
@@ -293,7 +293,7 @@ p_dir_get_next_entry (PDir	*dir,
 	strcat (entry_path + path_len + 1, ret->name);
 
 	if (P_UNLIKELY (stat (entry_path, &sb) != 0)) {
-		P_WARNING ("PDir: failed to call stat()");
+		P_WARNING ("PDir::p_dir_get_next_entry: stat() failed");
 		ret->type = P_DIR_ENTRY_TYPE_OTHER;
 		p_free (entry_path);
 		return ret;
@@ -336,7 +336,7 @@ p_dir_free (PDir *dir)
 
 	if (P_LIKELY (dir->dir != NULL)) {
 		if (P_UNLIKELY (closedir (dir->dir) != 0))
-			P_ERROR ("PDir: error while closing the directory");
+			P_ERROR ("PDir::p_dir_free: closedir() failed");
 	}
 
 	p_free (dir->path);

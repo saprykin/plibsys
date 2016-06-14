@@ -74,8 +74,10 @@ p_crypto_hash_new (PCryptoHashType type)
 	if (type < P_CRYPTO_HASH_TYPE_MD5 || type > P_CRYPTO_HASH_TYPE_GOST)
 		return NULL;
 
-	if (P_UNLIKELY ((ret = p_malloc0 (sizeof (PCryptoHash))) == NULL))
+	if (P_UNLIKELY ((ret = p_malloc0 (sizeof (PCryptoHash))) == NULL)) {
+		P_ERROR ("PCryptoHash::p_crypto_hash_new: failed to allocate memory");
 		return NULL;
+	}
 
 	switch (type) {
 	case P_CRYPTO_HASH_TYPE_MD5:

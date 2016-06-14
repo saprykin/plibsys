@@ -29,12 +29,12 @@ p_spinlock_new (void)
 	PSpinLock *ret;
 
 	if (P_UNLIKELY ((ret = p_malloc0 (sizeof (PSpinLock))) == NULL)) {
-		P_ERROR ("PSpinLock: failed to allocate memory");
+		P_ERROR ("PSpinLock::p_spinlock_new: failed to allocate memory");
 		return NULL;
 	}
 
 	if (P_UNLIKELY ((ret->mutex = p_mutex_new ()) == NULL)) {
-		P_ERROR ("PSpinLock: failed to create mutex object");
+		P_ERROR ("PSpinLock::p_spinlock_new: p_mutex_new() failed");
 		p_free (ret);
 		return NULL;
 	}

@@ -212,7 +212,7 @@ p_mem_mmap (psize	n_bytes,
 				     "Failed to call mmap() to create file mapping");
 #  if !defined (PLIBSYS_MMAP_HAS_MAP_ANONYMOUS) && !defined (PLIBSYS_MMAP_HAS_MAP_ANON)
 		if (P_UNLIKELY (p_sys_close (fd) != 0))
-			P_WARNING ("PMem: failed to close file descriptor to /dev/zero");
+			P_WARNING ("PMem::p_mem_mmap: failed to close file descriptor to /dev/zero");
 #  endif
 		return NULL;
 	}

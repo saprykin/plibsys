@@ -40,7 +40,7 @@ pp_time_profiler_get_hr_ticks (void)
 	LARGE_INTEGER tcounter;
 
 	if (P_UNLIKELY (QueryPerformanceCounter (&tcounter) == FALSE)) {
-		P_ERROR ("PTimeProfiler: failed to get current HR ticks count");
+		P_ERROR ("PTimeProfiler::pp_time_profiler_get_hr_ticks: QueryPerformanceCounter() failed");
 		tcounter.QuadPart = 0;
 	}
 
@@ -97,7 +97,7 @@ p_time_profiler_init (void)
 
 	if (has_qpc == TRUE) {
 		if (P_UNLIKELY (QueryPerformanceFrequency (&tcounter) == 0)) {
-			P_ERROR ("PTimeProfiler: failed to call QueryPerformanceFrequency()");
+			P_ERROR ("PTimeProfiler::p_time_profiler_init: QueryPerformanceFrequency() failed");
 			has_qpc = FALSE;
 		} else {
 			pp_time_profiler_freq         = (puint64) (tcounter.QuadPart / 1000000.0F);
@@ -110,7 +110,7 @@ p_time_profiler_init (void)
 		hmodule = GetModuleHandleA ("kernel32.dll");
 
 		if (P_UNLIKELY (hmodule == NULL)) {
-			P_ERROR ("PTimeProfiler: failed to load kernel32.dll module");
+			P_ERROR ("PTimeProfiler::p_time_profiler_init: failed to load kernel32.dll module");
 			return;
 		}
 
@@ -123,7 +123,7 @@ p_time_profiler_init (void)
 		}
 
 		if (P_UNLIKELY (pp_time_profiler_ticks_func == NULL)) {
-			P_ERROR ("PTimeProfiler: failed to load any reliable tick counter");
+			P_ERROR ("PTimeProfiler::p_time_profiler_init: no reliable tick counter");
 			pp_time_profiler_elapsed_func = NULL;
 		}
 	}

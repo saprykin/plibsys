@@ -285,7 +285,7 @@ p_ini_file_parse (PIniFile	*file,
 	}
 
 	if (P_UNLIKELY (fclose (in_file) != 0))
-		P_WARNING ("PIniFile: Failed to close file after parsing");
+		P_WARNING ("PIniFile::p_ini_file_parse: fclose() failed");
 
 	file->is_parsed = TRUE;
 

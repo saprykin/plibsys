@@ -23,7 +23,7 @@
 typedef CRITICAL_SECTION mutex_hdl;
 
 struct PMutex_ {
-	mutex_hdl	hdl;
+	mutex_hdl hdl;
 };
 
 P_LIB_API PMutex *
@@ -32,7 +32,7 @@ p_mutex_new (void)
 	PMutex *ret;
 
 	if (P_UNLIKELY ((ret = p_malloc0 (sizeof (PMutex))) == NULL)) {
-		P_ERROR ("PMutex: failed to allocate memory");
+		P_ERROR ("PMutex::p_mutex_new: failed to allocate memory");
 		return NULL;
 	}
 
