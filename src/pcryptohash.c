@@ -25,9 +25,6 @@
 
 #include <string.h>
 
-/* Keep in sync with hash algorithms */
-#define P_MAX_HASH_LENGTH	32
-
 #define P_HASH_FUNCS(ctx, type) \
 	ctx->create = (void * (*) (void)) p_crypto_hash_##type##_new;				\
 	ctx->update = (void (*) (void *, const puchar *, psize)) p_crypto_hash_##type##_update;	\
