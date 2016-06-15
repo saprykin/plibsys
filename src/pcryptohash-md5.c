@@ -83,9 +83,6 @@ pp_crypto_hash_md5_process (PHashMD5		*ctx,
 {
 	puint32	A, B, C, D;
 
-	if (P_UNLIKELY (ctx == NULL))
-		return;
-
 	A = ctx->hash[0];
 	B = ctx->hash[1];
 	C = ctx->hash[2];
