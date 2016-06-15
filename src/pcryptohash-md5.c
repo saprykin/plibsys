@@ -32,7 +32,7 @@ struct PHashMD5_ {
 	puint32		len_low;
 };
 
-static puchar pp_crypto_hash_md5_pad[64] = {
+static const puchar pp_crypto_hash_md5_pad[64] = {
 	0x80, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 	   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 	   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,

@@ -32,7 +32,7 @@ struct PHashSHA1_ {
 	puint32		len_low;
 };
 
-static puchar pp_crypto_hash_sha1_pad[64] = {
+static const puchar pp_crypto_hash_sha1_pad[64] = {
 	0x80, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 	   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 	   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
