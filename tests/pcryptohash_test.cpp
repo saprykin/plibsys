@@ -100,6 +100,7 @@ general_hash_test (PCryptoHashType	type,
 	BOOST_REQUIRE (p_crypto_hash_get_string (crypto_hash) == NULL);
 
 	/* Check digest */
+	dig_len = hash_len;
 	p_crypto_hash_update (crypto_hash, (const puchar *) msg1, strlen (msg1));
 	p_crypto_hash_get_digest (crypto_hash, hash_dig, &dig_len);
 
@@ -123,6 +124,7 @@ general_hash_test (PCryptoHashType	type,
 	BOOST_REQUIRE (p_crypto_hash_get_string (crypto_hash) == NULL);
 
 	/* Check digest */
+	dig_len = hash_len;
 	p_crypto_hash_update (crypto_hash, (const puchar *) msg2, strlen (msg2));
 	p_crypto_hash_get_digest (crypto_hash, hash_dig, &dig_len);
 
@@ -149,6 +151,7 @@ general_hash_test (PCryptoHashType	type,
 	BOOST_REQUIRE (p_crypto_hash_get_string (crypto_hash) == NULL);
 
 	/* Check digest */
+	dig_len = hash_len;
 	for (int i = 0; i < PCRYPTO_MAX_UPDATES; ++i)
 		p_crypto_hash_update (crypto_hash, (const puchar *) "a", 1);
 
