@@ -39,6 +39,8 @@
  * The cryptographic hash module supports the following hash functions:
  * - MD5;
  * - SHA-1;
+ * - SHA-2/224;
+ * - SHA-2/256;
  * - GOST (R 34.11-94).
  *
  * Use p_crypto_hash_new() to initialize a new hash context with one of the
@@ -70,9 +72,11 @@ typedef struct PCryptoHash_ PCryptoHash;
 
 /** Cryptographic hash function types for #PCryptoHash. */
 typedef enum PCryptoHashType_ {
-	P_CRYPTO_HASH_TYPE_MD5	= 0, /**< MD5 hash function.			*/
-	P_CRYPTO_HASH_TYPE_SHA1	= 1, /**< SHA-1 hash function.			*/
-	P_CRYPTO_HASH_TYPE_GOST	= 2  /**< GOST (R 34.11-94) hash function.	*/
+	P_CRYPTO_HASH_TYPE_MD5		= 0, /**< MD5 hash function.			@since 0.0.1	*/
+	P_CRYPTO_HASH_TYPE_SHA1		= 1, /**< SHA-1 hash function.			@since 0.0.1	*/
+	P_CRYPTO_HASH_TYPE_SHA2_224	= 2, /**< SHA-2/224 hash function.		@since 0.0.2	*/
+	P_CRYPTO_HASH_TYPE_SHA2_256	= 3, /**< SHA-2/256 hash function.		@since 0.0.2	*/
+	P_CRYPTO_HASH_TYPE_GOST		= 4  /**< GOST (R 34.11-94) hash function.	@since 0.0.1	*/
 } PCryptoHashType;
 
 /**

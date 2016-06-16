@@ -385,6 +385,271 @@ BOOST_AUTO_TEST_CASE (sha1_test)
 	p_libsys_shutdown ();
 }
 
+BOOST_AUTO_TEST_CASE (sha2_224_test)
+{
+	PCryptoHash	*sha2_hash;
+	pchar		*hash_str;
+	pchar		*long_str;
+	puchar		*hash_dig;
+	puchar		hash_etalon_1[] = { 35,   9, 125,  34,  52,   5, 216,  34, 134,  66,
+					   164, 119, 189, 162,  85, 179,  42, 173, 188, 228,
+					   189, 160, 179, 247, 227, 108, 157, 167};
+	puchar		hash_etalon_2[] = {117,  56, 139,  22, 81, 39, 118, 204, 93, 186,
+					    93, 161, 253, 137,  1, 80, 176, 198, 69,  92,
+					   180, 245, 139,  25, 82, 82,  37,  37};
+	puchar		hash_etalon_3[] = { 32, 121,  70,  85, 152,  12, 145, 216, 187, 180,
+					   193, 234, 151,  97, 138,  75, 240,  63,  66,  88,
+					    25,  72, 178, 238,  78, 231, 173, 103, };
+	psize		hash_len;
+
+	p_libsys_init ();
+
+	sha2_hash = p_crypto_hash_new (P_CRYPTO_HASH_TYPE_SHA2_224);
+
+	BOOST_REQUIRE (p_crypto_hash_get_length (sha2_hash) == 28);
+	BOOST_REQUIRE (p_crypto_hash_get_type (sha2_hash) == P_CRYPTO_HASH_TYPE_SHA2_224);
+	BOOST_REQUIRE (p_crypto_hash_get_string (sha2_hash) == NULL);
+
+	hash_len = (psize) p_crypto_hash_get_length (sha2_hash);
+	hash_dig = (puchar *) p_malloc0 (hash_len);
+	BOOST_REQUIRE (hash_dig != NULL);
+
+	long_str = (pchar *) p_malloc0 (PCRYPTO_STRESS_LENGTH);
+	BOOST_REQUIRE (long_str != NULL);
+
+	for (int i = 0; i < PCRYPTO_STRESS_LENGTH; ++i)
+		long_str[i] = (pchar) (97 + i % 20);
+
+	/* Case 1 */
+
+	/* Check string */
+	p_crypto_hash_update (sha2_hash, (const puchar *) ("abc"), 3);
+	hash_str = p_crypto_hash_get_string (sha2_hash);
+
+	BOOST_CHECK (strcmp (hash_str, "23097d223405d8228642a477bda255b32aadbce4bda0b3f7e36c9da7") == 0);
+	p_free (hash_str);
+
+	p_crypto_hash_reset (sha2_hash);
+	BOOST_REQUIRE (p_crypto_hash_get_string (sha2_hash) == NULL);
+
+	/* Check digest */
+	p_crypto_hash_update (sha2_hash, (const puchar *) ("abc"), 3);
+	p_crypto_hash_get_digest (sha2_hash, hash_dig, &hash_len);
+
+	BOOST_CHECK (hash_len == 28);
+
+	for (unsigned int i = 0; i < hash_len; ++i)
+		BOOST_CHECK (hash_dig[i] == hash_etalon_1[i]);
+
+	p_crypto_hash_reset (sha2_hash);
+	BOOST_REQUIRE (p_crypto_hash_get_string (sha2_hash) == NULL);
+
+	/* Case 2 */
+
+	/* Check string */
+	p_crypto_hash_update (sha2_hash,
+			      (const puchar *) ("abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq"),
+			      56);
+	hash_str = p_crypto_hash_get_string (sha2_hash);
+	BOOST_CHECK (strcmp (hash_str, "75388b16512776cc5dba5da1fd890150b0c6455cb4f58b1952522525") == 0);
+	p_free (hash_str);
+
+	p_crypto_hash_reset (sha2_hash);
+	BOOST_REQUIRE (p_crypto_hash_get_string (sha2_hash) == NULL);
+
+	/* Check digest */
+	p_crypto_hash_update (sha2_hash,
+			      (const puchar *) ("abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq"),
+			      56);
+	p_crypto_hash_get_digest (sha2_hash, hash_dig, &hash_len);
+
+	BOOST_CHECK (hash_len == 28);
+
+	for (unsigned int i = 0; i < hash_len; ++i)
+		BOOST_CHECK (hash_dig[i] == hash_etalon_2[i]);
+
+	p_crypto_hash_reset (sha2_hash);
+	BOOST_REQUIRE (p_crypto_hash_get_string (sha2_hash) == NULL);
+
+	/* Case 3 */
+
+	/* Check string */
+	for (int i = 0; i < PCRYPTO_MAX_UPDATES; ++i)
+		p_crypto_hash_update (sha2_hash, (const puchar *) "a", 1);
+
+	hash_str = p_crypto_hash_get_string (sha2_hash);
+
+	BOOST_CHECK (strcmp (hash_str, "20794655980c91d8bbb4c1ea97618a4bf03f42581948b2ee4ee7ad67") == 0);
+	p_free (hash_str);
+
+	p_crypto_hash_reset (sha2_hash);
+	BOOST_REQUIRE (p_crypto_hash_get_string (sha2_hash) == NULL);
+
+	/* Check digest */
+	for (int i = 0; i < PCRYPTO_MAX_UPDATES; ++i)
+		p_crypto_hash_update (sha2_hash, (const puchar *) "a", 1);
+
+	p_crypto_hash_get_digest (sha2_hash, hash_dig, &hash_len);
+
+	BOOST_CHECK (hash_len == 28);
+
+	for (unsigned int i = 0; i < hash_len; ++i)
+		BOOST_CHECK (hash_dig[i] == hash_etalon_3[i]);
+
+	p_crypto_hash_reset (sha2_hash);
+	BOOST_REQUIRE (p_crypto_hash_get_string (sha2_hash) == NULL);
+
+	/* Stress test */
+	p_crypto_hash_update (sha2_hash, (const puchar *) long_str, PCRYPTO_STRESS_LENGTH);
+	hash_str = p_crypto_hash_get_string (sha2_hash);
+
+	BOOST_CHECK (strcmp (hash_str, "4cf3d45b57e0d54981c4d86954e8378168d5a9f6ceab9e0aae5dd2f6") == 0);
+	p_free (hash_str);
+
+	p_crypto_hash_reset (sha2_hash);
+	BOOST_REQUIRE (p_crypto_hash_get_string (sha2_hash) == NULL);
+
+	p_free (long_str);
+	p_free (hash_dig);
+	p_crypto_hash_free (sha2_hash);
+
+	p_libsys_shutdown ();
+}
+
+BOOST_AUTO_TEST_CASE (sha2_256_test)
+{
+	PCryptoHash	*sha2_hash;
+	pchar		*hash_str;
+	pchar		*long_str;
+	puchar		*hash_dig;
+	puchar		hash_etalon_1[] = {186, 120,  22, 191, 143,   1, 207, 234,
+					    65,  65,  64, 222,  93, 174,  34,  35,
+					   176,   3,  97, 163, 150,  23, 122, 156,
+					   180,  16, 255,  97, 242,   0,  21, 173};
+	puchar		hash_etalon_2[] = { 36, 141, 106,  97, 210,   6, 56, 184,
+					   229, 192,  38, 147,  12,  62, 96,  57,
+					   163,  60, 228,  89, 100, 255, 33, 103,
+					   246, 236, 237, 212,  25, 219,  6, 193};
+	puchar		hash_etalon_3[] = {205, 199, 110,  92, 153,  20, 251, 146,
+					   129, 161, 199, 226, 132, 215,  62, 103,
+					   241, 128, 154,  72, 164, 151,  32,  14,
+					     4, 109,  57, 204, 199,  17,  44, 208};
+	psize		hash_len;
+
+	p_libsys_init ();
+
+	sha2_hash = p_crypto_hash_new (P_CRYPTO_HASH_TYPE_SHA2_256);
+
+	BOOST_REQUIRE (p_crypto_hash_get_length (sha2_hash) == 32);
+	BOOST_REQUIRE (p_crypto_hash_get_type (sha2_hash) == P_CRYPTO_HASH_TYPE_SHA2_256);
+	BOOST_REQUIRE (p_crypto_hash_get_string (sha2_hash) == NULL);
+
+	hash_len = (psize) p_crypto_hash_get_length (sha2_hash);
+	hash_dig = (puchar *) p_malloc0 (hash_len);
+	BOOST_REQUIRE (hash_dig != NULL);
+
+	long_str = (pchar *) p_malloc0 (PCRYPTO_STRESS_LENGTH);
+	BOOST_REQUIRE (long_str != NULL);
+
+	for (int i = 0; i < PCRYPTO_STRESS_LENGTH; ++i)
+		long_str[i] = (pchar) (97 + i % 20);
+
+	/* Case 1 */
+
+	/* Check string */
+	p_crypto_hash_update (sha2_hash, (const puchar *) ("abc"), 3);
+	hash_str = p_crypto_hash_get_string (sha2_hash);
+
+	BOOST_CHECK (strcmp (hash_str, "ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad") == 0);
+	p_free (hash_str);
+
+	p_crypto_hash_reset (sha2_hash);
+	BOOST_REQUIRE (p_crypto_hash_get_string (sha2_hash) == NULL);
+
+	/* Check digest */
+	p_crypto_hash_update (sha2_hash, (const puchar *) ("abc"), 3);
+	p_crypto_hash_get_digest (sha2_hash, hash_dig, &hash_len);
+
+	BOOST_CHECK (hash_len == 32);
+
+	for (unsigned int i = 0; i < hash_len; ++i)
+		BOOST_CHECK (hash_dig[i] == hash_etalon_1[i]);
+
+	p_crypto_hash_reset (sha2_hash);
+	BOOST_REQUIRE (p_crypto_hash_get_string (sha2_hash) == NULL);
+
+	/* Case 2 */
+
+	/* Check string */
+	p_crypto_hash_update (sha2_hash,
+			      (const puchar *) ("abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq"),
+			      56);
+	hash_str = p_crypto_hash_get_string (sha2_hash);
+	BOOST_CHECK (strcmp (hash_str, "248d6a61d20638b8e5c026930c3e6039a33ce45964ff2167f6ecedd419db06c1") == 0);
+	p_free (hash_str);
+
+	p_crypto_hash_reset (sha2_hash);
+	BOOST_REQUIRE (p_crypto_hash_get_string (sha2_hash) == NULL);
+
+	/* Check digest */
+	p_crypto_hash_update (sha2_hash,
+			      (const puchar *) ("abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq"),
+			      56);
+	p_crypto_hash_get_digest (sha2_hash, hash_dig, &hash_len);
+
+	BOOST_CHECK (hash_len == 32);
+
+	for (unsigned int i = 0; i < hash_len; ++i)
+		BOOST_CHECK (hash_dig[i] == hash_etalon_2[i]);
+
+	p_crypto_hash_reset (sha2_hash);
+	BOOST_REQUIRE (p_crypto_hash_get_string (sha2_hash) == NULL);
+
+	/* Case 3 */
+
+	/* Check string */
+	for (int i = 0; i < PCRYPTO_MAX_UPDATES; ++i)
+		p_crypto_hash_update (sha2_hash, (const puchar *) "a", 1);
+
+	hash_str = p_crypto_hash_get_string (sha2_hash);
+
+	BOOST_CHECK (strcmp (hash_str, "cdc76e5c9914fb9281a1c7e284d73e67f1809a48a497200e046d39ccc7112cd0") == 0);
+	p_free (hash_str);
+
+	p_crypto_hash_reset (sha2_hash);
+	BOOST_REQUIRE (p_crypto_hash_get_string (sha2_hash) == NULL);
+
+	/* Check digest */
+	for (int i = 0; i < PCRYPTO_MAX_UPDATES; ++i)
+		p_crypto_hash_update (sha2_hash, (const puchar *) "a", 1);
+
+	p_crypto_hash_get_digest (sha2_hash, hash_dig, &hash_len);
+
+	BOOST_CHECK (hash_len == 32);
+
+	for (unsigned int i = 0; i < hash_len; ++i)
+		BOOST_CHECK (hash_dig[i] == hash_etalon_3[i]);
+
+	p_crypto_hash_reset (sha2_hash);
+	BOOST_REQUIRE (p_crypto_hash_get_string (sha2_hash) == NULL);
+
+	/* Stress test */
+	p_crypto_hash_update (sha2_hash, (const puchar *) long_str, PCRYPTO_STRESS_LENGTH);
+	hash_str = p_crypto_hash_get_string (sha2_hash);
+
+	BOOST_CHECK (strcmp (hash_str, "4c2d7749e1b711ca652fda20dd29fe378fd9988f19eadadfa570682e2c55349f") == 0);
+	p_free (hash_str);
+
+	p_crypto_hash_reset (sha2_hash);
+	BOOST_REQUIRE (p_crypto_hash_get_string (sha2_hash) == NULL);
+
+	p_free (long_str);
+	p_free (hash_dig);
+	p_crypto_hash_free (sha2_hash);
+
+	p_libsys_shutdown ();
+}
+
 BOOST_AUTO_TEST_CASE (gost3411_94_test)
 {
 	PCryptoHash	*gost3411_94_hash;

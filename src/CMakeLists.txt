@@ -98,6 +98,7 @@ set (PLIBSYS_PRIVATE_HDRS
 	pcryptohash-gost3411.h
 	pcryptohash-md5.h
 	pcryptohash-sha1.h
+	pcryptohash-sha2-256.h
 	perror-private.h
 	pipc-private.h
 	plibsys-private.h
@@ -116,6 +117,7 @@ set (PLIBSYS_SRCS
 	pcryptohash-gost3411.c
 	pcryptohash-md5.c
 	pcryptohash-sha1.c
+	pcryptohash-sha2-256.c
 	pdir.c
 	perror.c
 	pfile.c
