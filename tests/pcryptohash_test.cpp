@@ -372,6 +372,82 @@ BOOST_AUTO_TEST_CASE (sha2_256_test)
 	p_libsys_shutdown ();
 }
 
+BOOST_AUTO_TEST_CASE (sha2_384_test)
+{
+	const puchar	hash_etalon_1[] = {203,   0, 117,  63,  69, 163,  94, 139, 181, 160,  61, 105,
+					   154, 198,  80,   7,  39,  44,  50, 171,  14, 222, 209,  99,
+					    26, 139,  96,  90,  67, 255,  91, 237, 128, 134,   7,  43,
+					   161, 231, 204,  35,  88, 186, 236, 161,  52, 200,  37, 167};
+	const puchar	hash_etalon_2[] = { 51, 145, 253, 221, 252, 141, 199,  57,  55,   7, 166,  91,
+					    27,  71,   9,  57, 124, 248, 177, 209,  98, 175,   5, 171,
+					   254, 143,  69,  13, 229, 243, 107, 198, 176,  69,  90, 133,
+					    32, 188,  78, 111,  95, 233,  91,  31, 227, 200,  69,  43};
+	const puchar	hash_etalon_3[] = {157,  14,  24,   9, 113, 100, 116, 203,   8, 110, 131,  78,
+					    49,  10,  74,  28, 237,  20, 158, 156,   0, 242,  72,  82,
+					   121, 114, 206, 197, 112,  76,  42,  91,   7, 184, 179, 220,
+					    56, 236, 196, 235, 174, 151, 221, 216, 127,  61, 137, 133};
+
+	p_libsys_init ();
+
+	general_hash_test (P_CRYPTO_HASH_TYPE_SHA2_384,
+			   48,
+			   "abc",
+			   "abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq",
+			   hash_etalon_1,
+			   hash_etalon_2,
+			   hash_etalon_3,
+			   "cb00753f45a35e8bb5a03d699ac65007272c32ab0eded1631a8b605a43ff5bed8086072ba1e7cc2358baeca134c825a7",
+			   "3391fdddfc8dc7393707a65b1b4709397cf8b1d162af05abfe8f450de5f36bc6b0455a8520bc4e6f5fe95b1fe3c8452b",
+			   "9d0e1809716474cb086e834e310a4a1ced149e9c00f248527972cec5704c2a5b07b8b3dc38ecc4ebae97ddd87f3d8985",
+			   "533e016fd92dd8a8c339328bb5401c3e700e27cd72d8230059e1d4583a506fe8187607bf899a86961af2bf5521b359eb");
+
+	p_libsys_shutdown ();
+}
+
+BOOST_AUTO_TEST_CASE (sha2_512_test)
+{
+	const puchar	hash_etalon_1[] = {221, 175,  53, 161, 147,  97, 122, 186,
+					   204,  65, 115,  73, 174,  32,  65,  49,
+					    18, 230, 250,  78, 137, 169, 126, 162,
+					    10, 158, 238, 230,  75,  85, 211, 154,
+					    33, 146, 153,  42,  39,  79, 193, 168,
+					    54, 186,  60,  35, 163, 254, 235, 189,
+					    69,  77,  68,  35, 100,  60, 232,  14,
+					    42, 154, 201,  79, 165,  76, 164, 159};
+	const puchar	hash_etalon_2[] = { 32,  74, 143, 198, 221, 168,  47,  10,
+					    12, 237, 123, 235, 142,   8, 164,  22,
+					    87, 193, 110, 244, 104, 178,  40, 168,
+					    39, 155, 227,  49, 167,   3, 195,  53,
+					   150, 253,  21, 193,  59,  27,   7, 249,
+					   170,  29,  59, 234,  87, 120, 156, 160,
+					    49, 173, 133, 199, 167,  29, 215,   3,
+					    84, 236,  99,  18,  56, 202,  52,  69};
+	const puchar	hash_etalon_3[] = {231,  24,  72,  61,  12, 231, 105, 100,
+					    78,  46,  66, 199, 188,  21, 180,  99,
+					   142,  31, 152, 177,  59,  32,  68,  40,
+					    86,  50, 168,   3, 175, 169, 115, 235,
+					   222,  15, 242,  68, 135, 126, 166,  10,
+					    76, 176,  67,  44, 229, 119, 195,  27,
+					   235,   0, 156,  92,  44,  73, 170,  46,
+					    78, 173, 178,  23, 173, 140, 192, 155};
+
+	p_libsys_init ();
+
+	general_hash_test (P_CRYPTO_HASH_TYPE_SHA2_512,
+			   64,
+			   "abc",
+			   "abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq",
+			   hash_etalon_1,
+			   hash_etalon_2,
+			   hash_etalon_3,
+			   "ddaf35a193617abacc417349ae20413112e6fa4e89a97ea20a9eeee64b55d39a2192992a274fc1a836ba3c23a3feebbd454d4423643ce80e2a9ac94fa54ca49f",
+			   "204a8fc6dda82f0a0ced7beb8e08a41657c16ef468b228a8279be331a703c33596fd15c13b1b07f9aa1d3bea57789ca031ad85c7a71dd70354ec631238ca3445",
+			   "e718483d0ce769644e2e42c7bc15b4638e1f98b13b2044285632a803afa973ebde0ff244877ea60a4cb0432ce577c31beb009c5c2c49aa2e4eadb217ad8cc09b",
+			   "411525772d02eef0e2ce1107d89b79b8cf6d704e88d4509f726c963d411df6df178c1c9473718f70b0e06c2fda6a9c25f6c91a925849f372634d5f63e6047a20");
+
+	p_libsys_shutdown ();
+}
+
 BOOST_AUTO_TEST_CASE (gost3411_94_test)
 {
 	PCryptoHash	*gost3411_94_hash;

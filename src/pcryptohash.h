@@ -41,6 +41,8 @@
  * - SHA-1;
  * - SHA-2/224;
  * - SHA-2/256;
+ * - SHA-2/384;
+ * - SHA-2/512;
  * - GOST (R 34.11-94).
  *
  * Use p_crypto_hash_new() to initialize a new hash context with one of the
@@ -76,7 +78,9 @@ typedef enum PCryptoHashType_ {
 	P_CRYPTO_HASH_TYPE_SHA1		= 1, /**< SHA-1 hash function.			@since 0.0.1	*/
 	P_CRYPTO_HASH_TYPE_SHA2_224	= 2, /**< SHA-2/224 hash function.		@since 0.0.2	*/
 	P_CRYPTO_HASH_TYPE_SHA2_256	= 3, /**< SHA-2/256 hash function.		@since 0.0.2	*/
-	P_CRYPTO_HASH_TYPE_GOST		= 4  /**< GOST (R 34.11-94) hash function.	@since 0.0.1	*/
+	P_CRYPTO_HASH_TYPE_SHA2_384	= 4, /**< SHA-2/384 hash function.		@since 0.0.2	*/
+	P_CRYPTO_HASH_TYPE_SHA2_512	= 5, /**< SHA-2/512 hash function.		@since 0.0.2	*/
+	P_CRYPTO_HASH_TYPE_GOST		= 6  /**< GOST (R 34.11-94) hash function.	@since 0.0.1	*/
 } PCryptoHashType;
 
 /**

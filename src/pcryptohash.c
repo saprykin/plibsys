@@ -23,6 +23,7 @@
 #include "pcryptohash-md5.h"
 #include "pcryptohash-sha1.h"
 #include "pcryptohash-sha2-256.h"
+#include "pcryptohash-sha2-512.h"
 
 #include <string.h>
 
@@ -93,6 +94,14 @@ p_crypto_hash_new (PCryptoHashType type)
 	case P_CRYPTO_HASH_TYPE_SHA2_256:
 		P_HASH_FUNCS (ret, sha2_256);
 		ret->hash_len = 32;
+		break;
+	case P_CRYPTO_HASH_TYPE_SHA2_384:
+		P_HASH_FUNCS (ret, sha2_384);
+		ret->hash_len = 48;
+		break;
+	case P_CRYPTO_HASH_TYPE_SHA2_512:
+		P_HASH_FUNCS (ret, sha2_512);
+		ret->hash_len = 64;
 		break;
 	case P_CRYPTO_HASH_TYPE_GOST:
 		P_HASH_FUNCS (ret, gost3411);
