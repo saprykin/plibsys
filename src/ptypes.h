@@ -799,8 +799,8 @@ typedef pint64 poffset;
  * @return Swapped 64-bit unsigned int.
  * @since 0.0.1
  */
-#define PUINT64_SWAP_BYTES(val) ((puint64) (				\
-	(((puint64) (val))  >> 56) |					\
+#define PUINT64_SWAP_BYTES(val) ((puint64) (					\
+	(((puint64) (val))  >> 56) |						\
 	((((puint64) (val)) << 40) & ((puint64) 0x00FF000000000000ULL)) |	\
 	((((puint64) (val)) << 24) & ((puint64) 0x0000FF0000000000ULL)) |	\
 	((((puint64) (val)) <<  8) & ((puint64) 0x000000FF00000000ULL)) |	\
