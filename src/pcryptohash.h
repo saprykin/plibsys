@@ -80,7 +80,11 @@ typedef enum PCryptoHashType_ {
 	P_CRYPTO_HASH_TYPE_SHA2_256	= 3, /**< SHA-2/256 hash function.		@since 0.0.2	*/
 	P_CRYPTO_HASH_TYPE_SHA2_384	= 4, /**< SHA-2/384 hash function.		@since 0.0.2	*/
 	P_CRYPTO_HASH_TYPE_SHA2_512	= 5, /**< SHA-2/512 hash function.		@since 0.0.2	*/
-	P_CRYPTO_HASH_TYPE_GOST		= 6  /**< GOST (R 34.11-94) hash function.	@since 0.0.1	*/
+	P_CRYPTO_HASH_TYPE_SHA3_224	= 6, /**< SHA-2/224 hash function.		@since 0.0.2	*/
+	P_CRYPTO_HASH_TYPE_SHA3_256	= 7, /**< SHA-2/256 hash function.		@since 0.0.2	*/
+	P_CRYPTO_HASH_TYPE_SHA3_384	= 8, /**< SHA-2/384 hash function.		@since 0.0.2	*/
+	P_CRYPTO_HASH_TYPE_SHA3_512	= 9, /**< SHA-3/512 hash function.		@since 0.0.2	*/
+	P_CRYPTO_HASH_TYPE_GOST		= 10 /**< GOST (R 34.11-94) hash function.	@since 0.0.1	*/
 } PCryptoHashType;
 
 /**
