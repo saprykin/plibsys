@@ -43,6 +43,10 @@
  * - SHA-2/256;
  * - SHA-2/384;
  * - SHA-2/512;
+ * - SHA-3/224;
+ * - SHA-3/256;
+ * - SHA-3/384;
+ * - SHA-3/512;
  * - GOST (R 34.11-94).
  *
  * Use p_crypto_hash_new() to initialize a new hash context with one of the
