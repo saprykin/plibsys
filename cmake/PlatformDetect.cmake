@@ -26,6 +26,11 @@ function (plibsys_detect_c_compiler result)
                 set (PLIBSYS_C_COMPILER watcom)
         endif()
 
+        # Rename xl -> xlc
+        if (PLIBSYS_C_COMPILER STREQUAL xl)
+                set (PLIBSYS_C_COMPILER xlc)
+        endif()
+
         # Assign result
         set (${result} ${PLIBSYS_C_COMPILER} PARENT_SCOPE)
 endfunction (plibsys_detect_c_compiler)
