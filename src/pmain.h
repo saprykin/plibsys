@@ -83,7 +83,7 @@
  * phashtable.h Hash table
  * @endlink
  * - @link
- * ptree.h Cryptographic hash
+ * pcyptohash.h Cryptographic hash
  * @endlink
  * - @link
  * ptree.h Binary search tree
