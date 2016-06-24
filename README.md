@@ -69,6 +69,7 @@ plibsys was tested with the following compilers:
 * QCC (x86)
 * Oracle Solaris Studio (x86, x64, SPARCv9)
 * MIPSpro (MIPS32)
+* XL C (PPC64le)
 
 ======= Building =======
 
