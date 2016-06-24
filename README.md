@@ -63,7 +63,7 @@ plibsys was tested with the following compilers:
 * MinGW (x86, x64)
 * Open Watcom (x86)
 * Borland (x86)
-* GCC (x86, x64, PPC32be, PPC64be, IA-64/32, IA-64, HPPA2.0-32, MIPS32, AArch32, SPARCv9)
+* GCC (x86, x64, PPC32be, PPC64be/le, IA-64/32, IA-64, HPPA2.0-32, MIPS32, AArch32, SPARCv9)
 * Clang (x86, x64, PPC32be)
 * Intel (x86, x64)
 * QCC (x86)
