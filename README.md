@@ -24,7 +24,7 @@ plibsys gives you:
 * Optimized spinlock
 * Atomic operations
 * Socket support (UDP, TCP, SCTP)
-* Hash functions: MD5, SHA-1, SHA-256, GOST (R 34.11-94)
+* Hash functions: MD5, SHA-1, SHA-2, SHA-3, GOST (R 34.11-94)
 * Binary trees: BST, red-black, AVL
 * INI file parser
 * High resolution time profiler
