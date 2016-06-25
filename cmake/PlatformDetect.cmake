@@ -79,6 +79,7 @@ function (plibsys_detect_target_os result)
         # Rename hp-ux -> hpux
         if (PLIBSYS_TARGET_OS STREQUAL hp-ux)
                 set (PLIBSYS_TARGET_OS hpux)
+        endif()
 
         # Rename sco_sv -> scosv
         if (PLIBSYS_TARGET_OS STREQUAL sco_sv)
