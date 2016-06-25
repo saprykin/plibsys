@@ -71,13 +71,17 @@ endfunction (plibsys_detect_cpu_arch)
 function (plibsys_detect_target_os result)
         string (TOLOWER ${CMAKE_SYSTEM_NAME} PLIBSYS_TARGET_OS)
 
+        # Rename mingw -> windows
         if (PLIBSYS_TARGET_OS MATCHES "(mingw.*)")
                 set (PLIBSYS_TARGET_OS windows)
         endif()
 
+        # Rename hp-ux -> hpux
         if (PLIBSYS_TARGET_OS STREQUAL hp-ux)
                 set (PLIBSYS_TARGET_OS hpux)
-        elseif (PLIBSYS_TARGET_OS STREQUAL sco_sv)
+
+        # Rename sco_sv -> scosv
+        if (PLIBSYS_TARGET_OS STREQUAL sco_sv)
                 set (PLIBSYS_TARGET_OS scosv)
         endif()
 
