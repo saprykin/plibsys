@@ -81,6 +81,11 @@ function (plibsys_detect_target_os result)
                 set (PLIBSYS_TARGET_OS scosv)
         endif()
 
+        # Rename osf1 -> tru64
+        if (PLIBSYS_TARGET_OS STREQUAL osf1)
+                set (PLIBSYS_TARGET_OS tru64)
+        endif()
+
         set (${result} ${PLIBSYS_TARGET_OS} PARENT_SCOPE)
 endfunction (plibsys_detect_target_os)
 
