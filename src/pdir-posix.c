@@ -25,14 +25,12 @@
 #include <string.h>
 #include <dirent.h>
 #include <unistd.h>
-#ifdef P_OS_SCO
-#  include <limits.h>
-#endif
+#include <limits.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 
 #if defined(P_OS_SOLARIS) || defined(P_OS_QNX6) || defined(P_OS_UNIXWARE) || defined(P_OS_SCO) || \
-    defined(P_OS_IRIX) || defined(P_OS_HAIKU)
+    defined(P_OS_IRIX)    || defined(P_OS_HAIKU)
 #  define P_DIR_NEED_BUF_ALLOC 1
 #endif
 
