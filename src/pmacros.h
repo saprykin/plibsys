@@ -56,6 +56,7 @@
  * OPENBSD           - OpenBSD
  * AIX               - IBM AIX
  * HPUX              - HP-UX
+ * TRU64             - Tru64
  * SOLARIS           - Sun (Oracle) Solaris
  * QNX               - QNX 4.x
  * QNX6              - QNX Neutrino 6.x
@@ -133,6 +134,12 @@
  * @def P_OS_HPUX
  * @brief HP-UX operating system.
  * @since 0.0.1
+ */
+
+/**
+ * @def P_OS_TRU64
+ * @brief Tru64 operating system.
+ * @since 0.0.2
  */
 
 /**
@@ -256,6 +263,7 @@
 #  define P_OS_OPENBSD
 #  define P_OS_AIX
 #  define P_OS_HPUX
+#  define P_OS_TRU64
 #  define P_OS_SOLARIS
 #  define P_OS_QNX
 #  define P_OS_QNX6
@@ -312,6 +320,8 @@
 #  define P_OS_AIX
 #elif defined(hpux) || defined(__hpux)
 #  define P_OS_HPUX
+#elif defined(__osf__) || defined(__osf)
+#  define P_OS_TRU64
 #elif defined(__sun) || defined(sun)
 #  define P_OS_SOLARIS
 #elif defined(__QNXNTO__)
