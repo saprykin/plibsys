@@ -147,17 +147,17 @@ pp_shm_clean_handle (PShm *shm)
 
 	if (P_LIKELY (shm->addr != NULL)) {
 		if (P_UNLIKELY (shmdt (shm->addr) == -1))
-			P_ERROR ("PShm: shmdt() failed");
+			P_ERROR ("PShm::pp_shm_clean_handle: shmdt() failed");
 
 		if (P_UNLIKELY (shmctl (shm->shm_hdl, IPC_STAT, &shm_stat) == -1))
-			P_ERROR ("PShm: failed to call shmctl() with IPC_STAT");
+			P_ERROR ("PShm::pp_shm_clean_handle: shmctl() with IPC_STAT failed");
 
 		if (P_UNLIKELY (shm_stat.shm_nattch == 0 && shmctl (shm->shm_hdl, IPC_RMID, 0) == -1))
-			P_ERROR ("PShm: failed to call shmctl() with IPC_RMID");
+			P_ERROR ("PShm::pp_shm_clean_handle: shmctl() with IPC_RMID failed");
 	}
 
 	if (shm->file_created == TRUE && unlink (shm->platform_key) == -1)
-		P_ERROR ("PShm: failed to remove key file with unlink()");
+		P_ERROR ("PShm::pp_shm_clean_handle: unlink() failed");
 
 	if (P_LIKELY (shm->sem != NULL)) {
 		p_semaphore_free (shm->sem);

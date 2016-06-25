@@ -100,7 +100,7 @@ pp_shm_create_handle (PShm	*shm,
 					     "Failed to call fstat() to get memory segment size");
 
 			if (P_UNLIKELY (p_sys_close (fd) != 0))
-				P_WARNING ("PShm: failed (1) to close segment file descriptor");
+				P_WARNING ("PShm::pp_shm_create_handle: p_sys_close() failed(1)");
 
 			pp_shm_clean_handle (shm);
 			return FALSE;
@@ -115,7 +115,7 @@ pp_shm_create_handle (PShm	*shm,
 					     "Failed to call ftruncate() to set memory segment size");
 
 			if (P_UNLIKELY (p_sys_close (fd) != 0))
-				P_WARNING ("PShm: failed (2) to close segment file descriptor");
+				P_WARNING ("PShm::pp_shm_create_handle: p_sys_close() failed(2)");
 
 			pp_shm_clean_handle (shm);
 			return FALSE;
@@ -132,14 +132,14 @@ pp_shm_create_handle (PShm	*shm,
 		shm->addr = NULL;
 
 		if (P_UNLIKELY (p_sys_close (fd) != 0))
-			P_WARNING ("PShm: failed (3) to close segment file descriptor");
+			P_WARNING ("PShm::pp_shm_create_handle: p_sys_close() failed(3)");
 
 		pp_shm_clean_handle (shm);
 		return FALSE;
 	}
 
 	if (P_UNLIKELY (p_sys_close (fd) != 0))
-		P_WARNING ("PShm: failed (4) to close segment file descriptor");
+		P_WARNING ("PShm::pp_shm_create_handle: p_sys_close() failed(4)");
 
 	if (P_UNLIKELY ((shm->sem = p_semaphore_new (shm->platform_key, 1,
 						     is_exists ? P_SEM_ACCESS_OPEN : P_SEM_ACCESS_CREATE,
@@ -155,10 +155,10 @@ static void
 pp_shm_clean_handle (PShm *shm)
 {
 	if (P_UNLIKELY (shm->addr != NULL && munmap (shm->addr, shm->size) == -1))
-		P_ERROR ("PShm: failed to unmap shared memory with munmap()");
+		P_ERROR ("PShm::pp_shm_clean_handle: munmap () failed");
 
 	if (shm->shm_created == TRUE && shm_unlink (shm->platform_key) == -1)
-		P_ERROR ("PShm: failed to unlink shared memory with shm_unlink()");
+		P_ERROR ("PShm::pp_shm_clean_handle: shm_unlink() failed");
 
 	if (P_LIKELY (shm->sem != NULL)) {
 		p_semaphore_free (shm->sem);

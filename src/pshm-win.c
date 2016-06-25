@@ -115,10 +115,10 @@ static void
 pp_shm_clean_handle (PShm *shm)
 {
 	if (P_UNLIKELY (shm->addr != NULL && UnmapViewOfFile ((char *) shm->addr) == 0))
-		P_ERROR ("PShm: UnmapViewOfFile() failed");
+		P_ERROR ("PShm::pp_shm_clean_handle: UnmapViewOfFile() failed");
 
 	if (P_UNLIKELY (shm->shm_hdl != P_SHM_INVALID_HDL && CloseHandle (shm->shm_hdl) == 0))
-		P_ERROR ("PShm: CloseHandle() failed");
+		P_ERROR ("PShm::pp_shm_clean_handle: CloseHandle() failed");
 
 	if (P_LIKELY (shm->sem != NULL)) {
 		p_semaphore_free (shm->sem);
