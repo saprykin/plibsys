@@ -47,6 +47,7 @@ with unit tests and was tested on the following platforms:
 * Solaris
 * AIX
 * HP-UX
+* Tru64
 * IRIX64
 * QNX Neutrino
 * UnixWare 7
@@ -63,13 +64,14 @@ plibsys was tested with the following compilers:
 * MinGW (x86, x64)
 * Open Watcom (x86)
 * Borland (x86)
-* GCC (x86, x64, PPC32be, PPC64be/le, IA-64/32, IA-64, HPPA2.0-32, MIPS32, AArch32, SPARCv9)
+* GCC (x86, x64, PPC32be, PPC64be/le, IA-64/32, IA-64, Alpha, HPPA2.0-32, MIPS32, AArch32, SPARCv9)
 * Clang (x86, x64, PPC32be)
 * Intel (x86, x64)
 * QCC (x86)
 * Oracle Solaris Studio (x86, x64, SPARCv9)
 * MIPSpro (MIPS32)
 * XL C (PPC64le)
+* Compaq (Alpha)
 
 ======= Building =======
 
