@@ -9,6 +9,7 @@
 ======= About plibsys =======
 
 plibsys is a cross-platform system C library with some helpful routines.
+It has zero third-party dependecies and uses only native system calls.
 
 ======= Features =======
 
