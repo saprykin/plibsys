@@ -23,8 +23,8 @@
 
 struct PHashSHA2_512_ {
 	union buf_ {
-		puchar		buf[128];
-		puint64		buf_w[16];
+		puchar	buf[128];
+		puint64	buf_w[16];
 	} buf;
 	puint64		hash[8];
 

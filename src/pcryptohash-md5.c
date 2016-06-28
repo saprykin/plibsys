@@ -23,8 +23,8 @@
 
 struct PHashMD5_ {
 	union buf_ {
-		puchar		buf[64];
-		puint32		buf_w[16];
+		puchar	buf[64];
+		puint32	buf_w[16];
 	} buf;
 	puint32		hash[4];
 
