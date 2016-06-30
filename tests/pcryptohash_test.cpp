@@ -77,7 +77,11 @@ general_hash_test (PCryptoHashType	type,
 
 	BOOST_REQUIRE ((psize) p_crypto_hash_get_length (crypto_hash) == hash_len);
 	BOOST_REQUIRE (p_crypto_hash_get_type (crypto_hash) == type);
-	BOOST_REQUIRE (p_crypto_hash_get_string (crypto_hash) == NULL);
+
+	hash_str = p_crypto_hash_get_string (crypto_hash);
+	BOOST_REQUIRE (hash_str != NULL);
+	p_crypto_hash_reset (crypto_hash);
+	p_free (hash_str);
 
 	hash_dig = (puchar *) p_malloc0 (hash_len);
 	BOOST_REQUIRE (hash_dig != NULL);
@@ -97,7 +101,6 @@ general_hash_test (PCryptoHashType	type,
 	p_free (hash_str);
 
 	p_crypto_hash_reset (crypto_hash);
-	BOOST_REQUIRE (p_crypto_hash_get_string (crypto_hash) == NULL);
 
 	/* Check digest */
 	dig_len = hash_len;
@@ -110,7 +113,6 @@ general_hash_test (PCryptoHashType	type,
 		BOOST_CHECK (hash_dig[i] == etalon1[i]);
 
 	p_crypto_hash_reset (crypto_hash);
-	BOOST_REQUIRE (p_crypto_hash_get_string (crypto_hash) == NULL);
 
 	/* Case 2 */
 
@@ -121,7 +123,6 @@ general_hash_test (PCryptoHashType	type,
 	p_free (hash_str);
 
 	p_crypto_hash_reset (crypto_hash);
-	BOOST_REQUIRE (p_crypto_hash_get_string (crypto_hash) == NULL);
 
 	/* Check digest */
 	dig_len = hash_len;
@@ -134,7 +135,6 @@ general_hash_test (PCryptoHashType	type,
 		BOOST_CHECK (hash_dig[i] == etalon2[i]);
 
 	p_crypto_hash_reset (crypto_hash);
-	BOOST_REQUIRE (p_crypto_hash_get_string (crypto_hash) == NULL);
 
 	/* Case 3 */
 
@@ -148,7 +148,6 @@ general_hash_test (PCryptoHashType	type,
 	p_free (hash_str);
 
 	p_crypto_hash_reset (crypto_hash);
-	BOOST_REQUIRE (p_crypto_hash_get_string (crypto_hash) == NULL);
 
 	/* Check digest */
 	dig_len = hash_len;
@@ -162,7 +161,6 @@ general_hash_test (PCryptoHashType	type,
 		BOOST_CHECK (hash_dig[i] == etalon3[i]);
 
 	p_crypto_hash_reset (crypto_hash);
-	BOOST_REQUIRE (p_crypto_hash_get_string (crypto_hash) == NULL);
 
 	/* Stress test */
 	p_crypto_hash_update (crypto_hash, (const puchar *) long_str, PCRYPTO_STRESS_LENGTH);
@@ -172,7 +170,6 @@ general_hash_test (PCryptoHashType	type,
 	p_free (hash_str);
 
 	p_crypto_hash_reset (crypto_hash);
-	BOOST_REQUIRE (p_crypto_hash_get_string (crypto_hash) == NULL);
 
 	p_free (long_str);
 	p_free (hash_dig);
@@ -631,8 +628,6 @@ BOOST_AUTO_TEST_CASE (gost3411_94_test)
 	p_free (hash_str);
 
 	p_crypto_hash_reset (gost3411_94_hash);
-	BOOST_REQUIRE (p_crypto_hash_get_string (gost3411_94_hash) == NULL);
-
 	p_crypto_hash_free (gost3411_94_hash);
 
 	p_libsys_shutdown ();

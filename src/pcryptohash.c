@@ -15,8 +15,6 @@
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-/* TODO: Handle NULL-terminated strings */
-
 #include "pmem.h"
 #include "pcryptohash.h"
 #include "pcryptohash-gost3411.h"
@@ -41,7 +39,6 @@ struct PCryptoHash_ {
 	ppointer	context;
 	puint		hash_len;
 	pboolean	closed;
-	pboolean	reseted;
 	ppointer	(*create)	(void);
 	void		(*update)	(void *hash, const puchar *data, psize len);
 	void		(*finish)	(void *hash);
@@ -126,9 +123,8 @@ p_crypto_hash_new (PCryptoHashType type)
 		break;
 	}
 
-	ret->type    = type;
-	ret->closed  = FALSE;
-	ret->reseted = TRUE;
+	ret->type   = type;
+	ret->closed = FALSE;
 
 	if (P_UNLIKELY ((ret->context = ret->create ()) == NULL)) {
 		p_free (ret);
@@ -148,8 +144,6 @@ p_crypto_hash_update (PCryptoHash *hash, const puchar *data, psize len)
 		return;
 
 	hash->update (hash->context, data, len);
-
-	hash->reseted = FALSE;
 }
 
 P_LIB_API void
@@ -159,8 +153,7 @@ p_crypto_hash_reset (PCryptoHash *hash)
 		return;
 
 	hash->reset (hash->context);
-	hash->closed  = FALSE;
-	hash->reseted = TRUE;
+	hash->closed = FALSE;
 }
 
 P_LIB_API pchar *
@@ -169,7 +162,7 @@ p_crypto_hash_get_string (PCryptoHash *hash)
 	pchar		*ret;
 	const puchar	*digest;
 
-	if (P_UNLIKELY (hash == NULL || hash->reseted))
+	if (P_UNLIKELY (hash == NULL))
 		return NULL;
 
 	if (!hash->closed) {
@@ -197,11 +190,6 @@ p_crypto_hash_get_digest (PCryptoHash *hash, puchar *buf, psize *len)
 		return;
 
 	if (P_UNLIKELY (hash == NULL || buf == NULL)) {
-		*len = 0;
-		return;
-	}
-
-	if (P_UNLIKELY (hash->reseted)) {
 		*len = 0;
 		return;
 	}
