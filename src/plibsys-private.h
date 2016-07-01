@@ -28,7 +28,11 @@
 P_BEGIN_DECLS
 
 #ifndef PLIBSYS_HAS_SOCKLEN_T
+#  ifdef P_OS_VMS
+typedef unsigned int socklen_t;
+#  else
 typedef int socklen_t;
+#  endif
 #endif
 
 #ifndef PLIBSYS_HAS_SOCKADDR_STORAGE
