@@ -64,7 +64,7 @@
  * UNIXWARE          - UnixWare 7
  * IRIX              - SGI IRIX
  * HAIKU             - Haiku
- * VMS               - VMS
+ * VMS               - OpenVMS
  * UNIX              - Any UNIX BSD/SYSV based system
  * LINUX             - Linux
  * MAC9              - Mac OS 9 (Classic)
@@ -186,7 +186,7 @@
 
 /**
  * @def P_OS_VMS
- * @brief VMS operating system.
+ * @brief OpenVMS operating system.
  * @since 0.0.1
  */
 
