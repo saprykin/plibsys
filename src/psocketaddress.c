@@ -56,6 +56,12 @@
 #  endif
 #endif
 
+#ifdef P_OS_VMS
+#  if PLIBSYS_SIZEOF_VOID_P == 8
+#    define addrinfo __addrinfo64
+#  endif
+#endif
+
 struct PSocketAddress_ {
 	PSocketFamily	family;
 	union addr_ {
@@ -131,18 +137,8 @@ p_socket_address_new (const pchar	*address,
 {
 	PSocketAddress		*ret;
 #if defined (P_OS_WIN) || defined (PLIBSYS_HAS_GETADDRINFO)
-#  ifdef P_OS_VMS
-#    if PLIBSYS_SIZEOF_VOID_P == 4
-	struct __addrinfo32	hints;
-	struct __addrinfo32	*res;
-#    else
-	struct __addrinfo64	hints;
-	struct __addrinfo64	*res;
-#    endif
-#  else
 	struct addrinfo		hints;
 	struct addrinfo		*res;
-#  endif
 #endif
 
 #ifdef P_OS_WIN
