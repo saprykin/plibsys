@@ -18,10 +18,10 @@ $!===========================================================================
 $! Command-line options:
 $!
 $!    32        Compile with 32-bit pointers.
-$!
 $!    CCQUAL=x  Add "x" to the C compiler qualifiers.
 $!    NOIEEE    Do not use IEEE floating point.
 $!    DEBUG     Build in debug mode.
+$!    CLEAN     Only perform clean after the previous build.
 $!===========================================================================
 $!
 $!
@@ -112,14 +112,6 @@ $ endif
 $!
 $ objdir = proc_dev_dir - delim + ".''arch_name'" + delim
 $!
-$! When building on a search list, need to do a create to make sure that
-$! the output directory exists, since the clean procedure tries to delete
-$! it.
-$ 'vo_c' "Cleaning up previous build..."
-$ set default 'proc_dev_dir'
-$ @deltree.com 'arch_name'
-$ create/dir 'objdir'/prot=o:rwed
-$!
 $! Parse input arguments
 $! ---------------------
 $! Allow arguments to be grouped together with comma or separated by spaces
@@ -132,6 +124,14 @@ $ args_lower = f$edit(args, "LOWERCASE,COLLAPSE")
 $!
 $ args_len = f$length(args)
 $ args_lower_len = f$length(args_lower)
+$!
+$ if f$locate(",clean,", args_lower) .lt. args_lower_len
+$ then
+$     $ 'vo_c' "Cleaning up previous build..."
+$     set default 'proc_dev_dir'
+$     @deltree.com 'arch_name'
+$     goto common_exit 
+$ endif
 $!
 $ build_64 = 1
 $ if f$locate(",32,", args_lower) .lt. args_lower_len
@@ -159,6 +159,15 @@ $ if f$locate(",debug,", args_lower) .lt. args_lower_len
 $ then
 $     is_debug = 1
 $ endif
+$!
+$! Prepare build directory
+$! -----------------------
+$!
+$! When building on a search list, need to do a create to make sure that
+$! the output directory exists, since the clean procedure tries to delete
+$! it.
+$!
+$ create/dir 'objdir'/prot=o:rwed
 $!
 $! Generate platform-specific config file
 $! --------------------------------------
@@ -308,6 +317,16 @@ $ plibsys_src = plibsys_src + " psemaphore-posix.c pshm-posix.c pshmbuffer.c pso
 $ plibsys_src = plibsys_src + " psocketaddress.c pspinlock-sim.c pstring.c psysclose-unix.c"
 $ plibsys_src = plibsys_src + " ptimeprofiler-posix.c ptimeprofiler.c ptree-avl.c ptree-bst.c"
 $ plibsys_src = plibsys_src + " ptree-rb.c ptree.c puthread-posix.c puthread.c"
+$!
+$! Inform about building
+$! ---------------------
+$!
+$ if build_64 .eqs. "1"
+$ then
+$     'vo_c' "Building for ''arch_name' (64-bit)"
+$ else
+$     'vo_c' "Building for ''arch_name' (32-bit)"
+$ endif
 $!
 $! Compile library modules
 $! -----------------------
