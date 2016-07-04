@@ -46,7 +46,13 @@ typedef sem_t psem_hdl;
 struct PSemaphore_ {
 	pboolean		sem_created;
 	pchar			*platform_key;
+#if defined (P_OS_VMS) && (PLIBSYS_SIZEOF_VOID_P == 4)
+#  pragma __pointer_size 64
+#endif
 	psem_hdl		*sem_hdl;
+#if defined (P_OS_VMS) && (PLIBSYS_SIZEOF_VOID_P == 4)
+#  pragma __pointer_size 32
+#endif
 	PSemaphoreAccessMode	mode;
 	pint			init_val;
 };
