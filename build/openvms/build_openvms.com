@@ -88,7 +88,7 @@ $! -----------------------------------------------------------
 $!
 $ if (f$getsyi("HW_MODEL") .lt. 1024)
 $ then
-$      'vo_o' %PLIBSYS-F-NOTSUP, ", "VAX platform is not supported, sorry :("
+$      'vo_o' "%PLIBSYS-F-NOTSUP, VAX platform is not supported, sorry :("
 $      goto common_exit
 $ else
 $      arch_name = ""
@@ -105,7 +105,7 @@ $      patch         = f$element(1, "-", min_ver_patch)
 $!
 $      if maj_ver .lts. "8" .or. min_ver .lts. "4"
 $      then
-$          'vo_o' %PLIBSYS-F-NOTSUP, ", "only OpenVMS 8.4 and above are supported, sorry :("
+$          'vo_o' "%PLIBSYS-F-NOTSUP, only OpenVMS 8.4 and above are supported, sorry :("
 $          goto common_exit
 $      endif
 $ endif
@@ -127,10 +127,10 @@ $ args_lower_len = f$length(args_lower)
 $!
 $ if f$locate(",clean,", args_lower) .lt. args_lower_len
 $ then
-$     $ 'vo_c' "Cleaning up previous build..."
+$     'vo_c' "Cleaning up previous build..."
 $     set default 'proc_dev_dir'
 $     @deltree.com 'arch_name'
-$     goto common_exit 
+$     goto common_exit
 $ endif
 $!
 $ build_64 = 1
@@ -145,7 +145,7 @@ $ if args_loc .lt. args_lower_len
 $ then
 $     arg = f$extract(args_loc + 1, args_lower_len, args_lower)
 $     arg_val = f$element(0, ",", arg)
-$     cc_extra = f$element(1, "=", arg_val);
+$     cc_extra = f$element(1, "=", arg_val)
 $ endif
 $!
 $ is_ieee = 1
