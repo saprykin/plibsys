@@ -17,11 +17,18 @@ $!
 $!===========================================================================
 $! Command-line options:
 $!
-$!    32        Compile with 32-bit pointers.
-$!    CCQUAL=x  Add "x" to the C compiler qualifiers.
-$!    NOIEEE    Do not use IEEE floating point.
-$!    DEBUG     Build in debug mode.
-$!    CLEAN     Only perform clean after the previous build.
+$!    32            Compile with 32-bit pointers.
+$!    CCQUAL=x      Add "x" to the C compiler qualifiers.
+$!    DEBUG         Build in debug mode.
+$!    CLEAN         Only perform clean after the previous build.
+$!    TESTS=(x)     Build library tests. Comma separated test names or leave
+$!                  empty to build all the tests.
+$!                  Example 1 (curtain tests): TESTS=(pmem_test,puthread_test)
+$!                  Example 2 (all tests): TESTS
+$!    BOOST_ROOT=x  Boost root directory.
+$!                  Example: BOOST_ROOT=/SYS$COMMON/boost_1_43_1
+$!    NOLIB         Skip library buidling. Useful when you want to rebuild
+$!                  particular tests.
 $!===========================================================================
 $!
 $!
@@ -60,12 +67,10 @@ $ then
 $     proc_dev_dir = orig_def_dev + proc_dir
 $ endif
 $!
-$! Verbose output message stuff. Define symbol to "write sys$output" or "!".
+$! Verbose output message stuff. Define symbol to "write sys$output".
 $! vo_c - verbose output for compile
-$! vo_o - object check
 $!
 $ vo_c := "write sys$output"
-$ vo_o := "!"
 $!
 $! Determine the main distribution directory ("[--]") in an
 $! ODS5-tolerant (case-insensitive) way.  (We do assume that the only
@@ -80,7 +85,6 @@ $!
 $ set default 'proc_dev_dir'
 $ set default [--.src]
 $ base_src_dir = f$environment("default")
-$ top_src_dir = base_src_dir - delim
 $ set default 'proc_dev_dir'
 $!
 $! Define the architecture-specific destination directory name
@@ -88,7 +92,7 @@ $! -----------------------------------------------------------
 $!
 $ if (f$getsyi("HW_MODEL") .lt. 1024)
 $ then
-$      'vo_o' "%PLIBSYS-F-NOTSUP, VAX platform is not supported, sorry :("
+$      'vo_c' "%PLIBSYS-F-NOTSUP, VAX platform is not supported, sorry :("
 $      goto common_exit
 $ else
 $      arch_name = ""
@@ -105,7 +109,7 @@ $      patch         = f$element(1, "-", min_ver_patch)
 $!
 $      if maj_ver .lts. "8" .or. min_ver .lts. "4"
 $      then
-$          'vo_o' "%PLIBSYS-F-NOTSUP, only OpenVMS 8.4 and above are supported, sorry :("
+$          'vo_c' "%PLIBSYS-F-NOTSUP, only OpenVMS 8.4 and above are supported, sorry :("
 $          goto common_exit
 $      endif
 $ endif
@@ -148,16 +152,57 @@ $     arg_val = f$element(0, ",", arg)
 $     cc_extra = f$element(1, "=", arg_val)
 $ endif
 $!
-$ is_ieee = 1
-$ if f$locate(",noieee,", args_lower) .lt. args_lower_len
-$ then
-$     is_ieee = 0
-$ endif
-$!
 $ is_debug = 0
 $ if f$locate(",debug,", args_lower) .lt. args_lower_len
 $ then
 $     is_debug = 1
+$ endif
+$!
+$ is_tests = 0
+$ test_list = ""
+$ if f$locate(",tests,", args_lower) .lt. args_lower_len
+$ then
+$     is_tests = 1
+$ else
+$     args_loc = f$locate(",tests=(", args_lower)
+$     if args_loc .lt. args_lower_len
+$     then
+$         is_tests          = 1
+$         arg               = f$extract(args_loc + 1, args_lower_len, args_lower)
+$         arg_val           = f$element(0, ")", arg)
+$         test_list_val     = f$element(1, "=", arg_val) - "(" - ")"
+$         test_list_val     = f$edit(test_list_val, "COLLAPSE")
+$         test_list_counter = 0
+$
+$ test_list_loop: 
+$         next_test_val = f$element (test_list_counter, ",", test_list_val)
+$         if next_test_val .nes. "" .and. next_test_val .nes. ","
+$         then
+$             test_list         = test_list + next_test_val + " "
+$             test_list_counter = test_list_counter + 1
+$             goto test_list_loop
+$         endif
+$     endif
+$ endif
+$!
+$ boost_root = ""
+$ args_loc = f$locate(",boost_root=", args_lower)
+$ if args_loc .lt. args_lower_len
+$ then
+$     arg = f$extract(args_loc + 1, args_lower_len, args_lower)
+$     arg_val = f$element(0, ",", arg)
+$     boost_root = f$element(1, "=", arg_val)
+$ endif
+$!
+$ if is_tests .eqs. "1" .and. boost_root .eqs. ""
+$ then
+$     'vo_c' "%PLIBSYS-I-NOTESTS, tests couldn't be built without BOOST_ROOT parameter, disabling."
+$     is_tests = 0
+$ endif
+$!
+$ if is_tests .eqs. "0" .and. boost_root .nes. ""
+$ then
+$     'vo_c' "%PLIBSYS-I-BOOSTIGN, BOOST_ROOT parameter will be ignored without tests enabled."
 $ endif
 $!
 $! Prepare build directory
@@ -168,11 +213,16 @@ $! the output directory exists, since the clean procedure tries to delete
 $! it.
 $!
 $ create/dir 'objdir'/prot=o:rwed
+$ set default 'objdir'
+$ @[-]deltree CXX_REPOSITORY
+$!
+$ if f$locate(",nolib,", args_lower) .lt. args_lower_len
+$ then
+$     goto build_tests
+$ endif
 $!
 $! Generate platform-specific config file
 $! --------------------------------------
-$!
-$ set default 'objdir'
 $!
 $ if f$search("plibsysconfig.h") .nes. "" then delete/log plibsysconfig.h;*
 $!
@@ -283,8 +333,9 @@ $!
 $! Prepare sources for compilation
 $! -------------------------------
 $!
-$ plibsys_include_dirs = "''objdir',''top_src_dir'" + delim
-$ cc_params = "/NAMES=(AS_IS,SHORTENED)/DEFINE=(PLIBSYS_COMPILATION,_REENTRANT)/INCLUDE_DIRECTORY=(''plibsys_include_dirs')"
+$ cc_params = "/NAMES=(AS_IS,SHORTENED)/DEFINE=(PLIBSYS_COMPILATION,_REENTRANT)"
+$ cc_params = cc_params + "/INCLUDE_DIRECTORY=(''objdir',''base_src_dir')"
+$ cc_params = cc_params + "/FLOAT=IEEE/IEEE_MODE=DENORM_RESULTS"
 $!
 $ if build_64 .eqs. "1"
 $ then
@@ -301,11 +352,6 @@ $!
 $ if is_debug .eqs. "1"
 $ then
 $     cc_params = cc_params + "/DEBUG/NOOPTIMIZE/LIST/SHOW=ALL"
-$ endif
-$!
-$ if is_ieee .eqs. "1"
-$ then
-$     cc_params = cc_params + "/FLOAT=IEEE/IEEE_MODE=DENORM_RESULTS"
 $ endif
 $!
 $ plibsys_src = "patomic-sim.c pcondvariable-posix.c pcryptohash-gost3411.c pcryptohash-md5.c"
@@ -341,6 +387,7 @@ $     if next_src .nes. "" .and. next_src .nes. " "
 $     then
 $         'vo_c' "[CC] ''next_src'"
 $         cc [---.src]'next_src' 'cc_params'
+$!
 $         src_counter = src_counter + 1
 $         goto src_loop
 $     endif
@@ -353,8 +400,70 @@ $ library/create PLIBSYS.OLB
 $ library/replace PLIBSYS.OLB *.obj;*
 $ library/compress PLIBSYS.OLB
 $ purge PLIBSYS.OLB
-$ 'vo_c' "Build done."
 $!
-$common_exit:
-$ set default 'orig_def'
-$ exit
+$! Compile tests
+$! -------------------------
+$ build_tests:
+$!
+$ if is_tests .eqs. "0"
+$ then
+$     goto build_done
+$ endif
+$!
+$ if test_list .nes. ""
+$ then
+$     plibsys_tests = f$edit(test_list, "TRIM")
+$ else
+$     plibsys_tests = "patomic_test pcondvariable_test pcryptohash_test pdir_test"
+$     plibsys_tests = plibsys_tests + " perror_test pfile_test phashtable_test"
+$     plibsys_tests = plibsys_tests + " pinifile_test plibraryloader_test plist_test"
+$     plibsys_tests = plibsys_tests + " pmacros_test pmain_test pmem_test pmutex_test"
+$     plibsys_tests = plibsys_tests + " pprocess_test prwlock_test psemaphore_test"
+$     plibsys_tests = plibsys_tests + " pshm_test pshmbuffer_test psocket_test"
+$     plibsys_tests = plibsys_tests + " psocketaddress_test pspinlock_test pstring_test"
+$     plibsys_tests = plibsys_tests + " ptimeprofiler_test ptree_test ptypes_test"
+$     plibsys_tests = plibsys_tests + " puthread_test"
+$ endif
+$!
+$ 'vo_c' "Compiling test executables..."
+$ test_counter = 0
+$ plibsys_tests = f$edit(plibsys_tests, "COMPRESS")
+$!
+$ cxx_params = "/INCLUDE=(''objdir',''base_src_dir',""''boost_root'"")"
+$ cxx_params = cxx_params + "/DEFINE=(__USE_STD_IOSTREAM,PLIBSYS_TESTS_STATIC)/NAMES=(AS_IS, SHORTENED)"
+$ cxx_params = cxx_params + "/FLOAT=IEEE/IEEE_MODE=DENORM_RESULTS"
+$!
+$ if build_64 .eqs. "1"
+$ then
+$     cxx_params = cxx_params + "/POINTER_SIZE=64"
+$ else
+$     cxx_params = cxx_params + "/POINTER_SIZE=32"
+$ endif
+$!
+$ if is_debug .eqs. "1"
+$ then
+$     cxx_params = cxx_params + "/DEBUG/NOOPTIMIZE/LIST/SHOW=ALL"
+$ endif
+$!
+$ test_loop:
+$     next_test = f$element (test_counter, " ", plibsys_tests)
+$     if next_test .nes. "" .and. next_test .nes. " "
+$     then
+$         'vo_c' "[CXX] ''next_test'.cpp"
+$         cxx [---.tests]'next_test'.cpp 'cxx_params'
+$!
+$         'vo_c' "[CXXLINK] ''next_test'.obj"
+$          cxxlink 'next_test'.obj,'objdir'PLIBSYS.OLB/LIBRARY /THREADS_ENABLE
+$!
+$         @[-]deltree CXX_REPOSITORY
+$ next_test:
+$         test_counter = test_counter + 1
+$         goto test_loop
+$     endif
+$!
+$ build_done:
+$     'vo_c' "Build done."
+$!
+$ common_exit:
+$     set default 'orig_def'
+$     exit
