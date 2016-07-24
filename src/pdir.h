@@ -86,6 +86,8 @@ P_LIB_API PDir *	p_dir_new		(const pchar	*path,
  * @return TRUE in case of success, FALSE otherwise.
  * @since 0.0.1
  * @note Call returns TRUE if the directory @a path is already exists.
+ * @note On OpenVMS operating system it creates intermediate directories as
+ * well.
  */
 P_LIB_API pboolean	p_dir_create		(const pchar	*path,
 						 pint		mode,
