@@ -109,7 +109,9 @@ BOOST_AUTO_TEST_CASE (pdir_general_test)
 	BOOST_CHECK (p_dir_new (NULL, NULL) == NULL);
 	BOOST_CHECK (p_dir_new ("." P_DIR_SEPARATOR "pdir_test_dir_new", NULL) == NULL);
 	BOOST_CHECK (p_dir_create (NULL, -1, NULL) == FALSE);
+#ifndef P_OS_VMS
 	BOOST_CHECK (p_dir_create ("." P_DIR_SEPARATOR "pdir_test_dir_new" P_DIR_SEPARATOR "test_dir", -1, NULL) == FALSE);
+#endif
 	BOOST_CHECK (p_dir_remove (NULL, NULL) == FALSE);
 	BOOST_CHECK (p_dir_remove ("." P_DIR_SEPARATOR "pdir_test_dir_new", NULL) == FALSE);
 	BOOST_CHECK (p_dir_is_exists (NULL) == FALSE);
