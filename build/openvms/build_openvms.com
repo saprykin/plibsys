@@ -333,7 +333,8 @@ $!
 $! Prepare sources for compilation
 $! -------------------------------
 $!
-$ cc_params = "/NAMES=(AS_IS,SHORTENED)/DEFINE=(PLIBSYS_COMPILATION,_REENTRANT)"
+$ cc_params = "/NAMES=(AS_IS,SHORTENED)"
+$ cc_params = cc_params + "/DEFINE=(PLIBSYS_COMPILATION,_REENTRANT,_POSIX_EXIT)"
 $ cc_params = cc_params + "/INCLUDE_DIRECTORY=(''objdir',''base_src_dir')"
 $ cc_params = cc_params + "/FLOAT=IEEE/IEEE_MODE=DENORM_RESULTS"
 $!
