@@ -333,6 +333,7 @@ $!
 $! Prepare sources for compilation
 $! -------------------------------
 $!
+$ cc_link_params = ""
 $ cc_params = "/NAMES=(AS_IS,SHORTENED)"
 $ cc_params = cc_params + "/DEFINE=(PLIBSYS_COMPILATION,_REENTRANT,_POSIX_EXIT)"
 $ cc_params = cc_params + "/INCLUDE_DIRECTORY=(''objdir',''base_src_dir')"
@@ -353,6 +354,9 @@ $!
 $ if is_debug .eqs. "1"
 $ then
 $     cc_params = cc_params + "/DEBUG/NOOPTIMIZE/LIST/SHOW=ALL"
+$     cc_link_params = "/DEBUG/TRACEBACK"
+$ else
+$     cc_link_params = "/NODEBUG/NOTRACEBACK"
 $ endif
 $!
 $ plibsys_src = "patomic-sim.c pcondvariable-posix.c pcryptohash-gost3411.c pcryptohash-md5.c"
@@ -381,6 +385,7 @@ $!
 $ 'vo_c' "Compiling object modules..."
 $ src_counter = 0
 $ plibsys_src = f$edit(plibsys_src, "COMPRESS")
+$ plibsys_objs = ""
 $!
 $ src_loop:
 $     next_src = f$element (src_counter, " ", plibsys_src)
@@ -390,17 +395,27 @@ $         'vo_c' "[CC] ''next_src'"
 $         cc [---.src]'next_src' 'cc_params'
 $!
 $         src_counter = src_counter + 1
+$!
+$         obj_file = f$extract (0, f$length (next_src) - 1, next_src) + "obj"
+$         plibsys_objs = plibsys_objs + "''obj_file',"
+$!
 $         goto src_loop
 $     endif
+$!
+$ plibsys_objs = f$extract (0, f$length (plibsys_objs) - 1, plibsys_objs)
+$ 
 $!
 $! Create library
 $! --------------
 $!
 $ 'vo_c' "Creating object library..."
 $ library/create PLIBSYS.OLB
-$ library/replace PLIBSYS.OLB *.obj;*
+$ library/replace PLIBSYS.OLB 'plibsys_objs'
 $ library/compress PLIBSYS.OLB
 $ purge PLIBSYS.OLB
+$!
+$ 'vo_c' "Creating shared library..."
+$ link/shareable=PLIBSYS.EXE 'cc_link_params' 'plibsys_objs', [-]plibsys.opt/option
 $!
 $! Compile tests
 $! -------------------------
