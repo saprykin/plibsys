@@ -409,13 +409,12 @@ $! Create library
 $! --------------
 $!
 $ 'vo_c' "Creating object library..."
-$ library/create PLIBSYS.OLB
-$ library/replace PLIBSYS.OLB 'plibsys_objs'
-$ library/compress PLIBSYS.OLB
+$ library/CREATE/INSERT/REPLACE /LIST=PLIBSYS.LIST PLIBSYS.OLB 'plibsys_objs'
+$ library/COMPRESS PLIBSYS.OLB
 $ purge PLIBSYS.OLB
 $!
 $ 'vo_c' "Creating shared library..."
-$ link/shareable=PLIBSYS.EXE 'cc_link_params' 'plibsys_objs', [-]plibsys.opt/option
+$ link/SHAREABLE=PLIBSYS.EXE /MAP=PLIBSYS.MAP 'cc_link_params' 'plibsys_objs', [-]plibsys.opt/OPTION
 $!
 $! Compile tests
 $! -------------------------
