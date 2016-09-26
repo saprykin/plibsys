@@ -57,7 +57,7 @@ build_script:
                         $BUILD_COMMAND = "mingw32-make";
                 } Else {
                         $BUILD_COMMAND = "msbuild";
-                        $BUILD_PARAMS  = @("/verbosity:normal", "$BUILD_DIR\plibsys.sln", "/p:Configuration=$env:configuration");
+                        $BUILD_PARAMS  = @("/verbosity:normal", "$BUILD_DIR\plibsys.sln", "/p:Configuration=$env:configuration", "/m");
                 }
 
                 If ($env:USE_COVERITY -eq "1" -And $env:APPVEYOR_REPO_BRANCH -eq "appveyor_test") {
