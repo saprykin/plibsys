@@ -416,14 +416,28 @@ $!
 $ 'vo_c' "Creating shared library..."
 $ link/SHAREABLE=PLIBSYS.EXE /MAP=PLIBSYS.MAP 'cc_link_params' 'plibsys_objs', [-]plibsys.opt/OPTION
 $!
-$! Compile tests
-$! -------------------------
-$ build_tests:
+$! Testing area
+$! ------------
 $!
+$ build_tests:
 $ if is_tests .eqs. "0"
 $ then
 $     goto build_done
 $ endif
+$!
+$! Write link options file
+$! -----------------------
+$!
+$ if f$search("plibsys_link.opt") .nes. "" then delete/log plibsys_link.opt;*
+$!
+$ open/write/error=link_write_end lhf plibsys_link.opt
+$ write lhf "''objdir'PLIBSYS.EXE/SHARE"
+$ write lhf ""
+$ link_write_end:
+$     close lhf
+$!
+$! Compile tests
+$! -------------------------
 $!
 $ if test_list .nes. ""
 $ then
@@ -468,7 +482,7 @@ $         'vo_c' "[CXX] ''next_test'.cpp"
 $         cxx [---.tests]'next_test'.cpp 'cxx_params'
 $!
 $         'vo_c' "[CXXLINK] ''next_test'.obj"
-$          cxxlink 'next_test'.obj,'objdir'PLIBSYS.OLB/LIBRARY /THREADS_ENABLE
+$          cxxlink 'next_test'.obj,'objdir'plibsys_link.opt/OPTION /THREADS_ENABLE
 $!
 $         @[-]deltree CXX_REPOSITORY
 $ next_test:
