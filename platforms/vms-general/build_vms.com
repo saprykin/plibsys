@@ -235,7 +235,7 @@ $!
 $! Generate platform-specific config file
 $! --------------------------------------
 $!
-$ if f$search("plibsysconfig.h") .nes. "" then delete/log plibsysconfig.h;*
+$ if f$search("plibsysconfig.h") .nes. "" then delete plibsysconfig.h;*
 $!
 $! Get the version number
 $! ----------------------
