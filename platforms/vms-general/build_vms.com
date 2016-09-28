@@ -219,7 +219,11 @@ $! When building on a search list, need to do a create to make sure that
 $! the output directory exists, since the clean procedure tries to delete
 $! it.
 $!
-$ create/dir 'objdir'/prot=o:rwed
+$ if f$search("''proc_dev_dir'''arch_name'.DIR") .eqs. ""
+$ then
+$     create/dir 'objdir'/prot=o:rwed
+$ endif
+$!
 $ set default 'objdir'
 $ @[-]deltree CXX_REPOSITORY
 $!
