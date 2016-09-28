@@ -18,6 +18,7 @@ $!===========================================================================
 $! Command-line options:
 $!
 $!    32            Compile with 32-bit pointers.
+$!    BIGENDIAN     Compile for a big endian host.
 $!    CCQUAL=x      Add "x" to the C compiler qualifiers.
 $!    DEBUG         Build in debug mode.
 $!    CLEAN         Only perform clean after the previous build.
@@ -141,6 +142,12 @@ $ build_64 = 1
 $ if f$locate(",32,", args_lower) .lt. args_lower_len
 $ then
 $     build_64 = 0
+$ endif
+$!
+$ big_endian = 0
+$ if f$locate(",bigendian,", args_lower) .lt. args_lower_len
+$ then
+$     big_endian = 1
 $ endif
 $!
 $ cc_extra = ""
@@ -322,7 +329,14 @@ $ endif
 $!
 $ write chf "#define PLIBSYS_SIZEOF_LONG 4"
 $ write chf ""
-$ write chf "#define P_BYTE_ORDER P_LITTLE_ENDIAN"
+$!
+$ if big_endian .eqs. "1"
+$ then
+$     write chf "#define P_BYTE_ORDER P_BIG_ENDIAN"
+$ else
+$     write chf "#define P_BYTE_ORDER P_LITTLE_ENDIAN"
+$ endif
+$!
 $ write chf ""
 $ write chf "P_END_DECLS"
 $ write chf ""
