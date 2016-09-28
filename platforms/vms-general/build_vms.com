@@ -450,7 +450,7 @@ $!
 $! Write link options file
 $! -----------------------
 $!
-$ if f$search("plibsys_link.opt") .nes. "" then delete/log plibsys_link.opt;*
+$ if f$search("plibsys_link.opt") .nes. "" then delete plibsys_link.opt;*
 $!
 $ open/write/error=link_write_end lhf plibsys_link.opt
 $ write lhf "''objdir'PLIBSYS.EXE/SHARE"
