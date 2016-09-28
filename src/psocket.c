@@ -36,6 +36,9 @@
 #  include <unistd.h>
 #  include <signal.h>
 #  include <sys/poll.h>
+#  ifdef P_OS_VMS
+#    include <stropts.h>
+#  endif
 #endif
 
 /* On old Solaris systems SOMAXCONN is set to 5 */
@@ -105,6 +108,11 @@ pp_socket_set_fd_blocking (pint		fd,
 #endif
 
 #ifndef P_OS_WIN
+#  ifdef P_OS_VMS
+	arg = !blocking;
+
+	if (P_UNLIKELY (ioctl (fd, FIONBIO, (pchar *) &arg) < 0)) {
+#  else
 	if (P_UNLIKELY ((arg = fcntl (fd, F_GETFL, NULL)) < 0)) {
 		P_WARNING ("PSocket::pp_socket_set_fd_blocking: fcntl() failed");
 		arg = 0;
@@ -113,6 +121,7 @@ pp_socket_set_fd_blocking (pint		fd,
 	arg = (!blocking) ? (arg | O_NONBLOCK) : (arg & ~O_NONBLOCK);
 
 	if (P_UNLIKELY (fcntl (fd, F_SETFL, arg) < 0)) {
+#  endif
 #else
 	arg = !blocking;
 
