@@ -416,6 +416,7 @@ $         src_counter = src_counter + 1
 $!
 $         obj_file = f$extract (0, f$length (next_src) - 1, next_src) + "obj"
 $         plibsys_objs = plibsys_objs + "''obj_file',"
+$         purge 'obj_file'
 $!
 $         goto src_loop
 $     endif
@@ -427,12 +428,15 @@ $! Create library
 $! --------------
 $!
 $ 'vo_c' "Creating object library..."
-$ library/CREATE/INSERT/REPLACE /LIST=PLIBSYS.LIST PLIBSYS.OLB 'plibsys_objs'
+$ library/CREATE/INSERT/REPLACE /LIST=PLIBSYS.LIS PLIBSYS.OLB 'plibsys_objs'
 $ library/COMPRESS PLIBSYS.OLB
 $ purge PLIBSYS.OLB
+$ purge PLIBSYS.LIS
 $!
 $ 'vo_c' "Creating shared library..."
 $ link/SHAREABLE=PLIBSYS.EXE /MAP=PLIBSYS.MAP 'cc_link_params' 'plibsys_objs', [-]plibsys.opt/OPTION
+$ purge PLIBSYS.EXE
+$ purge PLIBSYS.MAP
 $!
 $! Testing area
 $! ------------
@@ -503,6 +507,8 @@ $         'vo_c' "[CXXLINK] ''next_test'.obj"
 $          cxxlink 'next_test'.obj,'objdir'plibsys_link.opt/OPTION /THREADS_ENABLE
 $!
 $         @[-]deltree CXX_REPOSITORY
+$         purge 'next_test'.obj
+$         purge 'next_test'.exe
 $ next_test:
 $         test_counter = test_counter + 1
 $         goto test_loop
