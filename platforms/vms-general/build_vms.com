@@ -500,7 +500,7 @@ $ test_loop:
 $     next_test = f$element (test_counter, " ", plibsys_tests)
 $     if next_test .nes. "" .and. next_test .nes. " "
 $     then
-$         'vo_c' "[CXX] ''next_test'.cpp"
+$         'vo_c' "[CXX]     ''next_test'.cpp"
 $         cxx [---.tests]'next_test'.cpp 'cxx_params'
 $!
 $         'vo_c' "[CXXLINK] ''next_test'.obj"
