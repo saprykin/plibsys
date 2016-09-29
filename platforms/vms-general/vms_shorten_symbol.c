@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2010 Craig A. Berry
+ * Copyright (c) 2016 Alexander Saprykin
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -203,7 +204,7 @@ main (int argc, char **argv)
 
         if (argc < 2) {
                 fprintf (stderr, "Usage: %s <symbol name> [<AS_IS flag>]\n", argv[0]);
-                exit (EXIT_FAILURE);
+                return EXIT_FAILURE;
         }
 
         if (argc > 2)
@@ -219,7 +220,7 @@ main (int argc, char **argv)
         input_symbol = malloc (symlen + 1);
 
         if (input_symbol == NULL)
-                exit (EXIT_FAILURE);
+                return EXIT_FAILURE;
 
         strncpy (input_symbol, argv[1], symlen);
         input_symbol[symlen] = '\0';
@@ -233,5 +234,5 @@ main (int argc, char **argv)
         printf ("%s%s\n", &short_symbol, argv[1]);
         free (input_symbol);
 
-        return 0;
+        return EXIT_SUCCESS;
 }
