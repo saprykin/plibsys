@@ -210,6 +210,12 @@ main (int argc, char **argv)
                 as_is_flag = 1;
 
         symlen = strlen (argv[1]);
+
+        if (symlen <= 31) {
+                printf ("No need for shorten symbol\n");
+                return EXIT_SUCCESS;
+        }
+
         input_symbol = malloc (symlen + 1);
 
         if (input_symbol == NULL)
