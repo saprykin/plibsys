@@ -24,8 +24,9 @@ $!    DEBUG         Build in debug mode.
 $!    CLEAN         Only perform clean after the previous build.
 $!    TESTS=(x)     Build library tests. Comma separated test names or leave
 $!                  empty to build all the tests.
-$!                  Example 1 (curtain tests): TESTS=(pmem_test,puthread_test)
+$!                  Example 1 (curtain tests): TESTS=(pmem,puthread)
 $!                  Example 2 (all tests): TESTS
+$!    RUN_TESTS     Runs all tests.
 $!    BOOST_ROOT=x  Boost root directory.
 $!                  Example: BOOST_ROOT=/SYS$COMMON/boost_1_43_1
 $!    NOLIB         Skip library buidling. Useful when you want to rebuild
@@ -190,6 +191,12 @@ $             test_list_counter = test_list_counter + 1
 $             goto test_list_loop
 $         endif
 $     endif
+$ endif
+$!
+$ run_tests = 0
+$ if f$locate(",run_tests,", args_lower) .lt. args_lower_len
+$ then
+$     run_tests = 1
 $ endif
 $!
 $ boost_root = ""
@@ -422,7 +429,6 @@ $         goto src_loop
 $     endif
 $!
 $ plibsys_objs = f$extract (0, f$length (plibsys_objs) - 1, plibsys_objs)
-$ 
 $!
 $! Create library
 $! --------------
@@ -442,6 +448,12 @@ $! Testing area
 $! ------------
 $!
 $ build_tests:
+$ test_list_full = "patomic pcondvariable pcryptohash pdir"
+$ test_list_full = test_list_full + " perror pfile phashtable pinifile plibraryloader plist"
+$ test_list_full = test_list_full + " pmacros pmain pmem pmutex pprocess prwlock psemaphore"
+$ test_list_full = test_list_full + " pshm pshmbuffer psocket psocketaddress pspinlock pstring"
+$ test_list_full = test_list_full + " ptimeprofiler ptree ptypes puthread"
+$!
 $ if is_tests .eqs. "0"
 $ then
 $     goto build_done
@@ -465,15 +477,7 @@ $ if test_list .nes. ""
 $ then
 $     plibsys_tests = f$edit(test_list, "TRIM")
 $ else
-$     plibsys_tests = "patomic_test pcondvariable_test pcryptohash_test pdir_test"
-$     plibsys_tests = plibsys_tests + " perror_test pfile_test phashtable_test"
-$     plibsys_tests = plibsys_tests + " pinifile_test plibraryloader_test plist_test"
-$     plibsys_tests = plibsys_tests + " pmacros_test pmain_test pmem_test pmutex_test"
-$     plibsys_tests = plibsys_tests + " pprocess_test prwlock_test psemaphore_test"
-$     plibsys_tests = plibsys_tests + " pshm_test pshmbuffer_test psocket_test"
-$     plibsys_tests = plibsys_tests + " psocketaddress_test pspinlock_test pstring_test"
-$     plibsys_tests = plibsys_tests + " ptimeprofiler_test ptree_test ptypes_test"
-$     plibsys_tests = plibsys_tests + " puthread_test"
+$     plibsys_tests = test_list_full
 $ endif
 $!
 $ 'vo_c' "Compiling test executables..."
@@ -500,6 +504,7 @@ $ test_loop:
 $     next_test = f$element (test_counter, " ", plibsys_tests)
 $     if next_test .nes. "" .and. next_test .nes. " "
 $     then
+$         next_test = next_test + "_test"
 $         'vo_c' "[CXX]     ''next_test'.cpp"
 $         cxx [---.tests]'next_test'.cpp 'cxx_params'
 $!
@@ -509,13 +514,46 @@ $!
 $         @[-]deltree CXX_REPOSITORY
 $         purge 'next_test'.obj
 $         purge 'next_test'.exe
-$ next_test:
+$!
 $         test_counter = test_counter + 1
 $         goto test_loop
 $     endif
 $!
 $ build_done:
 $     'vo_c' "Build done."
+$!
+$! Run unit tests
+$! --------------
+$!
+$ if run_tests .eqs. "0"
+$ then
+$     goto common_exit
+$ endif
+$!
+$ 'vo_c' "Running tests..."
+$ test_counter = 0
+$!
+$ run_loop:
+$     next_test = f$element (test_counter, " ", test_list_full)
+$     if next_test .nes. "" .and. next_test .nes. " "
+$     then
+$         if f$search("''next_test'_test.exe") .eqs. ""
+$         then
+$             'vo_c' "[SKIP] ''next_test'"
+$             goto run_loop_next
+$         endif
+$!
+$         'vo_c' "[RUN]  ''next_test'"
+$         next_test = next_test + "_test.exe"
+$!
+$         define/user sys$error NL:
+$         define/user sys$output NL:
+$         run 'next_test'
+$!
+$ run_loop_next:
+$         test_counter = test_counter + 1
+$         goto run_loop
+$     endif
 $!
 $ common_exit:
 $     set default 'orig_def'
