@@ -540,7 +540,7 @@ $     if next_test .nes. "" .and. next_test .nes. " "
 $     then
 $         if f$search("''next_test'_test.exe") .eqs. ""
 $         then
-$             'vo_c' "[SKIP] ''next_test'"
+$             'vo_c' "[SKIP] Test not found: ''next_test'"
 $             goto run_loop_next
 $         endif
 $!
