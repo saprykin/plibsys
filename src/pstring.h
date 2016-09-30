@@ -58,7 +58,7 @@ P_LIB_API pchar *	p_strchomp	(const pchar	*str);
 
 /**
  * @brief Tokenizes a string by given delimiters.
- * @param[in, out] str String to tokenize.
+ * @param[in,out] str String to tokenize.
  * @param delim List of delimiters to split the string.
  * @param buf Context to store tokenize info.
  * @return Pointer to a splitted zero-terminated string in case of success, NULL

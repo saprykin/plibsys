@@ -140,7 +140,7 @@ P_LIB_API pchar *		p_crypto_hash_get_string	(PCryptoHash		*hash);
  * @brief Gets a hash in a raw representation.
  * @param hash #PCryptoHash context to get a digest from.
  * @param buf Buffer to store the digest with the hash raw representation.
- * @param[in, out] len Size of @a buf when calling, count of written bytes
+ * @param[in,out] len Size of @a buf when calling, count of written bytes
  * after.
  * @note Before getting the raw digest the hash context will be closed for
  * further updates.

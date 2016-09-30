@@ -78,7 +78,7 @@ P_LIB_API void		p_atomic_int_set			(volatile pint		*atomic,
 
 /**
  * @brief Increments #pint value from @a atomic by 1.
- * @param[in, out] atomic Pointer to #pint to increment the value.
+ * @param[in,out] atomic Pointer to #pint to increment the value.
  * @since 0.0.1
  *
  * Think of this operation as an atomic version of `{ *atomic += 1; }`.
@@ -90,7 +90,7 @@ P_LIB_API void		p_atomic_int_inc			(volatile pint		*atomic);
 /**
  * @brief Decrements #pint value from @a atomic by 1 and tests the result for
  * zero.
- * @param[in, out] atomic Pointer to #pint to decrement the value.
+ * @param[in,out] atomic Pointer to #pint to decrement the value.
  * @return TRUE if the new value is equal to zero, FALSE otherwise.
  * @since 0.0.1
  *
@@ -104,7 +104,7 @@ P_LIB_API pboolean	p_atomic_int_dec_and_test		(volatile pint		*atomic);
 /**
  * @brief Compares @a oldval with the value pointed to by @a atomic and if
  * they are equal, atomically exchanges the value of @a atomic with @a newval.
- * @param[in, out] atomic Pointer to #pint.
+ * @param[in,out] atomic Pointer to #pint.
  * @param oldval Old #pint value.
  * @param newval New #pint value.
  * @return TRUE if @a atomic value was equal @a oldval, FALSE otherwise.
@@ -123,7 +123,7 @@ P_LIB_API pboolean	p_atomic_int_compare_and_exchange	(volatile pint		*atomic,
 
 /**
  * @brief Atomically adds #pint value to @a atomic value.
- * @param[in, out] atomic Pointer to #pint.
+ * @param[in,out] atomic Pointer to #pint.
  * @param val Integer to add to @a atomic value.
  * @return Old value before the addition.
  * @since 0.0.1
@@ -139,7 +139,7 @@ P_LIB_API pint		p_atomic_int_add			(volatile pint		*atomic,
 /**
  * @brief Atomically performs the bitwise 'and' operation of @a atomic value
  * and @a val storing the result back in @a atomic.
- * @param[in, out] atomic Pointer to #puint.
+ * @param[in,out] atomic Pointer to #puint.
  * @param val #puint to perform bitwise 'and' with @a atomic value.
  * @return Old @a atomic value before the operation.
  * @since 0.0.1
@@ -155,7 +155,7 @@ P_LIB_API puint		p_atomic_int_and			(volatile puint		*atomic,
 /**
  * @brief Atomically performs the bitwise 'or' operation of @a atomic value
  * and @a val storing the result back in @a atomic.
- * @param[in, out] atomic Pointer to #puint.
+ * @param[in,out] atomic Pointer to #puint.
  * @param val #puint to perform bitwise 'or' with @a atomic value.
  * @return Old @a atomic value before the operation.
  * @since 0.0.1
@@ -171,7 +171,7 @@ P_LIB_API puint		p_atomic_int_or				(volatile puint		*atomic,
 /**
  * @brief Atomically performs the bitwise 'xor' operation of @a atomic value
  * and @a val storing the result back in @a atomic.
- * @param[in, out] atomic Pointer to #puint.
+ * @param[in,out] atomic Pointer to #puint.
  * @param val #puint to perform bitwise 'xor' with @a atomic value.
  * @return Old @a atomic value before the operation.
  * @since 0.0.1
@@ -208,7 +208,7 @@ P_LIB_API void		p_atomic_pointer_set			(volatile void		*atomic,
 /**
  * @brief Compares @a oldval with the value pointed to by @a atomic and if
  * they are equal, atomically exchanges the value of @a atomic with @a newval.
- * @param[in, out] atomic Pointer to #ppointer-sized value.
+ * @param[in,out] atomic Pointer to #ppointer-sized value.
  * @param oldval Old #ppointer-sized value.
  * @param newval New #ppointer-sized value.
  * @return TRUE if @a atomic value was equal @a oldval, FALSE otherwise.
@@ -227,7 +227,7 @@ P_LIB_API pboolean	p_atomic_pointer_compare_and_exchange	(volatile void		*atomic
 
 /**
  * @brief Atomically adds #ppointer-sized value to @a atomic value.
- * @param[in, out] atomic Pointer to #ppointer-sized value.
+ * @param[in,out] atomic Pointer to #ppointer-sized value.
  * @param val Value to add to @a atomic value.
  * @return Old value before the addition.
  * @since 0.0.1
@@ -243,7 +243,7 @@ P_LIB_API pssize	p_atomic_pointer_add			(volatile void		*atomic,
 /**
  * @brief Atomically performs the bitwise 'and' operation of #ppointer-sized
  * @a atomic value and @a val storing the result back in @a atomic.
- * @param[in, out] atomic Pointer to #ppointer-size value.
+ * @param[in,out] atomic Pointer to #ppointer-size value.
  * @param val #psize to perform bitwise 'and' with @a atomic value.
  * @return Old @a atomic value before the operation.
  * @since 0.0.1
@@ -259,7 +259,7 @@ P_LIB_API psize		p_atomic_pointer_and			(volatile void		*atomic,
 /**
  * @brief Atomically performs the bitwise 'or' operation of #ppointer-sized
  * @a atomic value and @a val storing the result back in @a atomic.
- * @param[in, out] atomic Pointer to #ppointer-size value.
+ * @param[in,out] atomic Pointer to #ppointer-size value.
  * @param val #psize to perform bitwise 'or' with @a atomic value.
  * @return Old @a atomic value before the operation.
  * @since 0.0.1
@@ -275,7 +275,7 @@ P_LIB_API psize		p_atomic_pointer_or			(volatile void		*atomic,
 /**
  * @brief Atomically performs the bitwise 'xor' operation of #ppointer-sized
  * @a atomic value and @a val storing the result back in @a atomic.
- * @param[in, out] atomic Pointer to #ppointer-size value.
+ * @param[in,out] atomic Pointer to #ppointer-size value.
  * @param val #psize to perform bitwise 'xor' with @a atomic value.
  * @return Old @a atomic value before the operation.
  * @since 0.0.1
