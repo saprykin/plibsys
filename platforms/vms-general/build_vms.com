@@ -505,7 +505,7 @@ $     next_test = f$element (test_counter, " ", plibsys_tests)
 $     if next_test .nes. "" .and. next_test .nes. " "
 $     then
 $         next_test = next_test + "_test"
-$         'vo_c' "[CXX]     ''next_test'.cpp"
+$         'vo_c' "[CXX    ] ''next_test'.cpp"
 $         cxx [---.tests]'next_test'.cpp 'cxx_params'
 $!
 $         'vo_c' "[CXXLINK] ''next_test'.obj"
@@ -532,6 +532,7 @@ $ endif
 $!
 $ 'vo_c' "Running tests..."
 $ test_counter = 0
+$ tests_passed = 0
 $!
 $ run_loop:
 $     next_test = f$element (test_counter, " ", test_list_full)
@@ -543,17 +544,35 @@ $             'vo_c' "[SKIP] ''next_test'"
 $             goto run_loop_next
 $         endif
 $!
-$         'vo_c' "[RUN]  ''next_test'"
-$         next_test = next_test + "_test.exe"
+$         'vo_c' "[RUN ] ''next_test'"
 $!
 $         define/user sys$error NL:
 $         define/user sys$output NL:
-$         run 'next_test'
+$         define/user plibsys 'objdir'PLIBSYS.EXE
+$         define/user test_imgdir 'objdir'
+$!
+$         xrun := $test_imgdir:'next_test'_test.exe
+$         if next_test .eqs. "plibraryloader"
+$         then
+$             xrun 'objdir'PLIBSYS.EXE
+$         else
+$             xrun
+$         endif
+$!
+$         if $STATUS .eqs. "%X00000001"
+$         then
+$             'vo_c' "[PASS] Test passed: ''next_test'"
+$             tests_passed = tests_passed + 1
+$         else
+$             'vo_c' "[FAIL] *** Test failed: ''next_test'"
+$         endif
 $!
 $ run_loop_next:
 $         test_counter = test_counter + 1
 $         goto run_loop
 $     endif
+$!
+$ 'vo_c' "Tests passed: ''tests_passed'/''test_counter'"
 $!
 $ common_exit:
 $     set default 'orig_def'
