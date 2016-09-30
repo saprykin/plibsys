@@ -39,6 +39,11 @@
  * Use p_library_loader_new() to load a shared library and
  * p_library_loader_get_symbol() to retrieve a pointer to a symbol within it.
  * Close the library after usage with p_library_loader_free().
+ *
+ * Please note the following platform specific differences:
+ *
+ * - On OpenVMS only shareable images (linked with /SHAREABLE) can be used for
+ * dynamic symbol resolving. Usually they have .EXE extension.
  */
 
 #if !defined (PLIBSYS_H_INSIDE) && !defined (PLIBSYS_COMPILATION)
