@@ -49,6 +49,7 @@ with unit tests and was tested on the following platforms:
 * AIX
 * HP-UX
 * Tru64
+* OpenVMS
 * IRIX64
 * QNX Neutrino
 * UnixWare 7
@@ -73,10 +74,11 @@ plibsys was tested with the following compilers:
 * MIPSpro (MIPS32)
 * XL C (PPC64le)
 * Compaq (Alpha)
+* HP (Alpha)
 
 ======= Building =======
 
-Use CMake to build plibsys for any target platform.
+Use CMake to build plibsys for target platform. For OpenVMS see platforms/vms-general directory.
 
 ======= License =======
 
