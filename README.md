@@ -6,12 +6,12 @@
 [![](https://codedocs.xyz/saprykin/plibsys.svg)](https://codedocs.xyz/saprykin/plibsys/)
 [![](http://img.shields.io/:license-lgpl2-blue.svg?style=flat)](http://www.gnu.org/licenses/lgpl-2.1.html)
 
-======= About plibsys =======
+## About plibsys
 
 plibsys is a cross-platform system C library with some helpful routines.
 It has zero third-party dependecies and uses only native system calls.
 
-======= Features =======
+## Features
 
 plibsys gives you:
 
@@ -34,7 +34,7 @@ plibsys gives you:
 * Useful routines for linked lists, strings, hash tables
 * Macros for OS and compiler detection
 
-======= Platforms =======
+## Platforms
 
 plibsys is a cross-platform, highly portable library, it is fully covered
 with unit tests and was tested on the following platforms:
@@ -58,7 +58,7 @@ with unit tests and was tested on the following platforms:
 
 It should also work on other *nix systems with or without minimal efforts.
 
-======= Compilers =======
+## Compilers
 
 plibsys was tested with the following compilers:
 
@@ -76,14 +76,14 @@ plibsys was tested with the following compilers:
 * Compaq (Alpha)
 * HP (Alpha)
 
-======= Building =======
+## Building
 
 Use CMake to build plibsys for target platform. For OpenVMS see platforms/vms-general directory.
 
-======= License =======
+## License
 
 plibsys is distributed under the terms of GNU LGPLv2 or higher license.
 
-======= More =======
+## More
 
 More information about the library is available on the [Wiki](https://github.com/saprykin/plibsys/wiki).
