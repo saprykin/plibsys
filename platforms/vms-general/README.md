@@ -46,6 +46,9 @@ libraries (32-bit pointers) and all the tests.
 * `@build_vms.com NOLIB RUN_TESTS` only runs already built tests.
 * `@build_vms.com CLEAN` cleans all the files produced during a build.
 
+You can use _Boost_ reduced mini-version supplied with the library in
+`boost` directory. Version 1.34.1 was checked and works fine.
+
 ## More
 
 OpenVMS can mangle long (> 31 characters) symbol names in a compiled object
