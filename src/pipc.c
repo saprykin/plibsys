@@ -138,14 +138,10 @@ p_ipc_get_platform_key (const pchar *name, pboolean posix)
 	return hash_str;
 #else
 	if (posix) {
-		/* POSIX semaphores which are named kinda like '/semname' */
-#  ifdef P_OS_BSD4
-		/* BSD implementation of POSIX semaphores has restriction for the name - max 14
-		   characters */
+		/* POSIX semaphores which are named kinda like '/semname'.
+		 * Some implementations of POSIX semaphores has restriction for
+		 * the name as of max 14 characters, best to use this limit */
 		if (P_UNLIKELY ((path_name = p_malloc0 (15)) == NULL)) {
-#  else
-		if (P_UNLIKELY ((path_name = p_malloc0 (strlen (hash_str) + 2)) == NULL)) {
-#  endif
 			p_free (hash_str);
 			return NULL;
 		}
