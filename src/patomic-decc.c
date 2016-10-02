@@ -17,7 +17,11 @@
 
 #include "patomic.h"
 
-#include <builtins.h>
+#ifdef P_OS_VMS
+#  include <builtins.h>
+#else
+#  include <machine/builtins.h>
+#endif
 
 P_LIB_API pint
 p_atomic_int_get (const volatile pint *atomic)
