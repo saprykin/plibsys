@@ -384,7 +384,7 @@ $ else
 $     cc_link_params = "/NODEBUG/NOTRACEBACK"
 $ endif
 $!
-$ plibsys_src = "patomic-sim.c pcondvariable-posix.c pcryptohash-gost3411.c pcryptohash-md5.c"
+$ plibsys_src = "patomic-decc.c pcondvariable-posix.c pcryptohash-gost3411.c pcryptohash-md5.c"
 $ plibsys_src = plibsys_src + " pcryptohash-sha1.c pcryptohash-sha2-256.c pcryptohash-sha2-512.c"
 $ plibsys_src = plibsys_src + " pcryptohash-sha3.c pcryptohash.c pdir-posix.c pdir.c"
 $ plibsys_src = plibsys_src + " perror.c pfile.c phashtable.c pinifile.c pipc.c plibraryloader.c"
