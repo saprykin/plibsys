@@ -390,7 +390,7 @@ $ plibsys_src = plibsys_src + " pcryptohash-sha3.c pcryptohash.c pdir-posix.c pd
 $ plibsys_src = plibsys_src + " perror.c pfile.c phashtable.c pinifile.c pipc.c plibraryloader.c"
 $ plibsys_src = plibsys_src + " plist.c pmain.c pmem.c pmutex-posix.c pprocess.c prwlock-posix.c"
 $ plibsys_src = plibsys_src + " psemaphore-posix.c pshm-posix.c pshmbuffer.c psocket.c"
-$ plibsys_src = plibsys_src + " psocketaddress.c pspinlock-sim.c pstring.c psysclose-unix.c"
+$ plibsys_src = plibsys_src + " psocketaddress.c pspinlock-decc.c pstring.c psysclose-unix.c"
 $ plibsys_src = plibsys_src + " ptimeprofiler-posix.c ptimeprofiler.c ptree-avl.c ptree-bst.c"
 $ plibsys_src = plibsys_src + " ptree-rb.c ptree.c puthread-posix.c puthread.c"
 $!
