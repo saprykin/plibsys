@@ -28,7 +28,6 @@ endif()
 enable_testing ()
 
 subdirs (src)
-subdirs (cmake)
 
 message (STATUS "Checking whether to enable unit tests")
 
