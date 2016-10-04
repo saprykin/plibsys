@@ -23,6 +23,28 @@
 #  include <machine/builtins.h>
 #endif
 
+#ifdef __ia64
+#  define PATOMIC_DECC_CAS_LONG(atomic_src, oldval, newval, atomic_dst)	\
+	  __CMP_SWAP_LONG ((volatile void *) (atomic_src),		\
+			   (pint) (oldval),				\
+			   (pint) (newval))
+#  define PATOMIC_DECC_CAS_QUAD(atomic_src, oldval, newval, atomic_dst)	\
+	  __CMP_SWAP_QUAD ((volatile void *) (atomic_src),		\
+			   (pint64) (oldval),				\
+			   (pint64) (newval))	  
+#else
+#  define PATOMIC_DECC_CAS_LONG(atomic_src, oldval, newval, atomic_dst)	\
+	  __CMP_STORE_LONG ((volatile void *) (atomic_src),		\
+			    (pint) (oldval),				\
+			    (pint) (newval),				\
+			    (volatile void *) (atomic_dst))
+#  define PATOMIC_DECC_CAS_QUAD(atomic_src, oldval, newval, atomic_dst)	\
+	  __CMP_STORE_QUAD ((volatile void *) (atomic_src),		\
+			    (pint64) (oldval),				\
+			    (pint64) (newval),				\
+			    (volatile void *) (atomic_dst))
+#endif
+
 P_LIB_API pint
 p_atomic_int_get (const volatile pint *atomic)
 {
@@ -66,10 +88,7 @@ p_atomic_int_compare_and_exchange (volatile pint	*atomic,
 	pboolean result;
 
 	__MB ();
-	result = __CMP_STORE_LONG ((volatile void *) atomic,
-				   oldval,
-				   newval,
-				   (volatile void *) atomic) == 1 ? TRUE : FALSE;
+	result = PATOMIC_DECC_CAS_LONG (atomic, oldval, newval, atomic) == 1 ? TRUE : FALSE;
 	__MB ();
 
 	return result;
@@ -123,10 +142,7 @@ p_atomic_int_xor (volatile puint	*atomic,
 	do {
 		__MB ();
 		i = (pint) (*atomic);
-	} while (__CMP_STORE_LONG ((volatile void *) atomic,
-				   i,
-				   i ^ ((pint) val),
-				   (volatile void *) atomic) != 1);
+	} while (PATOMIC_DECC_CAS_LONG (atomic, i, i ^ ((pint) val), atomic) != 1);
 
 	__MB ();
 
@@ -161,15 +177,9 @@ p_atomic_pointer_compare_and_exchange (volatile void	*atomic,
 
 	__MB ();
 #if (PLIBSYS_SIZEOF_VOID_P == 8)
-	result =  __CMP_STORE_QUAD (atomic,
-				    (pint64) oldval,
-				    (pint64) newval,
-				    atomic) == 1 ? TRUE : FALSE;
+	result = PATOMIC_DECC_CAS_QUAD (atomic, oldval, newval, atomic) == 1 ? TRUE : FALSE;
 #else
-	result =  __CMP_STORE_LONG (atomic,
-				    (pint) oldval,
-				    (pint) newval,
-				    atomic) == 1 ? TRUE : FALSE;
+	result = PATOMIC_DECC_CAS_LONG (atomic, oldval, newval, atomic) == 1 ? TRUE : FALSE;
 #endif
 	__MB ();
 
@@ -237,20 +247,14 @@ p_atomic_pointer_xor (volatile void	*atomic,
 	do {
 		__MB ();
 		i = (pint64) (* ((volatile psize *) atomic));
-	} while (__CMP_STORE_QUAD (atomic,
-				   i,
-				   i ^ ((pint64) val),
-				   atomic) != 1);
+	} while (PATOMIC_DECC_CAS_QUAD (atomic, i, i ^ ((pint64) val), atomic) != 1);
 #else
 	pint i;
 
 	do {
 		__MB ();
 		i = (pint) (* ((volatile psize *) atomic));
-	} while (__CMP_STORE_LONG (atomic,
-				   i,
-				   i ^ ((pint) val),
-				   atomic) != 1);
+	} while (PATOMIC_DECC_CAS_LONG (atomic, i, i ^ ((pint) val), atomic) != 1);
 #endif
 	__MB ();
 
