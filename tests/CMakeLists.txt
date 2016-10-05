@@ -1,8 +1,5 @@
 project (tests CXX)
 set (OUTPUT_DIR ${CMAKE_BINARY_DIR})
-include (${PROJECT_SOURCE_DIR}/../cmake/PlatformDetect.cmake)
-
-plibsys_detect_c_compiler (PLIBSYS_C_COMPILER)
 
 if (NOT PLIBSYS_TESTS_STATIC)
         find_package (Boost COMPONENTS unit_test_framework REQUIRED)
@@ -32,7 +29,7 @@ endif()
 
 include_directories (${PROJECT_SOURCE_DIR}/../src ${CMAKE_BINARY_DIR})
 
-if (PLIBSYS_C_COMPILER STREQUAL msvc)
+if (MSVC)
         add_definitions (-D_CRT_SECURE_NO_WARNINGS)
 endif()
 
