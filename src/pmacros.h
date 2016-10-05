@@ -68,9 +68,9 @@
  * UNIX              - Any UNIX BSD/SYSV based system
  * LINUX             - Linux
  * MAC9              - Mac OS 9 (Classic)
- * MAC               - Any Mac OS X
- * MAC32             - 32-bit Mac OS X
- * MAC64             - 64-bit Mac OS X
+ * MAC               - Any macOS
+ * MAC32             - 32-bit macOS
+ * MAC64             - 64-bit macOS
  * CYGWIN            - Cygwin
  * WIN               - 32-bit Windows
  * WIN64             - 64-bit Windows
@@ -78,7 +78,7 @@
 
 /**
  * @def P_OS_DARWIN
- * @brief Darwin based operating system (i.e. Mac OS X).
+ * @brief Darwin based operating system (i.e. macOS).
  * @since 0.0.1
  */
 
@@ -210,19 +210,19 @@
 
 /**
  * @def P_OS_MAC
- * @brief Apple's Mac OS X operating system.
+ * @brief Apple's macOS operating system.
  * @since 0.0.1
  */
 
 /**
  * @def P_OS_MAC32
- * @brief Apple's Mac OS X 32-bit operating system.
+ * @brief Apple's macOS 32-bit operating system.
  * @since 0.0.1
  */
 
 /**
  * @def P_OS_MAC64
- * @brief Apple's Mac OS X 64-bit operating system.
+ * @brief Apple's macOS 64-bit operating system.
  * @since 0.0.1
  */
 

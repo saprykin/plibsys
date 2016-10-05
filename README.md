@@ -40,7 +40,7 @@ plibsys is a cross-platform, highly portable library, it is fully covered
 with unit tests and was tested on the following platforms:
 
 * GNU/Linux
-* OS X
+* macOS
 * Windows
 * Cygwin
 * FreeBSD, NetBSD, OpenBSD

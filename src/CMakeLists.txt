@@ -28,7 +28,7 @@ if (PLIBSYS_TARGET_OS STREQUAL darwin)
 	set (CMAKE_MACOSX_RPATH TRUE)
 	set (CMAKE_SKIP_BUILD_RPATH FALSE)
 
-	# Fix runtime paths on OS X 10.5 and less
+	# Fix runtime paths on macOS 10.5 and less
 	if (CMAKE_SYSTEM_VERSION VERSION_LESS "10.0.0")
 		set (CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
 	else()

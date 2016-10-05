@@ -23,7 +23,7 @@
  * http://crbug.com/269623
  * http://openradar.appspot.com/14999594
  *
- * When the default version of close used on Mac OS X fails with EINTR, the
+ * When the default version of close used on macOS fails with EINTR, the
  * file descriptor is not in a deterministic state. It may have been closed,
  * or it may not have been. This makes it impossible to gracefully recover
  * from the error. If the close is retried after the FD has been closed, the
@@ -31,7 +31,7 @@
  * opened by another thread. If the close is not retried after the FD has been
  * left open, the FD is leaked. Neither of these are good options.
  *
- * Mac OS X provides an alternate version of close, close$NOCANCEL. This
+ * macOS provides an alternate version of close, close$NOCANCEL. This
  * version will never fail with EINTR before the FD is actually closed. With
  * this version, it is thus safe to call close without checking for EINTR (as
  * the HANDLE_EINTR macro does) and not risk leaking the FD. In fact, mixing
