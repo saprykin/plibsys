@@ -110,8 +110,14 @@ pp_socket_set_fd_blocking (pint		fd,
 #ifndef P_OS_WIN
 #  ifdef P_OS_VMS
 	arg = !blocking;
-
-	if (P_UNLIKELY (ioctl (fd, FIONBIO, (ppointer) &arg) < 0)) {
+#    if (PLIBSYS_SIZEOF_VOID_P == 8)
+#      pragma __pointer_size 32
+#    endif
+	/* Explicit (void *) cast is necessary */
+	if (P_UNLIKELY (ioctl (fd, FIONBIO, (void *) &arg) < 0)) {
+#    if (PLIBSYS_SIZEOF_VOID_P == 8)
+#      pragma __pointer_size 64
+#    endif
 #  else
 	if (P_UNLIKELY ((arg = fcntl (fd, F_GETFL, NULL)) < 0)) {
 		P_WARNING ("PSocket::pp_socket_set_fd_blocking: fcntl() failed");
