@@ -51,13 +51,12 @@ build_script:
                         $BUILD_TYPE    = "-DCMAKE_BUILD_TYPE=$env:configuration";
                         $BUILD_COMMAND = "mingw32-make";
                 } ElseIf ($env:USE_LLVM -eq "1") {
-                        $VSENV_BAT = "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat";
+                        $VSENV_BAT = "`"C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat`"";
                         & $VSENV_BAT amd64;
 
                         $BUILD_COMMAND = "nmake";
                         $BUILD_TYPE    = "-DCMAKE_BUILD_TYPE=$env:configuration";
-                        $CMAKE_PARAMS  = "-DCMAKE_C_COMPILER=`"C:\Program Files\LLVM\bin\clang-cl.exe`" -DCMAKE_CXX_COMPILER=`"C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\amd64\cl.exe`"";
-
+                        $CMAKE_PARAMS  = "-DCMAKE_C_COMPILER=`"C:/Program Files/LLVM/bin/clang-cl.exe`" -DCMAKE_CXX_COMPILER=`"C:/Program Files (x86)/Microsoft Visual Studio 14.0/VC/bin/amd64/cl.exe`"";
                 } Else {
                         If ($env:USE_OLD_MSBUILD -eq "1") {
                                 $env:PATH = "C:\Windows\Microsoft.NET\Framework\v3.5;$env:PATH";
