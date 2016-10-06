@@ -57,7 +57,7 @@ build_script:
                         $env:PATH      = "C:\Program Files\LLVM\bin;$env:PATH";
                         $BUILD_COMMAND = "nmake";
                         $BUILD_TYPE    = "-DCMAKE_BUILD_TYPE=$env:configuration";
-                        $CMAKE_PARAMS  = "-DCMAKE_C_COMPILER=clang-cl.exe -DCMAKE_CXX_COMPILER=cl.exe";
+                        $CMAKE_PARAMS  = "-DCMAKE_C_COMPILER=clang-cl.exe`" -DCMAKE_CXX_COMPILER=cl.exe";
                 } Else {
                         If ($env:USE_OLD_MSBUILD -eq "1") {
                                 $env:PATH = "C:\Windows\Microsoft.NET\Framework\v3.5;$env:PATH";
