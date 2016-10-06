@@ -18,6 +18,8 @@ environment:
                 - CMAKE_GENERATOR: "Visual Studio 14 2015"
                 - CMAKE_GENERATOR: "Visual Studio 14 2015 Win64"
                   USE_COVERITY:    "1"
+                - CMAKE_GENERATOR: "NMake Makefiles"
+                  USE_LLVM:        "1"
 
 os: Visual Studio 2015
 
@@ -45,17 +47,22 @@ build_script:
                 }
 
                 If ($env:USE_MINGW -eq "1") {
-                        $env:PATH   = "C:\MinGW\bin;C:\Program Files (x86)\CMake\bin";
-                        $BUILD_TYPE = "-DCMAKE_BUILD_TYPE=$env:configuration";
-                }
-
-                If ($env:USE_OLD_MSBUILD -eq "1") {
-                        $env:PATH = "C:\Windows\Microsoft.NET\Framework\v3.5;$env:PATH";
-                }
-
-                If ($env:USE_MINGW -eq "1") {
+                        $env:PATH      = "C:\MinGW\bin;C:\Program Files (x86)\CMake\bin";
+                        $BUILD_TYPE    = "-DCMAKE_BUILD_TYPE=$env:configuration";
                         $BUILD_COMMAND = "mingw32-make";
+                } ElseIf ($env:USE_LLVM -eq "1") {
+                        $VSENV_BAT = "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat";
+                        & $VSENV_BAT amd64;
+
+                        $BUILD_COMMAND = "nmake";
+                        $BUILD_TYPE    = "-DCMAKE_BUILD_TYPE=$env:configuration";
+                        $CMAKE_PARAMS  = "-DCMAKE_C_COMPILER=`"C:\Program Files\LLVM\bin\clang-cl.exe`" -DCMAKE_CXX_COMPILER=`"C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\amd64\cl.exe`"";
+
                 } Else {
+                        If ($env:USE_OLD_MSBUILD -eq "1") {
+                                $env:PATH = "C:\Windows\Microsoft.NET\Framework\v3.5;$env:PATH";
+                        }
+
                         $BUILD_COMMAND = "msbuild";
                         $BUILD_PARAMS  = @("/verbosity:normal", "$BUILD_DIR\plibsys.sln", "/p:Configuration=$env:configuration", "/m");
                 }
@@ -74,7 +81,7 @@ build_script:
                         & $COVERITY_EXE publish -z "$BUILD_DIR\coverity.zip" -r $env:COVERITY_SCAN_PROJECT_NAME -t $env:COVERITY_SCAN_TOKEN -e $env:COVERITY_SCAN_NOTIFICATION_EMAIL --codeVersion $env:APPVEYOR_BUILD_VERSION;
                 }
 
-                & cmake -G"$env:CMAKE_GENERATOR" $BUILD_TYPE $VAR_BOOST_TESTS $VAR_BOOST_ROOT C:\Projects\plibsys;
+                & cmake -G"$env:CMAKE_GENERATOR" $BUILD_TYPE $VAR_BOOST_TESTS $VAR_BOOST_ROOT $CMAKE_PARAMS C:\Projects\plibsys;
                 & $BUILD_COMMAND $BUILD_PARAMS;
 
                 If ($env:APPVEYOR_REPO_BRANCH -eq "appveyor_test") {
