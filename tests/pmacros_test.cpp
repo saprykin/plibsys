@@ -117,7 +117,7 @@ BOOST_AUTO_TEST_CASE (pmacros_general_test)
     !defined (P_CC_INTEL)   && !defined (P_CC_CLANG) && !defined (P_CC_SUN)    && \
     !defined (P_CC_XLC)     && !defined (P_CC_HP)    && !defined (P_CC_WATCOM) && \
     !defined (P_CC_BORLAND) && !defined (P_CC_MIPS)  && !defined (P_CC_USLC)   && \
-    !defined (P_CC_COMPAQ)
+    !defined (P_CC_DEC)
 	BOOST_CHECK (false);
 #endif
 

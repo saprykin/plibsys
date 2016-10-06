@@ -372,7 +372,7 @@
  * SUN             - Sun WorkShop/Studio C/C++
  * XLC             - IBM XL C/C++
  * HP              - HP C/aC++
- * COMPAQ          - Compaq C/C++
+ * DEC             - DEC C/C++
  * MIPS            - MIPSpro C/C++
  * USLC            - SCO OUDK and UDK C/C++
  * WATCOM          - Watcom C/C++
@@ -428,8 +428,8 @@
  */
 
 /**
- * @def P_CC_COMPAQ
- * @brief Compaq C/C++ compiler.
+ * @def P_CC_DEC
+ * @brief DEC C/C++ compiler.
  * @since 0.0.2
  */
 
@@ -466,7 +466,7 @@
 #  define P_CC_SUN
 #  define P_CC_XLC
 #  define P_CC_HP
-#  define P_CC_COMPAQ
+#  define P_CC_DEC
 #  define P_CC_MIPS
 #  define P_CC_USLC
 #  define P_CC_WATCOM
@@ -496,7 +496,7 @@
 #elif defined(__HP_cc) || defined(__HP_aCC)
 #  define P_CC_HP
 #elif defined (__DECC) || defined(__DECCXX)
-#  define P_CC_COMPAQ
+#  define P_CC_DEC
 #elif (defined(__sgi) || defined(sgi)) && \
       (defined(_COMPILER_VERSION) || defined(_SGI_COMPILER_VERSION))
 #  define P_CC_MIPS
