@@ -60,10 +60,11 @@ build_script:
                         }
                         popd
 
-                        $env:PATH      = "C:\Program Files\LLVM\bin;$env:PATH";
-                        $BUILD_COMMAND = "nmake";
-                        $BUILD_TYPE    = "-DCMAKE_BUILD_TYPE=$env:configuration";
-                        $CMAKE_PARAMS  = "-DCMAKE_C_COMPILER=clang-cl.exe`" -DCMAKE_CXX_COMPILER=cl.exe`"";
+                        $env:PATH           = "C:\Program Files\LLVM\bin;$env:PATH";
+                        $BUILD_COMMAND      = "nmake";
+                        $BUILD_TYPE         = "-DCMAKE_BUILD_TYPE=$env:configuration";
+                        $CMAKE_C_COMPILER   = "-DCMAKE_C_COMPILER=clang-cl.exe"
+                        $CMAKE_CXX_COMPILER = "-DCMAKE_CXX_COMPILER=cl.exe"
                 } Else {
                         If ($env:USE_OLD_MSBUILD -eq "1") {
                                 $env:PATH = "C:\Windows\Microsoft.NET\Framework\v3.5;$env:PATH";
@@ -87,7 +88,7 @@ build_script:
                         & $COVERITY_EXE publish -z "$BUILD_DIR\coverity.zip" -r $env:COVERITY_SCAN_PROJECT_NAME -t $env:COVERITY_SCAN_TOKEN -e $env:COVERITY_SCAN_NOTIFICATION_EMAIL --codeVersion $env:APPVEYOR_BUILD_VERSION;
                 }
 
-                & cmake -G"$env:CMAKE_GENERATOR" $BUILD_TYPE $VAR_BOOST_TESTS $VAR_BOOST_ROOT $CMAKE_PARAMS C:\Projects\plibsys;
+                & cmake -G"$env:CMAKE_GENERATOR" $BUILD_TYPE $VAR_BOOST_TESTS $VAR_BOOST_ROOT $CMAKE_C_COMPILER $CMAKE_CXX_COMPILER C:\Projects\plibsys;
                 & $BUILD_COMMAND $BUILD_PARAMS;
 
                 If ($env:APPVEYOR_REPO_BRANCH -eq "appveyor_test") {
