@@ -62,6 +62,7 @@ build_script:
 
                         $env:PATH           = "C:\Program Files\LLVM\bin;$env:PATH";
                         $BUILD_COMMAND      = "nmake";
+                        $BUILD_PARAMS       = "/NOLOGO"
                         $BUILD_TYPE         = "-DCMAKE_BUILD_TYPE=$env:configuration";
                         $CMAKE_C_COMPILER   = "-DCMAKE_C_COMPILER=clang-cl.exe"
                         $CMAKE_CXX_COMPILER = "-DCMAKE_CXX_COMPILER=cl.exe"
