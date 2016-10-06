@@ -51,8 +51,8 @@ build_script:
                         $BUILD_TYPE    = "-DCMAKE_BUILD_TYPE=$env:configuration";
                         $BUILD_COMMAND = "mingw32-make";
                 } ElseIf ($env:USE_LLVM -eq "1") {
-                        pushd "$env:VS140COMNTOOLS"
-                        cmd /c "vsvars32.bat&set" |
+                        pushd "$env:VS140COMNTOOLS\..\..\VC\bin\amd64"
+                        cmd /c "vcvars32.bat&set" |
                         foreach {
                                 if ($_ -match "=") {
                                         $v = $_.split("="); set-item -force -path "ENV:\$($v[0])"  -value "$($v[1])"
