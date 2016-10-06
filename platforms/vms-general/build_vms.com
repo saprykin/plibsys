@@ -1,6 +1,7 @@
 $!
-$! Copyright 2014, John Malmberg
-$! Copyright 2016, Alexander Saprykin
+$! Copyright 2011, Richard Levitte <richard@levitte.org>
+$! Copyright 2014, John Malmberg <wb8tyw@qsl.net>
+$! Copyright 2016, Alexander Saprykin <xelfium@gmail.com>
 $!
 $! Permission to use, copy, modify, and/or distribute this software for any
 $! purpose with or without fee is hereby granted, provided that the above
