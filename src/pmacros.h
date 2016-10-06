@@ -478,6 +478,9 @@
 #  if defined(__INTEL_COMPILER)
 #    define P_CC_INTEL
 #  endif
+#  if defined(__clang__)
+#    define P_CC_CLANG
+#  endif
 #elif defined(__GNUC__)
 #  define P_CC_GNU
 #  if defined(__MINGW32__)
