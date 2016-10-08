@@ -1,7 +1,6 @@
 ## OpenVMS
 
-This directory contains a build script for OpenVMS as well as some
-other useful scripts and utilities.
+This directory contains mainly a build script for OpenVMS.
 
 ## Requirements
 
@@ -18,8 +17,8 @@ pointers are used. Use `32` parameter to switch behaviour.
 Test suit is optional (and requires quite a long time to be compiled on
 an emulator) and is not built by default. Use `TESTS` parameter to
 enable tests. Tests require _Boost Unit Test Framefork_ which you must
-point out with the `BOOST_ROOT` parameter. _Boost_ produces less warnings
-in the 32-bit mode.
+point out with the `BOOST_ROOT` parameter. On some systems _Boost_
+loves either 32-bit or 64-bit mode only (not the both).
 
 There are other build parametes available, plese look inside the
 `build_vms.com` (a DCL-based script) to see the detailed description for
@@ -55,7 +54,3 @@ OpenVMS can mangle long (> 31 characters) symbol names in a compiled object
 to fit the limit. Sometimes it is useful to know the mangled name of a
 symbol. Use the `vms_shorten_symbol.c` program to get a mangled name. See
 details inside.
-
-Deleting a whole directory tree with all the files and subdirectories is not
-a trivial task on OpenVMS. Use the `deltree.com` DCL script to make your
-life easier. See details inside.
