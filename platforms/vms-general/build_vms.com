@@ -492,8 +492,8 @@ $!
 $ if build_64 .eqs. "1"
 $ then
 $     set noon
-$     define/user sys$output NL:
-$     define/user sys$error NL:
+$     define/user/nolog sys$output NL:
+$     define/user/nolog sys$error NL:
 $     cxx/POINTER_SIZE=64=ARGV NL:
 $!
 $     if ($STATUS .and. %X0FFF0000) .eq. %X00030000
@@ -509,8 +509,8 @@ $!        complains, they aren't, so we do it here (it might be
 $!        unnecessary, but just in case there will be another error
 $!        message further on that we don't want to miss).
 $!
-$         deassign/USER sys$error
-$         deassign/USER sys$output
+$         deassign/user/nolog sys$error
+$         deassign/user/nolog sys$output
 $         cxx_params = cxx_params + "/POINTER_SIZE=64"
 $     else
 $         cxx_params = cxx_params + "/POINTER_SIZE=64=ARGV"
@@ -571,10 +571,10 @@ $         endif
 $!
 $         'vo_c' "[RUN ] ''next_test'"
 $!
-$         define/user sys$error NL:
-$         define/user sys$output NL:
-$         define/user plibsys 'objdir'PLIBSYS.EXE
-$         define/user test_imgdir 'objdir'
+$         define/user/nolog sys$error NL:
+$         define/user/nolog sys$output NL:
+$         define/user/nolog plibsys 'objdir'PLIBSYS.EXE
+$         define/user/nolog test_imgdir 'objdir'
 $!
 $         xrun := $test_imgdir:'next_test'_test.exe
 $         if next_test .eqs. "plibraryloader"
@@ -598,6 +598,12 @@ $         goto run_loop
 $     endif
 $!
 $ 'vo_c' "Tests passed: ''tests_passed'/''test_counter'"
+$!
+$! In case of error during the last test
+$ deassign/user/nolog sys$error
+$ deassign/user/nolog sys$output
+$ deassign/user/nolog plibsys
+$ deassign/user/nolog test_imgdir
 $!
 $ common_exit:
 $     set default 'orig_def'
