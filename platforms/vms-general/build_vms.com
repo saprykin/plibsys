@@ -140,38 +140,10 @@ $     @deltree.com 'arch_name'
 $     goto common_exit
 $ endif
 $!
-$ build_64     = 1
-$ ptr_size_arg = "/POINTER_SIZE="
-$!
+$ build_64   = 1
 $ if f$locate(",32,", args_lower) .lt. args_lower_len
 $ then
 $     build_64 = 0
-$     ptr_size_arg = ptr_size_arg + "32"
-$ else
-$     ptr_size_arg = ptr_size_arg + "64"
-$     set noon
-$     define/user sys$output NL:
-$     define/user sys$error NL:
-$     cc/POINTER_SIZE=64=ARGV NL:
-$!
-$     if ($STATUS .and. %X0FFF0000) .eq. %X00030000
-$     then
-$!
-$!        If we got here, it means DCL complained like this:
-$!        %DCL-W-NOVALU, value not allowed - remove value specification
-$!        \64=\
-$!
-$!        If the compiler was run, logicals defined in /USER would
-$!        have been deassigned automatically.  However, when DCL
-$!        complains, they aren't, so we do it here (it might be
-$!        unnecessary, but just in case there will be another error
-$!        message further on that we don't want to miss).
-$!
-$         deassign/USER sys$error
-$         deassign/USER sys$output
-$	  else
-$	      ptr_size_arg = ptr_size_arg + "=ARGV"
-$	  endif
 $ endif
 $!
 $ big_endian = 0
@@ -392,7 +364,13 @@ $ cc_params = "/NAMES=(AS_IS,SHORTENED)"
 $ cc_params = cc_params + "/DEFINE=(PLIBSYS_COMPILATION,_REENTRANT,_POSIX_EXIT)"
 $ cc_params = cc_params + "/INCLUDE_DIRECTORY=(''objdir',''base_src_dir')"
 $ cc_params = cc_params + "/FLOAT=IEEE/IEEE_MODE=DENORM_RESULTS"
-$ cc_params = cc_params + ptr_size_arg
+$!
+$ if build_64 .eqs. "1"
+$ then
+$     cc_params = cc_params + "/POINTER_SIZE=64"
+$ else
+$     cc_params = cc_params + "/POINTER_SIZE=32"
+$ endif
 $!
 $ if cc_extra .nes. ""
 $ then
@@ -510,7 +488,36 @@ $!
 $ cxx_params = "/INCLUDE=(''objdir',''base_src_dir',""''boost_root'"")"
 $ cxx_params = cxx_params + "/DEFINE=(__USE_STD_IOSTREAM,PLIBSYS_TESTS_STATIC)/NAMES=(AS_IS, SHORTENED)"
 $ cxx_params = cxx_params + "/FLOAT=IEEE/IEEE_MODE=DENORM_RESULTS"
-$ cxx_params = cxx_params + ptr_size_arg
+$!
+$ if build_64 .eqs. "1"
+$ then
+$     set noon
+$     define/user sys$output NL:
+$     define/user sys$error NL:
+$     cxx/POINTER_SIZE=64=ARGV NL:
+$!
+$     if ($STATUS .and. %X0FFF0000) .eq. %X00030000
+$     then
+$!
+$!        If we got here, it means DCL complained like this:
+$!        %DCL-W-NOVALU, value not allowed - remove value specification
+$!        \64=\
+$!
+$!        If the compiler was run, logicals defined in /USER would
+$!        have been deassigned automatically.  However, when DCL
+$!        complains, they aren't, so we do it here (it might be
+$!        unnecessary, but just in case there will be another error
+$!        message further on that we don't want to miss).
+$!
+$         deassign/USER sys$error
+$         deassign/USER sys$output
+$         cxx_params = cxx_params + "/POINTER_SIZE=64"
+$     else
+$         cxx_params = cxx_params + "/POINTER_SIZE=64=ARGV"
+$     endif
+$ else
+$     cxx_params = cxx_params + "/POINTER_SIZE=32"
+$ endif
 $!
 $ if is_debug .eqs. "1"
 $ then
