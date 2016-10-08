@@ -136,7 +136,14 @@ $ if f$locate(",clean,", args_lower) .lt. args_lower_len
 $ then
 $     'vo_c' "Cleaning up previous build..."
 $     set default 'proc_dev_dir'
-$     @deltree.com 'arch_name'
+$!
+$     if f$search("''arch_name'.DIR") .nes. ""
+$     then
+$         set prot=w:d []'arch_name'.DIR;*
+$         delete/tree [.'arch_name'...]*.*;*
+$         delete []'arch_name'.DIR;*
+$     endif
+$!
 $     goto common_exit
 $ endif
 $!
@@ -233,7 +240,12 @@ $     create/dir 'objdir'/prot=o:rwed
 $ endif
 $!
 $ set default 'objdir'
-$ @[-]deltree CXX_REPOSITORY
+$ if f$search("CXX_REPOSITORY.DIR") .nes. ""
+$ then
+$     set prot=w:d []CXX_REPOSITORY.DIR;*
+$     delete/tree [.CXX_REPOSITORY...]*.*;*
+$     delete []CXX_REPOSITORY.DIR;*
+$ endif
 $!
 $ if f$locate(",nolib,", args_lower) .lt. args_lower_len
 $ then
@@ -535,7 +547,13 @@ $!
 $         'vo_c' "[CXXLINK] ''next_test'.obj"
 $          cxxlink 'next_test'.obj,'objdir'plibsys_link.opt/OPTION /THREADS_ENABLE
 $!
-$         @[-]deltree CXX_REPOSITORY
+$         if f$search("CXX_REPOSITORY.DIR") .nes. ""
+$         then
+$             set prot=w:d []CXX_REPOSITORY.DIR;*
+$             delete/tree [.CXX_REPOSITORY...]*.*;*
+$             delete []CXX_REPOSITORY.DIR;*
+$         endif
+$!
 $         purge 'next_test'.obj
 $         purge 'next_test'.exe
 $!
@@ -551,7 +569,10 @@ $! --------------
 $!
 $ if run_tests .eqs. "0"
 $ then
-$     'vo_c' "To run tests invoke: @build_vms.com NOLIB RUN_TESTS"
+$     if is_tests .eqs. "1"
+$     then
+$         'vo_c' "To run tests invoke: @build_vms.com NOLIB RUN_TESTS"
+$     endif
 $     goto common_exit
 $ endif
 $!
