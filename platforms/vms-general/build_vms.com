@@ -544,6 +544,7 @@ $! --------------
 $!
 $ if run_tests .eqs. "0"
 $ then
+$     'vo_c' "To run tests invoke: @build_vms.com NOLIB RUN_TESTS"
 $     goto common_exit
 $ endif
 $!
