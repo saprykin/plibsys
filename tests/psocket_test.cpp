@@ -759,12 +759,12 @@ BOOST_AUTO_TEST_CASE (psocket_general_udp_test)
 	BOOST_CHECK (p_socket_get_timeout (socket) == 0);
 
 	/* On some operating systems (i.e. OpenVMS) remote address is not NULL */
-	PSocketAddress *rem_addr = p_socket_get_remote_address (socket, NULL);
+	PSocketAddress *remote_addr = p_socket_get_remote_address (socket, NULL);
 
-	if (rem_addr != NULL) {
-		BOOST_CHECK (p_socket_address_is_any (rem_addr) == TRUE);
-		p_socket_address_free (rem_addr);
-		rem_addr = NULL;
+	if (remote_addr != NULL) {
+		BOOST_CHECK (p_socket_address_is_any (remote_addr) == TRUE);
+		p_socket_address_free (remote_addr);
+		remote_addr = NULL;
 	}
 
 	BOOST_CHECK (p_socket_get_protocol (socket) == P_SOCKET_PROTOCOL_UDP);
@@ -794,14 +794,14 @@ BOOST_AUTO_TEST_CASE (psocket_general_udp_test)
 	BOOST_CHECK (p_socket_get_listen_backlog (fd_socket) == 5);
 	BOOST_CHECK (p_socket_get_timeout (fd_socket) == 0);
 
-	rem_addr = p_socket_get_remote_address (fd_socket, NULL);
+	remote_addr = p_socket_get_remote_address (fd_socket, NULL);
 
-	if (rem_addr != NULL) {
-		BOOST_CHECK (p_socket_address_is_any (rem_addr) == TRUE);
-		p_socket_address_free (rem_addr);
-		rem_addr = NULL;
+	if (remote_addr != NULL) {
+		BOOST_CHECK (p_socket_address_is_any (remote_addr) == TRUE);
+		p_socket_address_free (remote_addr);
+		remote_addr = NULL;
 	}
-	
+
 	BOOST_CHECK (p_socket_get_protocol (fd_socket) == P_SOCKET_PROTOCOL_UDP);
 	BOOST_CHECK (p_socket_get_blocking (fd_socket) == TRUE);
 	BOOST_CHECK (p_socket_get_type (fd_socket) == P_SOCKET_TYPE_DATAGRAM);
