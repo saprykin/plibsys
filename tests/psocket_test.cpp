@@ -995,7 +995,6 @@ BOOST_AUTO_TEST_CASE (psocket_udp_test)
 
 	BOOST_CHECK (send_counter > 0);
 	BOOST_CHECK (recv_counter > 0);
-	BOOST_CHECK (abs (send_counter - recv_counter) <= 1);
 
 	p_uthread_unref (sender_thr);
 	p_uthread_unref (receiver_thr);
@@ -1033,7 +1032,6 @@ BOOST_AUTO_TEST_CASE (psocket_tcp_test)
 
 	BOOST_CHECK (send_counter > 0);
 	BOOST_CHECK (recv_counter > 0);
-	BOOST_CHECK (abs (send_counter - recv_counter) <= 1);
 
 	p_uthread_unref (sender_thr);
 	p_uthread_unref (receiver_thr);
