@@ -20,6 +20,10 @@
 #include "puthread.h"
 #include "puthread-private.h"
 
+#ifdef P_OS_SCO
+#  include "pmutex.h"
+#endif
+
 #include <unistd.h>
 #include <stdlib.h>
 #include <string.h>
@@ -70,6 +74,10 @@ struct PUThreadKey_ {
 	pthread_key_t	*key;
 	PDestroyFunc	free_func;
 };
+
+#ifdef P_OS_SCO
+static PMutex *pp_uthread_tls_mutex = NULL;
+#endif
 
 #ifdef PLIBSYS_HAS_POSIX_SCHEDULING
 static pboolean pp_uthread_get_unix_priority (PUThreadPriority prio, int *sched_policy, int *sched_priority);
@@ -125,34 +133,53 @@ pp_uthread_get_tls_key (PUThreadKey *key)
 
 	thread_key = (pthread_key_t *) p_atomic_pointer_get ((ppointer) &key->key);
 
-	if (P_UNLIKELY (thread_key == NULL)) {
+	if (P_LIKELY (thread_key != NULL))
+		return thread_key;
+
+#ifdef P_OS_SCO
+	p_mutex_lock (pp_uthread_tls_mutex);
+
+	thread_key = key->key;
+
+	if (P_LIKELY (thread_key == NULL)) {
+#endif
 		if (P_UNLIKELY ((thread_key = p_malloc0 (sizeof (pthread_key_t))) == NULL)) {
 			P_ERROR ("PUThread::pp_uthread_get_tls_key: failed to allocate memory");
+#ifdef P_OS_SCO
+			p_mutex_unlock (pp_uthread_tls_mutex);
+#endif
 			return NULL;
 		}
 
 		if (P_UNLIKELY (pthread_key_create (thread_key, key->free_func) != 0)) {
 			P_ERROR ("PUThread::pp_uthread_get_tls_key: pthread_key_create() failed");
 			p_free (thread_key);
+#ifdef P_OS_SCO
+			p_mutex_unlock (pp_uthread_tls_mutex);
+#endif
 			return NULL;
 		}
 
+#ifndef P_OS_SCO
 		if (P_UNLIKELY (p_atomic_pointer_compare_and_exchange ((ppointer) &key->key,
 								       NULL,
 								       (ppointer) thread_key) == FALSE)) {
-#ifndef P_OS_SCO
 			if (P_UNLIKELY (pthread_key_delete (*thread_key) != 0)) {
 				P_ERROR ("PUThread::pp_uthread_get_tls_key: pthread_key_delete() failed");
 				p_free (thread_key);
 				return NULL;
 			}
-#endif
 
 			p_free (thread_key);
 
 			thread_key = key->key;
 		}
+#else
+		key->key = thread_key;
 	}
+
+	p_mutex_unlock (pp_uthread_tls_mutex);
+#endif
 
 	return thread_key;
 }
@@ -160,11 +187,21 @@ pp_uthread_get_tls_key (PUThreadKey *key)
 void
 p_uthread_init_internal (void)
 {
+#ifdef P_OS_SCO
+	if (P_LIKELY (pp_uthread_tls_mutex == NULL))
+		pp_uthread_tls_mutex = p_mutex_new ();
+#endif
 }
 
 void
 p_uthread_shutdown_internal (void)
 {
+#ifdef P_OS_SCO
+	if (P_LIKELY (pp_uthread_tls_mutex != NULL)) {
+		p_mutex_free (pp_uthread_tls_mutex);
+		pp_uthread_tls_mutex = NULL;
+	}
+#endif
 }
 
 void
@@ -190,7 +227,6 @@ p_uthread_create_internal (PUThreadFunc		func,
 #if defined (PLIBSYS_HAS_POSIX_STACKSIZE) && defined (_SC_THREAD_STACK_MIN)
 	plong			min_stack;
 #endif
-
 
 	if (P_UNLIKELY ((ret = p_malloc0 (sizeof (PUThread))) == NULL)) {
 		P_ERROR ("PUThread::p_uthread_create_internal: failed to allocate memory");
