@@ -83,6 +83,8 @@ pp_uthread_get_tls_key (PUThreadKey *key)
 #ifndef P_OS_UNIXWARE
 	p_mutex_lock (pp_uthread_tls_mutex);
 
+	thread_key = key->key;
+
 	if (P_LIKELY (thread_key == NULL)) {
 #endif
 		if (P_UNLIKELY ((thread_key = p_malloc0 (sizeof (thread_key_t))) == NULL)) {
