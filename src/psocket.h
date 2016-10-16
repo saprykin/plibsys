@@ -366,6 +366,9 @@ P_LIB_API PSocketAddress *	p_socket_get_local_address	(const PSocket 		*socket,
  *
  * If the @a socket was not connected to the endpoint address with
  * p_socket_connect(), the call will fail.
+ *
+ * @warning On Syllable this call will always return NULL for connection-less
+ * sockets (though connecting is possible).
  */
 P_LIB_API PSocketAddress *	p_socket_get_remote_address	(const PSocket 		*socket,
 								 PError			**error);
@@ -403,6 +406,7 @@ P_LIB_API pboolean		p_socket_is_closed		(const PSocket		*socket);
  * @return TRUE if was no error, FALSE otherwise.
  * @since 0.0.1
  * @sa p_socket_io_condition_wait()
+ * @warning Not supported on Syllable for connection-less sockets.
  *
  * Usually this call is used after calling p_socket_connect() on a socket in a
  * non-blocking mode to check the connection state. If call returns the FALSE
@@ -532,6 +536,8 @@ P_LIB_API pboolean		p_socket_bind			(const PSocket 		*socket,
  * @since 0.0.1
  * @sa p_socket_is_connected(), p_socket_check_connect_result(),
  * p_socket_get_remote_address(), p_socket_io_condition_wait()
+ * @warning On Syllable this method changes a local port of the connection
+ * oriented socket in case of success.
  *
  * Calling this method on the connection-less socket will bind it to the remote
  * address and the p_socket_send() method can be used instead of
@@ -735,6 +741,7 @@ P_LIB_API void			p_socket_free			(PSocket 		*socket);
  * @param[out] error Error report object, NULL to ignore.
  * @return TRUE in case of success, FALSE otherwise.
  * @since 0.0.1
+ * @warning Not supported on Syllable.
  */
 P_LIB_API pboolean		p_socket_set_buffer_size	(const PSocket		*socket,
 								 PSocketDirection	dir,
