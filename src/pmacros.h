@@ -64,6 +64,7 @@
  * UNIXWARE          - UnixWare 7
  * IRIX              - SGI IRIX
  * HAIKU             - Haiku
+ * SYLLABLE          - Syllable
  * VMS               - OpenVMS
  * UNIX              - Any UNIX BSD/SYSV based system
  * LINUX             - Linux
@@ -185,6 +186,12 @@
  */
 
 /**
+ * @def P_OS_SYLLABLE
+ * @brief Syllable operating system.
+ * @since 0.0.2
+ */
+
+/**
  * @def P_OS_VMS
  * @brief OpenVMS operating system.
  * @since 0.0.1
@@ -271,6 +278,7 @@
 #  define P_OS_UNIXWARE
 #  define P_OS_IRIX
 #  define P_OS_HAIKU
+#  define P_OS_SYLLABLE
 #  define P_OS_VMS
 #  define P_OS_UNIX
 #  define P_OS_LINUX
@@ -338,6 +346,8 @@
 #  define P_OS_IRIX
 #elif defined(__HAIKU__)
 #  define P_OS_HAIKU
+#elif defined(__SYLLABLE__)
+#  define P_OS_SYLLABLE
 #elif defined(VMS) || defined(__VMS)
 #  define P_OS_VMS
 #endif
