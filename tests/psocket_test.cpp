@@ -534,8 +534,12 @@ static void * tcp_socket_receiver_thread (void *arg)
 				p_uthread_sleep (1);
 				continue;
 			} else {
+				/* On Syllable there is a bug in TCP which changes a local port
+				 * of the client socket which connects to a server */
+#ifndef P_OS_SYLLABLE
 				if (test_socket_address (conn_socket, data->sender_port) == FALSE)
 					break;
+#endif
 
 				if (p_socket_shutdown (conn_socket, data->shutdown_channel, FALSE, NULL) == FALSE)
 					break;
@@ -646,10 +650,13 @@ BOOST_AUTO_TEST_CASE (psocket_bad_input_test)
 				   (PSocketType) -1,
 				   P_SOCKET_PROTOCOL_TCP,
 				   NULL) == NULL);
+	/* Syllable doesn't validate socket family */
+#ifndef P_OS_SYLLABLE
 	BOOST_CHECK (p_socket_new ((PSocketFamily) -1,
 				   P_SOCKET_TYPE_SEQPACKET,
 				   P_SOCKET_PROTOCOL_TCP,
 				   NULL) == NULL);
+#endif
 	BOOST_CHECK (p_socket_new (P_SOCKET_FAMILY_UNKNOWN,
 				   P_SOCKET_TYPE_UNKNOWN,
 				   P_SOCKET_PROTOCOL_UNKNOWN,
@@ -834,15 +841,25 @@ BOOST_AUTO_TEST_CASE (psocket_general_udp_test)
 	BOOST_CHECK (p_socket_io_condition_wait (socket, P_SOCKET_IO_CONDITION_POLLOUT, NULL) == TRUE);
 
 	sock_addr = p_socket_get_remote_address (socket, NULL);
+
+	/* Syllable doesn't support getpeername() for UDP sockets */
+#ifdef P_OS_SYLLABLE
+	BOOST_CHECK (sock_addr == NULL);
+	sock_addr = p_socket_address_new ("127.0.0.1", 32115);
+	BOOST_CHECK (addr != NULL);
+#else
 	BOOST_CHECK (sock_addr != NULL);
-
 	BOOST_CHECK (compare_socket_addresses (sock_addr, addr) == TRUE);
+#endif
 
+	/* Not supported on Syllable */
+#ifndef P_OS_SYLLABLE
 	BOOST_CHECK (p_socket_set_buffer_size (socket, P_SOCKET_DIRECTION_RCV, 72 * 1024, NULL) == TRUE);
 	BOOST_CHECK (p_socket_set_buffer_size (socket, P_SOCKET_DIRECTION_SND, 72 * 1024, NULL) == TRUE);
+	BOOST_CHECK (p_socket_check_connect_result (socket, NULL) == TRUE);
+#endif
 
 	BOOST_CHECK (p_socket_is_connected (socket) == TRUE);
-	BOOST_CHECK (p_socket_check_connect_result (socket, NULL) == TRUE);
 	BOOST_CHECK (p_socket_close (socket, NULL) == TRUE);
 
 	pchar sock_buf[10];
