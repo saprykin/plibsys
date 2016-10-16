@@ -389,7 +389,13 @@ if (NOT PLIBSYS_NATIVE_WINDOWS)
 	endif()
 endif()
 
-set (PLIBSYS_RWLOCK_MODEL ${PLIBSYS_THREAD_MODEL})
+if (NOT PLIBSYS_RWLOCK_MODEL)
+	set (PLIBSYS_RWLOCK_MODEL ${PLIBSYS_THREAD_MODEL})
+else()
+	if (NOT PLIBSYS_RWLOCK_MODEL STREQUAL general)
+		message (WARNING "It's not recommended to mix thread and RW lock models")
+	endif()
+endif()
 
 if (PLIBSYS_THREAD_MODEL STREQUAL posix)
 	# Some systems only need the difinition to be available
@@ -447,7 +453,13 @@ if (PLIBSYS_THREAD_MODEL STREQUAL posix)
 	else()
 		message (STATUS "Checking whether POSIX thread stack size is supported - no")
 	endif()
+endif()
 
+# Some platforms may have headers, but lack actual implementation,
+# thus we can let platform to override read-write lock model with
+# general implementation
+if (PLIBSYS_THREAD_MODEL STREQUAL posix AND
+    PLIBSYS_RWLOCK_MODEL STREQUAL posix)
 	# Check for read-write lock support
 	message (STATUS "Checking whether POSIX read-write locks are supported")
 
@@ -713,6 +725,7 @@ SET (PLIBSYS_SUMMARY
 	Address model:          ${PLIBSYS_OS_BITS} bit
 
 	Thread model:           ${PLIBSYS_THREAD_MODEL}
+	RW lock model:          ${PLIBSYS_RWLOCK_MODEL}
 	IPC model:              ${PLIBSYS_IPC_MODEL}
 	DIR model:              ${PLIBSYS_DIR_MODEL}
 	Time profiler model:    ${PLIBSYS_TIME_PROFILER_MODEL}
