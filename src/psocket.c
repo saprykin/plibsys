@@ -668,6 +668,13 @@ p_socket_get_remote_address (const PSocket	*socket,
 		return NULL;
 	}
 
+#ifdef P_OS_SYLLABLE
+	/* Syllable has a bug with a wrong byte order for a TCP port,
+	 * as it only supports IPv4 we can easily fix it here. */
+	((struct sockaddr_in *) &buffer)->sin_port =
+			p_htons (((struct sockaddr_in *) &buffer)->sin_port);
+#endif
+
 	ret = p_socket_address_new_from_native (&buffer, (psize) len);
 
 	if (P_UNLIKELY (ret == NULL))
