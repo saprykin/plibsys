@@ -29,8 +29,10 @@
 #  include <boost/test/unit_test.hpp>
 #endif
 
-static pint spinlock_test_val = 10;
-static PSpinLock *global_spinlock = NULL;
+#define PSPINLOCK_MAX_VAL 10
+
+static pint        spinlock_test_val = 0;
+static PSpinLock * global_spinlock   = NULL;
 
 extern "C" ppointer pmem_alloc (psize nbytes)
 {
@@ -60,7 +62,7 @@ static void * spinlock_test_thread (void *)
 				p_uthread_exit (1);
 		}
 
-		if (spinlock_test_val == 10)
+		if (spinlock_test_val == PSPINLOCK_MAX_VAL)
 			--spinlock_test_val;
 		else {
 			p_uthread_sleep (1);
@@ -96,19 +98,27 @@ BOOST_AUTO_TEST_CASE (pspinlock_nomem_test)
 	p_libsys_shutdown ();
 }
 
+BOOST_AUTO_TEST_CASE (pspinlock_bad_input_test)
+{
+	p_libsys_init ();
+
+	BOOST_REQUIRE (p_spinlock_lock (NULL) == FALSE);
+	BOOST_REQUIRE (p_spinlock_unlock (NULL) == FALSE);
+	BOOST_REQUIRE (p_spinlock_trylock (NULL) == FALSE);
+	p_spinlock_free (NULL);
+
+	p_libsys_shutdown ();
+}
+
 BOOST_AUTO_TEST_CASE (pspinlock_general_test)
 {
 	PUThread *thr1, *thr2;
 
 	p_libsys_init ();
 
-	BOOST_REQUIRE (p_spinlock_lock (global_spinlock) == FALSE);
-	BOOST_REQUIRE (p_spinlock_unlock (global_spinlock) == FALSE);
-	BOOST_REQUIRE (p_spinlock_trylock (global_spinlock) == FALSE);
-	p_spinlock_free (global_spinlock);
+	spinlock_test_val = PSPINLOCK_MAX_VAL;
+	global_spinlock   = p_spinlock_new ();
 
-	spinlock_test_val = 10;
-	global_spinlock = p_spinlock_new ();
 	BOOST_REQUIRE (global_spinlock != NULL);
 
 	thr1 = p_uthread_create ((PUThreadFunc) spinlock_test_thread, NULL, true);
@@ -120,7 +130,7 @@ BOOST_AUTO_TEST_CASE (pspinlock_general_test)
 	BOOST_CHECK (p_uthread_join (thr1) == 0);
 	BOOST_CHECK (p_uthread_join (thr2) == 0);
 
-	BOOST_REQUIRE (spinlock_test_val == 10);
+	BOOST_REQUIRE (spinlock_test_val == PSPINLOCK_MAX_VAL);
 
 	p_uthread_unref (thr1);
 	p_uthread_unref (thr2);

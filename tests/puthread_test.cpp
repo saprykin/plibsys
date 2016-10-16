@@ -29,17 +29,17 @@
 #  include <boost/test/unit_test.hpp>
 #endif
 
-static pint thread_wakes_1 = 0;
-static pint thread_wakes_2 = 0;
-static pint thread_to_wakes = 100;
-static volatile pboolean is_threads_working = TRUE;
+static pint              thread_wakes_1     = 0;
+static pint              thread_wakes_2     = 0;
+static pint              thread_to_wakes    = 0;
+static volatile pboolean is_threads_working = FALSE;
 
-static P_HANDLE thread1_id = (P_HANDLE) NULL;
-static P_HANDLE thread2_id = (P_HANDLE) NULL;
-static PUThread *thread1_obj = NULL;
-static PUThread *thread2_obj = NULL;
+static P_HANDLE   thread1_id  = (P_HANDLE) NULL;
+static P_HANDLE   thread2_id  = (P_HANDLE) NULL;
+static PUThread * thread1_obj = NULL;
+static PUThread * thread2_obj = NULL;
 
-static PUThreadKey *tls_key = NULL;
+static PUThreadKey * tls_key      = NULL;
 static volatile pint free_counter = 0;
 
 extern "C" ppointer pmem_alloc (psize nbytes)
@@ -182,6 +182,9 @@ BOOST_AUTO_TEST_CASE (puthread_nomem_test)
 
 	BOOST_CHECK (p_mem_set_vtable (&vtable) == TRUE);
 
+	thread_wakes_1 = 0;
+	thread_wakes_2 = 0;
+
 	BOOST_CHECK (p_uthread_create ((PUThreadFunc) test_thread_func,
 				       (ppointer) &thread_wakes_1,
 				       TRUE) == NULL);
@@ -234,9 +237,15 @@ BOOST_AUTO_TEST_CASE (puthread_general_test)
 
 	thread_wakes_1 = 1;
 	thread_wakes_2 = 2;
+	thread1_id     = (P_HANDLE) NULL;
+	thread2_id     = (P_HANDLE) NULL;
+	thread1_obj    = NULL;
+	thread2_obj    = NULL;
 
 	tls_key = p_uthread_local_new (NULL);
 	BOOST_CHECK (tls_key != NULL);
+
+	is_threads_working = TRUE;
 
 	PUThread *thr1 = p_uthread_create ((PUThreadFunc) test_thread_func,
 					   (ppointer) &thread_wakes_1,
@@ -285,7 +294,9 @@ BOOST_AUTO_TEST_CASE (puthread_nonjoinable_test)
 {
 	p_libsys_init ();
 
-	thread_wakes_1 = 0;
+	thread_wakes_1     = 0;
+	thread_to_wakes    = 100;
+	is_threads_working = TRUE;
 
 	PUThread *thr1 = p_uthread_create ((PUThreadFunc) test_thread_nonjoinable_func,
 					   (ppointer) &thread_wakes_1,
@@ -315,6 +326,7 @@ BOOST_AUTO_TEST_CASE (puthread_tls_test)
 	tls_key = p_uthread_local_new (free_with_check);
 
 	is_threads_working = TRUE;
+	free_counter       = 0;
 
 	pint self_thread_free = 0;
 

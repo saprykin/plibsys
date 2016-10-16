@@ -68,16 +68,23 @@ BOOST_AUTO_TEST_CASE (ptimeprofiler_nomem_test)
 	p_libsys_shutdown ();
 }
 
+BOOST_AUTO_TEST_CASE (ptimeprofiler_bad_input_test)
+{
+	p_libsys_init ();
+
+	BOOST_CHECK (p_time_profiler_elapsed_usecs (NULL) == 0);
+	p_time_profiler_reset (NULL);
+	p_time_profiler_free (NULL);
+
+	p_libsys_shutdown ();
+}
+
 BOOST_AUTO_TEST_CASE (ptimeprofiler_general_test)
 {
 	PTimeProfiler	*profiler = NULL;
 	puint64		prev_val, val;
 
 	p_libsys_init ();
-
-	BOOST_CHECK (p_time_profiler_elapsed_usecs (profiler) == 0);
-	p_time_profiler_reset (profiler);
-	p_time_profiler_free (profiler);
 
 	profiler = p_time_profiler_new ();
 	BOOST_REQUIRE (profiler != NULL);

@@ -55,11 +55,9 @@ extern "C" void pmem_free (ppointer block)
 	free (block);
 }
 
-BOOST_AUTO_TEST_CASE (pmem_general_test)
+BOOST_AUTO_TEST_CASE (pmem_bad_input_test)
 {
-	PMemVTable	vtable;
-	ppointer	ptr = NULL;
-	pint		i;
+	PMemVTable vtable;
 
 	p_libsys_init ();
 
@@ -73,6 +71,21 @@ BOOST_AUTO_TEST_CASE (pmem_general_test)
 	BOOST_CHECK (p_mem_set_vtable (NULL) == FALSE);
 	BOOST_CHECK (p_mem_set_vtable (&vtable) == FALSE);
 	p_free (NULL);
+
+	p_libsys_shutdown ();
+}
+
+BOOST_AUTO_TEST_CASE (pmem_general_test)
+{
+	PMemVTable	vtable;
+	ppointer	ptr = NULL;
+	pint		i;
+
+	p_libsys_init ();
+
+	alloc_counter   = 0;
+	realloc_counter = 0;
+	free_counter    = 0;
 
 	vtable.free    = pmem_free;
 	vtable.malloc  = pmem_alloc;

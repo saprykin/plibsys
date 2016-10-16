@@ -30,7 +30,9 @@
 #endif
 
 #ifndef P_OS_MSYS
-static pint semaphore_test_val = 10;
+#define PSEMAPHORE_MAX_VAL 10
+
+static pint semaphore_test_val = 0;
 static pint is_thread_exit     = 0;
 
 static void clean_error (PError **error)
@@ -55,14 +57,14 @@ static void * semaphore_test_thread (void *)
 	for (i = 0; i < 1000; ++i) {
 		if (!p_semaphore_acquire (sem, NULL)) {
 			if (is_thread_exit > 0) {
-				semaphore_test_val = 10;
+				semaphore_test_val = PSEMAPHORE_MAX_VAL;
 				break;
 			}
 
 			p_uthread_exit (1);
 		}
 
-		if (semaphore_test_val == 10)
+		if (semaphore_test_val == PSEMAPHORE_MAX_VAL)
 			--semaphore_test_val;
 		else {
 			p_uthread_sleep (1);
@@ -71,7 +73,7 @@ static void * semaphore_test_thread (void *)
 
 		if (!p_semaphore_release (sem, NULL)) {
 			if (is_thread_exit > 0) {
-				semaphore_test_val = 10;
+				semaphore_test_val = PSEMAPHORE_MAX_VAL;
 				break;
 			}
 
@@ -189,7 +191,9 @@ BOOST_AUTO_TEST_CASE (psemaphore_thread_test)
 	p_semaphore_take_ownership (sem);
 	p_semaphore_free (sem);
 
-	sem = NULL;
+	sem                = NULL;
+	is_thread_exit     = 0;
+	semaphore_test_val = PSEMAPHORE_MAX_VAL;
 
 	thr1 = p_uthread_create ((PUThreadFunc) semaphore_test_thread, NULL, true);
 	BOOST_REQUIRE (thr1 != NULL);
@@ -200,7 +204,7 @@ BOOST_AUTO_TEST_CASE (psemaphore_thread_test)
 	BOOST_CHECK (p_uthread_join (thr1) == 0);
 	BOOST_CHECK (p_uthread_join (thr2) == 0);
 
-	BOOST_REQUIRE (semaphore_test_val == 10);
+	BOOST_REQUIRE (semaphore_test_val == PSEMAPHORE_MAX_VAL);
 
 	BOOST_REQUIRE (p_semaphore_acquire (sem, NULL) == FALSE);
 	BOOST_REQUIRE (p_semaphore_release (sem, NULL) == FALSE);

@@ -31,12 +31,12 @@
 
 #define PCONDTEST_MAX_QUEUE 10
 
-static pint thread_wakeups = 0;
-static pint thread_queue = 0;
-static PCondVariable *queue_empty_cond = NULL;
-static PCondVariable *queue_full_cond = NULL;
-static PMutex *cond_mutex = NULL;
-volatile static pboolean is_working = TRUE;
+static pint              thread_wakeups   = 0;
+static pint              thread_queue     = 0;
+static PCondVariable *   queue_empty_cond = NULL;
+static PCondVariable *   queue_full_cond  = NULL;
+static PMutex *          cond_mutex       = NULL;
+volatile static pboolean is_working       = TRUE;
 
 extern "C" ppointer pmem_alloc (psize nbytes)
 {
@@ -160,16 +160,23 @@ BOOST_AUTO_TEST_CASE (pcondvariable_nomem_test)
 	p_libsys_shutdown ();
 }
 
-BOOST_AUTO_TEST_CASE (pcondvariable_general_test)
+BOOST_AUTO_TEST_CASE (pcondvariable_bad_input_test)
 {
-	PUThread	*thr1, *thr2, *thr3;
-
 	p_libsys_init ();
 
-	BOOST_REQUIRE (p_cond_variable_broadcast (queue_empty_cond) == FALSE);
-	BOOST_REQUIRE (p_cond_variable_signal (queue_empty_cond) == FALSE);
-	BOOST_REQUIRE (p_cond_variable_wait (queue_empty_cond, cond_mutex) == FALSE);
+	BOOST_REQUIRE (p_cond_variable_broadcast (NULL) == FALSE);
+	BOOST_REQUIRE (p_cond_variable_signal (NULL) == FALSE);
+	BOOST_REQUIRE (p_cond_variable_wait (NULL, NULL) == FALSE);
 	p_cond_variable_free (NULL);
+
+	p_libsys_shutdown ();
+}
+
+BOOST_AUTO_TEST_CASE (pcondvariable_general_test)
+{
+	PUThread *thr1, *thr2, *thr3;
+
+	p_libsys_init ();
 
 	queue_empty_cond = p_cond_variable_new ();
 	BOOST_REQUIRE (queue_empty_cond != NULL);
@@ -177,6 +184,10 @@ BOOST_AUTO_TEST_CASE (pcondvariable_general_test)
 	BOOST_REQUIRE (queue_full_cond != NULL);
 	cond_mutex = p_mutex_new ();
 	BOOST_REQUIRE (cond_mutex != NULL);
+
+	is_working     = TRUE;
+	thread_wakeups = 0;
+	thread_queue   = 0;
 
 	thr1 = p_uthread_create ((PUThreadFunc) producer_test_thread, NULL, true);
 	BOOST_REQUIRE (thr1 != NULL);

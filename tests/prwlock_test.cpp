@@ -34,10 +34,10 @@
 #define PRWLOCK_TEST_STRING_1 "This is a test string."
 #define PRWLOCK_TEST_STRING_2 "Ouh, yet another string to check!"
 
-static PRWLock *test_rwlock = NULL;
-static volatile pboolean is_threads_working = TRUE;
-static volatile pint writers_counter = 0;
-static pchar string_buf[50];
+static PRWLock *         test_rwlock        = NULL;
+static volatile pboolean is_threads_working = FALSE;
+static volatile pint     writers_counter    = 0;
+static pchar             string_buf[50];
 
 extern "C" ppointer pmem_alloc (psize nbytes)
 {
@@ -167,6 +167,9 @@ BOOST_AUTO_TEST_CASE (prwlock_general_test)
 	test_rwlock = p_rwlock_new ();
 
 	BOOST_REQUIRE (test_rwlock != NULL);
+
+	is_threads_working = TRUE;
+	writers_counter    = 0;
 
 	PUThread *reader_thr1 = p_uthread_create ((PUThreadFunc) reader_thread_func,
 						  NULL,

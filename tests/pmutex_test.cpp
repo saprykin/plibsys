@@ -29,7 +29,7 @@
 #  include <boost/test/unit_test.hpp>
 #endif
 
-static pint mutex_test_val = 10;
+static pint mutex_test_val  = 0;
 static PMutex *global_mutex = NULL;
 
 extern "C" ppointer pmem_alloc (psize nbytes)
@@ -96,20 +96,28 @@ BOOST_AUTO_TEST_CASE (pmutex_nomem_test)
 	p_libsys_shutdown ();
 }
 
+BOOST_AUTO_TEST_CASE (pmutex_bad_input_test)
+{
+	p_libsys_init ();
+
+	BOOST_REQUIRE (p_mutex_lock (NULL) == FALSE);
+	BOOST_REQUIRE (p_mutex_unlock (NULL) == FALSE);
+	BOOST_REQUIRE (p_mutex_trylock (NULL) == FALSE);
+	p_mutex_free (NULL);
+
+	p_libsys_shutdown ();
+}
+
 BOOST_AUTO_TEST_CASE (pmutex_general_test)
 {
 	PUThread *thr1, *thr2;
 
 	p_libsys_init ();
 
-	BOOST_REQUIRE (p_mutex_lock (global_mutex) == FALSE);
-	BOOST_REQUIRE (p_mutex_unlock (global_mutex) == FALSE);
-	BOOST_REQUIRE (p_mutex_trylock (global_mutex) == FALSE);
-	p_mutex_free (global_mutex);
-
-	mutex_test_val = 10;
 	global_mutex = p_mutex_new ();
 	BOOST_REQUIRE (global_mutex != NULL);
+
+	mutex_test_val = 10;
 
 	thr1 = p_uthread_create ((PUThreadFunc) mutex_test_thread, NULL, true);
 	BOOST_REQUIRE (thr1 != NULL);

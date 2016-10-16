@@ -38,7 +38,7 @@ static pint read_count     = 0;
 static pint write_count    = 0;
 
 #  ifndef P_OS_HPUX
-volatile static pboolean is_working = TRUE;
+volatile static pboolean is_working = FALSE;
 
 static void * shm_buffer_test_write_thread (void *)
 {
@@ -279,6 +279,11 @@ BOOST_AUTO_TEST_CASE (pshmbuffer_thread_test)
 	BOOST_REQUIRE (buffer != NULL);
 	p_shm_buffer_take_ownership (buffer);
 	p_shm_buffer_free (buffer);
+
+	is_thread_exit = 0;
+	read_count     = 0;
+	write_count    = 0;
+	is_working     = TRUE;
 
 	buffer = p_shm_buffer_new ("pshm_test_buffer", 1024, NULL);
 	BOOST_REQUIRE (buffer != NULL);

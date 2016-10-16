@@ -31,9 +31,9 @@
 #  include <boost/test/unit_test.hpp>
 #endif
 
-static pchar socket_data[] = "This is a socket test data!";
-volatile static pboolean is_sender_working = TRUE;
-volatile static pboolean is_receiver_working = TRUE;
+static pchar             socket_data[]       = "This is a socket test data!";
+volatile static pboolean is_sender_working   = FALSE;
+volatile static pboolean is_receiver_working = FALSE;
 
 typedef struct _SocketTestData {
 	puint16		sender_port;
@@ -969,12 +969,12 @@ BOOST_AUTO_TEST_CASE (psocket_udp_test)
 {
 	p_libsys_init ();
 
-	is_sender_working = TRUE;
+	is_sender_working   = TRUE;
 	is_receiver_working = TRUE;
 
 	SocketTestData data;
-	data.receiver_port = 0;
-	data.sender_port = 0;
+	data.receiver_port    = 0;
+	data.sender_port      = 0;
 	data.shutdown_channel = FALSE;
 
 	PUThread *receiver_thr = p_uthread_create ((PUThreadFunc) udp_socket_receiver_thread, (ppointer) &data, TRUE);
@@ -1006,12 +1006,12 @@ BOOST_AUTO_TEST_CASE (psocket_tcp_test)
 {
 	p_libsys_init ();
 
-	is_sender_working = TRUE;
+	is_sender_working   = TRUE;
 	is_receiver_working = TRUE;
 
 	SocketTestData data;
-	data.receiver_port = 0;
-	data.sender_port = 0;
+	data.receiver_port    = 0;
+	data.sender_port      = 0;
 	data.shutdown_channel = FALSE;
 
 	PUThread *receiver_thr = p_uthread_create ((PUThreadFunc) tcp_socket_receiver_thread, (ppointer) &data, TRUE);
@@ -1043,12 +1043,12 @@ BOOST_AUTO_TEST_CASE (psocket_shutdown_test)
 {
 	p_libsys_init ();
 
-	is_sender_working = TRUE;
+	is_sender_working   = TRUE;
 	is_receiver_working = TRUE;
 
 	SocketTestData data;
-	data.receiver_port = 0;
-	data.sender_port = 0;
+	data.receiver_port    = 0;
+	data.sender_port      = 0;
 	data.shutdown_channel = TRUE;
 
 	PUThread *receiver_thr = p_uthread_create ((PUThreadFunc) tcp_socket_receiver_thread, (ppointer) &data, TRUE);
