@@ -65,6 +65,11 @@
  * process, but it will close the object after the first close call from any of
  * the threads within the process.
  *
+ * - OpenVMS (as of 8.4 release) has declared prototypes for POSIX semaphores
+ * but the actual implementation is broken.
+ *
+ * - Syllable lacks support for process-wide named semaphores.
+ *
  * Use the third argument as #P_SEM_ACCESS_CREATE in p_semaphore_new() to reset
  * a semaphore value while opening it. This argument is ignored on Windows. You
  * can also take ownership of the semaphore with p_semaphore_take_ownership() to
