@@ -119,9 +119,9 @@ p_uthread_create_full (PUThreadFunc	func,
 	p_spinlock_lock (pp_uthread_new_spin);
 
 	base_thread = (PUThreadBase *) p_uthread_create_internal (pp_uthread_proxy,
-								   joinable,
-								   prio,
-								   stack_size);
+								  joinable,
+								  prio,
+								  stack_size);
 
 	if (P_LIKELY (base_thread != NULL)) {
 		base_thread->ref_count = 2;
