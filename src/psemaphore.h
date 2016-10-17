@@ -65,8 +65,8 @@
  * process, but it will close the object after the first close call from any of
  * the threads within the process.
  *
- * - OpenVMS (as of 8.4 release) has declared prototypes for POSIX semaphores
- * but the actual implementation is broken.
+ * - OpenVMS (as of 8.4 release) has declared prototypes for process-wide named
+ * semaphores but the actual implementation is broken.
  *
  * - Syllable lacks support for process-wide named semaphores.
  *

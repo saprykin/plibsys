@@ -62,8 +62,8 @@
  * process, but it will close the object after the first close call from any of
  * the threads within the process.
  *
- * - OpenVMS (as of 8.4 release) has broken implementation of POSIX semaphores
- * which leads to the broken shared memory also.
+ * - OpenVMS (as of 8.4 release) has broken implementation of process-wide named
+ * semaphores which leads to the broken shared memory also.
  *
  * - Syllable lacks support for process-wide named semaphores which leads to the
  * absence of shared memory.
