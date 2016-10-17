@@ -392,8 +392,9 @@ endif()
 if (NOT PLIBSYS_RWLOCK_MODEL)
 	set (PLIBSYS_RWLOCK_MODEL ${PLIBSYS_THREAD_MODEL})
 else()
-	if (NOT PLIBSYS_RWLOCK_MODEL STREQUAL general)
-		message (WARNING "It's not recommended to mix thread and RW lock models")
+	if (NOT PLIBSYS_RWLOCK_MODEL STREQUAL general AND
+	    NOT PLIBSYS_RWLOCK_MODEL STREQUAL none)
+		message (WARNING "It's not recommended to mix threading and read-write lock models")
 	endif()
 endif()
 
