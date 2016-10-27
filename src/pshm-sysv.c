@@ -15,6 +15,7 @@
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "perror.h"
 #include "pmem.h"
 #include "psemaphore.h"
 #include "pshm.h"
@@ -70,7 +71,7 @@ pp_shm_create_handle (PShm	*shm,
 	if (P_UNLIKELY ((built = p_ipc_unix_create_key_file (shm->platform_key)) == -1)) {
 		p_error_set_error_p (error,
 				     (pint) p_error_get_last_ipc (),
-				     p_error_get_last_error (),
+				     p_error_get_last_system (),
 				     "Failed to create key file");
 		pp_shm_clean_handle (shm);
 		return FALSE;
@@ -80,7 +81,7 @@ pp_shm_create_handle (PShm	*shm,
 	if (P_UNLIKELY ((shm->unix_key = p_ipc_unix_get_ftok_key (shm->platform_key)) == -1)) {
 		p_error_set_error_p (error,
 				     (pint) p_error_get_last_ipc (),
-				     p_error_get_last_error (),
+				     p_error_get_last_system (),
 				     "Failed to get unique IPC key");
 		pp_shm_clean_handle (shm);
 		return FALSE;
@@ -91,7 +92,7 @@ pp_shm_create_handle (PShm	*shm,
 	if ((shm->shm_hdl = shmget (shm->unix_key,
 				    shm->size,
 				    IPC_CREAT | IPC_EXCL | flags)) == P_SHM_INVALID_HDL) {
-		if (p_error_get_last_error () == EEXIST) {
+		if (p_error_get_last_system () == EEXIST) {
 			is_exists = TRUE;
 
 			shm->shm_hdl = shmget (shm->unix_key, 0, flags);
@@ -102,7 +103,7 @@ pp_shm_create_handle (PShm	*shm,
 	if (P_UNLIKELY (shm->shm_hdl == P_SHM_INVALID_HDL)) {
 		p_error_set_error_p (error,
 				     (pint) p_error_get_last_ipc (),
-				     p_error_get_last_error (),
+				     p_error_get_last_system (),
 				     "Failed to call shmget() to create memory segment");
 		pp_shm_clean_handle (shm);
 		return FALSE;
@@ -111,7 +112,7 @@ pp_shm_create_handle (PShm	*shm,
 	if (P_UNLIKELY (shmctl (shm->shm_hdl, IPC_STAT, &shm_stat) == -1)) {
 		p_error_set_error_p (error,
 				     (pint) p_error_get_last_ipc (),
-				     p_error_get_last_error (),
+				     p_error_get_last_system (),
 				     "Failed to call shmctl() to get memory segment size");
 		pp_shm_clean_handle (shm);
 		return FALSE;
@@ -124,7 +125,7 @@ pp_shm_create_handle (PShm	*shm,
 	if (P_UNLIKELY ((shm->addr = shmat (shm->shm_hdl, 0, flags)) == (void *) -1)) {
 		p_error_set_error_p (error,
 				     (pint) p_error_get_last_ipc (),
-				     p_error_get_last_error (),
+				     p_error_get_last_system (),
 				     "Failed to call shmat() to attach to the memory segment");
 		pp_shm_clean_handle (shm);
 		return FALSE;

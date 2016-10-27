@@ -15,6 +15,7 @@
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "perror.h"
 #include "pmem.h"
 #include "psemaphore.h"
 #include "perror-private.h"
@@ -75,7 +76,7 @@ pp_semaphore_create_handle (PSemaphore *sem, PError **error)
 	if (P_UNLIKELY ((built = p_ipc_unix_create_key_file (sem->platform_key)) == -1)) {
 		p_error_set_error_p (error,
 				     (pint) p_error_get_last_ipc (),
-				     p_error_get_last_error (),
+				     p_error_get_last_system (),
 				     "Failed to create key file");
 		pp_semaphore_clean_handle (sem);
 		return FALSE;
@@ -85,7 +86,7 @@ pp_semaphore_create_handle (PSemaphore *sem, PError **error)
 	if (P_UNLIKELY ((sem->unix_key = p_ipc_unix_get_ftok_key (sem->platform_key)) == -1)) {
 		p_error_set_error_p (error,
 				     (pint) p_error_get_last_ipc (),
-				     p_error_get_last_error (),
+				     p_error_get_last_system (),
 				     "Failed to get unique IPC key");
 		pp_semaphore_clean_handle (sem);
 		return FALSE;
@@ -94,7 +95,7 @@ pp_semaphore_create_handle (PSemaphore *sem, PError **error)
 	if ((sem->sem_hdl = semget (sem->unix_key,
 				    1,
 				    IPC_CREAT | IPC_EXCL | 0660)) == P_SEM_INVALID_HDL) {
-		if (p_error_get_last_error () == EEXIST)
+		if (p_error_get_last_system () == EEXIST)
 			sem->sem_hdl = semget (sem->unix_key, 1, 0660);
 	} else {
 		sem->sem_created = TRUE;
@@ -106,7 +107,7 @@ pp_semaphore_create_handle (PSemaphore *sem, PError **error)
 	if (P_UNLIKELY (sem->sem_hdl == P_SEM_INVALID_HDL)) {
 		p_error_set_error_p (error,
 				     (pint) p_error_get_last_ipc (),
-				     p_error_get_last_error (),
+				     p_error_get_last_system (),
 				     "Failed to call semget() to create semaphore");
 		pp_semaphore_clean_handle (sem);
 		return FALSE;
@@ -118,7 +119,7 @@ pp_semaphore_create_handle (PSemaphore *sem, PError **error)
 		if (P_UNLIKELY (semctl (sem->sem_hdl, 0, SETVAL, semun_op) == -1)) {
 			p_error_set_error_p (error,
 					     (pint) p_error_get_last_ipc (),
-					     p_error_get_last_error (),
+					     p_error_get_last_system (),
 					     "Failed to set semaphore initial value with semctl()");
 			pp_semaphore_clean_handle (sem);
 			return FALSE;
@@ -223,14 +224,14 @@ p_semaphore_acquire (PSemaphore *sem,
 	}
 
 	while ((res = semop (sem->sem_hdl, &sem_lock, 1)) == -1 &&
-		p_error_get_last_error () == EINTR)
+		p_error_get_last_system () == EINTR)
 		;
 
 	ret = (res == 0);
 
 	if (P_UNLIKELY (ret == FALSE &&
-			(p_error_get_last_error () == EIDRM ||
-			 p_error_get_last_error () == EINVAL))) {
+			(p_error_get_last_system () == EIDRM ||
+			 p_error_get_last_system () == EINVAL))) {
 		P_WARNING ("PSemaphore::p_semaphore_acquire: trying to recreate");
 		pp_semaphore_clean_handle (sem);
 
@@ -238,7 +239,7 @@ p_semaphore_acquire (PSemaphore *sem,
 			return FALSE;
 
 		while ((res = semop (sem->sem_hdl, &sem_lock, 1)) == -1 &&
-			p_error_get_last_error () == EINTR)
+			p_error_get_last_system () == EINTR)
 			;
 
 		ret = (res == 0);
@@ -247,7 +248,7 @@ p_semaphore_acquire (PSemaphore *sem,
 	if (P_UNLIKELY (ret == FALSE))
 		p_error_set_error_p (error,
 				     (pint) p_error_get_last_ipc (),
-				     p_error_get_last_error (),
+				     p_error_get_last_system (),
 				     "Failed to call semop() on semaphore");
 
 	return ret;
@@ -269,14 +270,14 @@ p_semaphore_release (PSemaphore *sem,
 	}
 
 	while ((res = semop (sem->sem_hdl, &sem_unlock, 1)) == -1 &&
-		p_error_get_last_error () == EINTR)
+		p_error_get_last_system () == EINTR)
 		;
 
 	ret = (res == 0);
 
 	if (P_UNLIKELY (ret == FALSE &&
-			(p_error_get_last_error () == EIDRM ||
-			 p_error_get_last_error () == EINVAL))) {
+			(p_error_get_last_system () == EIDRM ||
+			 p_error_get_last_system () == EINVAL))) {
 		P_WARNING ("PSemaphore::p_semaphore_release: trying to recreate");
 		pp_semaphore_clean_handle (sem);
 
@@ -289,7 +290,7 @@ p_semaphore_release (PSemaphore *sem,
 	if (P_UNLIKELY (ret == FALSE))
 		p_error_set_error_p (error,
 				     (pint) p_error_get_last_ipc (),
-				     p_error_get_last_error (),
+				     p_error_get_last_system (),
 				     "Failed to call semop() on semaphore");
 
 	return ret;

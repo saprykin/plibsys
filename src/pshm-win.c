@@ -15,6 +15,7 @@
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "perror.h"
 #include "pmem.h"
 #include "psemaphore.h"
 #include "pshm.h"
@@ -70,7 +71,7 @@ pp_shm_create_handle (PShm	*shm,
 							    shm->platform_key)) == NULL)) {
 		p_error_set_error_p (error,
 				     (pint) p_error_get_last_ipc (),
-				     p_error_get_last_error (),
+				     p_error_get_last_system (),
 				     "Failed to call CreateFileMapping() to create file mapping");
 		pp_shm_clean_handle (shm);
 		return FALSE;
@@ -81,19 +82,19 @@ pp_shm_create_handle (PShm	*shm,
 	if (P_UNLIKELY ((shm->addr = MapViewOfFile (shm->shm_hdl, protect, 0, 0, 0)) == NULL)) {
 		p_error_set_error_p (error,
 				     (pint) p_error_get_last_ipc (),
-				     p_error_get_last_error (),
+				     p_error_get_last_system (),
 				     "Failed to call MapViewOfFile() to map file to memory");
 		pp_shm_clean_handle (shm);
 		return FALSE;
 	}
 
-	if (p_error_get_last_error () == ERROR_ALREADY_EXISTS)
+	if (p_error_get_last_system () == ERROR_ALREADY_EXISTS)
 		is_exists = TRUE;
 
 	if (P_UNLIKELY (VirtualQuery (shm->addr, &mem_stat, sizeof (mem_stat)) == 0)) {
 		p_error_set_error_p (error,
 				     (pint) p_error_get_last_ipc (),
-				     p_error_get_last_error (),
+				     p_error_get_last_system (),
 				     "Failed to call VirtualQuery() to get memory map info");
 		pp_shm_clean_handle (shm);
 		return FALSE;

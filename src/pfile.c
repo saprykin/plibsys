@@ -15,6 +15,7 @@
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "perror.h"
 #include "pfile.h"
 #include "perror-private.h"
 
@@ -64,7 +65,7 @@ p_file_remove (const pchar	*file,
 	if (P_UNLIKELY (!result))
 		p_error_set_error_p (error,
 				     (pint) p_error_get_last_io (),
-				     p_error_get_last_error (),
+				     p_error_get_last_system (),
 				     "Failed to remove file");
 
 	return result;

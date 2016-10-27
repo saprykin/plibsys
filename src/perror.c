@@ -15,8 +15,8 @@
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "pmem.h"
 #include "perror.h"
+#include "pmem.h"
 #include "pstring.h"
 #include "perror-private.h"
 
@@ -29,25 +29,6 @@ struct PError_ {
 	pint	native_code;
 	pchar	*message;
 };
-
-pint
-p_error_get_last_error (void)
-{
-#ifdef P_OS_WIN
-	return (pint) GetLastError ();
-#else
-#  ifdef P_OS_VMS
-	pint error_code = errno;
-
-	if (error_code == EVMSERR)
-		return vaxc$errno;
-	else
-		return error_code;
-#  else
-	return errno;
-#  endif
-#endif
-}
 
 PErrorIO
 p_error_get_io_from_system (pint err_code)
@@ -378,7 +359,7 @@ p_error_get_io_from_system (pint err_code)
 PErrorIO
 p_error_get_last_io (void)
 {
-	return p_error_get_io_from_system (p_error_get_last_error ());
+	return p_error_get_io_from_system (p_error_get_last_system ());
 }
 
 PErrorIPC
@@ -548,7 +529,7 @@ p_error_get_ipc_from_system (pint err_code)
 PErrorIPC
 p_error_get_last_ipc (void)
 {
-	return p_error_get_ipc_from_system (p_error_get_last_error ());
+	return p_error_get_ipc_from_system (p_error_get_last_system ());
 }
 
 P_LIB_API PError *

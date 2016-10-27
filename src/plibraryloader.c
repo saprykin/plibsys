@@ -15,11 +15,11 @@
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "plibraryloader.h"
+#include "perror.h"
 #include "pfile.h"
+#include "plibraryloader.h"
 #include "pmem.h"
 #include "pstring.h"
-#include "perror-private.h"
 
 #ifndef P_OS_WIN
 #  include <dlfcn.h>
@@ -144,7 +144,7 @@ p_library_loader_get_last_error (void)
 	DWORD	err_code;
 	LPVOID	msg_buf;
 
-	err_code = p_error_get_last_error ();
+	err_code = p_error_get_last_system ();
 
 	if (err_code == 0)
 		return NULL;

@@ -15,6 +15,7 @@
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "perror.h"
 #include "pmem.h"
 #include "psemaphore.h"
 #include "perror-private.h"
@@ -77,11 +78,11 @@ pp_semaphore_create_handle (PSemaphore *sem,
 					 O_CREAT | O_EXCL,
 					 0660,
 					 sem->init_val)) == P_SEM_INVALID_HDL &&
-		p_error_get_last_error () == EINTR)
+		p_error_get_last_system () == EINTR)
 	;
 
 	if (sem->sem_hdl == P_SEM_INVALID_HDL) {
-		if (p_error_get_last_error () == EEXIST) {
+		if (p_error_get_last_system () == EEXIST) {
 			if (sem->mode == P_SEM_ACCESS_CREATE)
 				sem_unlink (sem->platform_key);
 
@@ -89,7 +90,7 @@ pp_semaphore_create_handle (PSemaphore *sem,
 							 0,
 							 0,
 							 0)) == P_SEM_INVALID_HDL &&
-				p_error_get_last_error () == EINTR)
+				p_error_get_last_system () == EINTR)
 			;
 		}
 	} else
@@ -98,7 +99,7 @@ pp_semaphore_create_handle (PSemaphore *sem,
 	if (P_UNLIKELY (sem->sem_hdl == P_SEM_INVALID_HDL)) {
 		p_error_set_error_p (error,
 				     (pint) p_error_get_last_ipc (),
-				     p_error_get_last_error (),
+				     p_error_get_last_system (),
 				     "Failed to call sem_open() to create semaphore");
 		pp_semaphore_clean_handle (sem);
 		return FALSE;
@@ -203,7 +204,7 @@ p_semaphore_acquire (PSemaphore *sem,
 		return FALSE;
 	}
 
-	while ((res = sem_wait (sem->sem_hdl)) == -1 && p_error_get_last_error () == EINTR)
+	while ((res = sem_wait (sem->sem_hdl)) == -1 && p_error_get_last_system () == EINTR)
 		;
 
 	ret = (res == 0);
@@ -211,7 +212,7 @@ p_semaphore_acquire (PSemaphore *sem,
 	if (P_UNLIKELY (ret == FALSE))
 		p_error_set_error_p (error,
 				     (pint) p_error_get_last_ipc (),
-				     p_error_get_last_error (),
+				     p_error_get_last_system (),
 				     "Failed to call sem_wait() on semaphore");
 
 	return ret;
@@ -236,7 +237,7 @@ p_semaphore_release (PSemaphore *sem,
 	if (P_UNLIKELY (ret == FALSE))
 		p_error_set_error_p (error,
 				     (pint) p_error_get_last_ipc (),
-				     p_error_get_last_error (),
+				     p_error_get_last_system (),
 				     "Failed to call sem_post() on semaphore");
 
 	return ret;

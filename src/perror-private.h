@@ -54,12 +54,6 @@ PErrorIPC	p_error_get_ipc_from_system	(pint	err_code);
  */
 PErrorIPC	p_error_get_last_ipc		(void);
 
-/**
- * @brief Gets the last native error code.
- * @return Last native error code.
- */
-pint		p_error_get_last_error		(void);
-
 P_END_DECLS
 
 #endif /* PLIBSYS_HEADER_PERROR_PRIVATE_H */

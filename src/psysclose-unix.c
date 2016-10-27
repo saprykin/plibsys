@@ -15,7 +15,7 @@
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "perror-private.h"
+#include "perror.h"
 #include "psysclose-private.h"
 
 #include <unistd.h>
@@ -33,7 +33,7 @@ p_sys_close (pint fd)
 		if (P_LIKELY (res == 0))
 			return 0;
 
-		err_code = p_error_get_last_error ();
+		err_code = p_error_get_last_system ();
 
 		if (err_code == EINTR)
 			continue;

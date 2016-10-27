@@ -15,6 +15,7 @@
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "perror.h"
 #include "pinifile.h"
 #include "plist.h"
 #include "pmem.h"
@@ -188,7 +189,7 @@ p_ini_file_parse (PIniFile	*file,
 	if (P_UNLIKELY ((in_file = fopen (file->path, "r")) == NULL)) {
 		p_error_set_error_p (error,
 				     (pint) p_error_get_last_io (),
-				     p_error_get_last_error (),
+				     p_error_get_last_system (),
 				     "Failed to open file for reading");
 		return FALSE;
 	}

@@ -23,9 +23,9 @@
 #ifdef P_OS_SCO
 #  include "ptimeprofiler.h"
 #endif
-#include "psysclose-private.h"
-#include "plibsys-private.h"
 #include "perror-private.h"
+#include "plibsys-private.h"
+#include "psysclose-private.h"
 
 #include <stdlib.h>
 #include <string.h>
@@ -82,19 +82,9 @@ struct PSocket_ {
 #  define P_SOCKET_DEFAULT_SEND_FLAGS	0
 #endif
 
-static pint pp_socket_get_errno (void);
 static pboolean pp_socket_set_fd_blocking (pint fd, pboolean blocking, PError **error);
 static pboolean pp_socket_check (const PSocket *socket, PError **error);
 static pboolean pp_socket_set_details_from_fd (PSocket *socket, PError **error);
-
-static pint pp_socket_get_errno (void)
-{
-#ifdef P_OS_WIN
-	return WSAGetLastError ();
-#else
-	return errno;
-#endif
-}
 
 static pboolean
 pp_socket_set_fd_blocking (pint		fd,
@@ -134,8 +124,8 @@ pp_socket_set_fd_blocking (pint		fd,
 	if (P_UNLIKELY (ioctlsocket (fd, FIONBIO, &arg) == SOCKET_ERROR)) {
 #endif
 		p_error_set_error_p (error,
-				     (pint) p_error_get_io_from_system (pp_socket_get_errno ()),
-				     (pint) pp_socket_get_errno (),
+				     (pint) p_error_get_io_from_system (p_error_get_last_net ()),
+				     (pint) p_error_get_last_net (),
 				     "Failed to set socket blocking flags");
 		return FALSE;
 	}
@@ -180,8 +170,8 @@ pp_socket_set_details_from_fd (PSocket	*socket,
 
 	if (P_UNLIKELY (getsockopt (fd, SOL_SOCKET, SO_TYPE, (ppointer) &value, &optlen) != 0)) {
 		p_error_set_error_p (error,
-				     (pint) p_error_get_io_from_system (pp_socket_get_errno ()),
-				     (pint) pp_socket_get_errno (),
+				     (pint) p_error_get_io_from_system (p_error_get_last_net ()),
+				     (pint) p_error_get_last_net (),
 				     "Failed to call getsockopt() to get socket info for fd");
 		return FALSE;
 	}
@@ -216,8 +206,8 @@ pp_socket_set_details_from_fd (PSocket	*socket,
 
 	if (P_UNLIKELY (getsockname (fd, (struct sockaddr *) &address, &addrlen) != 0)) {
 		p_error_set_error_p (error,
-				     (pint) p_error_get_io_from_system (pp_socket_get_errno ()),
-				     (pint) pp_socket_get_errno (),
+				     (pint) p_error_get_io_from_system (p_error_get_last_net ()),
+				     (pint) p_error_get_last_net (),
 				     "Failed to call getsockname() to get socket address info");
 		return FALSE;
 	}
@@ -232,8 +222,8 @@ pp_socket_set_details_from_fd (PSocket	*socket,
 					    (ppointer) &family,
 					    &optlen) != 0)) {
 			p_error_set_error_p (error,
-					     (pint) p_error_get_io_from_system (pp_socket_get_errno ()),
-					     (pint) pp_socket_get_errno (),
+					     (pint) p_error_get_io_from_system (p_error_get_last_net ()),
+					     (pint) p_error_get_last_net (),
 					     "Failed to call getsockopt() to get socket SO_DOMAIN option");
 			return FALSE;
 		}
@@ -395,7 +385,7 @@ p_socket_new_from_fd (pint	fd,
 	if (P_UNLIKELY ((ret->events = WSACreateEvent ()) == WSA_INVALID_EVENT)) {
 		p_error_set_error_p (error,
 				     (pint) P_ERROR_IO_FAILED,
-				     (pint) pp_socket_get_errno (),
+				     (pint) p_error_get_last_net (),
 				     "Failed to call WSACreateEvent() on socket");
 		p_free (ret);
 		return NULL;
@@ -472,8 +462,8 @@ p_socket_new (PSocketFamily	family,
 #endif
 	if (P_UNLIKELY ((fd = (pint) socket (family, native_type, protocol)) < 0)) {
 		p_error_set_error_p (error,
-				     (pint) p_error_get_io_from_system (pp_socket_get_errno ()),
-				     (pint) pp_socket_get_errno (),
+				     (pint) p_error_get_io_from_system (p_error_get_last_net ()),
+				     (pint) p_error_get_last_net (),
 				     "Failed to call socket() to create socket");
 #ifdef P_OS_SCO
 		p_time_profiler_free (ret->timer);
@@ -523,7 +513,7 @@ p_socket_new (PSocketFamily	family,
 	if (P_UNLIKELY ((ret->events = WSACreateEvent ()) == WSA_INVALID_EVENT)) {
 		p_error_set_error_p (error,
 				     (pint) P_ERROR_IO_FAILED,
-				     (pint) pp_socket_get_errno (),
+				     (pint) p_error_get_last_net (),
 				     "Failed to call WSACreateEvent() on socket");
 		p_socket_free (ret);
 		return NULL;
@@ -625,8 +615,8 @@ p_socket_get_local_address (const PSocket	*socket,
 
 	if (P_UNLIKELY (getsockname (socket->fd, (struct sockaddr *) &buffer, &len) < 0)) {
 		p_error_set_error_p (error,
-				     (pint) p_error_get_io_from_system (pp_socket_get_errno ()),
-				     (pint) pp_socket_get_errno (),
+				     (pint) p_error_get_io_from_system (p_error_get_last_net ()),
+				     (pint) p_error_get_last_net (),
 				     "Failed to call getsockname() to get local socket address");
 		return NULL;
 	}
@@ -662,8 +652,8 @@ p_socket_get_remote_address (const PSocket	*socket,
 
 	if (P_UNLIKELY (getpeername (socket->fd, (struct sockaddr *) &buffer, &len) < 0)) {
 		p_error_set_error_p (error,
-				     (pint) p_error_get_io_from_system (pp_socket_get_errno ()),
-				     (pint) pp_socket_get_errno (),
+				     (pint) p_error_get_io_from_system (p_error_get_last_net ()),
+				     (pint) p_error_get_last_net (),
 				     "Failed to call getpeername() to get remote socket address");
 		return NULL;
 	}
@@ -723,8 +713,8 @@ p_socket_check_connect_result (PSocket  *socket,
 
 	if (P_UNLIKELY (getsockopt (socket->fd, SOL_SOCKET, SO_ERROR, (ppointer) &val, &optlen) < 0)) {
 		p_error_set_error_p (error,
-				     (pint) p_error_get_io_from_system (pp_socket_get_errno ()),
-				     (pint) pp_socket_get_errno (),
+				     (pint) p_error_get_io_from_system (p_error_get_last_net ()),
+				     (pint) p_error_get_last_net (),
 				     "Failed to call getsockopt() to get connection status");
 		return FALSE;
 	}
@@ -872,8 +862,8 @@ p_socket_bind (const PSocket	*socket,
 			      (struct sockaddr *) &addr,
 			      (socklen_t) p_socket_address_get_native_size (address)) < 0)) {
 		p_error_set_error_p (error,
-				     (pint) p_error_get_io_from_system (pp_socket_get_errno ()),
-				     (pint) pp_socket_get_errno (),
+				     (pint) p_error_get_io_from_system (p_error_get_last_net ()),
+				     (pint) p_error_get_last_net (),
 				     "Failed to call bind() on socket");
 		return FALSE;
 	}
@@ -918,7 +908,7 @@ p_socket_connect (PSocket		*socket,
 		if (P_LIKELY (conn_result == 0))
 			break;
 
-		err_code = pp_socket_get_errno ();
+		err_code = p_error_get_last_net ();
 
 		if (err_code == EINTR)
 			continue;
@@ -930,7 +920,7 @@ p_socket_connect (PSocket		*socket,
 			       (pint) p_socket_address_get_native_size (address));
 
 	if (conn_result != 0)
-		err_code = pp_socket_get_errno ();
+		err_code = p_error_get_last_net ();
 #endif
 
 	if (conn_result == 0) {
@@ -980,8 +970,8 @@ p_socket_listen (PSocket	*socket,
 
 	if (P_UNLIKELY (listen (socket->fd, socket->listen_backlog) < 0)) {
 		p_error_set_error_p (error,
-				     (pint) p_error_get_io_from_system (pp_socket_get_errno ()),
-				     (pint) pp_socket_get_errno (),
+				     (pint) p_error_get_io_from_system (p_error_get_last_net ()),
+				     (pint) p_error_get_last_net (),
 				     "Failed to call listen() on socket");
 		return FALSE;
 	}
@@ -1021,9 +1011,9 @@ p_socket_accept (const PSocket	*socket,
 			return NULL;
 
 		if ((res = (pint) accept (socket->fd, NULL, 0)) < 0) {
-			err_code = pp_socket_get_errno ();
+			err_code = p_error_get_last_net ();
 #if !defined (P_OS_WIN) && defined (EINTR)
-			if (pp_socket_get_errno () == EINTR)
+			if (p_error_get_last_net () == EINTR)
 				continue;
 #endif
 			sock_err = p_error_get_io_from_system (err_code);
@@ -1095,7 +1085,7 @@ p_socket_receive (const PSocket	*socket,
 			return -1;
 
 		if ((ret = recv (socket->fd, buffer, (socklen_t) buflen, 0)) < 0) {
-			err_code = pp_socket_get_errno ();
+			err_code = p_error_get_last_net ();
 
 #if !defined (P_OS_WIN) && defined (EINTR)
 			if (err_code == EINTR)
@@ -1159,7 +1149,7 @@ p_socket_receive_from (const PSocket	*socket,
 				     0,
 				     (struct sockaddr *) &sa,
 				     &optlen)) < 0) {
-			err_code = pp_socket_get_errno ();
+			err_code = p_error_get_last_net ();
 
 #if !defined (P_OS_WIN) && defined (EINTR)
 			if (err_code == EINTR)
@@ -1219,7 +1209,7 @@ p_socket_send (const PSocket	*socket,
 				 buffer,
 				 (socklen_t) buflen,
 				 P_SOCKET_DEFAULT_SEND_FLAGS)) < 0) {
-			err_code = pp_socket_get_errno ();
+			err_code = p_error_get_last_net ();
 
 #if !defined (P_OS_WIN) && defined (EINTR)
 			if (err_code == EINTR)
@@ -1289,7 +1279,7 @@ p_socket_send_to (const PSocket		*socket,
 				   0,
 				   (struct sockaddr *) &sa,
 				   optlen)) < 0) {
-			err_code = pp_socket_get_errno ();
+			err_code = p_error_get_last_net ();
 
 #if !defined (P_OS_WIN) && defined (EINTR)
 			if (err_code == EINTR)
@@ -1339,7 +1329,7 @@ p_socket_close (PSocket	*socket,
 
 		return TRUE;
 	} else {
-		err_code = pp_socket_get_errno ();
+		err_code = p_error_get_last_net ();
 
 		p_error_set_error_p (error,
 				     (pint) p_error_get_io_from_system (err_code),
@@ -1390,8 +1380,8 @@ p_socket_shutdown (PSocket	*socket,
 
 	if (P_UNLIKELY (shutdown (socket->fd, how) != 0)) {
 		p_error_set_error_p (error,
-				     (pint) p_error_get_io_from_system (pp_socket_get_errno ()),
-				     (pint) pp_socket_get_errno (),
+				     (pint) p_error_get_io_from_system (p_error_get_last_net ()),
+				     (pint) p_error_get_last_net (),
 				     "Failed to call shutdown() on socket");
 		return FALSE;
 	}
@@ -1452,8 +1442,8 @@ p_socket_set_buffer_size (const PSocket		*socket,
 				    (pconstpointer) &optval,
 				    sizeof (optval)) != 0)) {
 		p_error_set_error_p (error,
-				     (pint) p_error_get_io_from_system (pp_socket_get_errno ()),
-				     (pint) pp_socket_get_errno (),
+				     (pint) p_error_get_io_from_system (p_error_get_last_net ()),
+				     (pint) p_error_get_last_net (),
 				     "Failed to call setsockopt() on socket to set buffer size");
 		return FALSE;
 	}
@@ -1503,13 +1493,13 @@ p_socket_io_condition_wait (const PSocket	*socket,
 	else if (evret == WSA_WAIT_TIMEOUT) {
 		p_error_set_error_p (error,
 				     (pint) P_ERROR_IO_TIMED_OUT,
-				     (pint) pp_socket_get_errno (),
+				     (pint) p_error_get_last_net (),
 				     "Timed out while waiting socket condition");
 		return FALSE;
 	} else {
 		p_error_set_error_p (error,
-				     (pint) p_error_get_io_from_system (pp_socket_get_errno ()),
-				     (pint) pp_socket_get_errno (),
+				     (pint) p_error_get_io_from_system (p_error_get_last_net ()),
+				     (pint) p_error_get_last_net (),
 				     "Failed to call WSAWaitForMultipleEvents() on socket");
 		return FALSE;
 	}
@@ -1532,7 +1522,7 @@ p_socket_io_condition_wait (const PSocket	*socket,
 		evret = poll (&pfd, 1, timeout);
 
 #ifdef EINTR
-		if (evret == -1 && pp_socket_get_errno () == EINTR) {
+		if (evret == -1 && p_error_get_last_net () == EINTR) {
 #  ifdef P_OS_SCO
 			if (timeout < 0 ||
 			    (p_time_profiler_elapsed_usecs (socket->timer) / 1000) < (puint64) timeout)
@@ -1550,13 +1540,13 @@ p_socket_io_condition_wait (const PSocket	*socket,
 		else if (evret == 0) {
 			p_error_set_error_p (error,
 					     (pint) P_ERROR_IO_TIMED_OUT,
-					     (pint) pp_socket_get_errno (),
+					     (pint) p_error_get_last_net (),
 					     "Timed out while waiting socket condition");
 			return FALSE;
 		} else {
 			p_error_set_error_p (error,
-					     (pint) p_error_get_io_from_system (pp_socket_get_errno ()),
-					     (pint) pp_socket_get_errno (),
+					     (pint) p_error_get_io_from_system (p_error_get_last_net ()),
+					     (pint) p_error_get_last_net (),
 					     "Failed to call poll() on socket");
 			return FALSE;
 		}

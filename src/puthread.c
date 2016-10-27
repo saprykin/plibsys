@@ -16,11 +16,13 @@
  */
 
 #include "patomic.h"
-#include "pspinlock.h"
+#ifndef P_OS_WIN
+#  include "perror.h"
+#endif
 #include "pmem.h"
+#include "pspinlock.h"
 #include "puthread.h"
 #include "puthread-private.h"
-#include "perror-private.h"
 
 #include <stdlib.h>
 #include <string.h>
@@ -247,7 +249,7 @@ static pint pp_uthread_nanosleep (puint32 msec)
 
 	while (rc != 0) {
 		if (P_UNLIKELY ((rc = select (0, NULL, NULL, NULL, &time2wait)) != 0)) {
-			if (p_error_get_last_error () == EINTR) {
+			if (p_error_get_last_system () == EINTR) {
 				if (gettimeofday (&tstop, NULL) != 0)
 					return -1;
 
@@ -286,7 +288,7 @@ p_uthread_sleep (puint32 msec)
 	result = -1;
 	while (result != 0) {
 		if (P_UNLIKELY ((result = nanosleep (&time_req, &time_rem)) != 0)) {
-			if (p_error_get_last_error () == EINTR)
+			if (p_error_get_last_system () == EINTR)
 				time_req = time_rem;
 			else
 				return -1;

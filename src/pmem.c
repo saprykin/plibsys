@@ -18,6 +18,7 @@
 #include <string.h>
 #include <stdlib.h>
 
+#include "perror.h"
 #include "pmem.h"
 #include "perror-private.h"
 #include "psysclose-private.h"
@@ -155,7 +156,7 @@ p_mem_mmap (psize	n_bytes,
 						   NULL)) == NULL)) {
 		p_error_set_error_p (error,
 				     (pint) p_error_get_last_io (),
-				     p_error_get_last_error (),
+				     p_error_get_last_system (),
 				     "Failed to call CreateFileMapping() to create file mapping");
 		return NULL;
 	}
@@ -167,7 +168,7 @@ p_mem_mmap (psize	n_bytes,
 					       n_bytes)) == NULL)) {
 		p_error_set_error_p (error,
 				     (pint) p_error_get_last_io (),
-				     p_error_get_last_error (),
+				     p_error_get_last_system (),
 				     "Failed to call MapViewOfFile() to map file view");
 		CloseHandle (hdl);
 		return NULL;
@@ -176,7 +177,7 @@ p_mem_mmap (psize	n_bytes,
 	if (P_UNLIKELY (!CloseHandle (hdl))) {
 		p_error_set_error_p (error,
 				     (pint) p_error_get_last_io (),
-				     p_error_get_last_error (),
+				     p_error_get_last_system (),
 				     "Failed to call CloseHandle() to close file mapping");
 		UnmapViewOfFile (addr);
 		return NULL;
@@ -186,7 +187,7 @@ p_mem_mmap (psize	n_bytes,
 	if (P_UNLIKELY ((fd = open ("/dev/zero", O_RDWR | O_EXCL, 0754)) == -1)) {
 		p_error_set_error_p (error,
 				     (pint) p_error_get_last_io (),
-				     p_error_get_last_error (),
+				     p_error_get_last_system (),
 				     "Failed to open /dev/zero for file mapping");
 		return NULL;
 	}
@@ -208,7 +209,7 @@ p_mem_mmap (psize	n_bytes,
 				      0)) == (void *) -1)) {
 		p_error_set_error_p (error,
 				     (pint) p_error_get_last_io (),
-				     p_error_get_last_error (),
+				     p_error_get_last_system (),
 				     "Failed to call mmap() to create file mapping");
 #  if !defined (PLIBSYS_MMAP_HAS_MAP_ANONYMOUS) && !defined (PLIBSYS_MMAP_HAS_MAP_ANON)
 		if (P_UNLIKELY (p_sys_close (fd) != 0))
@@ -221,7 +222,7 @@ p_mem_mmap (psize	n_bytes,
 	if (P_UNLIKELY (p_sys_close (fd) != 0)) {
 		p_error_set_error_p (error,
 				     (pint) p_error_get_last_io (),
-				     p_error_get_last_error (),
+				     p_error_get_last_system (),
 				     "Failed to close /dev/zero handle");
 		munmap (addr, n_bytes);
 		return NULL;
@@ -249,13 +250,13 @@ p_mem_munmap (ppointer	mem,
 	if (P_UNLIKELY (UnmapViewOfFile (mem) == 0)) {
 		p_error_set_error_p (error,
 				     (pint) p_error_get_last_io (),
-				     p_error_get_last_error (),
+				     p_error_get_last_system (),
 				     "Failed to call UnmapViewOfFile() to remove file mapping");
 #else
 	if (P_UNLIKELY (munmap (mem, n_bytes) != 0)) {
 		p_error_set_error_p (error,
 				     (pint) p_error_get_last_io (),
-				     p_error_get_last_error (),
+				     p_error_get_last_system (),
 				     "Failed to call munmap() to remove file mapping");
 #endif
 		return FALSE;

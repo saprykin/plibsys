@@ -15,6 +15,7 @@
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "perror.h"
 #include "pmem.h"
 #include "psemaphore.h"
 #include "perror-private.h"
@@ -55,7 +56,7 @@ pp_semaphore_create_handle (PSemaphore *sem, PError **error)
 							  sem->platform_key)) == P_SEM_INVALID_HDL)) {
 		p_error_set_error_p (error,
 				     (pint) p_error_get_last_ipc (),
-				     p_error_get_last_error (),
+				     p_error_get_last_system (),
 				     "Failed to call CreateSemaphore() to create semaphore");
 		return FALSE;
 	}
@@ -149,7 +150,7 @@ p_semaphore_acquire (PSemaphore *sem,
 	if (P_UNLIKELY (ret == FALSE))
 		p_error_set_error_p (error,
 				     (pint) p_error_get_last_ipc (),
-				     p_error_get_last_error (),
+				     p_error_get_last_system (),
 				     "Failed to call WaitForSingleObject() on semaphore");
 
 	return ret;
@@ -174,7 +175,7 @@ p_semaphore_release (PSemaphore *sem,
 	if (P_UNLIKELY (ret == FALSE))
 		p_error_set_error_p (error,
 				     (pint) p_error_get_last_ipc (),
-				     p_error_get_last_error (),
+				     p_error_get_last_system (),
 				     "Failed to call ReleaseSemaphore() on semaphore");
 
 	return ret;
