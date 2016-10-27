@@ -16,10 +16,10 @@ It has zero third-party dependecies and uses only native system calls.
 plibsys gives you:
 
 * Platform independent data types
-* Threads: POSIX, Solaris, Atheos and Win32
-* Mutexes: POSIX, Solaris, Atheos and Win32
-* Condition variables: POSIX, Solaris, Atheos and Win32
-* Read-write locks: POSIX, Solaris, Atheos and Win32
+* Threads: POSIX, Solaris, AtheOS and Win32
+* Mutexes: POSIX, Solaris, AtheOS and Win32
+* Condition variables: POSIX, Solaris, AtheOS and Win32
+* Read-write locks: POSIX, Solaris, AtheOS and Win32
 * System-wide semaphores: POSIX, System V and Win32
 * System-wide shared memory: POSIX, System V and Win32
 * Optimized spinlock
