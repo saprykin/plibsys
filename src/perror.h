@@ -193,19 +193,44 @@ P_LIB_API void		p_error_free		(PError		*error);
 
 /**
  * @brief Gets the last system native error code.
+ * @return Last system native error code.
  * @since 0.0.2
- * @sa p_error_get_last_net()
+ * @sa p_error_get_last_net(), p_error_set_last_system(),
+ * p_error_set_last_net()
  * @note If you want get an error code for socket-related calls, use
  * p_error_get_last_net() instead.
  */
+
 P_LIB_API pint		p_error_get_last_system	(void);
 
 /**
  * @brief Gets the last network native error code.
+ * @return Last network native error code.
  * @since 0.0.2
- * @sa p_error_get_last_system()
+ * @sa p_error_get_last_system(), p_error_set_last_net(),
+ * p_error_set_last_system()
  */
 P_LIB_API pint		p_error_get_last_net	(void);
+
+/**
+ * @brief Sets the last system native error code.
+ * @param code Error code to set.
+ * @since 0.0.2
+ * @sa p_error_set_last_net(), p_error_get_last_system(),
+ * p_error_get_last_net()
+ * @note If you want set an error code for socket-related calls, use
+ * p_error_set_last_net() instead.
+ */
+P_LIB_API void		p_error_set_last_system	(pint code);
+
+/**
+ * @brief Sets the last network native error code.
+ * @param code Error code to set.
+ * @since 0.0.2
+ * @sa p_error_set_last_system(), p_error_get_last_net(),
+ * p_error_get_last_system()
+ */
+P_LIB_API void		p_error_set_last_net	(pint code);
 
 P_END_DECLS
 

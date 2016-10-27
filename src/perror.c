@@ -733,3 +733,23 @@ p_error_get_last_net (void)
 	return p_error_get_last_system ();
 #endif
 }
+
+P_LIB_API void
+p_error_set_last_system (pint code)
+{
+#ifdef P_OS_WIN
+	return SetLastError (code);
+#else
+	errno = code;
+#endif
+}
+
+P_LIB_API void
+p_error_set_last_net (pint code)
+{
+#ifdef P_OS_WIN
+	return WSASetLastError (code);
+#else
+	errno = code;
+#endif
+}
