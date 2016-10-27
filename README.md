@@ -55,6 +55,7 @@ with unit tests and was tested on the following platforms:
 * UnixWare 7
 * SCO OpenServer 5
 * Haiku
+* Syllable
 
 It should also work on other *nix systems with or without minimal efforts.
 
