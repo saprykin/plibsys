@@ -201,9 +201,22 @@ BOOST_AUTO_TEST_CASE (puthread_nomem_test)
 	p_uthread_exit (0);
 
 	p_uthread_set_local (thread_key, PINT_TO_POINTER (10));
-	BOOST_CHECK (p_uthread_get_local (thread_key) == NULL);
-	p_uthread_replace_local (thread_key, PINT_TO_POINTER (10));
-	BOOST_CHECK (p_uthread_get_local (thread_key) == NULL);
+
+	ppointer tls_value = p_uthread_get_local (thread_key);
+
+	if (tls_value != NULL) {
+		BOOST_CHECK (tls_value == PINT_TO_POINTER (10));
+		p_uthread_set_local (thread_key, NULL);
+	}
+
+	p_uthread_replace_local (thread_key, PINT_TO_POINTER (12));
+
+	tls_value = p_uthread_get_local (thread_key);
+
+	if (tls_value != NULL) {
+		BOOST_CHECK (tls_value == PINT_TO_POINTER (12));
+		p_uthread_set_local (thread_key, NULL);
+	}
 
 	p_mem_restore_vtable ();
 
