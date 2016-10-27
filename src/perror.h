@@ -34,6 +34,9 @@
  * Note that you should not initialize a new #PError object before passing the
  * pointer into an API call. Simply initialize it with zero and check the result
  * after. Therefore you need to free memory if an error occurred.
+ *
+ * If you need to get a native error code from a system for the last call
+ * consider using p_error_get_last_system() and p_error_get_last_net().
  */
 
 #if !defined (PLIBSYS_H_INSIDE) && !defined (PLIBSYS_COMPILATION)
@@ -187,6 +190,22 @@ P_LIB_API void		p_error_clear		(PError		*error);
  * @since 0.0.1
  */
 P_LIB_API void		p_error_free		(PError		*error);
+
+/**
+ * @brief Gets the last system native error code.
+ * @since 0.0.2
+ * @sa p_error_get_last_net()
+ * @note If you want get an error code for socket-related calls, use
+ * p_error_get_last_net() instead.
+ */
+P_LIB_API pint		p_error_get_last_system	(void);
+
+/**
+ * @brief Gets the last network native error code.
+ * @since 0.0.2
+ * @sa p_error_get_last_system()
+ */
+P_LIB_API pint		p_error_get_last_net	(void);
 
 P_END_DECLS
 

@@ -723,3 +723,32 @@ p_error_free (PError	*error)
 
 	p_free (error);
 }
+
+P_LIB_API pint
+p_error_get_last_system (void)
+{
+#ifdef P_OS_WIN
+	return (pint) GetLastError ();
+#else
+#  ifdef P_OS_VMS
+	pint error_code = errno;
+
+	if (error_code == EVMSERR)
+		return vaxc$errno;
+	else
+		return error_code;
+#  else
+	return errno;
+#  endif
+#endif
+}
+
+P_LIB_API pint
+p_error_get_last_net (void)
+{
+#ifdef P_OS_WIN
+	return WSAGetLastError ();
+#else
+	return p_error_get_system_last ();
+#endif
+}
