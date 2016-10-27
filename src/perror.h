@@ -35,8 +35,12 @@
  * pointer into an API call. Simply initialize it with zero and check the result
  * after. Therefore you need to free memory if an error occurred.
  *
- * If you need to get a native error code from a system for the last call
- * consider using p_error_get_last_system() and p_error_get_last_net().
+ * Most operating systems store the last error code of the most system calls in
+ * a thread-specific variable. Moreover, Windows stores the error code of the
+ * last socket related call in a separate variable. Use
+ * p_error_get_last_system() and p_error_set_last_system() to access the last
+ * system error code, p_error_get_last_net() and p_error_set_last_net() to
+ * access the last network error code.
  */
 
 #if !defined (PLIBSYS_H_INSIDE) && !defined (PLIBSYS_COMPILATION)
