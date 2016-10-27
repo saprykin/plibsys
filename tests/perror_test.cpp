@@ -211,6 +211,17 @@ BOOST_AUTO_TEST_CASE (perror_general_test)
 
 	p_error_free (error);
 
+	/* System codes */
+	p_error_set_last_system (10);
+	BOOST_CHECK (p_error_get_last_system () == 10);
+	p_error_set_last_system (0);
+	BOOST_CHECK (p_error_get_last_system () == 0);
+
+	p_error_set_last_net (20);
+	BOOST_CHECK (p_error_get_last_net () == 20);
+	p_error_set_last_net (0);
+	BOOST_CHECK (p_error_get_last_net () == 0);
+
 	p_libsys_shutdown ();
 }
 
