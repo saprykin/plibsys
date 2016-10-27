@@ -191,10 +191,10 @@ p_uthread_shutdown_internal (void)
 }
 
 PUThread *
-p_uthread_create_internal (PUThreadFunc	func,
-			    pboolean		joinable,
-			    PUThreadPriority	prio,
-			    psize		stack_size)
+p_uthread_create_internal (PUThreadFunc		func,
+			   pboolean		joinable,
+			   PUThreadPriority	prio,
+			   psize		stack_size)
 {
 	PUThread *ret;
 
