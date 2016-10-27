@@ -730,6 +730,6 @@ p_error_get_last_net (void)
 #ifdef P_OS_WIN
 	return WSAGetLastError ();
 #else
-	return p_error_get_system_last ();
+	return p_error_get_last_system ();
 #endif
 }
