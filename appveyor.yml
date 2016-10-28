@@ -95,7 +95,7 @@ build_script:
 
                         echo $CMAKE_COMMAND
 
-                        & bash -c "$CMAKE_COMMAND";
+                        & bash -c "''$CMAKE_COMMAND''";
                         & bash -c 'make -j 2';
 
                         If ($env:APPVEYOR_REPO_BRANCH -eq "appveyor_test") {
