@@ -88,7 +88,7 @@ build_script:
                         & bash -c 'cygserver-config --yes';
                         & bash -c 'cygrunsrv -S cygserver';
 
-                        $CMAKE_COMMAND = 'cmake -G"{0}" -DCMAKE_BUILD_TYPE={1} {2} {3} /cygdrive/c/Projects/plibsys' -f $env:CMAKE_GENERATOR,$env:configuration,$VAR_BOOST_TESTS,$VAR_BOOST_ROOT;
+                        $CMAKE_COMMAND = 'cmake -G""{0}"" -DCMAKE_BUILD_TYPE={1} {2} {3} /cygdrive/c/Projects/plibsys' -f $env:CMAKE_GENERATOR,$env:configuration,$VAR_BOOST_TESTS,$VAR_BOOST_ROOT;
 
                         & bash -c $CMAKE_COMMAND;
                         & bash -c 'make -j 2';
