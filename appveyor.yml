@@ -7,6 +7,9 @@ environment:
         matrix:
                 - CMAKE_GENERATOR: "MinGW Makefiles"
                   USE_MINGW:       "1"
+                - CMAKE_GENERATOR: "MinGW Makefiles"
+                  USE_MINGW:       "1"
+                  USE_W64_32:      "1"
                 - CMAKE_GENERATOR: "Visual Studio 9 2008"
                   USE_OLD_MSBUILD: "1"
                 - CMAKE_GENERATOR: "Visual Studio 10 2010"
@@ -47,11 +50,15 @@ build_script:
                 }
 
                 If ($env:USE_MINGW -eq "1") {
-                        $env:PATH      = "C:\MinGW\bin;C:\Program Files (x86)\CMake\bin";
+                        if ($env:USE_W64_32 -eq "1") {
+                            $env:PATH = "C:\mingw-w64\i686-5.3.0-posix-dwarf-rt_v4-rev0\mingw32\bin;C:\Program Files (x86)\CMake\bin";
+                        } Else {
+                            $env:PATH = "C:\MinGW\bin;C:\Program Files (x86)\CMake\bin";
 
-                        # Workaround for https://github.com/appveyor/ci/issues/996
-                        & mingw-get update
-                        & mingw-get upgrade libstdc++=4.9.3-1
+                            # Workaround for https://github.com/appveyor/ci/issues/996
+                            & mingw-get update
+                            & mingw-get upgrade libstdc++=4.9.3-1
+                        }
 
                         $BUILD_TYPE    = "-DCMAKE_BUILD_TYPE=$env:configuration";
                         $BUILD_COMMAND = "mingw32-make";
