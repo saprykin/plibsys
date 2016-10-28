@@ -10,6 +10,11 @@ environment:
                 - CMAKE_GENERATOR: "MinGW Makefiles"
                   USE_MINGW:       "1"
                   USE_W64_32:      "1"
+                - CMAKE_GENERATOR: "Unix Makefiles"
+                  USE_CYGWIN:      "1"
+                  USE_CYGWIN64:    "1"
+                - CMAKE_GENERATOR: "Unix Makefiles"
+                  USE_CYGWIN:      "1"
                 - CMAKE_GENERATOR: "Visual Studio 9 2008"
                   USE_OLD_MSBUILD: "1"
                 - CMAKE_GENERATOR: "Visual Studio 10 2010"
@@ -46,22 +51,53 @@ build_script:
 
                 If ($env:APPVEYOR_REPO_BRANCH -eq "appveyor_test") {
                         $VAR_BOOST_TESTS = "-DPLIBSYS_TESTS_STATIC=ON";
-                        $VAR_BOOST_ROOT  = "-DBOOST_ROOT=C:\Libraries\boost_1_59_0";
+
+                        If ($env:USE_CYGWIN -eq "1") {
+                                $VAR_BOOST_ROOT = "-DBOOST_ROOT=/cygdrive/c/Libraries/boost_1_59_0";
+                        } Else {
+                                $VAR_BOOST_ROOT = "-DBOOST_ROOT=C:\Libraries\boost_1_59_0";
+                        }
                 }
 
                 If ($env:USE_MINGW -eq "1") {
                         if ($env:USE_W64_32 -eq "1") {
-                            $env:PATH = "C:\mingw-w64\i686-5.3.0-posix-dwarf-rt_v4-rev0\mingw32\bin;C:\Program Files (x86)\CMake\bin";
+                                $env:PATH = "C:\mingw-w64\i686-5.3.0-posix-dwarf-rt_v4-rev0\mingw32\bin;C:\Program Files (x86)\CMake\bin";
                         } Else {
-                            $env:PATH = "C:\MinGW\bin;C:\Program Files (x86)\CMake\bin";
+                                $env:PATH = "C:\MinGW\bin;C:\Program Files (x86)\CMake\bin";
 
-                            # Workaround for https://github.com/appveyor/ci/issues/996
-                            & mingw-get update
-                            & mingw-get upgrade libstdc++=4.9.3-1
+                                # Workaround for https://github.com/appveyor/ci/issues/996
+                                & mingw-get update
+                                & mingw-get upgrade libstdc++=4.9.3-1
                         }
 
                         $BUILD_TYPE    = "-DCMAKE_BUILD_TYPE=$env:configuration";
                         $BUILD_COMMAND = "mingw32-make";
+                } ElseIf ($env:USE_CYGWIN -eq "1") {
+                        If ($env:USE_CYGWIN64 -eq "1") {
+                                $CYG_ROOT  = "C:\cygwin64";
+                                $CYG_SETUP = "C:\cygwin64\setup-x86_64.exe";
+                        } Else {
+                                $CYG_ROOT  = "C:\cygwin";
+                                $CYG_SETUP = "C:\cygwin\setup-x86.exe";
+                        }
+
+                        $env:PATH = "$CYG_ROOT\bin;$env:PATH";
+
+                        & $CYG_SETUP -qnNdO -R $CYG_ROOT -s http://cygwin.mirror.constant.com -l "$CYG_ROOT\var\cache\setup" -P cmake,cygrunsrv;
+
+                        & bash -c 'cygserver-config --yes';
+                        & bash -c 'cygrunsrv -S cygserver';
+
+                        $CMAKE_COMMAND = 'cmake -G"{0}" -DCMAKE_BUILD_TYPE={1} {2} {3} /cygdrive/c/Projects/plibsys' -f $env:CMAKE_GENERATOR,$env:configuration,$VAR_BOOST_TESTS,$VAR_BOOST_ROOT;
+
+                        & bash -c $CMAKE_COMMAND;
+                        & bash -c 'make -j 2';
+
+                        If ($env:APPVEYOR_REPO_BRANCH -eq "appveyor_test") {
+                                & bash -c 'ctest --output-on-failure -V -C Release';
+                        }
+
+                        return;
                 } ElseIf ($env:USE_LLVM -eq "1") {
                         pushd "$env:VS140COMNTOOLS\..\..\VC\bin\amd64"
                         cmd /c "vcvars64.bat&set" |
