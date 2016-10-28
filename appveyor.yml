@@ -93,9 +93,5 @@ build_script:
                 & $BUILD_COMMAND $BUILD_PARAMS;
 
                 If ($env:APPVEYOR_REPO_BRANCH -eq "appveyor_test") {
-                        & ctest -V -C Release;
+                        & ctest --output-on-failure -V -C Release;
                 }
-
-# Uncomment this to debug AppVeyor failures.
-on_finish:
-    - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
