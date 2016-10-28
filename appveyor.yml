@@ -48,6 +48,11 @@ build_script:
 
                 If ($env:USE_MINGW -eq "1") {
                         $env:PATH      = "C:\MinGW\bin;C:\Program Files (x86)\CMake\bin";
+
+                        # Workaround for https://github.com/appveyor/ci/issues/996
+                        & mingw-get update
+                        & mingw-get upgrade libstdc++=4.9.3-1
+
                         $BUILD_TYPE    = "-DCMAKE_BUILD_TYPE=$env:configuration";
                         $BUILD_COMMAND = "mingw32-make";
                 } ElseIf ($env:USE_LLVM -eq "1") {
