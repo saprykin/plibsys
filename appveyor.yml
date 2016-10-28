@@ -42,6 +42,11 @@ branches:
 
 clone_folder: c:\projects\plibsys
 
+install:
+        - if "%USE_CYGWIN%" == "1" (
+          if "%USE_CYGWIN64%" == "1" (
+                c:\cygwin64\setup-x86_64.exe -qnNdO -R c:\cygwin64 -s http://cygwin.mirror.constant.com -l "c:\cygwin64\var\cache\setup" -P cmake -P cygrunsrv))
+
 build_script:
         - ps: >-
                 $BUILD_DIR = "c:\projects\plibsys-build";
@@ -75,13 +80,9 @@ build_script:
                 } ElseIf ($env:USE_CYGWIN -eq "1") {
                         If ($env:USE_CYGWIN64 -eq "1") {
                                 $CYG_ROOT  = "C:/cygwin64";
-                                $CYG_SETUP = "C:\cygwin64\setup-x86_64.exe";
                         } Else {
                                 $CYG_ROOT  = "C:/cygwin";
-                                $CYG_SETUP = "C:\cygwin\setup-x86.exe";
                         }
-
-                        cmd /c start /wait $CYG_SETUP -qnNdO -R $CYG_ROOT -s http://cygwin.mirror.constant.com -l "$CYG_ROOT/var/cache/setup" -P cmake,cygrunsrv;
 
                         $env:PATH = "$CYG_ROOT\bin";
 
