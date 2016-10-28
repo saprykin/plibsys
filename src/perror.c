@@ -738,7 +738,7 @@ P_LIB_API void
 p_error_set_last_system (pint code)
 {
 #ifdef P_OS_WIN
-	return SetLastError (code);
+	SetLastError (code);
 #else
 	errno = code;
 #endif
@@ -748,7 +748,7 @@ P_LIB_API void
 p_error_set_last_net (pint code)
 {
 #ifdef P_OS_WIN
-	return WSASetLastError (code);
+	WSASetLastError (code);
 #else
 	errno = code;
 #endif
