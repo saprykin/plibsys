@@ -43,9 +43,13 @@ branches:
 clone_folder: c:\projects\plibsys
 
 install:
-        - if "%USE_CYGWIN%" == "1" (
-          if "%USE_CYGWIN64%" == "1" (
+        - If "%USE_CYGWIN%" == "1" (
+          If "%USE_CYGWIN64%" == "1" (
                 c:\cygwin64\setup-x86_64.exe -qnNdO -R c:\cygwin64 -s http://cygwin.mirror.constant.com -l "c:\cygwin64\var\cache\setup" -P cmake -P cygrunsrv))
+
+        - If "%USE_CYGWIN%" == "1" (
+          If NOT "%USE_CYGWIN64%" == "1" (
+                c:\cygwin\setup-x86.exe -qnNdO -R c:\cygwin -s http://cygwin.mirror.constant.com -l "c:\cygwin\var\cache\setup" -P cmake -P cygrunsrv))
 
 build_script:
         - ps: >-
@@ -79,19 +83,19 @@ build_script:
                         $BUILD_COMMAND = "mingw32-make";
                 } ElseIf ($env:USE_CYGWIN -eq "1") {
                         If ($env:USE_CYGWIN64 -eq "1") {
-                                $CYG_ROOT  = "C:/cygwin64";
+                                $env:PATH = "c:\cygwin64\bin";
                         } Else {
-                                $CYG_ROOT  = "C:/cygwin";
+                                $env:PATH = "c:\cygwin\bin";
                         }
-
-                        $env:PATH = "$CYG_ROOT\bin";
 
                         & bash -c 'cygserver-config --yes';
                         & bash -c 'cygrunsrv -S cygserver';
 
                         $CMAKE_COMMAND = 'cmake -G""{0}"" -DCMAKE_BUILD_TYPE={1} {2} {3} /cygdrive/c/Projects/plibsys' -f $env:CMAKE_GENERATOR,$env:configuration,$VAR_BOOST_TESTS,$VAR_BOOST_ROOT;
 
-                        & bash -c $CMAKE_COMMAND;
+                        echo $CMAKE_COMMAND
+
+                        & bash -c "$CMAKE_COMMAND";
                         & bash -c 'make -j 2';
 
                         If ($env:APPVEYOR_REPO_BRANCH -eq "appveyor_test") {
