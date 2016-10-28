@@ -74,16 +74,16 @@ build_script:
                         $BUILD_COMMAND = "mingw32-make";
                 } ElseIf ($env:USE_CYGWIN -eq "1") {
                         If ($env:USE_CYGWIN64 -eq "1") {
-                                $CYG_ROOT  = "C:\cygwin64";
+                                $CYG_ROOT  = "C:/cygwin64";
                                 $CYG_SETUP = "C:\cygwin64\setup-x86_64.exe";
                         } Else {
-                                $CYG_ROOT  = "C:\cygwin";
+                                $CYG_ROOT  = "C:/cygwin";
                                 $CYG_SETUP = "C:\cygwin\setup-x86.exe";
                         }
 
                         $env:PATH = "$CYG_ROOT\bin";
 
-                        & $CYG_SETUP -qnNdO -R $CYG_ROOT -s http://cygwin.mirror.constant.com -l "$CYG_ROOT\var\cache\setup" -P cmake,cygrunsrv;
+                        cmd /c start /wait $CYG_SETUP -qnNdO -R $CYG_ROOT -s http://cygwin.mirror.constant.com -l "$CYG_ROOT/var/cache/setup" -P cmake,cygrunsrv;
 
                         & bash -c 'cygserver-config --yes';
                         & bash -c 'cygrunsrv -S cygserver';
