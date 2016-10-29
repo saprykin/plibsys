@@ -43,13 +43,22 @@ branches:
 clone_folder: c:\projects\plibsys
 
 install:
+        # Workaround for https://github.com/appveyor/ci/issues/996
+        - If "%USE_MINGW%" == 1 (
+          If NOT "%USE_W64_32%" == 1 (
+                C:\MinGW\bin\mingw-get update
+                C:\MinGW\bin\mingw-get upgrade libstdc++=4.9.3-1
+          ))
+
         - If "%USE_CYGWIN%" == "1" (
           If "%USE_CYGWIN64%" == "1" (
-                c:\cygwin64\setup-x86_64.exe -qnNdO -R c:\cygwin64 -s http://cygwin.mirror.constant.com -l "c:\cygwin64\var\cache\setup" -P cmake -P cygrunsrv))
+                c:\cygwin64\setup-x86_64.exe -gqnNdO -R c:\cygwin64 -s http://cygwin.mirror.constant.com -l "c:\cygwin64\var\cache\setup" -P cmake -P cygrunsrv
+          ))
 
         - If "%USE_CYGWIN%" == "1" (
           If NOT "%USE_CYGWIN64%" == "1" (
-                c:\cygwin\setup-x86.exe -qnNdO -R c:\cygwin -s http://cygwin.mirror.constant.com -l "c:\cygwin\var\cache\setup" -P cmake -P cygrunsrv))
+                c:\cygwin\setup-x86.exe -gqnNdO -R c:\cygwin -s http://cygwin.mirror.constant.com -l "c:\cygwin\var\cache\setup" -P cmake -P cygrunsrv
+          ))
 
 build_script:
         - ps: >-
@@ -73,10 +82,6 @@ build_script:
                                 $env:PATH = "C:\mingw-w64\i686-5.3.0-posix-dwarf-rt_v4-rev0\mingw32\bin;C:\Program Files (x86)\CMake\bin";
                         } Else {
                                 $env:PATH = "C:\MinGW\bin;C:\Program Files (x86)\CMake\bin";
-
-                                # Workaround for https://github.com/appveyor/ci/issues/996
-                                & mingw-get update
-                                & mingw-get upgrade libstdc++=4.9.3-1
                         }
 
                         $BUILD_TYPE    = "-DCMAKE_BUILD_TYPE=$env:configuration";
@@ -88,17 +93,14 @@ build_script:
                                 $env:PATH = "c:\cygwin\bin";
                         }
 
-                        & bash -c 'cygserver-config --yes';
-                        & bash -c 'cygrunsrv -S cygserver';
+                        $CMAKE_COMMAND = 'cmake -G""{0}"" -DCMAKE_BUILD_TYPE={1} {2} {3} /cygdrive/c/projects/plibsys' -f $env:CMAKE_GENERATOR,$env:configuration,$VAR_BOOST_TESTS,$VAR_BOOST_ROOT
 
-                        $CMAKE_COMMAND = 'cmake -G""{0}"" -DCMAKE_BUILD_TYPE={1} {2} {3} /cygdrive/c/Projects/plibsys' -f $env:CMAKE_GENERATOR,$env:configuration,$VAR_BOOST_TESTS,$VAR_BOOST_ROOT;
-
-                        echo $CMAKE_COMMAND
-
-                        & bash -c "''$CMAKE_COMMAND''";
+                        & bash -c $CMAKE_COMMAND;
                         & bash -c 'make -j 2';
 
                         If ($env:APPVEYOR_REPO_BRANCH -eq "appveyor_test") {
+                                & bash -c 'cygserver-config --yes';
+                                & bash -c 'cygrunsrv -S cygserver';
                                 & bash -c 'ctest --output-on-failure -V -C Release';
                         }
 
@@ -134,7 +136,7 @@ build_script:
                         $COVERITY_EXE = "$BUILD_DIR\PublishCoverity.0.11.0\tools\PublishCoverity.exe";
 
                         # Do not build tests for Coverity
-                        & cmake -G"$env:CMAKE_GENERATOR" C:\Projects\plibsys;
+                        & cmake -G"$env:CMAKE_GENERATOR" c:\projects\plibsys;
 
                         & cov-build --dir "$BUILD_DIR\cov-int" $BUILD_COMMAND $BUILD_PARAMS;
 
