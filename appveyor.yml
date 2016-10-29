@@ -9,7 +9,7 @@ environment:
                   USE_MINGW:       "1"
                 - CMAKE_GENERATOR: "MinGW Makefiles"
                   USE_MINGW:       "1"
-                  USE_W64_32:      "1"
+                  USE_MINGW64:     "1"
                 - CMAKE_GENERATOR: "Unix Makefiles"
                   USE_CYGWIN:      "1"
                   USE_CYGWIN64:    "1"
@@ -44,8 +44,8 @@ clone_folder: c:\projects\plibsys
 
 install:
         # Workaround for https://github.com/appveyor/ci/issues/996
-        - If "%USE_MINGW%" == 1 (
-          If NOT "%USE_W64_32%" == 1 (
+        - If "%USE_MINGW%" == "1" (
+          If NOT "%USE_MINGW64%" == "1" (
                 C:\MinGW\bin\mingw-get update
                 C:\MinGW\bin\mingw-get upgrade libstdc++=4.9.3-1
           ))
@@ -78,7 +78,7 @@ build_script:
                 }
 
                 If ($env:USE_MINGW -eq "1") {
-                        if ($env:USE_W64_32 -eq "1") {
+                        if ($env:USE_MINGW64 -eq "1") {
                                 $env:PATH = "C:\mingw-w64\i686-5.3.0-posix-dwarf-rt_v4-rev0\mingw32\bin;C:\Program Files (x86)\CMake\bin";
                         } Else {
                                 $env:PATH = "C:\MinGW\bin;C:\Program Files (x86)\CMake\bin";
