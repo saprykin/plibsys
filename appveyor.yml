@@ -76,10 +76,10 @@ install:
                         }
 
                         New-Item -ItemType directory -Path "$MINGW_BASE" | Out-Null;
-                        Copy-Item "$MINGW_ARCHVIE" "$MINGW_BASE";
+                        Copy-Item "$MINGW_ARCHIVE" "$MINGW_BASE";
 
                         Set-Location "$MINGW_BASE" | Out-Null;
-                        & 7z x -y "$MINGW_ARCHVIE";
+                        & 7z x -y "$MINGW_ARCHIVE";
 
                         $env:PATH = "c:\projects\$MINGW_BASE\mingw32\bin;C:\Program Files (x86)\CMake\bin";
                 }
