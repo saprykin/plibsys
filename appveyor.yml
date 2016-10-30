@@ -44,8 +44,8 @@ branches:
 clone_folder: c:\projects\plibsys
 
 cache:
-        - c:\projects\i686-4.9.3-release-win32-dwarf-rt_v4-rev1.7z -> appveyor.yml
-        - c:\projects\i686-6.2.0-release-win32-dwarf-rt_v5-rev1.7z -> appveyor.yml
+        - c:\projects\i686-4.9.3-release-win32-dwarf-rt_v4-rev1.7z
+        - c:\projects\i686-6.2.0-release-win32-dwarf-rt_v5-rev1.7z
 
 install:
         - If "%USE_CYGWIN%" == "1" (
