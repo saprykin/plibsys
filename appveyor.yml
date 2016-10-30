@@ -57,7 +57,7 @@ install:
                         & $CYGWIN_SETUP -gqnNdO -R "$CYG_ROOT" -s http://cygwin.mirror.constant.com -l "$CYG_ROOT\var\cache\setup" -P cmake -P cygrunsrv;
 
                         $env:PATH = "$env:CYG_ROOT\bin";
-                } Else If ($env:USE_MINGW -eq "1") {
+                } ElseIf ($env:USE_MINGW -eq "1") {
                         If ($env:USE_MINGW_490 -eq "1") {
                                 $MINGW_BASE    = "i686-4.9.3-release-win32-dwarf-rt_v4-rev1";
                                 $MINGW_VERSION = "4.9.3";
