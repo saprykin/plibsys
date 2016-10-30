@@ -46,16 +46,17 @@ clone_folder: c:\projects\plibsys
 cache:
         - c:\projects\i686-4.9.3-release-win32-dwarf-rt_v4-rev1.7z
         - c:\projects\i686-6.2.0-release-win32-dwarf-rt_v5-rev1.7z
+        - c:\cygwin-setup-cache
 
 install:
         - If "%USE_CYGWIN%" == "1" (
           If "%USE_CYGWIN64%" == "1" (
-                c:\cygwin64\setup-x86_64.exe -gqnNdO -R c:\cygwin64 -s http://cygwin.mirror.constant.com -l "c:\cygwin64\var\cache\setup" -P cmake -P cygrunsrv
+                c:\cygwin64\setup-x86_64.exe -gqnNdO -R c:\cygwin64 -s http://cygwin.mirror.constant.com -l "c:\cygwin-setup-cache" -P cmake -P cygrunsrv
           ))
 
         - If "%USE_CYGWIN%" == "1" (
           If NOT "%USE_CYGWIN64%" == "1" (
-                c:\cygwin\setup-x86.exe -gqnNdO -R c:\cygwin -s http://cygwin.mirror.constant.com -l "c:\cygwin\var\cache\setup" -P cmake -P cygrunsrv
+                c:\cygwin\setup-x86.exe -gqnNdO -R c:\cygwin -s http://cygwin.mirror.constant.com -l "c:\cygwin-setup-cache" -P cmake -P cygrunsrv
           ))
 
         - ps: >-
