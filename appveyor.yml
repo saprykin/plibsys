@@ -7,9 +7,10 @@ environment:
         matrix:
                 - CMAKE_GENERATOR: "MinGW Makefiles"
                   USE_MINGW:       "1"
+                  USE_MINGW_490:   "1"
                 - CMAKE_GENERATOR: "MinGW Makefiles"
                   USE_MINGW:       "1"
-                  USE_MINGW64:     "1"
+                  USE_MINGW_620:   "1"
                 - CMAKE_GENERATOR: "Unix Makefiles"
                   USE_CYGWIN:      "1"
                   USE_CYGWIN64:    "1"
@@ -43,22 +44,45 @@ branches:
 clone_folder: c:\projects\plibsys
 
 install:
-        # Workaround for https://github.com/appveyor/ci/issues/996
-        - If "%USE_MINGW%" == "1" (
-          If NOT "%USE_MINGW64%" == "1" (
-                C:\MinGW\bin\mingw-get update &&
-                C:\MinGW\bin\mingw-get upgrade gcc-core=4.9.3-1 gcc-g++=4.9.3.-1 libstdc++=4.9.3-1
-          ))
+        - ps: >-
+                If ($env:USE_CYGWIN -eq "1") {
+                        If ($env:USE_CYGWIN64 -eq "1") {
+                                $CYG_ROOT = "c:\cygwin64";
+                                $CYGWIN_SETUP = "$CYG_ROOT\setup-x86_64.exe";
+                        } Else {
+                                $CYG_ROOT = "c:\cygwin";
+                                $CYGWIN_SETUP = "$CYG_ROOT\setup-x86.exe";
+                        }
 
-        - If "%USE_CYGWIN%" == "1" (
-          If "%USE_CYGWIN64%" == "1" (
-                c:\cygwin64\setup-x86_64.exe -gqnNdO -R c:\cygwin64 -s http://cygwin.mirror.constant.com -l "c:\cygwin64\var\cache\setup" -P cmake -P cygrunsrv
-          ))
+                        & $CYGWIN_SETUP -gqnNdO -R "$CYG_ROOT" -s http://cygwin.mirror.constant.com -l "$CYG_ROOT\var\cache\setup" -P cmake -P cygrunsrv;
 
-        - If "%USE_CYGWIN%" == "1" (
-          If NOT "%USE_CYGWIN64%" == "1" (
-                c:\cygwin\setup-x86.exe -gqnNdO -R c:\cygwin -s http://cygwin.mirror.constant.com -l "c:\cygwin\var\cache\setup" -P cmake -P cygrunsrv
-          ))
+                        $env:PATH = "$env:CYG_ROOT\bin";
+                } Else If ($env:USE_MINGW -eq "1") {
+                        If ($env:USE_MINGW_490 -eq "1") {
+                                $MINGW_BASE    = "i686-4.9.3-release-win32-dwarf-rt_v4-rev1";
+                                $MINGW_VERSION = "4.9.3";
+                        } Else {
+                                $MINGW_BASE    = "i686-6.2.0-release-win32-dwarf-rt_v5-rev1";
+                                $MINGW_VERSION = "6.2.0";
+                        }
+
+                        $MINGW_ARCHIVE = "$MINGW_BASE.7z";
+                        $MINGW_URL     = "https://sourceforge.net/projects/mingw-w64/files/Toolchains%20targetting%20Win32/Personal%20Builds/mingw-builds/$MINGW_VERSION/threads-win32/dwarf/$MINGW_ARCHIVE/download";
+
+                        Set-Location c:\projects | Out-Null;
+
+                        If (-Not (Test-Path "$MINGW_ARCHIVE")) {
+                                & appveyor DownloadFile "$MINGW_URL" -FileName "$MINGW_ARCHIVE";
+                        }
+
+                        New-Item -ItemType directory -Path "$MINGW_BASE" | Out-Null;
+                        Copy-Item "$MINGW_ARCHVIE" "$MINGW_BASE";
+
+                        Set-Location "$MINGW_BASE" | Out-Null;
+                        & 7z x -y "$MINGW_ARCHVIE";
+
+                        $env:PATH = "c:\projects\$MINGW_BASE\mingw32\bin;C:\Program Files (x86)\CMake\bin";
+                }
 
 build_script:
         - ps: >-
@@ -78,23 +102,9 @@ build_script:
                 }
 
                 If ($env:USE_MINGW -eq "1") {
-                        if ($env:USE_MINGW64 -eq "1") {
-                                $env:PATH   = "C:\mingw-w64\i686-5.3.0-posix-dwarf-rt_v4-rev0\mingw32\bin;C:\Program Files (x86)\CMake\bin";
-                                # MinGW 5.3.0 doesn't work in a release mode
-                                $BUILD_TYPE = "Debug"
-                        } Else {
-                                $env:PATH   = "C:\MinGW\bin;C:\Program Files (x86)\CMake\bin";
-                                $BUILD_TYPE = "-DCMAKE_BUILD_TYPE=$env:configuration";
-                        }
-
+                        $BUILD_TYPE    = "-DCMAKE_BUILD_TYPE=$env:configuration";
                         $BUILD_COMMAND = "mingw32-make";
                 } ElseIf ($env:USE_CYGWIN -eq "1") {
-                        If ($env:USE_CYGWIN64 -eq "1") {
-                                $env:PATH = "c:\cygwin64\bin";
-                        } Else {
-                                $env:PATH = "c:\cygwin\bin";
-                        }
-
                         $CMAKE_COMMAND = 'cmake -G""{0}"" -DCMAKE_BUILD_TYPE={1} {2} {3} /cygdrive/c/projects/plibsys' -f $env:CMAKE_GENERATOR,$env:configuration,$VAR_BOOST_TESTS,$VAR_BOOST_ROOT
 
                         & bash -c $CMAKE_COMMAND;
