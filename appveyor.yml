@@ -48,20 +48,18 @@ cache:
         - c:\projects\i686-6.2.0-release-win32-dwarf-rt_v5-rev1.7z -> appveyor.yml
 
 install:
+        - If "%USE_CYGWIN%" == "1" (
+          If "%USE_CYGWIN64%" == "1" (
+                c:\cygwin64\setup-x86_64.exe -gqnNdO -R c:\cygwin64 -s http://cygwin.mirror.constant.com -l "c:\cygwin64\var\cache\setup" -P cmake -P cygrunsrv
+          ))
+
+        - If "%USE_CYGWIN%" == "1" (
+          If NOT "%USE_CYGWIN64%" == "1" (
+                c:\cygwin\setup-x86.exe -gqnNdO -R c:\cygwin -s http://cygwin.mirror.constant.com -l "c:\cygwin\var\cache\setup" -P cmake -P cygrunsrv
+          ))
+
         - ps: >-
-                If ($env:USE_CYGWIN -eq "1") {
-                        If ($env:USE_CYGWIN64 -eq "1") {
-                                $CYG_ROOT = "c:\cygwin64";
-                                $CYGWIN_SETUP = "$CYG_ROOT\setup-x86_64.exe";
-                        } Else {
-                                $CYG_ROOT = "c:\cygwin";
-                                $CYGWIN_SETUP = "$CYG_ROOT\setup-x86.exe";
-                        }
-
-                        & $CYGWIN_SETUP -gqnNdO -R "$CYG_ROOT" -s http://cygwin.mirror.constant.com -l "$CYG_ROOT\var\cache\setup" -P cmake -P cygrunsrv;
-
-                        $env:PATH = "$CYG_ROOT\bin";
-                } ElseIf ($env:USE_MINGW -eq "1") {
+                If ($env:USE_MINGW -eq "1") {
                         If ($env:USE_MINGW_493 -eq "1") {
                                 $MINGW_BASE    = "i686-4.9.3-release-win32-dwarf-rt_v4-rev1";
                                 $MINGW_VERSION = "4.9.3";
@@ -109,6 +107,12 @@ build_script:
                         $BUILD_TYPE    = "-DCMAKE_BUILD_TYPE=$env:configuration";
                         $BUILD_COMMAND = "mingw32-make";
                 } ElseIf ($env:USE_CYGWIN -eq "1") {
+                        If ($env:USE_CYGWIN64 -eq "1") {
+                                $env:PATH     = "c:\cygwin64\bin";
+                        } Else {
+                                $env:PATH     = "c:\cygwin\bin";
+                        }
+
                         $CMAKE_COMMAND = 'cmake -G""{0}"" -DCMAKE_BUILD_TYPE={1} {2} {3} /cygdrive/c/projects/plibsys' -f $env:CMAKE_GENERATOR,$env:configuration,$VAR_BOOST_TESTS,$VAR_BOOST_ROOT
 
                         & bash -c $CMAKE_COMMAND;
