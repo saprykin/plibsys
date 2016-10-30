@@ -7,7 +7,7 @@ environment:
         matrix:
                 - CMAKE_GENERATOR: "MinGW Makefiles"
                   USE_MINGW:       "1"
-                  USE_MINGW_490:   "1"
+                  USE_MINGW_493:   "1"
                 - CMAKE_GENERATOR: "MinGW Makefiles"
                   USE_MINGW:       "1"
                   USE_MINGW_620:   "1"
@@ -43,6 +43,10 @@ branches:
 
 clone_folder: c:\projects\plibsys
 
+cache:
+        - c:\projects\i686-4.9.3-release-win32-dwarf-rt_v4-rev1.7z -> appveyor.yml
+        - c:\projects\i686-6.2.0-release-win32-dwarf-rt_v5-rev1.7z -> appveyor.yml
+
 install:
         - ps: >-
                 If ($env:USE_CYGWIN -eq "1") {
@@ -58,7 +62,7 @@ install:
 
                         $env:PATH = "$CYG_ROOT\bin";
                 } ElseIf ($env:USE_MINGW -eq "1") {
-                        If ($env:USE_MINGW_490 -eq "1") {
+                        If ($env:USE_MINGW_493 -eq "1") {
                                 $MINGW_BASE    = "i686-4.9.3-release-win32-dwarf-rt_v4-rev1";
                                 $MINGW_VERSION = "4.9.3";
                         } Else {
