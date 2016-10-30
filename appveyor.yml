@@ -47,7 +47,7 @@ install:
         - If "%USE_MINGW%" == "1" (
           If NOT "%USE_MINGW64%" == "1" (
                 C:\MinGW\bin\mingw-get update &&
-                C:\MinGW\bin\mingw-get upgrade libstdc++=4.9.3-1
+                C:\MinGW\bin\mingw-get upgrade gcc-core=4.9.3-1 gcc-g++=4.9.3.-1 libstdc++=4.9.3-1
           ))
 
         - If "%USE_CYGWIN%" == "1" (
