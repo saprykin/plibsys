@@ -10,6 +10,9 @@ environment:
                   USE_MINGW_493:   "1"
                 - CMAKE_GENERATOR: "MinGW Makefiles"
                   USE_MINGW:       "1"
+                  USE_MINGW_540:   "1"
+                - CMAKE_GENERATOR: "MinGW Makefiles"
+                  USE_MINGW:       "1"
                   USE_MINGW_620:   "1"
                 - CMAKE_GENERATOR: "Unix Makefiles"
                   USE_CYGWIN:      "1"
@@ -45,6 +48,7 @@ clone_folder: c:\projects\plibsys
 
 cache:
         - c:\projects\i686-4.9.3-release-win32-dwarf-rt_v4-rev1.7z
+        - c:\projects\i686-5.4.0-release-win32-dwarf-rt_v5-rev0.7z
         - c:\projects\i686-6.2.0-release-win32-dwarf-rt_v5-rev1.7z
         - c:\cygwin-setup-cache
 
@@ -64,7 +68,10 @@ install:
                         If ($env:USE_MINGW_493 -eq "1") {
                                 $MINGW_BASE    = "i686-4.9.3-release-win32-dwarf-rt_v4-rev1";
                                 $MINGW_VERSION = "4.9.3";
-                        } Else {
+                        } ElseIf ($env:USE_MINGW_540 -eq "1") {
+                                $MINGW_BASE    = "i686-5.4.0-release-win32-dwarf-rt_v5-rev0";
+                                $MINGW_VERSION = "5.4.0";
+                        } ElseIf ($env:USE_MINGW_620 -eq "1") {
                                 $MINGW_BASE    = "i686-6.2.0-release-win32-dwarf-rt_v5-rev1";
                                 $MINGW_VERSION = "6.2.0";
                         }
