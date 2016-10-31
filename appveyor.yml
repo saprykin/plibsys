@@ -114,6 +114,7 @@ build_script:
                 If ($env:USE_MINGW -eq "1") {
                         $BUILD_TYPE    = "-DCMAKE_BUILD_TYPE=$env:configuration";
                         $BUILD_COMMAND = "mingw32-make";
+                        $BUILD_PARAMS  = @("-j", "2");
                 } ElseIf ($env:USE_CYGWIN -eq "1") {
                         If ($env:USE_CYGWIN64 -eq "1") {
                                 $env:PATH     = "c:\cygwin64\bin";
