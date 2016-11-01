@@ -5,6 +5,8 @@ environment:
                 secure: 6WFXzLxAMuUovtYc+u8OoruE/V6zhK2M4mZlrszRBIA=
 
         matrix:
+                - CMAKE_GENERATOR: "Watcom WMake"
+                  USE_WATCOM:      "1"
                 - CMAKE_GENERATOR: "MinGW Makefiles"
                   USE_MINGW:       "1"
                   USE_MINGW_493:   "1"
@@ -55,6 +57,7 @@ cache:
         - c:\projects\i686-4.9.3-release-win32-dwarf-rt_v4-rev1.7z
         - c:\projects\i686-5.4.0-release-win32-dwarf-rt_v5-rev0.7z
         - c:\projects\i686-6.2.0-release-win32-dwarf-rt_v5-rev1.7z
+        - c:\projects\open-watcom-1.9\open-watcom-c-win32-1.9.exe
         - c:\cygwin-setup-cache
 
 install:
@@ -103,6 +106,35 @@ install:
 
                         Set-Location "$MINGW_BASE" | Out-Null;
                         & 7z x -y "$MINGW_ARCHIVE";
+
+                        $env:PATH = "c:\projects\$MINGW_BASE\mingw32\bin;C:\Program Files (x86)\CMake\bin";
+                } ElseIf ($env:USE_WATCOM -eq "1") {
+                        $WATCOM_BASE      = "open-watcom-c-win32-1.9";
+                        $WATCOM_INSTALLER = "$WATCOM_URL.exe";
+                        $WATCOM_URL       = "https://sourceforge.net/projects/openwatcom/files/open-watcom-1.9/$WATCOM_INSTALLER/download";
+
+                        Set-Location c:\projects | Out-Null;
+
+                        If (-Not (Test-Path "$WATCOM_INSTALLER")) {
+                                & appveyor DownloadFile "$WATCOM_URL" -FileName "$WATCOM_INSTALLER";
+                        }
+
+                        New-Item -ItemType directory -Path "$WATCOM_BASE" | Out-Null;
+                        Copy-Item "$WATCOM_INSTALLER" "$WATCOM_BASE";
+
+                        Set-Location "$WATCOM_BASE" | Out-Null;
+                        & 7z x -y "$WATCOM_INSTALLER";
+
+                        $CUR_LOCATION = "c:\projects\$WATCOM_BASE";
+
+                        $env:PATH    = "$CUR_LOCATION\binw;$env:PATH";
+                        $env:PATH    = "$CUR_LOCATION\binnt;$env:PATH";
+                        $env:INCLUDE = "$CUR_LOCATION\h\nt;$env:INCLUDE";
+                        $env:INCLUDE = "$env:INCLUDE;$CUR_LOCATION\h\nt\directx";
+                        $env:INCLUDE = "$env:INCLUDE;$CUR_LOCATION\h\nt\ddk";
+                        $env:INCLUDE = "$CUR_LOCATION\h;$env:INCLUDE";
+                        $env:WATCOM  = "$CUR_LOCATION";
+                        $env:EDPATH  = "$CUR_LOCATION\eddat";
 
                         $env:PATH = "c:\projects\$MINGW_BASE\mingw32\bin;C:\Program Files (x86)\CMake\bin";
                 }
@@ -156,7 +188,7 @@ build_script:
                         $BUILD_PARAMS  = @("-j", "2");
 
                         If ($env:APPVEYOR_REPO_BRANCH -eq "appveyor_test") {
-                                & bash -c 'cygserver-config --yes';
+                                & bash -lc 'cygserver-config --yes';
                                 & cygrunsrv -S cygserver;
                         }
                 } ElseIf ($env:USE_LLVM -eq "1") {
@@ -175,6 +207,9 @@ build_script:
                         $BUILD_TYPE         = "-DCMAKE_BUILD_TYPE=$env:configuration";
                         $CMAKE_C_COMPILER   = "-DCMAKE_C_COMPILER=clang-cl.exe"
                         $CMAKE_CXX_COMPILER = "-DCMAKE_CXX_COMPILER=cl.exe"
+                } ElseIf ($env:USE_WATCOM -eq "1") {
+                        $BUILD_COMMAND = "wmake";
+                        $SKIP_TESTS    = "1"
                 } Else {
                         If ($env:USE_OLD_MSBUILD -eq "1") {
                                 $env:PATH = "C:\Windows\Microsoft.NET\Framework\v3.5;$env:PATH";
@@ -204,5 +239,7 @@ build_script:
                 & $BUILD_COMMAND $BUILD_PARAMS;
 
                 If ($env:APPVEYOR_REPO_BRANCH -eq "appveyor_test") {
-                        & ctest $CTEST_PARAMS --output-on-failure -V -C Release;
+                        If (-Not ($SKIP_TESTS -eq "1")) {
+                                & ctest $CTEST_PARAMS --output-on-failure -V -C Release;
+                        }
                 }
