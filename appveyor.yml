@@ -173,7 +173,7 @@ build_script:
                         & $COVERITY_EXE publish -z "$BUILD_DIR\coverity.zip" -r $env:COVERITY_SCAN_PROJECT_NAME -t $env:COVERITY_SCAN_TOKEN -e $env:COVERITY_SCAN_NOTIFICATION_EMAIL --codeVersion $env:APPVEYOR_BUILD_VERSION;
                 }
 
-                & cmake -G"$env:CMAKE_GENERATOR" $BUILD_TYPE $VAR_BOOST_TESTS $VAR_BOOST_ROOT $CMAKE_C_COMPILER $CMAKE_CXX_COMPILER c:\projects\plibsys;
+                & cmake -G"$env:CMAKE_GENERATOR" $BUILD_TYPE $VAR_BOOST_TESTS $VAR_BOOST_ROOT $CMAKE_C_COMPILER $CMAKE_CXX_COMPILER ../plibsys;
                 & $BUILD_COMMAND $BUILD_PARAMS;
 
                 If ($env:APPVEYOR_REPO_BRANCH -eq "appveyor_test") {
