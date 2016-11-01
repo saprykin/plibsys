@@ -117,7 +117,9 @@ build_script:
                 If ($env:APPVEYOR_REPO_BRANCH -eq "appveyor_test") {
                         $VAR_BOOST_TESTS = "-DPLIBSYS_TESTS_STATIC=ON";
 
-                        If ($env:USE_CYGWIN -eq "1") {
+                        If ($env:USE_MSYS64 -eq "1" -And -Not ($env:USE_MINGW64 -eq "1")) {
+                                $VAR_BOOST_ROOT = "-DBOOST_ROOT=/c/Libraries/boost_1_62_0";
+                        } ElseIf ($env:USE_CYGWIN -eq "1") {
                                 $VAR_BOOST_ROOT = "-DBOOST_ROOT=/cygdrive/c/Libraries/boost_1_62_0";
                         } Else {
                                 $VAR_BOOST_ROOT = "-DBOOST_ROOT=C:\Libraries\boost_1_62_0";
