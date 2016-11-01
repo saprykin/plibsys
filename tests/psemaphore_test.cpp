@@ -29,7 +29,6 @@
 #  include <boost/test/unit_test.hpp>
 #endif
 
-#ifndef P_OS_MSYS
 #define PSEMAPHORE_MAX_VAL 10
 
 static pint semaphore_test_val = 0;
@@ -88,7 +87,6 @@ static void * semaphore_test_thread (void *)
 
 	return NULL;
 }
-#endif /* !P_OS_MSYS */
 
 extern "C" ppointer pmem_alloc (psize nbytes)
 {
@@ -131,7 +129,6 @@ BOOST_AUTO_TEST_CASE (psemaphore_nomem_test)
 
 BOOST_AUTO_TEST_CASE (psemaphore_general_test)
 {
-#ifndef P_OS_MSYS
 	PSemaphore	*sem = NULL;
 	PError		*error = NULL;
 	pint		i;
@@ -175,12 +172,10 @@ BOOST_AUTO_TEST_CASE (psemaphore_general_test)
 	p_semaphore_free (sem);
 
 	p_libsys_shutdown ();
-#endif /* !P_OS_MSYS */
 }
 
 BOOST_AUTO_TEST_CASE (psemaphore_thread_test)
 {
-#ifndef P_OS_MSYS
 	PUThread	*thr1, *thr2;
 	PSemaphore	*sem = NULL;
 
@@ -220,7 +215,6 @@ BOOST_AUTO_TEST_CASE (psemaphore_thread_test)
 	p_uthread_unref (thr2);
 
 	p_libsys_shutdown ();
-#endif /* !P_OS_MSYS */
 }
 
 BOOST_AUTO_TEST_SUITE_END()

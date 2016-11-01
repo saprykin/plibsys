@@ -31,13 +31,12 @@
 #  include <boost/test/unit_test.hpp>
 #endif
 
-#ifndef P_OS_MSYS
 static pchar test_str[]    = "This is a test string!";
 static pint is_thread_exit = 0;
 static pint read_count     = 0;
 static pint write_count    = 0;
 
-#  ifndef P_OS_HPUX
+#ifndef P_OS_HPUX
 volatile static pboolean is_working = FALSE;
 
 static void * shm_buffer_test_write_thread (void *)
@@ -154,8 +153,7 @@ static void * shm_buffer_test_read_thread (void *)
 
 	return NULL;
 }
-#  endif /* !P_OS_HPUX */
-#endif /* !P_OS_MSYS */
+#endif /* !P_OS_HPUX */
 
 extern "C" ppointer pmem_alloc (psize nbytes)
 {
@@ -198,7 +196,6 @@ BOOST_AUTO_TEST_CASE (pshmbuffer_nomem_test)
 
 BOOST_AUTO_TEST_CASE (pshmbuffer_bad_input_test)
 {
-#ifndef P_OS_MSYS
 	p_libsys_init ();
 
 	BOOST_CHECK (p_shm_buffer_new (NULL, 0, NULL) == NULL);
@@ -215,12 +212,10 @@ BOOST_AUTO_TEST_CASE (pshmbuffer_bad_input_test)
 	p_shm_buffer_free (NULL);
 
 	p_libsys_shutdown ();
-#endif /* !P_OS_MSYS */
 }
 
 BOOST_AUTO_TEST_CASE (pshmbuffer_general_test)
 {
-#ifndef P_OS_MSYS
 	p_libsys_init ();
 
 	pchar		test_buf[sizeof (test_str)];
@@ -263,10 +258,9 @@ BOOST_AUTO_TEST_CASE (pshmbuffer_general_test)
 	p_shm_buffer_free (buffer);
 
 	p_libsys_shutdown ();
-#endif
 }
 
-#if !defined (P_OS_HPUX) && !defined (P_OS_MSYS)
+#ifndef P_OS_HPUX
 BOOST_AUTO_TEST_CASE (pshmbuffer_thread_test)
 {
 	p_libsys_init ();
@@ -310,6 +304,6 @@ BOOST_AUTO_TEST_CASE (pshmbuffer_thread_test)
 
 	p_libsys_shutdown ();
 }
-#endif /* !P_OS_HPUX && !P_OS_MSYS */
+#endif /* !P_OS_HPUX */
 
 BOOST_AUTO_TEST_SUITE_END()
