@@ -162,7 +162,7 @@ build_script:
                                 $BUILD_TYPE = "";
                         } Else {
                                 $BUILD_TYPE   = "-DCMAKE_BUILD_TYPE=$env:configuration";  
-                                $CTEST_PARAMS = "-E ""pshm|psemaphore"""
+                                $CTEST_PARAMS = @("-E", "pshm|psemaphore");
                         }
 
                         $BUILD_COMMAND = "make";
