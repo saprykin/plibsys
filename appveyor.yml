@@ -165,7 +165,7 @@ build_script:
                         $COVERITY_EXE = "$BUILD_DIR\PublishCoverity.0.11.0\tools\PublishCoverity.exe";
 
                         # Do not build tests for Coverity
-                        & cmake -G"$env:CMAKE_GENERATOR" c:\projects\plibsys;
+                        & cmake -G"$env:CMAKE_GENERATOR" $CMAKE_C_COMPILER $CMAKE_CXX_COMPILER ../plibsys;
 
                         & cov-build --dir "$BUILD_DIR\cov-int" $BUILD_COMMAND $BUILD_PARAMS;
 
