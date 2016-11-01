@@ -15,6 +15,11 @@ environment:
                   USE_MINGW:       "1"
                   USE_MINGW_620:   "1"
                 - CMAKE_GENERATOR: "Unix Makefiles"
+                  USE_MSYS64:      "1"
+                - CMAKE_GENERATOR: "MSYS Makefiles"
+                  USE_MSYS64:      "1"
+                  USE_MINGW64:     "1"
+                - CMAKE_GENERATOR: "Unix Makefiles"
                   USE_CYGWIN:      "1"
                   USE_CYGWIN64:    "1"
                 - CMAKE_GENERATOR: "Unix Makefiles"
@@ -64,7 +69,7 @@ install:
           ))
 
         - ps: >-
-                If ($env:USE_MINGW -eq "1") {
+                If ($env:USE_MINGW -eq "1" -And -Not ($env:USE_MSYS64 -eq "1")) {
                         If ($env:USE_MINGW_493 -eq "1") {
                                 $MINGW_BASE    = "i686-4.9.3-release-win32-dwarf-rt_v4-rev1";
                                 $MINGW_VERSION = "4.9.3";
@@ -111,7 +116,19 @@ build_script:
                         }
                 }
 
-                If ($env:USE_MINGW -eq "1") {
+                If ($env:USE_MSYS64 -eq "1") {
+                        if ($env:USE_MINGW64 -eq "1") {
+                                $BUILD_TYPE = "";
+                                $env:PATH   = "c:\msys64\mingw64\bin;$env:PATH";
+                                
+                        } Else {
+                                $BUILD_TYPE = "-DCMAKE_BUILD_TYPE=$env:configuration";
+                                $BUILD_TYPE = "c:\msys64\usr\bin;$env:PATH";
+                        }
+
+                        $BUILD_COMMAND = "make";
+                        $BUILD_PARAMS  = @("-j", "2");
+                } ElseIf ($env:USE_MINGW -eq "1") {
                         if ($env:USE_MINGW_493 -eq "1") {
                                 $BUILD_TYPE = "-DCMAKE_BUILD_TYPE=$env:configuration";
                         } Else {
@@ -172,7 +189,7 @@ build_script:
                         & $COVERITY_EXE compress -o "$BUILD_DIR\coverity.zip" -i "$BUILD_DIR\cov-int";
                         & $COVERITY_EXE publish -z "$BUILD_DIR\coverity.zip" -r $env:COVERITY_SCAN_PROJECT_NAME -t $env:COVERITY_SCAN_TOKEN -e $env:COVERITY_SCAN_NOTIFICATION_EMAIL --codeVersion $env:APPVEYOR_BUILD_VERSION;
 
-                        Get-ChildItem -Path ./ -Recurse | Remove-Item -Force -Recurse
+                        Get-ChildItem -Path ./ -Recurse | Remove-Item -Force -Recurse;
                 }
 
                 & cmake -G"$env:CMAKE_GENERATOR" $BUILD_TYPE $VAR_BOOST_TESTS $VAR_BOOST_ROOT $CMAKE_C_COMPILER $CMAKE_CXX_COMPILER ../plibsys;
