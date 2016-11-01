@@ -127,18 +127,13 @@ build_script:
                                 $env:PATH     = "c:\cygwin\bin";
                         }
 
-                        $CMAKE_COMMAND = 'cmake -G""{0}"" -DCMAKE_BUILD_TYPE={1} {2} {3} /cygdrive/c/projects/plibsys' -f $env:CMAKE_GENERATOR,$env:configuration,$VAR_BOOST_TESTS,$VAR_BOOST_ROOT
-
-                        & bash -c $CMAKE_COMMAND;
-                        & bash -c 'make -j 2';
+                        $BUILD_COMMAND = "make";
+                        $BUILD_PARAMS  = @("-j", "2");
 
                         If ($env:APPVEYOR_REPO_BRANCH -eq "appveyor_test") {
                                 & bash -c 'cygserver-config --yes';
-                                & bash -c 'cygrunsrv -S cygserver';
-                                & bash -c 'ctest --output-on-failure -V -C Release';
+                                & cygrunsrv -S cygserver;
                         }
-
-                        return;
                 } ElseIf ($env:USE_LLVM -eq "1") {
                         pushd "$env:VS140COMNTOOLS\..\..\VC\bin\amd64"
                         cmd /c "vcvars64.bat&set" |
