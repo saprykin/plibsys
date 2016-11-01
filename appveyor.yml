@@ -69,7 +69,15 @@ install:
           ))
 
         - ps: >-
-                If ($env:USE_MINGW -eq "1" -And -Not ($env:USE_MSYS64 -eq "1")) {
+                If ($env:USE_MSYS64 -eq "1") {
+                        $env:PATH = "c:\msys64\usr\bin;$env:PATH";
+
+                        If ($env:USE_MINGW64 -eq "1") {
+                                $env:PATH   = "c:\msys64\mingw64\bin;$env:PATH";
+                        } Else {
+                                & pacman --sync --noconfirm cmake;
+                        }
+                } ElseIf ($env:USE_MINGW -eq "1") {
                         If ($env:USE_MINGW_493 -eq "1") {
                                 $MINGW_BASE    = "i686-4.9.3-release-win32-dwarf-rt_v4-rev1";
                                 $MINGW_VERSION = "4.9.3";
@@ -117,12 +125,8 @@ build_script:
                 }
 
                 If ($env:USE_MSYS64 -eq "1") {
-                        $env:PATH = "c:\msys64\usr\bin;$env:PATH";
-
                         if ($env:USE_MINGW64 -eq "1") {
                                 $BUILD_TYPE = "";
-                                $env:PATH   = "c:\msys64\mingw64\bin;$env:PATH";
-                                
                         } Else {
                                 $BUILD_TYPE = "-DCMAKE_BUILD_TYPE=$env:configuration";                                
                         }
