@@ -135,8 +135,6 @@ install:
                         $env:INCLUDE = "$CUR_LOCATION\h;$env:INCLUDE";
                         $env:WATCOM  = "$CUR_LOCATION";
                         $env:EDPATH  = "$CUR_LOCATION\eddat";
-
-                        $env:PATH = "c:\projects\$MINGW_BASE\mingw32\bin;C:\Program Files (x86)\CMake\bin";
                 }
 
 build_script:
