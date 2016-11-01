@@ -58,7 +58,7 @@ cache:
         - c:\projects\i686-4.9.3-release-win32-dwarf-rt_v4-rev1.7z
         - c:\projects\i686-5.4.0-release-win32-dwarf-rt_v5-rev0.7z
         - c:\projects\i686-6.2.0-release-win32-dwarf-rt_v5-rev1.7z
-        - c:\projects\open-watcom-1.9\open-watcom-c-win32-1.9.exe
+        - c:\projects\open-watcom-c-win32-1.9.exe
         - c:\cygwin-setup-cache
 
 install:
