@@ -110,7 +110,7 @@ install:
                         $env:PATH = "c:\projects\$MINGW_BASE\mingw32\bin;C:\Program Files (x86)\CMake\bin";
                 } ElseIf ($env:USE_WATCOM -eq "1") {
                         $WATCOM_BASE      = "open-watcom-c-win32-1.9";
-                        $WATCOM_INSTALLER = "$WATCOM_URL.exe";
+                        $WATCOM_INSTALLER = "$WATCOM_BASE.exe";
                         $WATCOM_URL       = "https://sourceforge.net/projects/openwatcom/files/open-watcom-1.9/$WATCOM_INSTALLER/download";
 
                         Set-Location c:\projects | Out-Null;
