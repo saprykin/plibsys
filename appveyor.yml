@@ -7,6 +7,7 @@ environment:
         matrix:
                 - CMAKE_GENERATOR: "Watcom WMake"
                   USE_WATCOM:      "1"
+                  SKIP_TESTS:      "1"
                 - CMAKE_GENERATOR: "MinGW Makefiles"
                   USE_MINGW:       "1"
                   USE_MINGW_493:   "1"
@@ -144,7 +145,7 @@ build_script:
                 New-Item -ItemType directory -Path $BUILD_DIR | Out-Null;
                 Set-Location $BUILD_DIR | Out-Null;
 
-                If ($env:APPVEYOR_REPO_BRANCH -eq "appveyor_test") {
+                If ($env:APPVEYOR_REPO_BRANCH -eq "appveyor_test" -And -Not ($env:SKIP_TESTS -eq "1")) {
                         $VAR_BOOST_TESTS = "-DPLIBSYS_TESTS_STATIC=ON";
 
                         If ($env:USE_MSYS64 -eq "1" -And -Not ($env:USE_MINGW64 -eq "1")) {
@@ -237,7 +238,7 @@ build_script:
                 & $BUILD_COMMAND $BUILD_PARAMS;
 
                 If ($env:APPVEYOR_REPO_BRANCH -eq "appveyor_test") {
-                        If (-Not ($SKIP_TESTS -eq "1")) {
+                        If (-Not ($env:SKIP_TESTS -eq "1")) {
                                 & ctest $CTEST_PARAMS --output-on-failure -V -C Release;
                         }
                 }
