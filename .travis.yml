@@ -41,7 +41,7 @@ before_script:
         - if [[ "${TRAVIS_JOB_NUMBER##*.}" == "1" ]]; then curl -s "https://scan.coverity.com/scripts/travisci_build_coverity_scan.sh" | bash || true ; fi
 
 script:
-        - make
+        - make -j 2
         - if [[ "${TRAVIS_BRANCH}" != "coverity_scan" ]]; then ctest -V ; fi
 
 after_success:
