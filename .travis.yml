@@ -8,7 +8,7 @@ env:
                 - COVERITY_SCAN_NOTIFICATION_EMAIL="xelfium@gmail.com"
                 - COVERITY_SCAN_BUILD_COMMAND="make"
 
-language: cpp
+language: generic
 
 matrix:
         include:
