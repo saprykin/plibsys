@@ -99,20 +99,6 @@ matrix:
                   env:
                         - CC=clang-3.8
                         - CXX=clang++-3.8
-                - os: linux
-                  addons:
-                        apt:
-                                sources:
-                                        - ubuntu-toolchain-r-test
-                                        - sourceline: 'deb http://apt.llvm.org/precise/ llvm-toolchain-precise-3.9 main'
-                                          key_url: 'http://apt.llvm.org/llvm-snapshot.gpg.key'
-                                packages:
-                                        - clang-3.9
-                                        - libc++-dev
-                                        - libboost-test-dev
-                  env:
-                        - CC=clang-3.9
-                        - CXX=clang++-3.9
                 - os: osx
                   compiler: gcc
                   env:
