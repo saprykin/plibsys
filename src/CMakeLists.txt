@@ -19,7 +19,12 @@ endif()
 if (PLIBSYS_COVERAGE)
 	if (PLIBSYS_C_COMPILER MATCHES "gcc|clang")
 		set (CMAKE_BUILD_TYPE "Debug")
-		set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -coverage")
+		set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} --coverage")
+		set (CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} --coverage")
+
+		if (PLIBSYS_BUILD_STATIC)
+			set (CMAKE_STATIC_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} --coverage")			
+		endif()
 	endif()
 endif()
 
