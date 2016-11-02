@@ -21,7 +21,6 @@ matrix:
                                 packages:
                                         - gcc-4.9
                                         - g++-4.9
-                                        - gcov-4.9
                                         - libboost-test-dev
                                         - lcov
                   env:
