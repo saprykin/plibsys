@@ -24,7 +24,28 @@ matrix:
                         - C_COMPILER=gcc-4.9
                         - CXX_COMPILER=g++-4.9
                 - os: linux
-                  compiler: clang
+                  addons:
+                        apt:
+                                sources:
+                                        - ubuntu-toolchain-r-test
+                                packages:
+                                        - gcc-5
+                                        - g++-5
+                  env:
+                        - C_COMPILER=gcc-5
+                        - CXX_COMPILER=g++-5
+                - os: linux
+                  addons:
+                        apt:
+                                sources:
+                                        - ubuntu-toolchain-r-test
+                                packages:
+                                        - gcc-6
+                                        - g++-6
+                  env:
+                        - C_COMPILER=gcc-6
+                        - CXX_COMPILER=g++-6
+                - os: linux
                   env:
                         - C_COMPILER=clang
                         - CXX_COMPILER=clang++
