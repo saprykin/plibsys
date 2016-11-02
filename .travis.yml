@@ -22,12 +22,9 @@ matrix:
                                         - gcc-4.9
                                         - g++-4.9
                                         - libboost-test-dev
-                                        - lcov
                   env:
                         - CC=gcc-4.9
                         - CXX=g++-4.9
-                        - GCOV=gcov-4.9
-                        - USE_GCOV=1
                 - os: linux
                   addons:
                         apt:
@@ -49,9 +46,12 @@ matrix:
                                         - gcc-6
                                         - g++-6
                                         - libboost-test-dev
+                                        - lcov
                   env:
                         - CC=gcc-6
-                        - CXX=g++-6
+                        - CXX=g++-6                        
+                        - GCOV=gcov-6
+                        - USE_GCOV=1
                 - os: linux
                   addons:
                         apt:
