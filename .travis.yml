@@ -13,13 +13,30 @@ language: cpp
 matrix:
         include:
                 - os: linux
-                  compiler: gcc
+                  addons:
+                        apt:
+                                sources:
+                                        - ubuntu-toolchain-r-test
+                                packages:
+                                        - gcc-4.9
+                  env:
+                        - C_COMPILER=gcc-4.9
+                        - CXX_COMPILER=g++-4.9
                 - os: linux
                   compiler: clang
+                  env:
+                        - C_COMPILER=clang
+                        - CXX_COMPILER=clang++
                 - os: osx
                   compiler: gcc
+                  env:
+                        - C_COMPILER=gcc
+                        - CXX_COMPILER=g++
                 - os: osx
                   compiler: clang
+                  env:
+                        - C_COMPILER=clang
+                        - CXX_COMPILER=clang++
 
 branches:
         only:
@@ -37,7 +54,9 @@ before_install:
 before_script:
         - mkdir ./plibsys-build
         - cd ./plibsys-build
-        - if [[ "${USE_GCOV}" == "1" ]]; then cmake -DPLIBSYS_COVERAGE=ON .. ; else cmake -DCMAKE_BUILD_TYPE=Release .. ; fi
+        - $C_COMPILER --version
+        - $CXX_COMPILER --version
+        - if [[ "${USE_GCOV}" == "1" ]]; then cmake -DPLIBSYS_COVERAGE=ON .. ; else cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=$C_COMPILER -DCMAKE_CXX_COMPILER=CXX_COMPILER .. ; fi
         - if [[ "${TRAVIS_JOB_NUMBER##*.}" == "1" ]]; then curl -s "https://scan.coverity.com/scripts/travisci_build_coverity_scan.sh" | bash || true ; fi
 
 script:
