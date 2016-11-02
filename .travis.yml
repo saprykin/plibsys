@@ -19,6 +19,7 @@ matrix:
                                         - ubuntu-toolchain-r-test
                                 packages:
                                         - gcc-4.9
+                                        - g++-4.9
                   env:
                         - C_COMPILER=gcc-4.9
                         - CXX_COMPILER=g++-4.9
