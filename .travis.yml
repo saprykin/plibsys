@@ -29,13 +29,13 @@ matrix:
                   env: CC=gcc-6 CXX=g++-6 ARCH=64
                 # Linux x86 builds (GCC)
                 - os: linux
-                  addons: { apt: { sources: ubuntu-toolchain-r-test, packages: [gcc-4.9, g++-4.9, gcc-4.9-multilib, g++-4.9-multilib, libboost-test-dev] } }
+                  addons: { apt: { sources: ubuntu-toolchain-r-test, packages: [gcc-4.9, g++-4.9, gcc-4.9-multilib, g++-4.9-multilib, linux-libc-dev, libboost-test-dev] } }
                   env: CC=gcc-4.9 CXX=g++-4.9 ARCH=32
                 - os: linux
-                  addons: { apt: { sources: ubuntu-toolchain-r-test, packages: [gcc-5, g++-5, gcc-5-multilib, g++-5-multilib, libboost-test-dev] } }
+                  addons: { apt: { sources: ubuntu-toolchain-r-test, packages: [gcc-5, g++-5, gcc-5-multilib, g++-5-multilib, linux-libc-dev, libboost-test-dev] } }
                   env: CC=gcc-5 CXX=g++-5 ARCH=32
                 - os: linux
-                  addons: { apt: { sources: ubuntu-toolchain-r-test, packages: [gcc-6, g++-6, gcc-6-multilib, g++-6-multilib, libboost-test-dev] } }
+                  addons: { apt: { sources: ubuntu-toolchain-r-test, packages: [gcc-6, g++-6, gcc-6-multilib, g++-6-multilib, linux-libc-dev, libboost-test-dev] } }
                   env: CC=gcc-6 CXX=g++-6 ARCH=32
                 # Linux x64 builds (Clang)
                 - os: linux
