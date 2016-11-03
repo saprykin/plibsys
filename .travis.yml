@@ -29,13 +29,13 @@ matrix:
                   env: CC=gcc-6 CXX=g++-6 ARCH=64
                 # Linux x86 builds (GCC)
                 - os: linux
-                  addons: { apt: { sources: ubuntu-toolchain-r-test, packages: [gcc-4.9, g++-4.9, gcc-multilib, gcc-4.9-multilib, g++-4.9-multilib, linux-libc-dev, libboost-test-dev] } }
+                  addons: { apt: { sources: ubuntu-toolchain-r-test, packages: [gcc-4.9, g++-4.9, gcc-multilib, g++-multilib, gcc-4.9-multilib, g++-4.9-multilib, linux-libc-dev, libboost-test-dev] } }
                   env: CC=gcc-4.9 CXX=g++-4.9 ARCH=32
                 - os: linux
-                  addons: { apt: { sources: ubuntu-toolchain-r-test, packages: [gcc-5, g++-5, gcc-5-multilib, g++-5-multilib, linux-libc-dev, libboost-test-dev] } }
+                  addons: { apt: { sources: ubuntu-toolchain-r-test, packages: [gcc-5, g++-5, gcc-multilib, g++-multilib, gcc-5-multilib, g++-5-multilib, linux-libc-dev, libboost-test-dev] } }
                   env: CC=gcc-5 CXX=g++-5 ARCH=32
                 - os: linux
-                  addons: { apt: { sources: ubuntu-toolchain-r-test, packages: [gcc-6, g++-6, gcc-6-multilib, g++-6-multilib, linux-libc-dev, libboost-test-dev] } }
+                  addons: { apt: { sources: ubuntu-toolchain-r-test, packages: [gcc-6, g++-6, gcc-multilib, g++-multilib, gcc-6-multilib, g++-6-multilib, linux-libc-dev, libboost-test-dev] } }
                   env: CC=gcc-6 CXX=g++-6 ARCH=32
                 # Linux x64 builds (Clang)
                 - os: linux
@@ -70,11 +70,12 @@ before_install:
 before_script:
         - mkdir ./plibsys-build
         - cd ./plibsys-build
-        - $CC --version
-        - $CXX --version
-        - if ! [[ -z ${ARCH+x} ]]; then export CMAKE_ARCH_PARAM=-m$ARCH ; fi
-        - if [[ "${USE_GCOV}" == "1" ]]; then cmake -DPLIBSYS_COVERAGE=ON -DCMAKE_C_COMPILER=$CC -DCMAKE_CXX_COMPILER=$CXX -DCMAKE_C_FLAGS=$CMAKE_ARCH_PARAM -DCMAKE_CXX_FLAGS=$CMAKE_ARCH_PARAM .. ; fi
-        - if ! [[ "${USE_GCOV}" == "1" ]]; then cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=$CC -DCMAKE_CXX_COMPILER=$CXX -DCMAKE_C_FLAGS=$CMAKE_ARCH_PARAM -DCMAKE_CXX_FLAGS=$CMAKE_ARCH_PARAM .. ; fi
+        - ${CC} --version
+        - ${CXX} --version
+        - if ! [[ -z ${ARCH+x} ]]; then export CMAKE_ARCH_PARAM=-m${ARCH} ; fi
+        - if [[ "{ARCH}" == "32" ]]; then export TESTS_STATIC=ON ; else export TESTS_STATIC=OFF ; fi
+        - if [[ "${USE_GCOV}" == "1" ]]; then cmake -DPLIBSYS_TESTS_STATIC=${TESTS_STATIC} -DPLIBSYS_COVERAGE=ON -DCMAKE_C_COMPILER=${CC} -DCMAKE_CXX_COMPILER=${CXX} -DCMAKE_C_FLAGS=${CMAKE_ARCH_PARAM} -DCMAKE_CXX_FLAGS=${CMAKE_ARCH_PARAM} .. ; fi
+        - if ! [[ "${USE_GCOV}" == "1" ]]; then cmake -DPLIBSYS_TESTS_STATIC=${TESTS_STATIC} -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=${CC} -DCMAKE_CXX_COMPILER=${CXX} -DCMAKE_C_FLAGS=${CMAKE_ARCH_PARAM} -DCMAKE_CXX_FLAGS=${CMAKE_ARCH_PARAM} .. ; fi
         - if [[ "${TRAVIS_BRANCH}" == "coverity_scan" ]] && [[ "${TRAVIS_OS_NAME}" == "linux" ]]; then curl -s "https://scan.coverity.com/scripts/travisci_build_coverity_scan.sh" | bash || true ; fi
 
 script:
@@ -82,5 +83,5 @@ script:
         - if [[ "${TRAVIS_BRANCH}" != "coverity_scan" ]]; then ctest --output-on-failure -V -C Release; fi
 
 after_success:
-        - if [[ "${USE_GCOV}" == "1" ]]; then lcov --gcov-tool $GCOV --directory . --capture --output-file coverage.info ; fi
+        - if [[ "${USE_GCOV}" == "1" ]]; then lcov --gcov-tool ${GCOV} --directory . --capture --output-file coverage.info ; fi
         - if [[ "${USE_GCOV}" == "1" ]]; then bash <(curl -s https://codecov.io/bash) ; fi
