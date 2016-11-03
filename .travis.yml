@@ -73,7 +73,7 @@ before_script:
         - ${CC} --version
         - ${CXX} --version
         - if ! [[ -z ${ARCH+x} ]]; then export CMAKE_ARCH_PARAM=-m${ARCH} ; fi
-        - if [[ "{ARCH}" == "32" ]]; then export TESTS_STATIC=ON ; else export TESTS_STATIC=OFF ; fi
+        - if [[ "${ARCH}" == "32" ]]; then export TESTS_STATIC=ON ; else export TESTS_STATIC=OFF ; fi
         - if [[ "${USE_GCOV}" == "1" ]]; then cmake -DPLIBSYS_TESTS_STATIC=${TESTS_STATIC} -DPLIBSYS_COVERAGE=ON -DCMAKE_C_COMPILER=${CC} -DCMAKE_CXX_COMPILER=${CXX} -DCMAKE_C_FLAGS=${CMAKE_ARCH_PARAM} -DCMAKE_CXX_FLAGS=${CMAKE_ARCH_PARAM} .. ; fi
         - if ! [[ "${USE_GCOV}" == "1" ]]; then cmake -DPLIBSYS_TESTS_STATIC=${TESTS_STATIC} -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=${CC} -DCMAKE_CXX_COMPILER=${CXX} -DCMAKE_C_FLAGS=${CMAKE_ARCH_PARAM} -DCMAKE_CXX_FLAGS=${CMAKE_ARCH_PARAM} .. ; fi
         - if [[ "${TRAVIS_BRANCH}" == "coverity_scan" ]] && [[ "${TRAVIS_OS_NAME}" == "linux" ]]; then curl -s "https://scan.coverity.com/scripts/travisci_build_coverity_scan.sh" | bash || true ; fi
