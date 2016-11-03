@@ -14,112 +14,35 @@ sudo: false
 matrix:
         include:
                 - os: linux
-                  addons:
-                        apt:
-                                packages:
-                                        - libboost-test-dev
-                                        - lcov
-                  env:
-                        - CC=gcc
-                        - CXX=g++
-                        - GCOV=gcov
-                        - USE_GCOV=1
+                  addons: { apt: { packages: [libboost-test-dev, lcov] } }
+                  env: CC=gcc CXX=g++ GCOV=gcov USE_GCOV=1
                 - os: linux
-                  addons:
-                        apt:
-                                sources:
-                                        - ubuntu-toolchain-r-test
-                                packages:
-                                        - gcc-4.9
-                                        - g++-4.9
-                                        - libboost-test-dev
-                  env:
-                        - CC=gcc-4.9
-                        - CXX=g++-4.9
+                  addons: { apt: { sources: ubuntu-toolchain-r-test, packages: [gcc-4.9, g++-4.9, libboost-test-dev] } }
+                  env: CC=gcc-4.9 CXX=g++-4.9
                 - os: linux
-                  addons:
-                        apt:
-                                sources:
-                                        - ubuntu-toolchain-r-test
-                                packages:
-                                        - gcc-5
-                                        - g++-5
-                                        - libboost-test-dev
-                  env:
-                        - CC=gcc-5
-                        - CXX=g++-5
+                  addons: { apt: { sources: ubuntu-toolchain-r-test, packages: [gcc-5, g++-5, libboost-test-dev] } }
+                  env: CC=gcc-5 CXX=g++-5
                 - os: linux
-                  addons:
-                        apt:
-                                sources:
-                                        - ubuntu-toolchain-r-test
-                                packages:
-                                        - gcc-6
-                                        - g++-6
-                                        - libboost-test-dev
-                                        - lcov
-                  env:
-                        - CC=gcc-6
-                        - CXX=g++-6
+                  addons: { apt: { sources: ubuntu-toolchain-r-test, packages: [gcc-6, g++-6, libboost-test-dev] } }
+                  env: CC=gcc-6 CXX=g++-6
                 - os: linux
-                  addons:
-                        apt:
-                                packages:
-                                        - libboost-test-dev
-                  env:
-                        - CC=clang
-                        - CXX=clang++
+                  addons: { apt: { packages: libboost-test-dev } }
+                  env: CC=clang CXX=clang++
                 - os: linux
-                  addons:
-                        apt:
-                                sources:
-                                        - ubuntu-toolchain-r-test
-                                        - llvm-toolchain-precise-3.6
-                                packages:
-                                        - clang-3.6
-                                        - libc++-dev
-                                        - libboost-test-dev
-                  env:
-                        - CC=clang-3.6
-                        - CXX=clang++-3.6
+                  addons: { apt: { sources: [ubuntu-toolchain-r-test, llvm-toolchain-precise-3.6], packages: [clang-3.6, libc++-dev, libboost-test-dev] } }
+                  env: CC=clang-3.6 CXX=clang++-3.6
                 - os: linux
-                  addons:
-                        apt:
-                                sources:
-                                        - ubuntu-toolchain-r-test
-                                        - llvm-toolchain-precise-3.7
-                                packages:
-                                        - clang-3.7
-                                        - libc++-dev
-                                        - libboost-test-dev
-                  env:
-                        - CC=clang-3.7
-                        - CXX=clang++-3.7
+                  addons: { apt: { sources: [ubuntu-toolchain-r-test, llvm-toolchain-precise-3.7], packages: [clang-3.7, libc++-dev, libboost-test-dev] } }
+                  env: CC=clang-3.7 CXX=clang++-3.7
                 - os: linux
-                  addons:
-                        apt:
-                                sources:
-                                        - ubuntu-toolchain-r-test
-                                        - llvm-toolchain-precise-3.8
-                                packages:
-                                        - clang-3.8
-                                        - libc++-dev
-                                        - libboost-test-dev
-                  env:
-                        - CC=clang-3.8
-                        - CXX=clang++-3.8
+                  addons: { apt: { sources: [ubuntu-toolchain-r-test, llvm-toolchain-precise-3.8], packages: [clang-3.8, libc++-dev, libboost-test-dev] } }
+                  env: CC=clang-3.8 CXX=clang++-3.8
                 - os: osx
                   compiler: gcc
-                  env:
-                        - CC=gcc
-                        - CXX=g++
-                        - GCOV=gcov
-                        - USE_GCOV=1
+                  env: CC=gcc CXX=g++ GCOV=gcov USE_GCOV=1
                 - os: osx
                   compiler: clang
-                  env:
-                        - CC=clang
-                        - CXX=clang++
+                  env: CC=clang CXX=clang++
 
 branches:
         only:
