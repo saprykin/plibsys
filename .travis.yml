@@ -13,18 +13,31 @@ sudo: false
 
 matrix:
         include:
+                # Code coverage build
                 - os: linux
                   addons: { apt: { packages: [libboost-test-dev, lcov] } }
                   env: CC=gcc CXX=g++ GCOV=gcov USE_GCOV=1
+                # Linux x64 builds (GCC)
                 - os: linux
                   addons: { apt: { sources: ubuntu-toolchain-r-test, packages: [gcc-4.9, g++-4.9, libboost-test-dev] } }
-                  env: CC=gcc-4.9 CXX=g++-4.9
+                  env: CC=gcc-4.9 CXX=g++-4.9 ARCH=64
                 - os: linux
                   addons: { apt: { sources: ubuntu-toolchain-r-test, packages: [gcc-5, g++-5, libboost-test-dev] } }
-                  env: CC=gcc-5 CXX=g++-5
+                  env: CC=gcc-5 CXX=g++-5 ARCH=64
                 - os: linux
                   addons: { apt: { sources: ubuntu-toolchain-r-test, packages: [gcc-6, g++-6, libboost-test-dev] } }
-                  env: CC=gcc-6 CXX=g++-6
+                  env: CC=gcc-6 CXX=g++-6 ARCH=64
+                # Linux x86 builds (GCC)
+                - os: linux
+                  addons: { apt: { sources: ubuntu-toolchain-r-test, packages: [gcc-4.9, g++-4.9, libboost-test-dev] } }
+                  env: CC=gcc-4.9 CXX=g++-4.9 ARCH=32
+                - os: linux
+                  addons: { apt: { sources: ubuntu-toolchain-r-test, packages: [gcc-5, g++-5, libboost-test-dev] } }
+                  env: CC=gcc-5 CXX=g++-5 ARCH=32
+                - os: linux
+                  addons: { apt: { sources: ubuntu-toolchain-r-test, packages: [gcc-6, g++-6, libboost-test-dev] } }
+                  env: CC=gcc-6 CXX=g++-6 ARCH=32
+                # Linux x64 builds (Clang)
                 - os: linux
                   addons: { apt: { packages: libboost-test-dev } }
                   env: CC=clang CXX=clang++
@@ -37,6 +50,7 @@ matrix:
                 - os: linux
                   addons: { apt: { sources: [ubuntu-toolchain-r-test, llvm-toolchain-precise-3.8], packages: [clang-3.8, libc++-dev, libboost-test-dev] } }
                   env: CC=clang-3.8 CXX=clang++-3.8
+                # macOS builds
                 - os: osx
                   compiler: gcc
                   env: CC=gcc CXX=g++ GCOV=gcov USE_GCOV=1
@@ -58,7 +72,9 @@ before_script:
         - cd ./plibsys-build
         - $CC --version
         - $CXX --version
-        - if [[ "${USE_GCOV}" == "1" ]]; then cmake -DPLIBSYS_COVERAGE=ON -DCMAKE_C_COMPILER=$CC -DCMAKE_CXX_COMPILER=$CXX .. ; else cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=$CC -DCMAKE_CXX_COMPILER=$CXX .. ; fi
+        - if ! [[ -z ${ARCH+x} ]]; then export TARGET_ARCH="-DCMAKE_C_FLAGS=\"-m$ARCH\" -DCMAKE_CXX_FLAGS=\"-m$ARCH\"" ; fi
+        - export CMAKE_COMMON_PARAMS="-DCMAKE_C_COMPILER=$CC -DCMAKE_CXX_COMPILER=$CXX $TARGET_ARCH"
+        - if [[ "${USE_GCOV}" == "1" ]]; then cmake -DPLIBSYS_COVERAGE=ON $CMAKE_COMMON_PARAMS .. ; else cmake -DCMAKE_BUILD_TYPE=Release $CMAKE_COMMON_PARAMS .. ; fi
         - if [[ "${TRAVIS_BRANCH}" == "coverity_scan" ]] && [[ "${TRAVIS_OS_NAME}" == "linux" ]]; then curl -s "https://scan.coverity.com/scripts/travisci_build_coverity_scan.sh" | bash || true ; fi
 
 script:
