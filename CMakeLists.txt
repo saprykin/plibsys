@@ -32,7 +32,6 @@ if (PLIBSYS_TESTS)
         message (STATUS "Checking whether to enable unit tests")
 
         enable_testing ()
-        find_package (Boost COMPONENTS unit_test_framework)
 
         if (BOOST_ROOT)
                 if (NOT IS_ABSOLUTE "${BOOST_ROOT}")
@@ -40,6 +39,8 @@ if (PLIBSYS_TESTS)
                         set (BOOST_ROOT ${BOOST_ROOT_ABSOLUTE})
                 endif()
         endif()
+
+        find_package (Boost COMPONENTS unit_test_framework)
 
         if (Boost_FOUND)
                 if (PLIBSYS_TESTS_STATIC)
