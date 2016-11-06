@@ -82,6 +82,7 @@ before_install:
         - if [[ "${TRAVIS_OS_NAME}" == "osx" ]] && [[ "${USE_GCOV}" == "1" ]]; then brew install lcov ; fi
         - if [[ "${TRAVIS_OS_NAME}" == "osx" ]] && ! [[ -z ${FORMULA+x} ]]; then brew unlink gcc || true; fi
         - if [[ "${TRAVIS_OS_NAME}" == "osx" ]] && ! [[ -z ${FORMULA+x} ]]; then brew unlink ${FORMULA} || true; fi
+        - if [[ "${TRAVIS_OS_NAME}" == "osx" ]] && ! [[ -z ${FORMULA+x} ]]; then brew install ${FORMULA}; fi
         - if [[ "${TRAVIS_OS_NAME}" == "osx" ]] && ! [[ -z ${FORMULA+x} ]]; then brew link ${FORMULA}; fi
 
 before_script:
