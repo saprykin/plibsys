@@ -52,8 +52,16 @@ matrix:
                   env: CC=clang-3.8 CXX=clang++-3.8
                 # macOS builds
                 - os: osx
+                  osx_image: xcode7.3
                   env: CC=gcc-4.8 CXX=g++-4.8 GCOV=gcov USE_GCOV=1
                 - os: osx
+                  osx_image: xcode6.4
+                  env: CC=clang CXX=clang++
+                - os: osx
+                  osx_image: xcode7.3
+                  env: CC=clang CXX=clang++
+                - os: osx
+                  osx_image: xcode8
                   env: CC=clang CXX=clang++
 
 branches:
