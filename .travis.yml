@@ -56,7 +56,10 @@ matrix:
                   env: FORMULA=gcc49 CC=gcc-4.9 CXX=g++-4.9 GCOV=gcov USE_GCOV=1 BUNDLED_BOOST=1
                 - os: osx
                   osx_image: xcode7.3
-                  env: FORMULA=gcc5 CC=gcc-5 CXX=g++-5 BUNDLED_BOOST=1                  
+                  env: FORMULA=gcc5 CC=gcc-5 CXX=g++-5 BUNDLED_BOOST=1
+                - os: osx
+                  osx_image: xcode7.3
+                  env: FORMULA=gcc6 CC=gcc-6 CXX=g++-6 BUNDLED_BOOST=1
                 # macOS builds (Clang)
                 - os: osx
                   osx_image: xcode6.4
