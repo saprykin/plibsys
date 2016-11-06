@@ -53,10 +53,10 @@ matrix:
                 # macOS builds (GCC)
                 - os: osx
                   osx_image: xcode7.3
-                  env: CC=gcc-4.9 CXX=g++-4.9 GCOV=gcov USE_GCOV=1 MACOSX_DEPLOYMENT_TARGET=10.9
+                  env: FORMULA=gcc49 CC=gcc-4.9 CXX=g++-4.9 GCOV=gcov USE_GCOV=1 BUNDLED_BOOST=1
                 - os: osx
-                  osx_image: xcode6.4
-                  env: CC=gcc-5 CXX=g++-5
+                  osx_image: xcode7.3
+                  env: FORMULA=gcc5 CC=gcc-5 CXX=g++-5 BUNDLED_BOOST=1                  
                 # macOS builds (Clang)
                 - os: osx
                   osx_image: xcode6.4
@@ -75,7 +75,11 @@ branches:
 
 before_install:
         - if [[ "${TRAVIS_BRANCH}" == "coverity_scan" ]]; then export USE_GCOV="" ; fi
-        - if [[ "${USE_GCOV}" == "1" ]] && [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then brew update ; brew install lcov ; fi
+        - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew update ; fi
+        - if [[ "${TRAVIS_OS_NAME}" == "osx" ]] && [[ "${USE_GCOV}" == "1" ]]; then brew install lcov ; fi
+        - if [[ "${TRAVIS_OS_NAME}" == "osx" ]] && [[ -z ${FORMULA+x} ]]; then brew unlink gcc || true; fi
+        - if [[ "${TRAVIS_OS_NAME}" == "osx" ]] && [[ -z ${FORMULA+x} ]]; then brew unlink ${FORMULA} || true; fi
+        - if [[ "${TRAVIS_OS_NAME}" == "osx" ]] && [[ -z ${FORMULA+x} ]]; then brew install ${FORMULA}; fi
 
 before_script:
         - mkdir ./plibsys-build
