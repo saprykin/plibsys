@@ -100,9 +100,9 @@ p_atomic_pointer_set (volatile void	*atomic,
 		      ppointer		val)
 {
 #if (PLIBSYS_SIZEOF_VOID_P == 8)
-	__atomic_store_8 (atomic, (psize) val, __ATOMIC_SEQ_CST);
+	__atomic_store_8 ((volatile psize *) atomic, (psize) val, __ATOMIC_SEQ_CST);
 #else
-	__atomic_store_4 (atomic, (psize) val, __ATOMIC_SEQ_CST);
+	__atomic_store_4 ((volatile psize *) atomic, (psize) val, __ATOMIC_SEQ_CST);
 #endif
 }
 
