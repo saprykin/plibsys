@@ -192,7 +192,7 @@ P_LIB_API puint		p_atomic_int_xor			(volatile puint		*atomic,
  *
  * This call acts as a full compiler and hardware memory barrier (before the get).
  */
-P_LIB_API ppointer	p_atomic_pointer_get			(volatile pconstpointer	atomic);
+P_LIB_API ppointer	p_atomic_pointer_get			(const volatile void	*atomic);
 
 /**
  * @brief Sets @a val to #ppointer-sized @a atomic.
@@ -202,7 +202,7 @@ P_LIB_API ppointer	p_atomic_pointer_get			(volatile pconstpointer	atomic);
  *
  * This call acts as a full compiler and hardware memory barrier (after the set).
  */
-P_LIB_API void		p_atomic_pointer_set			(volatile ppointer	atomic,
+P_LIB_API void		p_atomic_pointer_set			(volatile void		*atomic,
 								 ppointer		val);
 
 /**
@@ -221,7 +221,7 @@ P_LIB_API void		p_atomic_pointer_set			(volatile ppointer	atomic,
  *
  * This call acts as a full compiler and hardware memory barrier.
  */
-P_LIB_API pboolean	p_atomic_pointer_compare_and_exchange	(volatile ppointer	atomic,
+P_LIB_API pboolean	p_atomic_pointer_compare_and_exchange	(volatile void		*atomic,
 								 ppointer 		oldval,
 								 ppointer		newval);
 
@@ -237,7 +237,7 @@ P_LIB_API pboolean	p_atomic_pointer_compare_and_exchange	(volatile ppointer	atom
  *
  * This call acts as a full compiler and hardware memory barrier.
  */
-P_LIB_API pssize	p_atomic_pointer_add			(volatile ppointer	atomic,
+P_LIB_API pssize	p_atomic_pointer_add			(volatile void		*atomic,
 								 pssize			val);
 
 /**
@@ -253,7 +253,7 @@ P_LIB_API pssize	p_atomic_pointer_add			(volatile ppointer	atomic,
  *
  * This call acts as a full compiler and hardware memory barrier.
  */
-P_LIB_API psize		p_atomic_pointer_and			(volatile ppointer	atomic,
+P_LIB_API psize		p_atomic_pointer_and			(volatile void		*atomic,
 								 psize			val);
 
 /**
@@ -269,7 +269,7 @@ P_LIB_API psize		p_atomic_pointer_and			(volatile ppointer	atomic,
  *
  * This call acts as a full compiler and hardware memory barrier.
  */
-P_LIB_API psize		p_atomic_pointer_or			(volatile ppointer	atomic,
+P_LIB_API psize		p_atomic_pointer_or			(volatile void		*atomic,
 								 psize			val);
 
 /**
@@ -285,7 +285,7 @@ P_LIB_API psize		p_atomic_pointer_or			(volatile ppointer	atomic,
  *
  * This call acts as a full compiler and hardware memory barrier.
  */
-P_LIB_API psize		p_atomic_pointer_xor			(volatile ppointer	atomic,
+P_LIB_API psize		p_atomic_pointer_xor			(volatile void		*atomic,
 								 psize			val);
 
 /**
