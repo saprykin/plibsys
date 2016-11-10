@@ -176,16 +176,16 @@ p_atomic_int_xor (volatile puint	*atomic,
 }
 
 P_LIB_API ppointer
-p_atomic_pointer_get (const volatile void *atomic)
+p_atomic_pointer_get (volatile pconstpointer atomic)
 {
-	const volatile ppointer *ptr = (const volatile ppointer *) atomic;
+	volatile pconstpointer *ptr = (volatile pconstpointer *) atomic;
 
 	MemoryBarrier ();
 	return *ptr;
 }
 
 P_LIB_API void
-p_atomic_pointer_set (volatile void	*atomic,
+p_atomic_pointer_set (volatile ppointer	atomic,
 		      ppointer		val)
 {
 	volatile ppointer *ptr = (volatile ppointer *) atomic;
@@ -195,9 +195,9 @@ p_atomic_pointer_set (volatile void	*atomic,
 }
 
 P_LIB_API pboolean
-p_atomic_pointer_compare_and_exchange (volatile void	*atomic,
-				       ppointer		oldval,
-				       ppointer		newval)
+p_atomic_pointer_compare_and_exchange (volatile ppointer	atomic,
+				       ppointer			oldval,
+				       ppointer			newval)
 {
 	return InterlockedCompareExchangePointer ((volatile PVOID *) atomic,
 						  (PVOID) newval,
@@ -205,7 +205,7 @@ p_atomic_pointer_compare_and_exchange (volatile void	*atomic,
 }
 
 P_LIB_API pssize
-p_atomic_pointer_add (volatile void	*atomic,
+p_atomic_pointer_add (volatile ppointer	atomic,
 		      pssize		val)
 {
 #if PLIBSYS_SIZEOF_VOID_P == 8
@@ -216,7 +216,7 @@ p_atomic_pointer_add (volatile void	*atomic,
 }
 
 P_LIB_API psize
-p_atomic_pointer_and (volatile void	*atomic,
+p_atomic_pointer_and (volatile ppointer	atomic,
 		      psize		val)
 {
 #if PLIBSYS_SIZEOF_VOID_P == 8
@@ -227,7 +227,7 @@ p_atomic_pointer_and (volatile void	*atomic,
 }
 
 P_LIB_API psize
-p_atomic_pointer_or (volatile void	*atomic,
+p_atomic_pointer_or (volatile ppointer	atomic,
 		     psize		val)
 {
 #if PLIBSYS_SIZEOF_VOID_P == 8
@@ -238,7 +238,7 @@ p_atomic_pointer_or (volatile void	*atomic,
 }
 
 P_LIB_API psize
-p_atomic_pointer_xor (volatile void	*atomic,
+p_atomic_pointer_xor (volatile ppointer	atomic,
 		      psize		val)
 {
 #if PLIBSYS_SIZEOF_VOID_P == 8

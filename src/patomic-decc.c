@@ -25,24 +25,24 @@
 
 #ifdef __ia64
 #  define PATOMIC_DECC_CAS_LONG(atomic_src, oldval, newval, atomic_dst)	\
-	  __CMP_SWAP_LONG ((volatile void *) (atomic_src),		\
+	  __CMP_SWAP_LONG ((volatile ppointer) (atomic_src),		\
 			   (pint) (oldval),				\
 			   (pint) (newval))
 #  define PATOMIC_DECC_CAS_QUAD(atomic_src, oldval, newval, atomic_dst)	\
-	  __CMP_SWAP_QUAD ((volatile void *) (atomic_src),		\
+	  __CMP_SWAP_QUAD ((volatile ppointer) (atomic_src),		\
 			   (pint64) (oldval),				\
 			   (pint64) (newval))	  
 #else
 #  define PATOMIC_DECC_CAS_LONG(atomic_src, oldval, newval, atomic_dst)	\
-	  __CMP_STORE_LONG ((volatile void *) (atomic_src),		\
+	  __CMP_STORE_LONG ((volatile ppointer) (atomic_src),		\
 			    (pint) (oldval),				\
 			    (pint) (newval),				\
-			    (volatile void *) (atomic_dst))
+			    (volatile ppointer) (atomic_dst))
 #  define PATOMIC_DECC_CAS_QUAD(atomic_src, oldval, newval, atomic_dst)	\
-	  __CMP_STORE_QUAD ((volatile void *) (atomic_src),		\
+	  __CMP_STORE_QUAD ((volatile ppointer) (atomic_src),		\
 			    (pint64) (oldval),				\
 			    (pint64) (newval),				\
-			    (volatile void *) (atomic_dst))
+			    (volatile ppointer) (atomic_dst))
 #endif
 
 P_LIB_API pint
@@ -56,7 +56,7 @@ P_LIB_API void
 p_atomic_int_set (volatile pint	*atomic,
 		  pint		val)
 {
-	(void) __ATOMIC_EXCH_LONG ((volatile void *) atomic, val);
+	(void) __ATOMIC_EXCH_LONG ((volatile ppointer) atomic, val);
 	__MB ();
 }
 
@@ -64,7 +64,7 @@ P_LIB_API void
 p_atomic_int_inc (volatile pint *atomic)
 {
 	__MB ();
-	(void) __ATOMIC_INCREMENT_LONG ((volatile void *) atomic);
+	(void) __ATOMIC_INCREMENT_LONG ((volatile ppointer) atomic);
 	__MB ();
 }
 
@@ -74,7 +74,7 @@ p_atomic_int_dec_and_test (volatile pint *atomic)
 	pboolean result;
 
 	__MB ();
-	result = __ATOMIC_DECREMENT_LONG ((volatile void *) atomic) == 1 ? TRUE : FALSE;
+	result = __ATOMIC_DECREMENT_LONG ((volatile ppointer) atomic) == 1 ? TRUE : FALSE;
 	__MB ();
 
 	return result;
@@ -101,7 +101,7 @@ p_atomic_int_add (volatile pint	*atomic,
 	pint result;
 
 	__MB ();
-	result = __ATOMIC_ADD_LONG ((volatile void *) atomic, val);
+	result = __ATOMIC_ADD_LONG ((volatile ppointer) atomic, val);
 	__MB ();
 
 	return result;
@@ -114,7 +114,7 @@ p_atomic_int_and (volatile puint	*atomic,
 	puint result;
 
 	__MB ();
-	result = (puint) __ATOMIC_AND_LONG ((volatile void *) atomic, (pint) val);
+	result = (puint) __ATOMIC_AND_LONG ((volatile ppointer) atomic, (pint) val);
 	__MB ();
 
 	return result;
@@ -127,7 +127,7 @@ p_atomic_int_or (volatile puint	*atomic,
 	puint result;
 
 	__MB ();
-	result = (puint) __ATOMIC_OR_LONG ((volatile void *) atomic, (pint) val);
+	result = (puint) __ATOMIC_OR_LONG ((volatile ppointer) atomic, (pint) val);
 	__MB ();
 
 	return result;
@@ -150,14 +150,14 @@ p_atomic_int_xor (volatile puint	*atomic,
 }
 
 P_LIB_API ppointer
-p_atomic_pointer_get (const volatile void *atomic)
+p_atomic_pointer_get (volatile pconstpointer atomic)
 {
 	__MB ();
 	return (ppointer) (* ((const volatile psize *) atomic));
 }
 
 P_LIB_API void
-p_atomic_pointer_set (volatile void	*atomic,
+p_atomic_pointer_set (volatile ppointer	atomic,
 		      ppointer		val)
 {
 #if (PLIBSYS_SIZEOF_VOID_P == 8)
@@ -169,9 +169,9 @@ p_atomic_pointer_set (volatile void	*atomic,
 }
 
 P_LIB_API pboolean
-p_atomic_pointer_compare_and_exchange (volatile void	*atomic,
-				       ppointer		oldval,
-				       ppointer		newval)
+p_atomic_pointer_compare_and_exchange (volatile ppointer	atomic,
+				       ppointer			oldval,
+				       ppointer			newval)
 {
 	pboolean result;
 
@@ -187,7 +187,7 @@ p_atomic_pointer_compare_and_exchange (volatile void	*atomic,
 }
 
 P_LIB_API pssize
-p_atomic_pointer_add (volatile void	*atomic,
+p_atomic_pointer_add (volatile ppointer	atomic,
 		      pssize		val)
 {
 	pssize result;
@@ -204,7 +204,7 @@ p_atomic_pointer_add (volatile void	*atomic,
 }
 
 P_LIB_API psize
-p_atomic_pointer_and (volatile void	*atomic,
+p_atomic_pointer_and (volatile ppointer	atomic,
 		      psize		val)
 {
 	psize result;
@@ -221,7 +221,7 @@ p_atomic_pointer_and (volatile void	*atomic,
 }
 
 P_LIB_API psize
-p_atomic_pointer_or (volatile void	*atomic,
+p_atomic_pointer_or (volatile ppointer	atomic,
 		     psize		val)
 {
 	psize result;
@@ -238,7 +238,7 @@ p_atomic_pointer_or (volatile void	*atomic,
 }
 
 P_LIB_API psize
-p_atomic_pointer_xor (volatile void	*atomic,
+p_atomic_pointer_xor (volatile ppointer	atomic,
 		      psize		val)
 {
 #if (PLIBSYS_SIZEOF_VOID_P == 8)
