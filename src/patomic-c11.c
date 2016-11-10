@@ -17,17 +17,25 @@
 
 #include "patomic.h"
 
+#ifdef P_CC_SUN
+#  define PATOMIC_INT_CAST(x) (pint *) (x)
+#  define PATOMIC_SIZE_CAST(x) (psize *) (x)
+#else
+#  define PATOMIC_INT_CAST(x) x
+#  define PATOMIC_SIZE_CAST(x) x
+#endif
+
 P_LIB_API pint
 p_atomic_int_get (const volatile pint *atomic)
 {
-	return (pint) __atomic_load_4 (atomic, __ATOMIC_SEQ_CST);
+	return (pint) __atomic_load_4 (PATOMIC_INT_CAST (atomic), __ATOMIC_SEQ_CST);
 }
 
 P_LIB_API void
 p_atomic_int_set (volatile pint	*atomic,
 		  pint		val)
 {
-	__atomic_store_4 (atomic, val, __ATOMIC_SEQ_CST);
+	__atomic_store_4 (PATOMIC_INT_CAST (atomic), val, __ATOMIC_SEQ_CST);
 }
 
 P_LIB_API void
@@ -49,7 +57,7 @@ p_atomic_int_compare_and_exchange (volatile pint	*atomic,
 {
 	pint tmp_int = oldval;
 
-	return (pboolean) __atomic_compare_exchange_n (atomic,
+	return (pboolean) __atomic_compare_exchange_n (PATOMIC_INT_CAST (atomic),
 						       &tmp_int,
 						       newval,
 						       0,
@@ -89,9 +97,9 @@ P_LIB_API ppointer
 p_atomic_pointer_get (volatile pconstpointer atomic)
 {
 #if (PLIBSYS_SIZEOF_VOID_P == 8)
-	return (ppointer) __atomic_load_8 ((const volatile psize *) atomic, __ATOMIC_SEQ_CST);
+	return (ppointer) __atomic_load_8 (PATOMIC_SIZE_CAST ((const volatile psize *) atomic), __ATOMIC_SEQ_CST);
 #else
-	return (ppointer) __atomic_load_4 ((const volatile psize *) atomic, __ATOMIC_SEQ_CST);
+	return (ppointer) __atomic_load_4 (PATOMIC_SIZE_CAST ((const volatile psize *) atomic), __ATOMIC_SEQ_CST);
 #endif
 }
 
@@ -100,9 +108,9 @@ p_atomic_pointer_set (volatile ppointer	atomic,
 		      ppointer		val)
 {
 #if (PLIBSYS_SIZEOF_VOID_P == 8)
-	__atomic_store_8 ((volatile psize *) atomic, (psize) val, __ATOMIC_SEQ_CST);
+	__atomic_store_8 (PATOMIC_SIZE_CAST ((volatile psize *) atomic), (psize) val, __ATOMIC_SEQ_CST);
 #else
-	__atomic_store_4 ((volatile psize *) atomic, (psize) val, __ATOMIC_SEQ_CST);
+	__atomic_store_4 (PATOMIC_SIZE_CAST ((volatile psize *) atomic), (psize) val, __ATOMIC_SEQ_CST);
 #endif
 }
 
@@ -113,9 +121,9 @@ p_atomic_pointer_compare_and_exchange (volatile ppointer	atomic,
 {
 	ppointer tmp_pointer = oldval;
 
-	return (pboolean) __atomic_compare_exchange_n ((volatile psize *) atomic,
+	return (pboolean) __atomic_compare_exchange_n (PATOMIC_SIZE_CAST ((volatile psize *) atomic),
 						       (psize *) &tmp_pointer,
-						       newval,
+						       PPOINTER_TO_PSIZE (newval),
 						       0,
 						       __ATOMIC_SEQ_CST,
 						       __ATOMIC_SEQ_CST);

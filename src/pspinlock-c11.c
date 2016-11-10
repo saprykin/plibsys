@@ -18,6 +18,12 @@
 #include "pmem.h"
 #include "pspinlock.h"
 
+#ifdef P_CC_SUN
+#  define PSPINLOCK_INT_CAST(x) (pint *) (x)
+#else
+#  define PSPINLOCK_INT_CAST(x) x
+#endif
+
 struct PSpinLock_ {
 	volatile pint spin;
 };
@@ -45,7 +51,7 @@ p_spinlock_lock (PSpinLock *spinlock)
 
 	do {
 		tmp_int = 0;
-	} while ((pboolean) __atomic_compare_exchange_n (&(spinlock->spin),
+	} while ((pboolean) __atomic_compare_exchange_n (PSPINLOCK_INT_CAST (&(spinlock->spin)),
 							 &tmp_int,
 							 1,
 							 0,
@@ -63,7 +69,7 @@ p_spinlock_trylock (PSpinLock *spinlock)
 	if (P_UNLIKELY (spinlock == NULL))
 		return FALSE;
 
-	return (pboolean) __atomic_compare_exchange_n (&(spinlock->spin),
+	return (pboolean) __atomic_compare_exchange_n (PSPINLOCK_INT_CAST (&(spinlock->spin)),
 						       &tmp_int,
 						       1,
 						       0,
@@ -77,7 +83,7 @@ p_spinlock_unlock (PSpinLock *spinlock)
 	if (P_UNLIKELY (spinlock == NULL))
 		return FALSE;
 
-	__atomic_store_4 (&(spinlock->spin), 0, __ATOMIC_RELEASE);
+	__atomic_store_4 (PSPINLOCK_INT_CAST (&(spinlock->spin)), 0, __ATOMIC_RELEASE);
 
 	return TRUE;
 }
