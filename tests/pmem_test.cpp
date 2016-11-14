@@ -23,6 +23,7 @@
 
 #include "plibsys.h"
 
+#include <stdlib.h>
 #include <string.h>
 
 #ifdef PLIBSYS_TESTS_STATIC

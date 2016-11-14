@@ -23,6 +23,8 @@
 
 #include "plibsys.h"
 
+#include <string.h>
+
 #ifdef PLIBSYS_TESTS_STATIC
 #  include <boost/test/included/unit_test.hpp>
 #else

@@ -23,7 +23,9 @@
 
 #include "plibsys.h"
 
+#include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 #include <float.h>
 
 #ifdef PLIBSYS_TESTS_STATIC
