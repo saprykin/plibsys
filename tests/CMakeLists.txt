@@ -1,6 +1,9 @@
 project (tests CXX)
 set (OUTPUT_DIR ${CMAKE_BINARY_DIR})
 
+include (${PROJECT_SOURCE_DIR}/../cmake/PlatformDetect.cmake)
+plibsys_detect_target_os (PLIBSYS_TESTS_TARGET_OS)
+
 if (NOT PLIBSYS_TESTS_STATIC)
         find_package (Boost COMPONENTS unit_test_framework REQUIRED)
         include_directories (${Boost_INCLUDE_DIR})
@@ -157,6 +160,11 @@ set (PTREE_TEST_SRCS ptree_test.cpp)
 add_executable (ptree_test ${PTREE_TEST_SRCS})
 target_link_libraries (ptree_test ${Boost_LIBRARIES} plibsys)
 set_target_properties (ptree_test PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${OUTPUT_DIR})
+
+# QNX requires libm for sqrt() and friends
+if (PLIBSYS_TESTS_TARGET_OS STREQUAL qnx)
+        target_link_libraries (ptree_test m)
+endif()
 
 set (PTYPES_TEST_SRCS ptypes_test.cpp)
 add_executable (ptypes_test ${PTYPES_TEST_SRCS})
