@@ -1,4 +1,47 @@
-Changes in PLibSYS 0.0.1
+Changes in plibsys 0.0.2
+========================
+
+* Rename project to lower case letters
+* Move to LGPL license 
+* Print routine names in warning and error output
+* Add CMake option PLIBSYS_TESTS to disable tests completely
+* Add ability to use general model for read-write locks explicitly
+
+* New API:
+  New hashing algorithms: SHA-256/224, SHA-512/384, SHA-3
+  Add routines to get and set last native error codes
+
+* New supported platforms and compilers:
+  OpenVMS on Alpha and IA64 (DEC C)
+  Tru64 on Alpha (Compaq, GCC)
+  Linux on PPC64le (IBM XL C, GCC)
+  Syllable (GCC)
+
+* AppVeyor:
+  Add parallel builds for Microsoft compilers
+  Add LLVM (x64) build
+  Add MinGW 4.9, 5.4 and 6.2 builds 
+  Add MSYS64 (x64) build
+  Add MSYS64 (MinGW x86) build
+  Add Cygwin (x86, x64) builds
+  Add OpenWatcom 1.9 build
+
+* Travis:
+  Move to container-based builds
+  Add GCC 4.9, 5.4 and 6.x builds (x86, x64) for Linux
+  Add Clang 3.6, 3.7 and 3.8 builds (x64) for Linux
+  Add GCC 4.9, 5.4 and 6.x builds (x64) for macOS
+  Add Xcode 6.4, 7.3 and 8 builds (x64) for macOS
+
+* Boost:
+  Backport changes from 1.62 to fix warnings with GCC 6.x
+
+* Fixes:
+  Fix race condition on Solaris when creating a TLS key
+  Fix potential leak on SCO when creating a TLS key
+  Fix building tests in QNX
+
+Changes in plibsys 0.0.1
 ========================
 
 * Initial release
