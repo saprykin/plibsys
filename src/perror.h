@@ -64,7 +64,7 @@ typedef struct PError_ PError;
  * @return Newly initialized #PError object in case of success, NULL otherwise.
  * @since 0.0.1
  */
-P_LIB_API PError *	p_error_new		();
+P_LIB_API PError *	p_error_new		(void);
 
 /**
  * @brief Initializes a new #PError with data.
