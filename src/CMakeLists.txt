@@ -102,7 +102,6 @@ set (PLIBSYS_PRIVATE_HDRS
 	pcryptohash-sha2-512.h
 	pcryptohash-sha3.h
 	perror-private.h
-	pipc-private.h
 	plibsys-private.h
 	psysclose-private.h
 	ptimeprofiler-private.h
@@ -127,7 +126,6 @@ set (PLIBSYS_SRCS
 	pfile.c
 	phashtable.c
 	pinifile.c
-	pipc.c
 	plibraryloader.c
 	plist.c
 	pmain.c
@@ -179,6 +177,18 @@ set (PLIBSYS_PLATFORM_SRCS
 	ptimeprofiler-${PLIBSYS_TIME_PROFILER_MODEL}.c
 	pdir-${PLIBSYS_DIR_MODEL}.c
 )
+
+if (NOT PLIBSYS_IPC_MODEL STREQUAL none)
+	set (PLIBSYS_PRIVATE_HDRS
+		${PLIBSYS_PRIVATE_HDRS}
+		pipc-private.h
+	)
+
+	set (PLIBSYS_SRCS
+		${PLIBSYS_SRCS}
+		pipc.c
+	)
+endif()
 
 set (CMAKE_REQUIRED_DEFINITIONS "${CMAKE_REQUIRED_DEFINITIONS} ${PLIBSYS_PLATFORM_DEFINES}")
 set (CMAKE_REQUIRED_LIBRARIES ${CMAKE_REQUIRED_LIBRARIES} ${PLIBSYS_PLATFORM_LINK_LIBRARIES})
