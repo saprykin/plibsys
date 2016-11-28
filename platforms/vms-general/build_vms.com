@@ -400,7 +400,7 @@ $!
 $ plibsys_src = "patomic-decc.c pcondvariable-posix.c pcryptohash-gost3411.c pcryptohash-md5.c"
 $ plibsys_src = plibsys_src + " pcryptohash-sha1.c pcryptohash-sha2-256.c pcryptohash-sha2-512.c"
 $ plibsys_src = plibsys_src + " pcryptohash-sha3.c pcryptohash.c pdir-posix.c pdir.c"
-$ plibsys_src = plibsys_src + " perror.c pfile.c phashtable.c pinifile.c pipc.c plibraryloader.c"
+$ plibsys_src = plibsys_src + " perror.c pfile.c phashtable.c pinifile.c pipc.c plibraryloader-posix.c"
 $ plibsys_src = plibsys_src + " plist.c pmain.c pmem.c pmutex-posix.c pprocess.c prwlock-posix.c"
 $ plibsys_src = plibsys_src + " psemaphore-posix.c pshm-posix.c pshmbuffer.c psocket.c"
 $ plibsys_src = plibsys_src + " psocketaddress.c pspinlock-decc.c pstring.c psysclose-unix.c"

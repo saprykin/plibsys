@@ -21,24 +21,7 @@
 #include "pmem.h"
 #include "pstring.h"
 
-#ifndef P_OS_WIN
-#  include <dlfcn.h>
-#endif
-
-/* FreeBSD may cause a segfault: https://reviews.freebsd.org/D5112,
- * DragonFlyBSD as well, so we need to check a file size before calling dlopen()
- */
-#if defined (P_OS_FREEBSD) || defined (P_OS_DRAGONFLY)
-#  include <unistd.h>
-#  include <sys/types.h>
-#  include <sys/stat.h>
-#endif
-
-#ifdef P_OS_WIN
-	typedef HINSTANCE	plibrary_handle;
-#else
-	typedef ppointer	plibrary_handle;
-#endif
+typedef HINSTANCE	plibrary_handle;
 
 struct PLibraryLoader_ {
 	plibrary_handle	handle;
@@ -49,52 +32,23 @@ static void pp_library_loader_clean_handle (plibrary_handle handle);
 static void
 pp_library_loader_clean_handle (plibrary_handle handle)
 {
-#ifdef P_OS_WIN
 	if (P_UNLIKELY (!FreeLibrary (handle)))
 		P_ERROR ("PLibraryLoader::pp_library_loader_clean_handle: FreeLibrary() failed");
-#else
-	if (P_UNLIKELY (dlclose (handle) != 0))
-		P_ERROR ("PLibraryLoader::pp_library_loader_clean_handle: dlclose() failed");
-#endif
 }
 
 P_LIB_API PLibraryLoader *
 p_library_loader_new (const pchar *path)
 {
-	PLibraryLoader	*loader;
+	PLibraryLoader	*loader = NULL;
 	plibrary_handle	handle;
-#if defined (P_OS_FREEBSD) || defined (P_OS_DRAGONFLY)
-	struct stat	stat_buf;
-#endif
-
-	loader = NULL;
 
 	if (!p_file_is_exists (path))
 		return NULL;
 
-#if defined (P_OS_FREEBSD) || defined (P_OS_DRAGONFLY)
-	if (P_UNLIKELY (stat (path, &stat_buf) != 0)) {
-		P_ERROR ("PLibraryLoader::p_library_loader_new: stat() failed");
-		return NULL;
-	}
-
-	if (P_UNLIKELY (stat_buf.st_size == 0)) {
-		P_ERROR ("PLibraryLoader::p_library_loader_new: unable to handle zero-size file");
-		return NULL;
-	}
-#endif
-
-#ifdef P_OS_WIN
 	if (P_UNLIKELY ((handle = LoadLibraryA (path)) == NULL)) {
 		P_ERROR ("PLibraryLoader::p_library_loader_new: LoadLibraryA() failed");
 		return NULL;
 	}
-#else
-	if (P_UNLIKELY ((handle = dlopen (path, RTLD_NOW)) == NULL)) {
-		P_ERROR ("PLibraryLoader::p_library_loader_new: dlopen() failed");
-		return NULL;
-	}
-#endif
 
 	if (P_UNLIKELY ((loader = p_malloc0 (sizeof (PLibraryLoader))) == NULL)) {
 		P_ERROR ("PLibraryLoader::p_library_loader_new: failed to allocate memory");
@@ -115,11 +69,7 @@ p_library_loader_get_symbol (PLibraryLoader *loader, const pchar *sym)
 	if (P_UNLIKELY (loader == NULL || sym == NULL || loader->handle == NULL))
 		return NULL;
 
-#ifdef P_OS_WIN
 	ret_sym = (PFuncAddr) GetProcAddress (loader->handle, sym);
-#else
-	ret_sym = (PFuncAddr) dlsym (loader->handle, sym);
-#endif
 
 	return ret_sym;
 }
@@ -138,9 +88,7 @@ p_library_loader_free (PLibraryLoader *loader)
 P_LIB_API pchar *
 p_library_loader_get_last_error (void)
 {
-	pchar *res = NULL;
-
-#ifdef P_OS_WIN
+	pchar	*res = NULL;
 	DWORD	err_code;
 	LPVOID	msg_buf;
 
@@ -161,14 +109,6 @@ p_library_loader_get_last_error (void)
 		res = p_strdup ((pchar *) msg_buf);
 		LocalFree (msg_buf);
 	}
-#else
-	pchar *msg;
-
-	msg = dlerror ();
-
-	if (msg != NULL)
-		res = p_strdup (msg);
-#endif
 
 	return res;
 }

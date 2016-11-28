@@ -126,7 +126,6 @@ set (PLIBSYS_SRCS
 	pfile.c
 	phashtable.c
 	pinifile.c
-	plibraryloader.c
 	plist.c
 	pmain.c
 	pmem.c
@@ -167,6 +166,10 @@ if (PLIBSYS_DIR_MODEL STREQUAL "")
 	set (PLIBSYS_DIR_MODEL none)
 endif()
 
+if (PLIBSYS_LIBRARYLOADER_MODEL STREQUAL "")
+	set (PLIBSYS_LIBRARYLOADER_MODEL none)
+endif()
+
 set (PLIBSYS_PLATFORM_SRCS
 	pcondvariable-${PLIBSYS_THREAD_MODEL}.c
 	pmutex-${PLIBSYS_THREAD_MODEL}.c
@@ -176,6 +179,7 @@ set (PLIBSYS_PLATFORM_SRCS
 	puthread-${PLIBSYS_THREAD_MODEL}.c
 	ptimeprofiler-${PLIBSYS_TIME_PROFILER_MODEL}.c
 	pdir-${PLIBSYS_DIR_MODEL}.c
+	plibraryloader-${PLIBSYS_LIBRARYLOADER_MODEL}.c
 )
 
 if (NOT PLIBSYS_IPC_MODEL STREQUAL none)
@@ -739,6 +743,7 @@ SET (PLIBSYS_SUMMARY
 	RW lock model:          ${PLIBSYS_RWLOCK_MODEL}
 	IPC model:              ${PLIBSYS_IPC_MODEL}
 	DIR model:              ${PLIBSYS_DIR_MODEL}
+	Library loader model:   ${PLIBSYS_LIBRARYLOADER_MODEL}
 	Time profiler model:    ${PLIBSYS_TIME_PROFILER_MODEL}
 	Atomic model:           ${PLIBSYS_ATOMIC_MODEL}
 
