@@ -387,6 +387,7 @@
  * USLC            - SCO OUDK and UDK C/C++
  * WATCOM          - Watcom C/C++
  * BORLAND         - Borland C/C++
+ * PGI             - Portland Group C/C++
  */
 
 /**
@@ -467,6 +468,12 @@
  * @since 0.0.1
  */
 
+/**
+ * @def P_CC_PGI
+ * @brief Portland Group C/C++ compiler.
+ * @since 0.0.3
+ */
+
 #ifdef DOXYGEN
 #  define P_CC_MSVC
 #  define P_CC_GNU
@@ -481,6 +488,7 @@
 #  define P_CC_USLC
 #  define P_CC_WATCOM
 #  define P_CC_BORLAND
+#  define P_CC_PGI
 #endif
 
 #if defined(_MSC_VER)
@@ -521,6 +529,8 @@
 #  define P_CC_BORLAND
 #elif defined(__INTEL_COMPILER)
 #  define P_CC_INTEL
+#elif defined(__PGI)
+#  define P_CC_PGI
 #endif
 
 /* For Clang */
