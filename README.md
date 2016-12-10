@@ -75,6 +75,7 @@ plibsys was tested with the following compilers:
 * MIPSpro (MIPS32)
 * XL C (PPC64le)
 * DEC C (Alpha)
+* PGI (x86, x64)
 
 ## Building
 
