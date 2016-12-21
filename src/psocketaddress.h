@@ -31,9 +31,9 @@
  * socket address data.
  *
  * #PSocketAddress supports IPv4 and IPv6 addresses which consist of an IP
- * address and a port number. IPv6 support is system dependent and doesn't
- * provided for all the platforms. Sometimes you may also need to enable IPv6
- * support in the system to make it working.
+ * address and a port number. IPv6 support is system dependent and not provided
+ * for all the platforms. Sometimes you may also need to enable IPv6 support in
+ * the system to make it working.
  *
  * Convenient methods to create special addresses are provided: for the loopback
  * interface use p_socket_address_new_loopback(), for the any-address interface
