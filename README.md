@@ -6,7 +6,7 @@
 [![](https://codedocs.xyz/saprykin/plibsys.svg)](https://codedocs.xyz/saprykin/plibsys/)
 [![](http://img.shields.io/:license-lgpl2-blue.svg?style=flat)](http://www.gnu.org/licenses/lgpl-2.1.html)
 
-## About plibsys
+## About
 
 plibsys is a cross-platform system C library with some helpful routines.
 It has zero third-party dependecies and uses only native system calls.
