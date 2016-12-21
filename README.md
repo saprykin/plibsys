@@ -50,7 +50,7 @@ with unit tests and was tested on the following platforms:
 * HP-UX
 * Tru64
 * OpenVMS
-* IRIX64
+* IRIX
 * QNX Neutrino
 * UnixWare 7
 * SCO OpenServer 5
