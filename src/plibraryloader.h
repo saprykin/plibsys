@@ -45,7 +45,9 @@
  * - On OpenVMS only shareable images (linked with /SHAREABLE) can be used for
  * dynamic symbol resolving. Usually they have .EXE extension.
  *
- * - BeOS supports dynamic loading for add-ons only.
+ * - BeOS supports dynamic loading for add-ons only. It is also possible to
+ * load the same library several times independently (not like a traditional
+ * shared library).
  */
 
 #if !defined (PLIBSYS_H_INSIDE) && !defined (PLIBSYS_COMPILATION)
