@@ -44,6 +44,8 @@
  *
  * - On OpenVMS only shareable images (linked with /SHAREABLE) can be used for
  * dynamic symbol resolving. Usually they have .EXE extension.
+ *
+ * - BeOS supports dynamic loading for add-ons only.
  */
 
 #if !defined (PLIBSYS_H_INSIDE) && !defined (PLIBSYS_COMPILATION)
@@ -110,6 +112,9 @@ P_LIB_API void			p_library_loader_free		(PLibraryLoader	*loader);
  * Some systems reset an error status before the call, some do not. Some
  * systems write the successful call result (usually zero) to the error status,
  * thus resetting an error from the previous call.
+ *
+ * @warning On BeOS this call does nothing as BeOS doesn't provide any
+ * information about the exact reason of the failed call.
  */
 P_LIB_API pchar *		p_library_loader_get_last_error	(void);
 
