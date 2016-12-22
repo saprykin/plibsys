@@ -124,7 +124,11 @@ BOOST_AUTO_TEST_CASE (plibraryloader_general_test)
 	BOOST_CHECK (p_library_loader_get_symbol (loader, "there_is_no_such_a_symbol") == (PFuncAddr) NULL);
 
 	err_msg = p_library_loader_get_last_error ();
+#ifdef P_OS_BEOS
+	BOOST_CHECK (err_msg == NULL);
+#else
 	BOOST_CHECK (err_msg != NULL);
+#endif
 	p_free (err_msg);
 
 	shutdown_func = (void (*) (void)) p_library_loader_get_symbol (loader, "p_libsys_shutdown");
@@ -139,8 +143,10 @@ BOOST_AUTO_TEST_CASE (plibraryloader_general_test)
 
 	p_library_loader_free (loader);
 
+#ifndef P_OS_BEOS
 	/* We have already loaded reference to ourself library, it's OK */
 	shutdown_func ();
+#endif
 }
 
 BOOST_AUTO_TEST_SUITE_END()
