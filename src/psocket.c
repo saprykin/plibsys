@@ -35,9 +35,19 @@
 #  include <errno.h>
 #  include <unistd.h>
 #  include <signal.h>
-#  include <sys/poll.h>
 #  ifdef P_OS_VMS
 #    include <stropts.h>
+#  endif
+#endif
+
+#ifndef P_OS_WIN
+#  ifdef P_OS_BEOS
+#    define P_SOCKET_USE_SELECT
+#    include <sys/select.h>
+#    include <sys/time.h>
+#  else
+#    define P_SOCKET_USE_POLL
+#    include <sys/poll.h>
 #  endif
 #endif
 
@@ -193,9 +203,11 @@ pp_socket_set_details_from_fd (PSocket	*socket,
 		socket->type = P_SOCKET_TYPE_DATAGRAM;
 		break;
 
+#ifdef SOCK_SEQPACKET
 	case SOCK_SEQPACKET:
 		socket->type = P_SOCKET_TYPE_SEQPACKET;
 		break;
+#endif
 
 	default:
 		socket->type = P_SOCKET_TYPE_UNKNOWN;
@@ -426,9 +438,11 @@ p_socket_new (PSocketFamily	family,
 		native_type = SOCK_DGRAM;
 		break;
 
+#ifdef SOCK_SEQPACKET
 	case P_SOCKET_TYPE_SEQPACKET:
 		native_type = SOCK_SEQPACKET;
 		break;
+#endif
 
 	default:
 		p_error_set_error_p (error,
@@ -1456,13 +1470,10 @@ p_socket_io_condition_wait (const PSocket	*socket,
 			    PSocketIOCondition	condition,
 			    PError		**error)
 {
-#ifdef P_OS_WIN
-	long		network_events;
-#else
-	struct pollfd	pfd;
-#endif
-	pint		evret;
-	pint		timeout;
+#if defined (P_OS_WIN)
+	long	network_events;
+	pint	evret;
+	pint	timeout;
 
 	if (P_UNLIKELY (socket == NULL)) {
 		p_error_set_error_p (error,
@@ -1475,7 +1486,6 @@ p_socket_io_condition_wait (const PSocket	*socket,
 	if (P_UNLIKELY (pp_socket_check (socket, error) == FALSE))
 		return FALSE;
 
-#ifdef P_OS_WIN
 	timeout = socket->timeout > 0 ? socket->timeout : WSA_INFINITE;
 
 	if (condition == P_SOCKET_IO_CONDITION_POLLIN)
@@ -1503,7 +1513,22 @@ p_socket_io_condition_wait (const PSocket	*socket,
 				     "Failed to call WSAWaitForMultipleEvents() on socket");
 		return FALSE;
 	}
-#else
+#elif defined (P_SOCKET_USE_POLL)
+	struct pollfd	pfd;
+	pint		evret;
+	pint		timeout;
+
+	if (P_UNLIKELY (socket == NULL)) {
+		p_error_set_error_p (error,
+				     (pint) P_ERROR_IO_INVALID_ARGUMENT,
+				     0,
+				     "Invalid input argument");
+		return FALSE;
+	}
+
+	if (P_UNLIKELY (pp_socket_check (socket, error) == FALSE))
+		return FALSE;
+
 	timeout = socket->timeout > 0 ? socket->timeout : -1;
 
 	pfd.fd = socket->fd;
@@ -1514,26 +1539,26 @@ p_socket_io_condition_wait (const PSocket	*socket,
 	else
 		pfd.events = POLLOUT;
 
-#ifdef P_OS_SCO
+#  ifdef P_OS_SCO
 	p_time_profiler_reset (socket->timer);
-#endif
+#  endif
 
 	while (TRUE) {
 		evret = poll (&pfd, 1, timeout);
 
-#ifdef EINTR
+#  ifdef EINTR
 		if (evret == -1 && p_error_get_last_net () == EINTR) {
-#  ifdef P_OS_SCO
+#    ifdef P_OS_SCO
 			if (timeout < 0 ||
 			    (p_time_profiler_elapsed_usecs (socket->timer) / 1000) < (puint64) timeout)
 				continue;
 			else
 				evret = 0;
-#  else
+#    else
 			continue;
-#  endif
+#    endif
 		}
-#endif
+#  endif
 
 		if (evret == 1)
 			return TRUE;
@@ -1548,6 +1573,63 @@ p_socket_io_condition_wait (const PSocket	*socket,
 					     (pint) p_error_get_io_from_system (p_error_get_last_net ()),
 					     (pint) p_error_get_last_net (),
 					     "Failed to call poll() on socket");
+			return FALSE;
+		}
+	}
+#else
+	fd_set			fds;
+	struct timeval		tv;
+	struct timeval *	ptv;
+	pint			evret;
+
+	if (P_UNLIKELY (socket == NULL)) {
+		p_error_set_error_p (error,
+				     (pint) P_ERROR_IO_INVALID_ARGUMENT,
+				     0,
+				     "Invalid input argument");
+		return FALSE;
+	}
+
+	if (P_UNLIKELY (pp_socket_check (socket, error) == FALSE))
+		return FALSE;
+
+	if (socket->timeout > 0)
+		ptv = &tv;
+	else
+		ptv = NULL;
+
+	while (TRUE) {
+		FD_ZERO (&fds);
+		FD_SET (socket->fd, &fds);
+
+		if (socket->timeout > 0) {
+			tv.tv_sec  = socket->timeout / 1000;
+			tv.tv_usec = (socket->timeout % 1000) * 1000;
+		}
+
+		if (condition == P_SOCKET_IO_CONDITION_POLLIN)
+			evret = select (socket->fd + 1, &fds, NULL, NULL, ptv);
+		else
+			evret = select (socket->fd + 1, NULL, &fds, NULL, ptv);
+
+#ifdef EINTR
+		if (evret == -1 && p_error_get_last_net () == EINTR)
+			continue;
+#endif
+
+		if (evret == 1)
+			return TRUE;
+		else if (evret == 0) {
+			p_error_set_error_p (error,
+					     (pint) P_ERROR_IO_TIMED_OUT,
+					     (pint) p_error_get_last_net (),
+					     "Timed out while waiting socket condition");
+			return FALSE;
+		} else {
+			p_error_set_error_p (error,
+					     (pint) p_error_get_io_from_system (p_error_get_last_net ()),
+					     (pint) p_error_get_last_net (),
+					     "Failed to call select() on socket");
 			return FALSE;
 		}
 	}

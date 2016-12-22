@@ -62,6 +62,12 @@
 #  endif
 #endif
 
+#ifdef P_OS_BEOS
+#  ifdef AF_INET6
+#    undef AF_INET6
+#  endif
+#endif
+
 struct PSocketAddress_ {
 	PSocketFamily	family;
 	union addr_ {

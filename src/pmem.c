@@ -24,11 +24,15 @@
 #include "psysclose-private.h"
 
 #ifndef P_OS_WIN
-#  include <unistd.h>
-#  include <sys/types.h>
-#  include <sys/mman.h>
-#  include <sys/stat.h>
-#  include <fcntl.h>
+#  ifdef P_OS_BEOS
+#    include <be/kernel/OS.h>
+#  else
+#    include <unistd.h>
+#    include <sys/types.h>
+#    include <sys/mman.h>
+#    include <sys/stat.h>
+#    include <fcntl.h>
+#  endif
 #endif
 
 static pboolean		p_mem_table_inited = FALSE;
@@ -132,8 +136,10 @@ p_mem_mmap (psize	n_bytes,
 	    PError	**error)
 {
 	ppointer	addr;
-#ifdef P_OS_WIN
+#if defined (P_OS_WIN)
 	HANDLE		hdl;
+#elif defined (P_OS_BEOS)
+	area_id		area;
 #else
 	int		fd;
 	int		map_flags = MAP_PRIVATE;
@@ -147,7 +153,7 @@ p_mem_mmap (psize	n_bytes,
 		return NULL;
 	}
 
-#ifdef P_OS_WIN
+#if defined (P_OS_WIN)
 	if (P_UNLIKELY ((hdl = CreateFileMappingA (INVALID_HANDLE_VALUE,
 						   NULL,
 						   PAGE_READWRITE,
@@ -180,6 +186,19 @@ p_mem_mmap (psize	n_bytes,
 				     p_error_get_last_system (),
 				     "Failed to call CloseHandle() to close file mapping");
 		UnmapViewOfFile (addr);
+		return NULL;
+	}
+#elif defined (P_OS_BEOS)
+	if (P_LIKELY ((n_bytes % B_PAGE_SIZE)) != 0)
+		n_bytes = (n_bytes / B_PAGE_SIZE + 1) * B_PAGE_SIZE;
+
+	area = create_area ("", &addr, B_ANY_ADDRESS, n_bytes, B_NO_LOCK, B_READ_AREA | B_WRITE_AREA);
+
+	if (P_UNLIKELY (area < B_NO_ERROR)) {
+		p_error_set_error_p (error,
+				     (pint) p_error_get_last_io (),
+				     p_error_get_last_system (),
+				     "Failed to call create_area() to create memory area");
 		return NULL;
 	}
 #else
@@ -238,6 +257,10 @@ p_mem_munmap (ppointer	mem,
 	      psize	n_bytes,
 	      PError	**error)
 {
+#ifdef P_OS_BEOS
+	area_id area;
+#endif
+
 	if (P_UNLIKELY (mem == NULL || n_bytes == 0)) {
 		p_error_set_error_p (error,
 				     (pint) P_ERROR_IO_INVALID_ARGUMENT,
@@ -246,12 +269,26 @@ p_mem_munmap (ppointer	mem,
 		return FALSE;
 	}
 
-#ifdef P_OS_WIN
+#if defined (P_OS_WIN)
 	if (P_UNLIKELY (UnmapViewOfFile (mem) == 0)) {
 		p_error_set_error_p (error,
 				     (pint) p_error_get_last_io (),
 				     p_error_get_last_system (),
 				     "Failed to call UnmapViewOfFile() to remove file mapping");
+#elif defined (P_OS_BEOS)
+	if (P_UNLIKELY (area = area_for (mem)) == B_ERROR) {
+		p_error_set_error_p (error,
+				     (pint) p_error_get_last_io (),
+				     p_error_get_last_system (),
+				     "Failed to call area_for() to find allocated memory area");
+		return FALSE;
+	}
+
+	if (P_UNLIKELY (delete_area (area)) != B_OK) {
+		p_error_set_error_p (error,
+				     (pint) p_error_get_last_io (),
+				     p_error_get_last_system (),
+				     "Failed to call delete_area() to remove memory area");
 #else
 	if (P_UNLIKELY (munmap (mem, n_bytes) != 0)) {
 		p_error_set_error_p (error,
