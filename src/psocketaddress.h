@@ -67,7 +67,7 @@ typedef enum PSocketFamily_ {
 	P_SOCKET_FAMILY_UNKNOWN = 0,		/**< Unknown family.	*/
 #ifdef AF_INET6
 	P_SOCKET_FAMILY_INET	= AF_INET,	/**< IPv4 family.	*/
-	P_SOCKET_FAMILY_INET6	= AF_INET6	/**< IPv6 family	*/
+	P_SOCKET_FAMILY_INET6	= AF_INET6	/**< IPv6 family.	*/
 #else
 	P_SOCKET_FAMILY_INET	= AF_INET	/**< IPv4 family.	*/
 #endif
