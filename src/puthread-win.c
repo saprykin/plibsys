@@ -169,11 +169,6 @@ p_uthread_shutdown_internal (void)
 {
 	PUThreadDestructor *destr;
 
-	if (P_LIKELY (pp_uthread_tls_mutex != NULL)) {
-		p_mutex_free (pp_uthread_tls_mutex);
-		pp_uthread_tls_mutex = NULL;
-	}
-
 	p_uthread_win32_thread_detach ();
 
 	destr = pp_uthread_tls_destructors;
@@ -188,6 +183,11 @@ p_uthread_shutdown_internal (void)
 	}
 
 	pp_uthread_tls_destructors = NULL;
+
+	if (P_LIKELY (pp_uthread_tls_mutex != NULL)) {
+		p_mutex_free (pp_uthread_tls_mutex);
+		pp_uthread_tls_mutex = NULL;
+	}
 }
 
 PUThread *
