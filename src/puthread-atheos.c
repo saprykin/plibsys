@@ -40,11 +40,11 @@ struct PUThreadKey_ {
 	PDestroyFunc	free_func;
 };
 
-static pint pp_uthread_get_beos_priority (PUThreadPriority prio);
+static pint pp_uthread_get_atheos_priority (PUThreadPriority prio);
 static pint pp_uthread_get_tls_key (PUThreadKey *key);
 
 static pint
-pp_uthread_get_beos_priority (PUThreadPriority prio)
+pp_uthread_get_atheos_priority (PUThreadPriority prio)
 {
 	switch (prio) {
 		case P_UTHREAD_PRIORITY_INHERIT:
@@ -54,7 +54,7 @@ pp_uthread_get_beos_priority (PUThreadPriority prio)
 			memset (&thr_info, 0, sizeof (thr_info));
 
 			if (P_UNLIKELY (get_thread_info (get_thread_id (NULL), &thr_info) != 0)) {
-				P_WARNING ("PUThread::pp_uthread_get_beos_priority: failed to get thread info");
+				P_WARNING ("PUThread::pp_uthread_get_atheos_priority: failed to get thread info");
 				return NORMAL_PRIORITY;
 			} else
 				return thr_info.ti_priority;
@@ -136,7 +136,7 @@ p_uthread_create_internal (PUThreadFunc		func,
 
 	if (P_UNLIKELY ((ret->hdl = spawn_thread ("",
 						  func,
-						  pp_uthread_get_beos_priority (prio),
+						  pp_uthread_get_atheos_priority (prio),
 						  stack_size,
 						  ret)) < 0)) {
 		P_ERROR ("PUThread::p_uthread_create_internal: spawn_thread() failed");
@@ -187,7 +187,7 @@ p_uthread_set_priority (PUThread		*thread,
 	if (P_UNLIKELY (thread == NULL))
 		return FALSE;
 
-	set_thread_priority (thread->hdl, pp_uthread_get_beos_priority (prio));
+	set_thread_priority (thread->hdl, pp_uthread_get_atheos_priority (prio));
 
 	thread->base.prio = prio;
 
