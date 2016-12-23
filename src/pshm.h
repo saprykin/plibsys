@@ -68,6 +68,9 @@
  * - Syllable lacks support for process-wide named semaphores which leads to the
  * absence of shared memory.
  *
+ * - BeOS lacks support for process-wide named semaphores which leads to the
+ * absence of shared memory.
+ *
  * You can take ownership of the shared memory segment with
  * p_shm_take_ownership() to explicitly remove it from the system after closing.
  */

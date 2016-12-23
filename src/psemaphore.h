@@ -70,6 +70,8 @@
  *
  * - Syllable lacks support for process-wide named semaphores.
  *
+ * - BeOS lacks support for process-wide named semaphores.
+ *
  * Use the third argument as #P_SEM_ACCESS_CREATE in p_semaphore_new() to reset
  * a semaphore value while opening it. This argument is ignored on Windows. You
  * can also take ownership of the semaphore with p_semaphore_take_ownership() to
