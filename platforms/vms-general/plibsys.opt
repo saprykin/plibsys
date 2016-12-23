@@ -1,4 +1,4 @@
-GSMATCH=LEQUAL,2,0
+GSMATCH=LEQUAL,3,0
 IDENTIFICATION="plibsys"
 CASE_SENSITIVE=YES
 !
@@ -431,6 +431,8 @@ SYMBOL_VECTOR=(p_socket_address_is_flo3bgg0hi$=PROCEDURE)
 SYMBOL_VECTOR=(P_SOCKET_ADDRESS_IS_FLO1N1P65T$/p_socket_address_is_flo3bgg0hi$=PROCEDURE)
 SYMBOL_VECTOR=(p_socket_address_is_sco2c7455c$=PROCEDURE)
 SYMBOL_VECTOR=(P_SOCKET_ADDRESS_IS_SCO1COK854$/p_socket_address_is_sco2c7455c$=PROCEDURE)
+SYMBOL_VECTOR=(p_socket_address_is_ipv3s9t3vi$=PROCEDURE)
+SYMBOL_VECTOR=(P_SOCKET_ADDRESS_IS_IPV13UAVM5$/p_socket_address_is_ipv3s9t3vi$=PROCEDURE)
 SYMBOL_VECTOR=(p_socket_address_is_any=PROCEDURE)
 SYMBOL_VECTOR=(P_SOCKET_ADDRESS_IS_ANY/p_socket_address_is_any=PROCEDURE)
 SYMBOL_VECTOR=(p_socket_address_is_loopback=PROCEDURE)
