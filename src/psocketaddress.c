@@ -547,6 +547,16 @@ p_socket_address_is_scope_id_supported (void)
 }
 
 P_LIB_API pboolean
+p_socket_address_is_ipv6_supported (void)
+{
+#ifdef AF_INET6
+	return TRUE;
+#else
+	return FALSE;
+#endif
+}
+
+P_LIB_API pboolean
 p_socket_address_is_any (const PSocketAddress *addr)
 {
 	puint32 addr4;

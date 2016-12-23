@@ -237,6 +237,13 @@ P_LIB_API pboolean		p_socket_address_is_flow_info_supported	(void);
 P_LIB_API pboolean		p_socket_address_is_scope_id_supported	(void);
 
 /**
+ * @brief Checks whether IPv6 protocol is supported.
+ * @return TRUE in case of success, FALSE otherwise.
+ * @since 0.0.3
+ */
+P_LIB_API pboolean		p_socket_address_is_ipv6_supported	(void);
+
+/**
  * @brief Checks whether a given socket address is an any-address
  * representation. Such an address is a 0.0.0.0.
  * @param addr #PSocketAddress to check.
