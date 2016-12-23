@@ -39,6 +39,10 @@
 #  if defined(P_OS_SCO)
 #    define P_DIR_NEED_SIMPLE_R 1
 #  endif
+#else
+#  if defined(P_OS_BEOS)
+#    define P_DIR_NON_REENTRANT 1
+#  endif
 #endif
 
 struct PDir_ {
@@ -176,7 +180,7 @@ p_dir_get_next_entry (PDir	*dir,
 	PDirEntry	*ret;
 #ifdef P_DIR_NEED_BUF_ALLOC
 	struct dirent	*dirent_st;
-#else
+#elif !defined(P_DIR_NON_REENTRANT)
 	struct dirent	dirent_st;
 #endif
 	struct stat	sb;
@@ -224,6 +228,8 @@ p_dir_get_next_entry (PDir	*dir,
 	}
 
 #  ifdef P_DIR_NEED_SIMPLE_R
+	p_error_set_last_system (0);
+
 	if ((dir->dir_result = readdir_r (dir->dir, dirent_st)) == NULL) {
 		if (P_UNLIKELY (p_error_get_last_system () != 0)) {
 			p_error_set_error_p (error,
@@ -245,6 +251,19 @@ p_dir_get_next_entry (PDir	*dir,
 	}
 #  endif
 #else
+#  ifdef P_DIR_NON_REENTRANT
+	p_error_set_last_system (0);
+
+	if ((dir->dir_result = readdir (dir->dir)) == NULL) {
+		if (P_UNLIKELY (p_error_get_last_system () != 0)) {
+			p_error_set_error_p (error,
+					     (pint) p_error_get_last_io (),
+					     p_error_get_last_system (),
+					     "Failed to call readdir() to read directory stream");
+			return NULL;
+		}
+	}
+#  else
 	if (P_UNLIKELY (readdir_r (dir->dir, &dirent_st, &dir->dir_result) != 0)) {
 		p_error_set_error_p (error,
 				     (pint) p_error_get_last_io (),
@@ -252,6 +271,7 @@ p_dir_get_next_entry (PDir	*dir,
 				     "Failed to call readdir_r() to read directory stream");
 		return NULL;
 	}
+#  endif
 #endif
 
 	if (dir->dir_result == NULL) {
@@ -276,7 +296,11 @@ p_dir_get_next_entry (PDir	*dir,
 	ret->name = p_strdup (dirent_st->d_name);
 	p_free (dirent_st);
 #else
+#  ifdef P_DIR_NON_REENTRANT
+	ret->name = p_strdup (dir->dir_result->d_name);
+#  else
 	ret->name = p_strdup (dirent_st.d_name);
+#  endif
 #endif
 
 	path_len = strlen (dir->path);
