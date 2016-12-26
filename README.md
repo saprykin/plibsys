@@ -38,10 +38,10 @@ To achieve maximum native performance on each platform several implementation mo
 
 * Threading models: POSIX, Solaris, BeOS, AtheOS and Win32
 * IPC models: POSIX, System V and Win32
-* Time profiler models: POSIX, Solaris, Mach, BeOS, Win32, generic
-* Directory iterating models: POSIX, Win32
-* Shared library loading models: POSIX, BeOS, Win32
-* Atomic operations models: __sync_*, __atomic_*, DECC, Win32, simulated
+* Time profiler models: POSIX, Solaris, Mach, BeOS, Win32 and generic
+* Directory iterating models: POSIX and Win32
+* Shared library loading models: POSIX, BeOS and Win32
+* Atomic operations models: sync, C11, DECC, Win32 and simulated
 * Sockets: BSD with Win32 support
 
 ## Platforms
