@@ -40,6 +40,7 @@ static PUThread * thread1_obj = NULL;
 static PUThread * thread2_obj = NULL;
 
 static PUThreadKey * tls_key      = NULL;
+static PUThreadKey * tls_key_2    = NULL;
 static volatile pint free_counter = 0;
 
 extern "C" ppointer pmem_alloc (psize nbytes)
@@ -161,6 +162,19 @@ static void * test_thread_tls_func (void *data)
 	}
 
 	p_uthread_exit (counter);
+
+	return NULL;
+}
+
+static void * test_thread_tls_create_func (void *data)
+{
+	pint *tls_value = (pint *) p_malloc0 (sizeof (pint));
+	*tls_value = 0;
+	p_uthread_set_local (tls_key, (ppointer) tls_value);
+
+	pint *tls_value_2 = (pint *) p_malloc0 (sizeof (pint));
+	*tls_value_2 = 0;
+	p_uthread_set_local (tls_key_2, (ppointer) tls_value_2);
 
 	return NULL;
 }
@@ -400,6 +414,32 @@ BOOST_AUTO_TEST_CASE (puthread_tls_test)
 	BOOST_CHECK (free_counter == 0);
 
 	p_uthread_local_free (tls_key);
+	p_uthread_unref (thr1);
+	p_uthread_unref (thr2);
+
+	/* With implicit thread exit */
+	tls_key = p_uthread_local_new (free_with_check);
+	tls_key_2 = p_uthread_local_new (free_with_check);
+
+	free_counter = 0;
+
+	thr1 = p_uthread_create ((PUThreadFunc) test_thread_tls_create_func,
+				 NULL,
+				 TRUE);
+	thr2 = p_uthread_create ((PUThreadFunc) test_thread_tls_create_func,
+				 NULL,
+				 TRUE);
+
+	BOOST_REQUIRE (thr1 != NULL);
+	BOOST_REQUIRE (thr2 != NULL);
+
+	p_uthread_join (thr1);
+	p_uthread_join (thr2);
+
+	BOOST_CHECK (free_counter == 4);
+
+	p_uthread_local_free (tls_key);
+	p_uthread_local_free (tls_key_2);
 	p_uthread_unref (thr1);
 	p_uthread_unref (thr2);
 
