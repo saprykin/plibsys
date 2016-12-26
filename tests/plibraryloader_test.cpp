@@ -143,7 +143,9 @@ BOOST_AUTO_TEST_CASE (plibraryloader_general_test)
 
 	p_library_loader_free (loader);
 
-#ifndef P_OS_BEOS
+#ifdef P_OS_BEOS
+	p_libsys_shutdown ();
+#else
 	/* We have already loaded reference to ourself library, it's OK */
 	shutdown_func ();
 #endif
