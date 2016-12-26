@@ -16,15 +16,15 @@ It has zero third-party dependecies and uses only native system calls.
 plibsys gives you:
 
 * Platform independent data types
-* Threads: POSIX, Solaris, BeOS, AtheOS and Win32
-* Mutexes: POSIX, Solaris, BeOS, AtheOS and Win32
-* Condition variables: POSIX, Solaris, BeOS, AtheOS and Win32
-* Read-write locks: POSIX, Solaris, BeOS, AtheOS and Win32
-* System-wide semaphores: POSIX, System V and Win32
-* System-wide shared memory: POSIX, System V and Win32
+* Threads 
+* Mutexes
+* Condition variables
+* Read-write locks
+* System-wide semaphores
+* System-wide shared memory
 * Optimized spinlock
 * Atomic operations
-* Socket support (UDP, TCP, SCTP)
+* Socket support (UDP, TCP, SCTP) with IPv4 and IPv6
 * Hash functions: MD5, SHA-1, SHA-2, SHA-3, GOST (R 34.11-94)
 * Binary trees: BST, red-black, AVL
 * INI file parser
@@ -33,6 +33,16 @@ plibsys gives you:
 * Shared library loading
 * Useful routines for linked lists, strings, hash tables
 * Macros for OS and compiler detection
+
+To achieve maximum native performance on each platform several implementation models are used:
+
+* Threading models: POSIX, Solaris, BeOS, AtheOS and Win32
+* IPC models: POSIX, System V and Win32
+* Time profiler models: POSIX, Solaris, Mach, BeOS, Win32, generic
+* Directory iterating models: POSIX, Win32
+* Shared library loading models: POSIX, BeOS, Win32
+* Atomic operations models: __sync_*, __atomic_*, DECC, Win32, simulated
+* Sockets: BSD with Win32 support
 
 ## Platforms
 
