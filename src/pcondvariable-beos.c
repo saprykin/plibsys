@@ -165,12 +165,12 @@ p_cond_variable_signal (PCondVariable *cond)
 P_LIB_API pboolean
 p_cond_variable_broadcast (PCondVariable *cond)
 {
-	if (P_UNLIKELY (cond == NULL))
-		return FALSE;
-
 	PCondThread	*cur_thread;
 	PCondThread	*next_thread;
 	thread_info	thr_info;
+	
+	if (P_UNLIKELY (cond == NULL))
+		return FALSE;
 
 	if (p_spinlock_lock (cond->lock) != TRUE) {
 		P_ERROR ("PCondVariable::p_cond_variable_broadcast: failed to lock internal spinlock");
