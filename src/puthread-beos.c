@@ -34,6 +34,7 @@ typedef thread_id puthread_hdl;
 struct PUThread_ {
 	PUThreadBase	base;
 	puthread_hdl	hdl;
+	PUThreadFunc	proxy;
 };
 
 struct PUThreadKey_ {
@@ -56,6 +57,7 @@ static PMutex *pp_uthread_tls_mutex = NULL;
 static pint pp_uthread_get_beos_priority (PUThreadPriority prio);
 static pint pp_uthread_get_tls_key (PUThreadKey *key);
 static void pp_uthread_clean_destructors (void);
+static pint pp_uthread_beos_proxy (ppointer data);
 
 static pint
 pp_uthread_get_beos_priority (PUThreadPriority prio)
@@ -176,6 +178,18 @@ pp_uthread_clean_destructors (void)
 	} while (was_called);
 }
 
+static pint
+pp_uthread_beos_proxy (ppointer data)
+{
+	PUThread *thread = data;
+
+	thread->proxy (thread);
+
+	pp_uthread_clean_destructors ();
+
+	return 0;
+}
+
 void
 p_uthread_init_internal (void)
 {
@@ -227,7 +241,9 @@ p_uthread_create_internal (PUThreadFunc		func,
 		return NULL;
 	}
 
-	if (P_UNLIKELY ((ret->hdl = spawn_thread ((thread_func) func,
+	ret->proxy = func;
+
+	if (P_UNLIKELY ((ret->hdl = spawn_thread ((thread_func) pp_uthread_beos_proxy,
 						  "",
 						  pp_uthread_get_beos_priority (prio),
 						  ret)) < B_OK)) {
