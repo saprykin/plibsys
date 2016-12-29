@@ -62,7 +62,7 @@
 #  endif
 #endif
 
-#ifdef P_OS_BEOS
+#if defined (P_OS_BEOS) || defined (P_OS_OS2)
 #  ifdef AF_INET6
 #    undef AF_INET6
 #  endif
