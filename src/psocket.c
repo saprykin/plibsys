@@ -41,7 +41,8 @@
 #endif
 
 #ifndef P_OS_WIN
-#  if defined (P_OS_BEOS) || defined (P_OS_MAC) || defined (P_OS_MAC9)
+#  if defined (P_OS_BEOS) || defined (P_OS_MAC) || defined (P_OS_MAC9) || \
+      defined (P_OS_OS2)
 #    define P_SOCKET_USE_SELECT
 #    include <sys/select.h>
 #    include <sys/time.h>
