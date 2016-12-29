@@ -66,6 +66,7 @@
  * HAIKU             - Haiku
  * SYLLABLE          - Syllable
  * BEOS              - BeOS
+ * OS2               - OS/2
  * VMS               - OpenVMS
  * UNIX              - Any UNIX BSD/SYSV based system
  * LINUX             - Linux
@@ -199,6 +200,12 @@
  */
 
 /**
+ * @def P_OS_OS2
+ * @brief OS/2 operating system.
+ * @since 0.0.3
+ */
+
+/**
  * @def P_OS_VMS
  * @brief OpenVMS operating system.
  * @since 0.0.1
@@ -287,6 +294,7 @@
 #  define P_OS_HAIKU
 #  define P_OS_SYLLABLE
 #  define P_OS_BEOS
+#  define P_OS_OS2
 #  define P_OS_VMS
 #  define P_OS_UNIX
 #  define P_OS_LINUX
@@ -358,6 +366,8 @@
 #  define P_OS_SYLLABLE
 #elif defined(__BEOS__)
 #  define P_OS_BEOS
+#elif defined(__OS2__)
+#  define P_OS_OS2
 #elif defined(VMS) || defined(__VMS)
 #  define P_OS_VMS
 #endif

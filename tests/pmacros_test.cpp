@@ -51,7 +51,7 @@ BOOST_AUTO_TEST_CASE (pmacros_general_test)
     !defined (P_OS_SCO)    && !defined (P_OS_UNIXWARE) && !defined (P_OS_VMS)       && \
     !defined (P_OS_IRIX)   && !defined (P_OS_MSYS)     && !defined (P_OS_DRAGONFLY) && \
     !defined (P_OS_HAIKU)  && !defined (P_OS_TRU64)    && !defined (P_OS_SYLLABLE)  && \
-    !defined (P_OS_BEOS)
+    !defined (P_OS_BEOS)   && !defined (P_OS_OS2)
 	BOOST_CHECK (false);
 #endif
 
