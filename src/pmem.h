@@ -40,7 +40,14 @@
  * calling p_libsys_shutdown().
  *
  * Use p_mem_mmap() to allocate system memory using memory mapping and
- * p_mem_munmap() to release the mapped memory.
+ * p_mem_munmap() to release the mapped memory. This type of allocated memory
+ * is not backed physically (does not consume any physical storage) by operating
+ * system. It means that every memory page within the allocated region will be
+ * committed to physical backend only when you first touch it. Until that
+ * untouched pages will be reserved for future usage. It can be useful when
+ * dealing with large memory blocks which should be filled with data on demand,
+ * i.e. custom memory allocator can request a large block first, and then it
+ * allocates chunks of memory within the block upon request.
  */
 
 #if !defined (PLIBSYS_H_INSIDE) && !defined (PLIBSYS_COMPILATION)
