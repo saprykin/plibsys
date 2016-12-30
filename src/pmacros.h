@@ -583,7 +583,7 @@
  */
 
 #if defined(P_CC_MSVC) || defined(P_CC_BORLAND) || defined(P_CC_WATCOM) || \
-    (defined(P_OS_BEOS) && !defined(P_CC_GNU))
+    defined(P_OS_OS2)  || (defined(P_OS_BEOS) && !defined(P_CC_GNU))
 #  define P_LIB_API __declspec(dllexport)
 #else
 #  define P_LIB_API
