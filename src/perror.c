@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Alexander Saprykin <xelfium@gmail.com>
+ * Copyright (C) 2016-2017 Alexander Saprykin <xelfium@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -21,6 +21,11 @@
 #include "perror-private.h"
 
 #ifndef P_OS_WIN
+#  if defined (P_OS_OS2)
+#    define INCL_DOSERRORS
+#    include <os2.h>
+#    include <sys/socket.h>
+#  endif
 #  include <errno.h>
 #endif
 
@@ -36,7 +41,7 @@ p_error_get_io_from_system (pint err_code)
 	switch (err_code) {
 	case 0:
 		return P_ERROR_IO_NONE;
-#ifdef P_OS_WIN
+#if defined (P_OS_WIN)
 #  ifdef WSAEADDRINUSE
 	case WSAEADDRINUSE:
 		return P_ERROR_IO_ADDRESS_IN_USE;
@@ -133,7 +138,52 @@ p_error_get_io_from_system (pint err_code)
 	case ERROR_NOT_SUPPORTED:
 		return P_ERROR_IO_NOT_SUPPORTED;
 #  endif
-#else /* !P_OS_WIN */
+#elif defined (P_OS_OS2)
+#  ifdef ERROR_FILE_NOT_FOUND
+	case ERROR_FILE_NOT_FOUND:
+		return P_ERROR_IO_NOT_EXISTS;
+#  endif
+#  ifdef ERROR_PATH_NOT_FOUND
+	case ERROR_PATH_NOT_FOUND:
+		return P_ERROR_IO_NOT_EXISTS;
+#  endif
+#  ifdef ERROR_TOO_MANY_OPEN_FILES
+	case ERROR_TOO_MANY_OPEN_FILES:
+		return P_ERROR_IO_NO_RESOURCES;
+#  endif
+#  ifdef ERROR_NOT_ENOUGH_MEMORY
+	case ERROR_NOT_ENOUGH_MEMORY:
+		return P_ERROR_IO_NO_RESOURCES;
+#  endif
+#  ifdef ERROR_ACCESS_DENIED
+	case ERROR_ACCESS_DENIED:
+		return P_ERROR_IO_ACCESS_DENIED;
+#  endif
+#  ifdef ERROR_INVALID_HANDLE
+	case ERROR_INVALID_HANDLE:
+		return P_ERROR_IO_INVALID_ARGUMENT;
+#  endif
+#  ifdef ERROR_INVALID_PARAMETER
+	case ERROR_INVALID_PARAMETER:
+		return P_ERROR_IO_INVALID_ARGUMENT;
+#  endif
+#  ifdef ERROR_INVALID_ADDRESS
+	case ERROR_INVALID_ADDRESS:
+		return P_ERROR_IO_INVALID_ARGUMENT;
+#  endif
+#  ifdef ERROR_NO_MORE_FILES
+	case ERROR_NO_MORE_FILES:
+		return P_ERROR_IO_NO_MORE;
+#  endif
+#  ifdef ERROR_NOT_SUPPORTED
+	case ERROR_NOT_SUPPORTED:
+		return P_ERROR_IO_NOT_SUPPORTED;
+#  endif
+#  ifdef ERROR_FILE_EXISTS
+	case ERROR_FILE_EXISTS:
+		return P_ERROR_IO_EXISTS;
+#  endif
+#else /* !P_OS_WIN && !P_OS_OS2 */
 #  ifdef EACCES
 	case EACCES:
 		return P_ERROR_IO_ACCESS_DENIED;
@@ -727,8 +777,10 @@ p_error_get_last_system (void)
 P_LIB_API pint
 p_error_get_last_net (void)
 {
-#ifdef P_OS_WIN
+#if defined (P_OS_WIN)
 	return WSAGetLastError ();
+#elif defined (P_OS_OS2)
+	return sock_errno ();
 #else
 	return p_error_get_last_system ();
 #endif
@@ -747,8 +799,10 @@ p_error_set_last_system (pint code)
 P_LIB_API void
 p_error_set_last_net (pint code)
 {
-#ifdef P_OS_WIN
+#if defined (P_OS_WIN)
 	WSASetLastError (code);
+#elif defined (P_OS_OS2)
+	P_UNUSED (code);
 #else
 	errno = code;
 #endif
