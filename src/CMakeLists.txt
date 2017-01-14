@@ -653,11 +653,17 @@ endif()
 set_target_properties (plibsys PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${OUTPUT_DIR})
 set_target_properties (plibsys PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${OUTPUT_DIR})
 set_target_properties (plibsys PROPERTIES ARCHIVE_OUTPUT_DIRECTORY ${OUTPUT_DIR})
-set_target_properties (plibsys PROPERTIES SOVERSION ${PLIBSYS_VERSION})
+
+if (NOT PLIBSYS_TARGET_OS STREQUAL os2)
+	set_target_properties (plibsys PROPERTIES SOVERSION ${PLIBSYS_VERSION})
+endif()
 
 if (PLIBSYS_BUILD_STATIC)
 	set_target_properties (plibsysstatic PROPERTIES ARCHIVE_OUTPUT_DIRECTORY ${OUTPUT_DIR})
-	set_target_properties (plibsysstatic PROPERTIES SOVERSION ${PLIBSYS_VERSION})
+
+	if (NOT PLIBSYS_TARGET_OS STREQUAL os2)
+		set_target_properties (plibsysstatic PROPERTIES SOVERSION ${PLIBSYS_VERSION})
+	endif()
 endif()
 
 if (PLIBSYS_PLATFORM_CFLAGS)
