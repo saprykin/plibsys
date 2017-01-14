@@ -24,8 +24,12 @@
 #include "psysclose-private.h"
 
 #ifndef P_OS_WIN
-#  ifdef P_OS_BEOS
+#  if defined (P_OS_BEOS)
 #    include <be/kernel/OS.h>
+#  elif defined (P_OS_OS2)
+#  define INCL_DOSMEMMGR
+#  define INCL_DOSERRORS
+#  include <os2.h>
 #  else
 #    include <unistd.h>
 #    include <sys/types.h>
@@ -140,6 +144,8 @@ p_mem_mmap (psize	n_bytes,
 	HANDLE		hdl;
 #elif defined (P_OS_BEOS)
 	area_id		area;
+#elif defined (P_OS_OS2)
+	APIRET		ulrc;
 #else
 	int		fd;
 	int		map_flags = MAP_PRIVATE;
@@ -201,6 +207,21 @@ p_mem_mmap (psize	n_bytes,
 				     "Failed to call create_area() to create memory area");
 		return NULL;
 	}
+#elif defined (P_OS_OS2)
+	if (P_UNLIKELY ((ulrc = DosAllocMem ((PPVOID) &addr,
+					     (ULONG) n_bytes,
+					     PAG_READ | PAG_WRITE | OBJ_ANY)) != NO_ERROR)) {
+		/* Try to remove OBJ_ANY */
+		if (P_UNLIKELY ((ulrc = DosAllocMem ((PPVOID) &addr,
+						     (ULONG) n_bytes,
+						     PAG_READ | PAG_WRITE)) != NO_ERROR)) {
+			p_error_set_error_p (error,
+					     (pint) p_error_get_io_from_system ((pint) ulrc),
+					     ulrc,
+					     "Failed to call DosAllocMemory() to alocate memory");
+			return NULL;
+		}
+	}
 #else
 #  if !defined (PLIBSYS_MMAP_HAS_MAP_ANONYMOUS) && !defined (PLIBSYS_MMAP_HAS_MAP_ANON)
 	if (P_UNLIKELY ((fd = open ("/dev/zero", O_RDWR | O_EXCL, 0754)) == -1)) {
@@ -257,8 +278,10 @@ p_mem_munmap (ppointer	mem,
 	      psize	n_bytes,
 	      PError	**error)
 {
-#ifdef P_OS_BEOS
-	area_id area;
+#if defined (P_OS_BEOS)
+	area_id	area;
+#elif defined (P_OS_OS2)
+	APIRET	ulrc;
 #endif
 
 	if (P_UNLIKELY (mem == NULL || n_bytes == 0)) {
@@ -284,11 +307,17 @@ p_mem_munmap (ppointer	mem,
 		return FALSE;
 	}
 
-	if (P_UNLIKELY (delete_area (area)) != B_OK) {
+	if (P_UNLIKELY ((delete_area (area)) != B_OK)) {
 		p_error_set_error_p (error,
 				     (pint) p_error_get_last_io (),
 				     p_error_get_last_system (),
 				     "Failed to call delete_area() to remove memory area");
+#elif defined (P_OS_OS2)
+	if (P_UNLIKELY ((ulrc = DosFreeMem ((PVOID) mem)) != NO_ERROR)) {
+		p_error_set_error_p (error,
+				     (pint) p_error_get_io_from_system ((pint) ulrc),
+				     ulrc,
+				     "Failed to call DosFreeMem() to free memory");
 #else
 	if (P_UNLIKELY (munmap (mem, n_bytes) != 0)) {
 		p_error_set_error_p (error,
