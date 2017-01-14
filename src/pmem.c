@@ -276,7 +276,7 @@ p_mem_munmap (ppointer	mem,
 				     p_error_get_last_system (),
 				     "Failed to call UnmapViewOfFile() to remove file mapping");
 #elif defined (P_OS_BEOS)
-	if (P_UNLIKELY (area = area_for (mem)) == B_ERROR) {
+	if (P_UNLIKELY ((area = area_for (mem)) == B_ERROR)) {
 		p_error_set_error_p (error,
 				     (pint) p_error_get_last_io (),
 				     p_error_get_last_system (),
