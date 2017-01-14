@@ -42,7 +42,7 @@
  * @def P_DIR_SEPARATOR
  * @brief A directory separator.
  */
-#ifdef P_OS_WIN
+#if defined (P_OS_WIN) || defined (P_OS_OS2)
 #  define P_DIR_SEPARATOR "\\"
 #else
 #  define P_DIR_SEPARATOR "/"
