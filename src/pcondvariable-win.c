@@ -21,6 +21,7 @@
  * See: https://github.com/python/cpython/blob/master/Python/condvar.h
  */
 
+#include "patomic.h"
 #include "pmem.h"
 #include "pcondvariable.h"
 
@@ -155,14 +156,14 @@ pp_cond_variable_wait_xp (PCondVariable *cond, PMutex *mutex)
 	PCondVariableXP	*cv_xp = ((PCondVariableXP *) cond->cv);
 	DWORD		wait;
 
-	cv_xp->waiters_count++;
+	p_atomic_int_inc (&cv_xp->waiters_count);
 
 	p_mutex_unlock (mutex);
 	wait = WaitForSingleObjectEx (cv_xp->waiters_sema, INFINITE, FALSE);
 	p_mutex_lock (mutex);
 
 	if (wait != WAIT_OBJECT_0)
-		--cv_xp->waiters_count;
+		p_atomic_int_add (&cv_xp->waiters_count, -1);
 
 	return wait == WAIT_OBJECT_0 ? TRUE : FALSE;
 }
@@ -172,8 +173,8 @@ pp_cond_variable_signal_xp (PCondVariable *cond)
 {
 	PCondVariableXP *cv_xp = ((PCondVariableXP *) cond->cv);
 
-	if (cv_xp->waiters_count > 0) {
-		cv_xp->waiters_count--;
+	if (p_atomic_int_get (&cv_xp->waiters_count) > 0) {
+		p_atomic_int_add (&cv_xp->waiters_count, -1);
 		return ReleaseSemaphore (cv_xp->waiters_sema, 1, 0) != 0 ? TRUE : FALSE;
 	}
 
@@ -186,10 +187,10 @@ pp_cond_variable_broadcast_xp (PCondVariable *cond)
 	PCondVariableXP	*cv_xp = ((PCondVariableXP *) cond->cv);
 	pint		waiters;
 
-	waiters = cv_xp->waiters_count;
+	waiters = p_atomic_int_get (&cv_xp->waiters_count);
 
 	if (waiters > 0) {
-		cv_xp->waiters_count = 0;
+		p_atomic_int_set (&cv_xp->waiters_count, 0);
 		return ReleaseSemaphore (cv_xp->waiters_sema, waiters, 0) != 0 ? TRUE : FALSE;
 	}
 
