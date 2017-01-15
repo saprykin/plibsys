@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2016 Alexander Saprykin <xelfium@gmail.com>
+ * Copyright (C) 2010-2017 Alexander Saprykin <xelfium@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -163,9 +163,6 @@ pp_cond_variable_wait_xp (PCondVariable *cond, PMutex *mutex)
 
 	if (wait != WAIT_OBJECT_0)
 		--cv_xp->waiters_count;
-
-	if (wait == WAIT_FAILED)
-		return FALSE;
 
 	return wait == WAIT_OBJECT_0 ? TRUE : FALSE;
 }
