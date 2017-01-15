@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2016 Alexander Saprykin <xelfium@gmail.com>
+ * Copyright (C) 2010-2017 Alexander Saprykin <xelfium@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -23,6 +23,12 @@
 #include "pspinlock.h"
 #include "puthread.h"
 #include "puthread-private.h"
+
+#ifdef P_OS_OS2
+#  define INCL_DOSPROCESS
+#  define INCL_DOSERRORS
+#  include <os2.h>
+#endif
 
 #include <stdlib.h>
 #include <string.h>
@@ -272,9 +278,11 @@ static pint pp_uthread_nanosleep (puint32 msec)
 P_LIB_API pint
 p_uthread_sleep (puint32 msec)
 {
-#ifdef P_OS_WIN
+#if defined (P_OS_WIN)
 	Sleep (msec);
 	return 0;
+#elif defined (P_OS_OS2)
+	return (DosSleep (msec) == NO_ERROR) ? 0 : -1;
 #elif defined (PLIBSYS_HAS_NANOSLEEP)
 	pint result;
 	struct timespec time_req;
