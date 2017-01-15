@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2016 Alexander Saprykin <xelfium@gmail.com>
+ * Copyright (C) 2013-2017 Alexander Saprykin <xelfium@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -189,13 +189,13 @@ BOOST_AUTO_TEST_CASE (pcondvariable_general_test)
 	thread_wakeups = 0;
 	thread_queue   = 0;
 
-	thr1 = p_uthread_create ((PUThreadFunc) producer_test_thread, NULL, true);
+	thr1 = p_uthread_create ((PUThreadFunc) producer_test_thread, NULL, TRUE);
 	BOOST_REQUIRE (thr1 != NULL);
 
-	thr2 = p_uthread_create ((PUThreadFunc) consumer_test_thread, NULL, true);
+	thr2 = p_uthread_create ((PUThreadFunc) consumer_test_thread, NULL, TRUE);
 	BOOST_REQUIRE (thr2 != NULL);
 
-	thr3 = p_uthread_create ((PUThreadFunc) consumer_test_thread, NULL, true);
+	thr3 = p_uthread_create ((PUThreadFunc) consumer_test_thread, NULL, TRUE);
 	BOOST_REQUIRE (thr3 != NULL);
 
 	BOOST_REQUIRE (p_cond_variable_broadcast (queue_empty_cond) == TRUE);
