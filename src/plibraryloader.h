@@ -123,6 +123,8 @@ P_LIB_API void			p_library_loader_free		(PLibraryLoader	*loader);
  *
  * @warning Depending on underlying implementation model, on HP-UX this call
  * may do nothing.
+ *
+ * @warning On OS/2 this call does nothing.
  */
 P_LIB_API pchar *		p_library_loader_get_last_error	(void);
 

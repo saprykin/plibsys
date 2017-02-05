@@ -126,7 +126,7 @@ BOOST_AUTO_TEST_CASE (plibraryloader_general_test)
 	err_msg = p_library_loader_get_last_error ();
 
 #ifndef P_OS_HPUX
-#  ifdef P_OS_BEOS
+#  if defined (P_OS_BEOS) || defined (P_OS_OS2)
 	BOOST_CHECK (err_msg == NULL);
 #  else
 	BOOST_CHECK (err_msg != NULL);
