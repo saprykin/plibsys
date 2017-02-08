@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2016 Alexander Saprykin <xelfium@gmail.com>
+ * Copyright (C) 2015-2017 Alexander Saprykin <xelfium@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -124,11 +124,15 @@ BOOST_AUTO_TEST_CASE (plibraryloader_general_test)
 	BOOST_CHECK (p_library_loader_get_symbol (loader, "there_is_no_such_a_symbol") == (PFuncAddr) NULL);
 
 	err_msg = p_library_loader_get_last_error ();
-#ifdef P_OS_BEOS
+
+#ifndef P_OS_HPUX
+#  ifdef P_OS_BEOS
 	BOOST_CHECK (err_msg == NULL);
-#else
+#  else
 	BOOST_CHECK (err_msg != NULL);
+#  endif
 #endif
+
 	p_free (err_msg);
 
 	shutdown_func = (void (*) (void)) p_library_loader_get_symbol (loader, "p_libsys_shutdown");

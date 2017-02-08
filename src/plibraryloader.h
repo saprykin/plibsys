@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2016 Alexander Saprykin <xelfium@gmail.com>
+ * Copyright (C) 2015-2017 Alexander Saprykin <xelfium@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -117,6 +117,9 @@ P_LIB_API void			p_library_loader_free		(PLibraryLoader	*loader);
  *
  * @warning On BeOS this call does nothing as BeOS doesn't provide any
  * information about the exact reason of the failed call.
+ *
+ * @warning Depending on underlying implementation model, on HP-UX this call
+ * may do nothing.
  */
 P_LIB_API pchar *		p_library_loader_get_last_error	(void);
 
