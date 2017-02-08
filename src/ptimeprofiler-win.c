@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2016 Alexander Saprykin <xelfium@gmail.com>
+ * Copyright (C) 2015-2017 Alexander Saprykin <xelfium@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -27,7 +27,7 @@ typedef puint64 (* PWin32ElapsedFunc) (puint64 last_counter);
 
 static PWin32TicksFunc   pp_time_profiler_ticks_func   = NULL;
 static PWin32ElapsedFunc pp_time_profiler_elapsed_func = NULL;
-static puint64           pp_time_profiler_freq         = 0;
+static puint64           pp_time_profiler_freq         = 1;
 
 static puint64 WINAPI pp_time_profiler_get_hr_ticks (void);
 static puint64 pp_time_profiler_elapsed_hr (puint64 last_counter);
@@ -132,7 +132,7 @@ p_time_profiler_init (void)
 void
 p_time_profiler_shutdown (void)
 {
-	pp_time_profiler_freq         = 0;
+	pp_time_profiler_freq         = 1;
 	pp_time_profiler_ticks_func   = NULL;
 	pp_time_profiler_elapsed_func = NULL;
 }
