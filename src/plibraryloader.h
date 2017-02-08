@@ -42,6 +42,9 @@
  *
  * Please note the following platform specific differences:
  *
+ * - HP-UX doesn't support loading libraries containing TLS and built with
+ * static TLS model. The same rule applies to any library used as dependency.
+ *
  * - On OpenVMS only shareable images (linked with /SHAREABLE) can be used for
  * dynamic symbol resolving. Usually they have .EXE extension.
  *
