@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Alexander Saprykin <xelfium@gmail.com>
+ * Copyright (C) 2016-2017 Alexander Saprykin <xelfium@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -217,10 +217,12 @@ BOOST_AUTO_TEST_CASE (perror_general_test)
 	p_error_set_last_system (0);
 	BOOST_CHECK (p_error_get_last_system () == 0);
 
+#ifndef P_OS_OS2
 	p_error_set_last_net (20);
 	BOOST_CHECK (p_error_get_last_net () == 20);
 	p_error_set_last_net (0);
 	BOOST_CHECK (p_error_get_last_net () == 0);
+#endif
 
 	p_libsys_shutdown ();
 }
