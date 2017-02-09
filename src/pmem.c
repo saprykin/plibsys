@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2016 Alexander Saprykin <xelfium@gmail.com>
+ * Copyright (C) 2010-2017 Alexander Saprykin <xelfium@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -210,7 +210,8 @@ p_mem_mmap (psize	n_bytes,
 #elif defined (P_OS_OS2)
 	if (P_UNLIKELY ((ulrc = DosAllocMem ((PPVOID) &addr,
 					     (ULONG) n_bytes,
-					     PAG_READ | PAG_WRITE | OBJ_ANY)) != NO_ERROR)) {
+					     PAG_READ | PAG_WRITE | PAG_COMMIT |
+					     OBJ_ANY)) != NO_ERROR)) {
 		/* Try to remove OBJ_ANY */
 		if (P_UNLIKELY ((ulrc = DosAllocMem ((PPVOID) &addr,
 						     (ULONG) n_bytes,
