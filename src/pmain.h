@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2016 Alexander Saprykin <xelfium@gmail.com>
+ * Copyright (C) 2010-2017 Alexander Saprykin <xelfium@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -83,7 +83,7 @@
  * phashtable.h Hash table
  * @endlink
  * - @link
- * pcyptohash.h Cryptographic hash
+ * pcryptohash.h Cryptographic hash
  * @endlink
  * - @link
  * ptree.h Binary search tree
