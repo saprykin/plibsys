@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2016 Alexander Saprykin <xelfium@gmail.com>
+ * Copyright (C) 2010-2017 Alexander Saprykin <xelfium@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -48,6 +48,12 @@
  * dealing with large memory blocks which should be filled with data on demand,
  * i.e. custom memory allocator can request a large block first, and then it
  * allocates chunks of memory within the block upon request.
+ *
+ * @note OS/2 supports non-backed memory pages allocation, but in a specific
+ * way: an exception handler to control access to uncommitted pages must be
+ * allocated on the stack of each thread before using the mapped memory. To
+ * unify the behaviour, on OS/2 all memory mapped allocations are already
+ * committed to the backing storage.
  */
 
 #if !defined (PLIBSYS_H_INSIDE) && !defined (PLIBSYS_COMPILATION)
@@ -152,6 +158,9 @@ P_LIB_API void		p_mem_restore_vtable	(void);
  * of memory equal to the page size instead.
  *
  * On most systems returned memory is mapped to the null or swap device.
+ *
+ * @warning On OS/2 returned memory is mapped to physical storage and can be
+ * swapped.
  */
 P_LIB_API ppointer	p_mem_mmap		(psize			n_bytes,
 						 PError			**error);
