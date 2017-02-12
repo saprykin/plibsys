@@ -475,7 +475,68 @@ p_error_get_ipc_from_system (pint err_code)
 	case ERROR_NOT_SUPPORTED:
 		return P_ERROR_IPC_NOT_IMPLEMENTED;
 #  endif
-#else /* !P_OS_WIN */
+#elif defined (P_OS_OS2)
+#  ifdef ERROR_NOT_ENOUGH_MEMORY
+	case ERROR_NOT_ENOUGH_MEMORY:
+		return P_ERROR_IPC_NO_RESOURCES;
+#  endif
+#  ifdef ERROR_INVALID_PARAMETER
+	case ERROR_INVALID_PARAMETER:
+		return P_ERROR_IPC_INVALID_ARGUMENT;
+#  endif
+#  ifdef ERROR_INVALID_NAME
+	case ERROR_INVALID_NAME:
+		return P_ERROR_IPC_INVALID_ARGUMENT;
+#  endif
+#  ifdef ERROR_INVALID_HANDLE
+	case ERROR_INVALID_HANDLE:
+		return P_ERROR_IPC_INVALID_ARGUMENT;
+#  endif
+#  ifdef ERROR_FILE_NOT_FOUND
+	case ERROR_FILE_NOT_FOUND:
+		return P_ERROR_IPC_NOT_EXISTS;
+#  endif
+#  ifdef ERROR_INVALID_ADDRESS
+	case ERROR_INVALID_ADDRESS:
+		return P_ERROR_IPC_INVALID_ARGUMENT;
+#  endif
+#  ifdef ERROR_GEN_FAILURE
+	case ERROR_GEN_FAILURE:
+		return P_ERROR_IPC_FAILED;
+#  endif
+#  ifdef ERROR_LOCKED
+	case ERROR_LOCKED:
+		return P_ERROR_IPC_ACCESS;
+#  endif
+#  ifdef ERROR_DUPLICATE_NAME
+	case ERROR_DUPLICATE_NAME:
+		return P_ERROR_IPC_EXISTS;
+#  endif
+#  ifdef ERROR_TOO_MANY_HANDLES
+	case ERROR_TOO_MANY_HANDLES:
+		return P_ERROR_IPC_NO_RESOURCES;
+#  endif
+#  ifdef ERROR_TOO_MANY_OPENS
+	case ERROR_TOO_MANY_OPENS:
+		return P_ERROR_IPC_NO_RESOURCES;
+#  endif
+#  ifdef ERROR_TOO_MANY_SEM_REQUESTS
+	case ERROR_TOO_MANY_SEM_REQUESTS:
+		return P_ERROR_IPC_NO_RESOURCES;
+#  endif
+#  ifdef ERROR_SEM_OWNER_DIED
+	case ERROR_SEM_OWNER_DIED:
+		return P_ERROR_IPC_NOT_EXISTS;
+#  endif
+#  ifdef ERROR_NOT_OWNER
+	case ERROR_NOT_OWNER:
+		return P_ERROR_IPC_ACCESS;
+#  endif
+#  ifdef ERROR_SEM_NOT_FOUND
+	case ERROR_SEM_NOT_FOUND:
+		return P_ERROR_IPC_NOT_EXISTS;
+#  endif
+#else /* !P_OS_WINDOWS && !P_OS_OS2 */
 #  ifdef EACCES
 	case EACCES:
 		return P_ERROR_IPC_ACCESS;
