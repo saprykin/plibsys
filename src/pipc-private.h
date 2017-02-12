@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Alexander Saprykin <xelfium@gmail.com>
+ * Copyright (C) 2016-2017 Alexander Saprykin <xelfium@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -27,7 +27,7 @@
 
 P_BEGIN_DECLS
 
-#ifndef P_OS_WIN
+#if !defined (P_OS_WIN) && !defined (P_OS_OS2)
 /**
  * @brief Gets a temporary directory on UNIX systems.
  * @return Temporary directory.
@@ -50,7 +50,7 @@ pint		p_ipc_unix_create_key_file	(const pchar	*file_name);
  * @return Key in case of success, -1 otherwise.
  */
 pint		p_ipc_unix_get_ftok_key		(const pchar	*file_name);
-#endif /* !P_OS_WIN */
+#endif /* !P_OS_WIN && !P_OS_OS2 */
 
 /**
  * @brief Generates a platform independent key for IPC usage, an object name for

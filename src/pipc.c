@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2016 Alexander Saprykin <xelfium@gmail.com>
+ * Copyright (C) 2010-2017 Alexander Saprykin <xelfium@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -16,7 +16,6 @@
  */
 
 #include "pmem.h"
-#include "psemaphore.h"
 #include "pcryptohash.h"
 #include "pstring.h"
 #include "psysclose-private.h"
@@ -24,7 +23,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#ifndef P_OS_WIN
+#if !defined (P_OS_WIN) && !defined (P_OS_OS2)
 #  include <unistd.h>
 #  include <errno.h>
 #  include <fcntl.h>
@@ -33,7 +32,7 @@
 #  include <sys/ipc.h>
 #endif
 
-#ifndef P_OS_WIN
+#if !defined (P_OS_WIN) && !defined (P_OS_OS2)
 pchar *
 p_ipc_unix_get_temp_dir (void)
 {
@@ -104,7 +103,7 @@ p_ipc_unix_get_ftok_key (const pchar *file_name)
 
 	return ftok (file_name, 'P');
 }
-#endif /* !P_OS_WIN */
+#endif /* !P_OS_WIN && !P_OS_OS2 */
 
 /* Returns a platform-independent key for IPC usage, object name for Windows and
  * a file name to use with ftok () for UNIX-like systems */
@@ -114,7 +113,7 @@ p_ipc_get_platform_key (const pchar *name, pboolean posix)
 	PCryptoHash	*sha1;
 	pchar		*hash_str;
 
-#ifdef P_OS_WIN
+#if defined (P_OS_WIN) || defined (P_OS_OS2)
 	P_UNUSED (posix);
 #else
 	pchar		*path_name, *tmp_path;
@@ -134,7 +133,7 @@ p_ipc_get_platform_key (const pchar *name, pboolean posix)
 	if (P_UNLIKELY (hash_str == NULL))
 		return NULL;
 
-#ifdef P_OS_WIN
+#if defined (P_OS_WIN) || defined (P_OS_OS2)
 	return hash_str;
 #else
 	if (posix) {
