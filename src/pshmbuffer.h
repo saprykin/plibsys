@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2016 Alexander Saprykin <xelfium@gmail.com>
+ * Copyright (C) 2010-2017 Alexander Saprykin <xelfium@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -109,7 +109,7 @@ P_LIB_API void		p_shm_buffer_free		(PShmBuffer	*buf);
  * If you take ownership of the shared memory buffer, p_shm_buffer_free() will
  * try to completely unlink it and remove from the system. This is useful on
  * UNIX systems, where shared memory can survive an application crash. On the
- * Windows platform this call has no effect.
+ * Windows and OS/2 platforms this call has no effect.
  *
  * The common usage of this call is upon application startup to ensure that the
  * memory segment from the previous crash can be removed from the system. To do

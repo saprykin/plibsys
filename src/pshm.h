@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2016 Alexander Saprykin <xelfium@gmail.com>
+ * Copyright (C) 2010-2017 Alexander Saprykin <xelfium@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -44,8 +44,8 @@
  *
  * Please note the following platform specific differences:
  *
- * - Windows doesn't own IPC objects (processes own them), which means that a
- * shared memory segment will be removed after the last process or thread
+ * - Windows and OS/2 don't own IPC objects (processes own them), which means
+ * that a shared memory segment will be removed after the last process or thread
  * detaches (or after terminating all the processes and threads attached to the
  * segment) it.
  *
@@ -120,7 +120,7 @@ P_LIB_API PShm *	p_shm_new		(const pchar		*name,
  * If you take ownership of the shared memory object, p_shm_free() will try to
  * completely unlink it and remove from the system. This is useful on UNIX
  * systems where shared memory can survive an application crash. On the Windows
- * platform this call has no effect.
+ * and OS/2 platforms this call has no effect.
  *
  * The common usage of this call is upon application startup to ensure that the
  * memory segment from the previous crash will be unlinked from the system. To
