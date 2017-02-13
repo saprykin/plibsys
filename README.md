@@ -36,11 +36,11 @@ plibsys gives you:
 
 To achieve maximum native performance on each platform several implementation models are used:
 
-* Threading models: POSIX, Solaris, BeOS, AtheOS and Win32
-* IPC models: POSIX, System V and Win32
-* Time profiler models: POSIX, Solaris, Mach, BeOS, Win32 and generic
-* Directory iterating models: POSIX and Win32
-* Shared library loading models: POSIX, BeOS and Win32
+* Threading models: POSIX, Solaris, OS/2, BeOS, AtheOS and Win32
+* IPC models: POSIX, System V, OS/2 and Win32
+* Time profiler models: POSIX, Solaris, Mach, OS/2, BeOS, Win32 and generic
+* Directory iterating models: POSIX, OS/2 Win32
+* Shared library loading models: POSIX, OS/2, BeOS and Win32
 * Atomic operations models: sync, C11, DECC, Win32 and simulated
 * Sockets: BSD with Win32 support
 
@@ -60,6 +60,7 @@ with unit tests and was tested on the following platforms:
 * HP-UX
 * Tru64
 * OpenVMS
+* OS/2
 * IRIX
 * QNX Neutrino
 * UnixWare 7
