@@ -28,18 +28,18 @@ puint64
 p_time_profiler_get_ticks_internal ()
 {
 	QWORD	tcounter;
-	puint64	freq_low;
-	puint64	freq_high;
+	puint64	time_low;
+	puint64	time_high;
 
 	if (P_UNLIKELY (DosTmrQueryTime (&tcounter) != NO_ERROR)) {
 		P_ERROR ("PTimeProfiler::p_time_profiler_get_ticks_internal: DosTmrQueryTime() failed");
 		return 0;
 	}
 
-	freq_low  = (puint64) tcounter.ulLo;
-	freq_high = (puint64) tcounter.ulHi;
+	time_low  = (puint64) tcounter.ulLo;
+	time_high = (puint64) tcounter.ulHi;
 
-	return (freq_high << 32) | freq_low;
+	return (time_high << 32) | time_low;
 }
 
 puint64
