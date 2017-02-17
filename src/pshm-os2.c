@@ -116,6 +116,8 @@ pp_shm_create_handle (PShm	*shm,
 			return FALSE;
 		}
 
+		real_size = (ULONG) shm->size;
+
 		while ((ulrc = DosQueryMem ((PVOID) shm->addr,
 					    &real_size,
 					    &real_flags)) == ERROR_INTERRUPT)
