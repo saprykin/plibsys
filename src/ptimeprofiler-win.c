@@ -70,7 +70,7 @@ pp_time_profiler_elapsed_hr (puint64 last_counter)
 	rem  = ldres.rem;
 #else
 	quot = ticks / pp_time_profiler_freq;
-	rem  = tick % pp_time_profiler_freq;
+	rem  = ticks % pp_time_profiler_freq;
 #endif
 
 	return (puint64) (quot * 1000000 + (rem * 1000000) / pp_time_profiler_freq);
