@@ -22,30 +22,43 @@
 #define INCL_DOSERRORS
 #include <os2.h>
 
+#include <stdlib.h>
+
 static puint64 pp_time_profiler_freq = 1;
 
 puint64
 p_time_profiler_get_ticks_internal ()
 {
-	QWORD	tcounter;
-	puint64	time_low;
-	puint64	time_high;
+	union {
+		puint64	ticks;
+		QWORD	tcounter;
+	} tick_time;
 
-	if (P_UNLIKELY (DosTmrQueryTime (&tcounter) != NO_ERROR)) {
+	if (P_UNLIKELY (DosTmrQueryTime (&tick_time.tcounter) != NO_ERROR)) {
 		P_ERROR ("PTimeProfiler::p_time_profiler_get_ticks_internal: DosTmrQueryTime() failed");
 		return 0;
 	}
 
-	time_low  = (puint64) tcounter.ulLo;
-	time_high = (puint64) tcounter.ulHi;
-
-	return (time_high << 32) | time_low;
+	return tick_time.ticks;
 }
 
 puint64
 p_time_profiler_elapsed_usecs_internal (const PTimeProfiler *profiler)
 {
-	return (p_time_profiler_get_ticks_internal () - profiler->counter) / pp_time_profiler_freq;
+	puint64	ticks;
+	lldiv_t	ldres;
+
+	ticks = p_time_profiler_get_ticks_internal ();
+
+	if (ticks < profiler->counter) {
+		P_WARNING ("PTimeProfiler::p_time_profiler_elapsed_usecs_internal: negative jitter");
+		return 1;
+	}
+
+	ticks -= profiler->counter;
+	ldres  = lldiv ((pint64) ticks, (pint64) pp_time_profiler_freq);
+
+	return (puint64) (ldres.quot * 1000000LL + (ldres.rem * 1000000LL) / pp_time_profiler_freq);
 }
 
 void
@@ -58,7 +71,7 @@ p_time_profiler_init (void)
 		return;
 	}
 
-	pp_time_profiler_freq = (puint64) (freq / 1000000.0F);
+	pp_time_profiler_freq = (puint64) freq;
 }
 
 void
