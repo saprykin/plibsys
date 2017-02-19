@@ -23,6 +23,9 @@
 #include <os2.h>
 
 #if PLIBSYS_HAS_LLDIV
+#  ifdef P_CC_GNU
+#    define __USE_ISOC99
+#  endif
 #  include <stdlib.h>
 #endif
 
