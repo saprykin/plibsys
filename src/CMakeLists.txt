@@ -642,7 +642,8 @@ set (CMAKE_EXTRA_INCLUDE_FILES ${CMAKE_EXTRA_INCLUDE_FILES_OLD})
 message (STATUS "Checking whether lldiv() presents")
 
 check_c_source_compiles (
-			 "#include <stdlib.h>
+			 "#define __USE_ISOC99
+			  #include <stdlib.h>
 			  int main () {
 				lldiv_t res = lldiv (100LL, 13LL);
 				res.quot = 0;
