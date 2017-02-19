@@ -22,7 +22,9 @@
 #define INCL_DOSERRORS
 #include <os2.h>
 
-#include <stdlib.h>
+#if PLIBSYS_HAS_LLDIV
+#  include <stdlib.h>
+#endif
 
 static puint64 pp_time_profiler_freq = 1;
 
@@ -46,7 +48,11 @@ puint64
 p_time_profiler_elapsed_usecs_internal (const PTimeProfiler *profiler)
 {
 	puint64	ticks;
+#if PLIBSYS_HAS_LLDIV
 	lldiv_t	ldres;
+#endif
+	puint64	quot;
+	puint64	rem;
 
 	ticks = p_time_profiler_get_ticks_internal ();
 
@@ -56,9 +62,18 @@ p_time_profiler_elapsed_usecs_internal (const PTimeProfiler *profiler)
 	}
 
 	ticks -= profiler->counter;
-	ldres  = lldiv ((pint64) ticks, (pint64) pp_time_profiler_freq);
 
-	return (puint64) (ldres.quot * 1000000LL + (ldres.rem * 1000000LL) / pp_time_profiler_freq);
+#if PLIBSYS_HAS_LLDIV
+	ldres = lldiv ((long long) ticks, (long long) pp_time_profiler_freq);
+
+	quot = ldres.quot;
+	rem  = ldres.rem;
+#else
+	quot = ticks / pp_time_profiler_freq;
+	rem  = ticks % pp_time_profiler_freq;
+#endif
+
+	return (puint64) (quot * 1000000LL + (rem * 1000000LL) / pp_time_profiler_freq);
 }
 
 void

@@ -22,6 +22,10 @@
 
 #include <time.h>
 
+#if PLIBSYS_HAS_LLDIV
+#  include <stdlib.h>
+#endif
+
 typedef puint64 (WINAPI * PWin32TicksFunc) (void);
 typedef puint64 (* PWin32ElapsedFunc) (puint64 last_counter);
 
@@ -50,7 +54,26 @@ pp_time_profiler_get_hr_ticks (void)
 static puint64
 pp_time_profiler_elapsed_hr (puint64 last_counter)
 {
-	return (pp_time_profiler_ticks_func () - last_counter) / pp_time_profiler_freq;
+	puint64	ticks;
+#ifdef PLIBSYS_HAS_LLDIV
+	lldiv_t	ldres;
+#endif
+	puint64	quot;
+	puint64	rem;
+
+	ticks = pp_time_profiler_ticks_func () - last_counter;
+
+#ifdef PLIBSYS_HAS_LLDIV
+	ldres = lldiv ((long long) ticks, (long long) pp_time_profiler_freq);
+
+	quot = ldres.quot;
+	rem  = ldres.rem;
+#else
+	quot = ticks / pp_time_profiler_freq;
+	rem  = tick % pp_time_profiler_freq;
+#endif
+
+	return (puint64) (quot * 1000000 + (rem * 1000000) / pp_time_profiler_freq);
 }
 
 static puint64
@@ -100,7 +123,7 @@ p_time_profiler_init (void)
 			P_ERROR ("PTimeProfiler::p_time_profiler_init: QueryPerformanceFrequency() failed");
 			has_qpc = FALSE;
 		} else {
-			pp_time_profiler_freq         = (puint64) (tcounter.QuadPart / 1000000.0F);
+			pp_time_profiler_freq         = (puint64) (tcounter.QuadPart);
 			pp_time_profiler_ticks_func   = (PWin32TicksFunc) pp_time_profiler_get_hr_ticks;
 			pp_time_profiler_elapsed_func = (PWin32ElapsedFunc) pp_time_profiler_elapsed_hr;
 		}
