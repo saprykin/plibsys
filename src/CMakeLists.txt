@@ -638,6 +638,28 @@ check_type_size ("((struct sockaddr *) 0)->sa_family" PLIBSYS_SIZEOF_SAFAMILY_T 
 
 set (CMAKE_EXTRA_INCLUDE_FILES ${CMAKE_EXTRA_INCLUDE_FILES_OLD})
 
+# Check for lldiv() call
+message (STATUS "Checking whether lldiv() presents")
+
+check_c_source_compiles (
+			 "#include <stdlib.h>
+			  int main () {
+				lldiv_t res = lldiv (100LL, 13LL);
+				res.quot = 0;
+				res.rem = 0;
+
+				return 0;
+			  }"
+			  PLIBSYS_HAS_LLDIV
+			)
+
+if (PLIBSYS_HAS_LLDIV)
+	message (STATUS "Checking whether lldiv() presents - yes")
+	add_definitions (-DPLIBSYS_HAS_LLDIV)
+else()
+	message (STATUS "Checking whether lldiv() presents - no")
+endif()
+
 add_library (plibsys SHARED ${PLIBSYS_SRCS} ${PLIBSYS_PLATFORM_SRCS} ${PLIBSYS_PUBLIC_HDRS} ${PLIBSYS_PRIVATE_HDRS})
 
 if (PLIBSYS_BUILD_STATIC)
