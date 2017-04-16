@@ -29,6 +29,7 @@ typedef HMODULE plibrary_handle;
 
 struct PLibraryLoader_ {
 	plibrary_handle	handle;
+	APIRET		last_error;
 };
 
 static void pp_library_loader_clean_handle (plibrary_handle handle);
@@ -74,7 +75,8 @@ p_library_loader_new (const pchar *path)
 		return NULL;
 	}
 
-	loader->handle = handle;
+	loader->handle     = handle;
+	loader->last_error = NO_ERROR;
 
 	return loader;
 }
@@ -82,15 +84,19 @@ p_library_loader_new (const pchar *path)
 P_LIB_API PFuncAddr
 p_library_loader_get_symbol (PLibraryLoader *loader, const pchar *sym)
 {
-	PFN func_addr = NULL;
+	PFN	func_addr = NULL;
+	APIRET	ulrc;
 
 	if (P_UNLIKELY (loader == NULL || sym == NULL || loader->handle == NULL))
 		return NULL;
 
-	if (P_UNLIKELY (DosQueryProcAddr (loader->handle, 0, (PSZ) sym, &func_addr) != NO_ERROR)) {
+	if (P_UNLIKELY ((ulrc = DosQueryProcAddr (loader->handle, 0, (PSZ) sym, &func_addr)) != NO_ERROR)) {
 		P_ERROR ("PLibraryLoader::p_library_loader_get_symbol: DosQueryProcAddr() failed");
+		loader->last_error = ulrc;
 		return NULL;
 	}
+
+	loader->last_error = NO_ERROR;
 
 	return (PFuncAddr) func_addr;
 }
@@ -107,7 +113,19 @@ p_library_loader_free (PLibraryLoader *loader)
 }
 
 P_LIB_API pchar *
-p_library_loader_get_last_error (void)
+p_library_loader_get_last_error (PLibraryLoader *loader)
 {
-	return NULL;
+	if (loader == NULL)
+		return NULL;
+
+	switch (loader->last_error) {
+		case NO_ERROR:
+			return NULL;
+		case ERROR_INVALID_HANDLE:
+			return p_strdup ("Invalid resource handler");
+		case ERROR_INVALID_NAME:
+			return p_strdup ("Invalid procedure name");
+		default:
+			return p_strdup ("Unknown error");
+	}
 }

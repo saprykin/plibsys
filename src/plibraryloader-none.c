@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Alexander Saprykin <xelfium@gmail.com>
+ * Copyright (C) 2016-2017 Alexander Saprykin <xelfium@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -42,8 +42,10 @@ p_library_loader_free (PLibraryLoader *loader)
 }
 
 P_LIB_API pchar *
-p_library_loader_get_last_error (void)
+p_library_loader_get_last_error (PLibraryLoader *loader)
 {
+	P_UNUSED (loader);
+
 	P_ERROR ("PLibraryLoader::p_library_loader_get_last_error: not implemented");
 	return NULL;
 }

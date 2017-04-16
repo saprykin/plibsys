@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Alexander Saprykin <xelfium@gmail.com>
+ * Copyright (C) 2016-2017 Alexander Saprykin <xelfium@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -19,6 +19,7 @@
 #include "pfile.h"
 #include "plibraryloader.h"
 #include "pmem.h"
+#include "pstring.h"
 
 #include <be/kernel/image.h>
 
@@ -26,6 +27,7 @@ typedef image_id plibrary_handle;
 
 struct PLibraryLoader_ {
 	plibrary_handle	handle;
+	status_t	last_status;
 };
 
 static void pp_library_loader_clean_handle (plibrary_handle handle);
@@ -57,7 +59,8 @@ p_library_loader_new (const pchar *path)
 		return NULL;
 	}
 
-	loader->handle = handle;
+	loader->handle      = handle;
+	loader->last_status = B_OK;
 
 	return loader;
 }
@@ -65,18 +68,22 @@ p_library_loader_new (const pchar *path)
 P_LIB_API PFuncAddr
 p_library_loader_get_symbol (PLibraryLoader *loader, const pchar *sym)
 {
-	ppointer location = NULL;
+	ppointer	location = NULL;
+	status_t	status;
 
 	if (P_UNLIKELY (loader == NULL || sym == NULL))
 		return NULL;
 
-	if (P_UNLIKELY (get_image_symbol (loader->handle,
-					  (pchar *) sym,
-					  B_SYMBOL_TYPE_ANY,
-					  &location) != B_OK)) {
+	if (P_UNLIKELY ((status = get_image_symbol (loader->handle,
+						    (pchar *) sym,
+						    B_SYMBOL_TYPE_ANY,
+						    &location)) != B_OK)) {
 		P_ERROR ("PLibraryLoader::p_library_loader_get_symbol: get_image_symbol() failed");
+		loader->last_status = status;
 		return NULL;
 	}
+
+	loader->last_status = B_OK;
 
 	return (PFuncAddr) location;
 }
@@ -93,7 +100,19 @@ p_library_loader_free (PLibraryLoader *loader)
 }
 
 P_LIB_API pchar *
-p_library_loader_get_last_error (void)
+p_library_loader_get_last_error (PLibraryLoader *loader)
 {
-	return NULL;
+	if (loader == NULL)
+		return NULL;
+
+	switch (loader->last_status) {
+		case B_OK:
+			return NULL;
+		case B_BAD_IMAGE_ID:
+			return p_strdup ("Image handler doesn't identify an existing image");
+		case B_BAD_INDEX:
+			return p_strdup ("Invalid symbol index");
+		default:
+			return p_strdup ("Unknown error");
+	}
 }

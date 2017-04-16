@@ -107,8 +107,9 @@ P_LIB_API void			p_library_loader_free		(PLibraryLoader	*loader);
 
 /**
  * @brief Gets the last occurred error.
+ * @param loader #PLibraryLoader object to get error for.
  * @return Human readable error string in case of success, NULL otherwise.
- * @since 0.0.1
+ * @since 0.0.2
  * @note Caller takes ownership of the returned string.
  *
  * The NULL result may indicate that no error was occurred since the last call.
@@ -118,15 +119,10 @@ P_LIB_API void			p_library_loader_free		(PLibraryLoader	*loader);
  * systems write the successful call result (usually zero) to the error status,
  * thus resetting an error from the previous call.
  *
- * @warning On BeOS this call does nothing as BeOS doesn't provide any
- * information about the exact reason of the failed call.
- *
- * @warning Depending on underlying implementation model, on HP-UX this call
- * may do nothing.
- *
- * @warning On OS/2 this call does nothing.
+ * Some operating systems may return last error even if library handler was not
+ * created. In that case try to pass NULL value as a parameter.
  */
-P_LIB_API pchar *		p_library_loader_get_last_error	(void);
+P_LIB_API pchar *		p_library_loader_get_last_error	(PLibraryLoader	*loader);
 
 P_END_DECLS
 

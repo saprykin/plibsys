@@ -113,7 +113,7 @@ BOOST_AUTO_TEST_CASE (plibraryloader_general_test)
 	p_library_loader_free (NULL);
 
 	/* General tests */
-	err_msg = p_library_loader_get_last_error ();
+	err_msg = p_library_loader_get_last_error (NULL);
 	p_free (err_msg);
 
 	int argCount = boost::unit_test::framework::master_test_suite().argc;
@@ -123,16 +123,8 @@ BOOST_AUTO_TEST_CASE (plibraryloader_general_test)
 
 	BOOST_CHECK (p_library_loader_get_symbol (loader, "there_is_no_such_a_symbol") == (PFuncAddr) NULL);
 
-	err_msg = p_library_loader_get_last_error ();
-
-#ifndef P_OS_HPUX
-#  if defined (P_OS_BEOS) || defined (P_OS_OS2)
-	BOOST_CHECK (err_msg == NULL);
-#  else
+	err_msg = p_library_loader_get_last_error (loader);
 	BOOST_CHECK (err_msg != NULL);
-#  endif
-#endif
-
 	p_free (err_msg);
 
 	shutdown_func = (void (*) (void)) p_library_loader_get_symbol (loader, "p_libsys_shutdown");
@@ -142,7 +134,7 @@ BOOST_AUTO_TEST_CASE (plibraryloader_general_test)
 
 	BOOST_REQUIRE (shutdown_func != NULL);
 
-	err_msg = p_library_loader_get_last_error ();
+	err_msg = p_library_loader_get_last_error (loader);
 	p_free (err_msg);
 
 	p_library_loader_free (loader);

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2016 Alexander Saprykin <xelfium@gmail.com>
+ * Copyright (C) 2015-2017 Alexander Saprykin <xelfium@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -108,10 +108,12 @@ p_library_loader_free (PLibraryLoader *loader)
 }
 
 P_LIB_API pchar *
-p_library_loader_get_last_error (void)
+p_library_loader_get_last_error (PLibraryLoader *loader)
 {
 	pchar *res = NULL;
 	pchar *msg;
+
+	P_UNUSED (loader);
 
 	msg = dlerror ();
 

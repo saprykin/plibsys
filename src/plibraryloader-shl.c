@@ -22,11 +22,14 @@
 #include "pstring.h"
 
 #include <dl.h>
+#include <errno.h>
+#include <string.h>
 
 typedef shl_t plibrary_handle;
 
 struct PLibraryLoader_ {
 	plibrary_handle	handle;
+	int		last_error;
 };
 
 static void pp_library_loader_clean_handle (plibrary_handle handle);
@@ -58,7 +61,8 @@ p_library_loader_new (const pchar *path)
 		return NULL;
 	}
 
-	loader->handle = handle;
+	loader->handle     = handle;
+	loader->last_error = 0;
 
 	return loader;
 }
@@ -73,8 +77,11 @@ p_library_loader_get_symbol (PLibraryLoader *loader, const pchar *sym)
 
 	if (P_UNLIKELY (shl_findsym (&loader->handle, sym, TYPE_UNDEFINED, (ppointer) &func_addr) != 0)) {
 		P_ERROR ("PLibraryLoader::p_library_loader_get_symbol: shl_findsym() failed");
+		loader->last_error = (errno == 0 ? -1 : errno);
 		return NULL;
 	}
+
+	loader->last_error = 0;
 
 	return func_addr;
 }
@@ -91,7 +98,15 @@ p_library_loader_free (PLibraryLoader *loader)
 }
 
 P_LIB_API pchar *
-p_library_loader_get_last_error (void)
+p_library_loader_get_last_error (PLibraryLoader *loader)
 {
-	return NULL;
+	if (loader == NULL)
+		return NULL;
+
+	if (loader->last_error == 0)
+		return NULL;
+	else if (loader->last_error == -1)
+		return p_strdup ("Failed to find a symbol");
+	else
+		return p_strdup (strerror (loader->last_error));
 }
