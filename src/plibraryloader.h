@@ -44,6 +44,8 @@
  *
  * - HP-UX doesn't support loading libraries containing TLS and built with
  * static TLS model. The same rule applies to any library used as dependency.
+ * PA-RISC32 doesn't support reference count for loaded libraries when using
+ * shl_* family of functions (always removes all library references on unload).
  *
  * - On OpenVMS only shareable images (linked with /SHAREABLE) can be used for
  * dynamic symbol resolving. Usually they have .EXE extension.
