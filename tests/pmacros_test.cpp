@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2016 Alexander Saprykin <xelfium@gmail.com>
+ * Copyright (C) 2014-2017 Alexander Saprykin <xelfium@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -126,6 +126,369 @@ BOOST_AUTO_TEST_CASE (pmacros_general_test)
     !defined (P_CC_XLC)     && !defined (P_CC_HP)    && !defined (P_CC_WATCOM) && \
     !defined (P_CC_BORLAND) && !defined (P_CC_MIPS)  && !defined (P_CC_USLC)   && \
     !defined (P_CC_DEC)     && !defined (P_CC_PGI)
+	BOOST_CHECK (false);
+#endif
+
+	/* Test for CPU architecture detection macros */
+#if defined (P_OS_VMS)
+#  if !defined (P_CPU_ALPHA) && !defined (P_CPU_IA64)
+	BOOST_CHECK (false);
+#  endif
+#endif
+
+#if defined (P_OS_TRU64)
+#  if !defined (P_CPU_ALPHA)
+	BOOST_CHECK (false);
+#  endif
+#endif
+
+#if defined (P_OS_AIX)
+#  if !defined (P_CPU_POWER)
+	BOOST_CHECK (false);
+#  endif
+#endif
+
+#if defined (P_OS_HPUX)
+#  if !defined (P_CPU_HPPA) && !defined (P_CPU_IA64)
+	BOOST_CHECK (false);
+#  endif
+#endif
+
+#if defined (P_OS_SOLARIS)
+#  if !defined (P_CPU_X86) && !defined (P_CPU_SPARC) && !defined (P_CPU_POWER)
+	BOOST_CHECK (false);
+#  endif
+#endif
+
+#if defined (P_OS_QNX)
+#  if !defined (P_CPU_X86)
+	BOOST_CHECK (false);
+#  endif
+#endif
+
+#if defined (P_OS_QNX6)
+#  if !defined (P_CPU_X86)  && !defined (P_CPU_ARM) && \
+      !defined (P_CPU_MIPS) && !defined (P_CPU_POWER)
+	BOOST_CHECK (false);
+#  endif
+#endif
+
+#if defined (P_OS_SCO)
+#  if !defined (P_CPU_X86)
+	BOOST_CHECK (false);
+#  endif
+#endif
+
+#if defined (P_OS_UNIXWARE)
+#  if !defined (P_CPU_X86)
+	BOOST_CHECK (false);
+#  endif
+#endif
+
+#if defined (P_OS_IRIX)
+#  if !defined (P_CPU_MIPS)
+	BOOST_CHECK (false);
+#  endif
+#endif
+
+#if defined (P_OS_HAIKU)
+#  if !defined (P_CPU_X86) && !defined (P_CPU_ARM)
+	BOOST_CHECK (false);
+#  endif
+#endif
+
+#if defined (P_OS_SYLLABLE)
+#  if !defined (P_CPU_X86)
+	BOOST_CHECK (false);
+#  endif
+#endif
+
+#if defined (P_OS_BEOS)
+#  if !defined (P_CPU_X86) && !defined (P_CPU_POWER)
+	BOOST_CHECK (false);
+#  endif
+#endif
+
+#if defined (P_OS_OS2)
+#  if !defined (P_CPU_X86)
+	BOOST_CHECK (false);
+#  endif
+#endif
+
+#if defined (P_OS_MAC9)
+#  if !defined (P_CPU_POWER)
+	BOOST_CHECK (false);
+#  endif
+#endif
+
+#if defined (P_OS_MAC)
+#  if !defined (P_CPU_X86) && !defined (P_CPU_POWER)
+	BOOST_CHECK (false);
+#  endif
+#endif
+
+#if defined (P_OS_WIN)
+#  if !defined (P_CPU_X86)  && !defined (P_CPU_ARM)   && !defined (P_CPU_IA64) && \
+      !defined (P_CPU_MIPS) && !defined (P_CPU_POWER) && !defined (P_CPU_ALPHA)
+	BOOST_CHECK (false);
+#  endif
+#endif
+
+#if defined (P_CC_MSVC)
+#  if !defined (P_CPU_X86)  && !defined (P_CPU_ARM)   && !defined (P_CPU_IA64) && \
+      !defined (P_CPU_MIPS) && !defined (P_CPU_POWER) && !defined (P_CPU_ALPHA)
+	BOOST_CHECK (false);
+#  endif
+#endif
+
+#if defined (P_CC_SUN)
+#  if !defined (P_CPU_X86) && !defined (P_CPU_SPARC)
+	BOOST_CHECK (false);
+#  endif
+#endif
+
+#if defined (P_CC_XLC)
+#  if !defined (P_CPU_POWER)
+	BOOST_CHECK (false);
+#  endif
+#endif
+
+#if defined (P_CC_HP)
+#  if !defined (P_CPU_HPPA) && !defined (P_CPU_IA64)
+	BOOST_CHECK (false);
+#  endif
+#endif
+
+#if defined (P_CC_DEC)
+#  if !defined (P_CPU_ALPHA) && !defined (P_CPU_IA64)
+	BOOST_CHECK (false);
+#  endif
+#endif
+
+#if defined (P_CC_MIPS)
+#  if !defined (P_CPU_MIPS)
+	BOOST_CHECK (false);
+#  endif
+#endif
+
+#if defined (P_CC_USLC)
+#  if !defined (P_CPU_X86)
+	BOOST_CHECK (false);
+#  endif
+#endif
+
+#if defined (P_CC_WATCOM)
+#  if !defined (P_CPU_X86)
+	BOOST_CHECK (false);
+#  endif
+#endif
+
+#if defined (P_CC_BORLAND)
+#  if !defined (P_CPU_X86)
+	BOOST_CHECK (false);
+#  endif
+#endif
+
+#if defined (P_CC_PGI)
+#  if !defined (P_CPU_X86) && !defined (P_CPU_POWER)
+	BOOST_CHECK (false);
+#  endif
+#endif
+
+#if defined (P_CPU_ARM)
+#  if !defined (P_CPU_ARM_V2) && !defined (P_CPU_ARM_V3) && !defined (P_CPU_ARM_V4) && \
+      !defined (P_CPU_ARM_V5) && !defined (P_CPU_ARM_V6) && !defined (P_CPU_ARM_V7) && \
+      !defined (P_CPU_ARM_V8)
+	BOOST_CHECK (false);
+#  endif
+#endif
+
+#if defined (P_CPU_ARM_V2)
+#  if !defined (P_CPU_ARM) || !(P_CPU_ARM - 0 == 2)
+	BOOST_CHECK (false);
+#  endif
+#endif
+
+#if defined (P_CPU_ARM_V3)
+#  if !defined (P_CPU_ARM) || !(P_CPU_ARM - 0 == 3)
+	BOOST_CHECK (false);
+#  endif
+#endif
+
+#if defined (P_CPU_ARM_V4)
+#  if !defined (P_CPU_ARM) || !(P_CPU_ARM - 0 == 4)
+	BOOST_CHECK (false);
+#  endif
+#endif
+
+#if defined (P_CPU_ARM_V5)
+#  if !defined (P_CPU_ARM) || !(P_CPU_ARM - 0 == 5)
+	BOOST_CHECK (false);
+#  endif
+#endif
+
+#if defined (P_CPU_ARM_V6)
+#  if !defined (P_CPU_ARM) || !(P_CPU_ARM - 0 == 6)
+	BOOST_CHECK (false);
+#  endif
+#endif
+
+#if defined (P_CPU_ARM_V7)
+#  if !defined (P_CPU_ARM) || !(P_CPU_ARM - 0 == 7)
+	BOOST_CHECK (false);
+#  endif
+#endif
+
+#if defined (P_CPU_ARM_V8)
+#  if !defined (P_CPU_ARM) || !(P_CPU_ARM - 0 == 8)
+	BOOST_CHECK (false);
+#  endif
+#endif
+
+#if defined (P_CPU_ARM) && !(P_CPU_ARM - 0 > 0)
+	BOOST_CHECK (false);
+#endif
+
+#if defined (P_CPU_ARM)
+#  if !defined (P_CPU_ARM_32) && !defined (P_CPU_ARM_64)
+	BOOST_CHECK (false);
+#  endif
+#endif
+
+#if defined (P_CPU_ARM_32) || defined (P_CPU_ARM_64)
+#  if !defined (P_CPU_ARM)
+	BOOST_CHECK (false);
+#  endif
+#endif
+
+#if defined (P_CPU_ARM_32)
+#  ifdef P_CPU_ARM_64
+	BOOST_CHECK (false);
+#  endif
+#endif
+
+#if defined (P_CPU_ARM_64)
+#  ifdef P_CPU_ARM_32
+	BOOST_CHECK (false);
+#  endif
+#endif
+
+#if defined (P_CPU_X86)
+#  if !((P_CPU_X86 >= 3) && (P_CPU_X86 <= 6))
+	BOOST_CHECK (false);
+#  endif
+#  if !defined (P_CPU_X86_32) && !defined (P_CPU_X86_64)
+	BOOST_CHECK (false);
+#  endif
+#endif
+
+#if defined (P_CPU_X86_32) || defined (P_CPU_X86_64)
+#  if !defined (P_CPU_X86)
+	BOOST_CHECK (false);
+#  endif
+#endif
+
+#if defined (P_CPU_X86_32) && defined (P_CPU_X86_64)
+	BOOST_CHECK (false);
+#endif
+
+#if defined (P_CPU_X86_64)
+#  if !defined (P_CPU_X86) || !(P_CPU_X86 - 0 == 6)
+	BOOST_CHECK (false);
+#  endif
+#endif
+
+#if defined (P_CPU_MIPS)
+#  if !defined (P_CPU_MIPS_I)  && !defined (P_CPU_MIPS_II) && !defined (P_CPU_MIPS_III) && \
+      !defined (P_CPU_MIPS_IV) && !defined (P_CPU_MIPS_V)  && !defined (P_CPU_MIPS_32)  && \
+      !defined (P_CPU_MIPS_64)
+	BOOST_CHECK (false);
+#  endif
+#endif
+
+#if defined (P_CPU_MIPS_I)  || defined (P_CPU_MIPS_II) || defined (P_CPU_MIPS_III) || \
+    defined (P_CPU_MIPS_IV) || defined (P_CPU_MIPS_V)  || defined (P_CPU_MIPS_32)  || \
+    defined (P_CPU_MIPS_64)
+#  if !defined (P_CPU_MIPS)
+	BOOST_CHECK (false);
+#  endif
+#endif
+
+#if defined (P_CPU_MIPS_II)
+#  if !defined (P_CPU_MIPS_I)
+	BOOST_CHECK (false);
+#  endif
+#endif
+
+#if defined (P_CPU_MIPS_III)
+#  if !defined (P_CPU_MIPS_II)
+	BOOST_CHECK (false);
+#  endif
+#endif
+
+#if defined (P_CPU_MIPS_IV)
+#  if !defined (P_CPU_MIPS_III)
+	BOOST_CHECK (false);
+#  endif
+#endif
+
+#if defined (P_CPU_MIPS_V)
+#  if !defined (P_CPU_MIPS_IV)
+	BOOST_CHECK (false);
+#  endif
+#endif
+
+#if defined (P_CPU_MIPS_32)
+#  if !defined (P_CPU_MIPS_II)
+	BOOST_CHECK (false);
+#  endif
+#endif
+
+#if defined (P_CPU_MIPS_64)
+#  if !defined (P_CPU_MIPS_V)
+	BOOST_CHECK (false);
+#  endif
+#endif
+
+#if defined (P_CPU_POWER)
+#  if !defined (P_CPU_POWER_32) && !defined (P_CPU_POWER_64)
+	BOOST_CHECK (false);
+#  endif
+#endif
+
+#if defined (P_CPU_POWER_32) || defined (P_CPU_POWER_64)
+#  if !defined (P_CPU_POWER)
+	BOOST_CHECK (false);
+#  endif
+#endif
+
+#if defined (P_CPU_POWER_32) && defined (P_CPU_POWER_64)
+	BOOST_CHECK (false);
+#endif
+
+#if defined (P_CPU_SPARC_V8) || defined (P_CPU_SPARC_V9)
+#  if !defined (P_CPU_SPARC)
+	BOOST_CHECK (false);
+#  endif
+#endif
+
+#if defined (P_CPU_SPARC_V8) && defined (P_CPU_SPARC_V9)
+	BOOST_CHECK (false);
+#endif
+
+#if defined (P_CPU_HPPA)
+#  if !defined (P_CPU_HPPA_32) && !defined (P_CPU_HPPA_64)
+	BOOST_CHECK (false);
+#  endif
+#endif
+
+#if defined (P_CPU_HPPA_32) || defined (P_CPU_HPPA_64)
+#  if !defined (P_CPU_HPPA)
+	BOOST_CHECK (false);
+#  endif
+#endif
+
+#if defined (P_CPU_HPPA_32) && defined (P_CPU_HPPA_64)
 	BOOST_CHECK (false);
 #endif
 
