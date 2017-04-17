@@ -129,6 +129,74 @@ BOOST_AUTO_TEST_CASE (pmacros_general_test)
 	BOOST_CHECK (false);
 #endif
 
+#if defined (P_CC_MSVC)
+#  if !defined (P_OS_WIN)
+	BOOST_CHECK (false);
+#  endif
+#endif
+
+#if defined (P_CC_INTEL)
+#  if !defined (P_OS_WIN)   && !defined (P_OS_MAC) && \
+      !defined (P_OS_LINUX) && !defined (P_OS_FREEBSD)
+	BOOST_CHECK (false);
+#  endif
+#endif
+
+#if defined (P_CC_SUN)
+#  if !defined (P_OS_SOLARIS) && !defined (P_OS_LINUX)
+	BOOST_CHECK (false);
+#  endif
+#endif
+
+#if defined (P_CC_XLC)
+#  if !defined (P_OS_AIX) && !defined (P_OS_LINUX)
+	BOOST_CHECK (false);
+#  endif
+#endif
+
+#if defined (P_CC_HP)
+#  if !defined (P_OS_HPUX)
+	BOOST_CHECK (false);
+#  endif
+#endif
+
+#if defined (P_CC_WATCOM)
+#  if !defined (P_OS_WIN) && !defined (P_OS_LINUX) && \
+      !defined (P_OS_OS2) && !defined (P_OS_QNX)
+	BOOST_CHECK (false);
+#  endif
+#endif
+
+#if defined (P_CC_BORLAND)
+#  if !defined (P_OS_WIN)
+	BOOST_CHECK (false);
+#  endif
+#endif
+
+#if defined (P_CC_MIPS)
+#  if !defined (P_OS_IRIX)
+	BOOST_CHECK (false);
+#  endif
+#endif
+
+#if defined (P_CC_USLC)
+#  if !defined (P_OS_SCO) && !defined (P_OS_UNIXWARE)
+	BOOST_CHECK (false);
+#  endif
+#endif
+
+#if defined (P_CC_DEC)
+#  if !defined (P_OS_VMS) && !defined (P_OS_TRU64)
+	BOOST_CHECK (false);
+#  endif
+#endif
+
+#if defined (P_CC_PGI)
+#  if !defined (P_OS_WIN) && !defined (P_OS_MAC) && !defined (P_OS_LINUX)
+	BOOST_CHECK (false);
+#  endif
+#endif
+
 	/* Test for CPU architecture detection macros */
 #if defined (P_OS_VMS)
 #  if !defined (P_CPU_ALPHA) && !defined (P_CPU_IA64)
