@@ -925,9 +925,9 @@
 #elif defined(__arm__) || defined(__TARGET_ARCH_ARM) || defined(_ARM) || \
       defined(_M_ARM_) || defined(__arm) || defined(__aarch64__)
 #  if defined(__aarch64__)
-#    define P_CPU_ARM64
+#    define P_CPU_ARM_64
 #  else
-#    define P_CPU_ARM32
+#    define P_CPU_ARM_32
 #  endif
 #  if defined(__ARM_ARCH) && __ARM_ARCH > 1
 #    define P_CPU_ARM __ARM_ARCH
