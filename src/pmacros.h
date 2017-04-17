@@ -386,7 +386,8 @@
 #  endif
 #endif
 
-#if defined(P_OS_WIN) || defined(P_OS_MAC9)
+#if defined(P_OS_WIN)  || defined(P_OS_MAC9) || defined(P_OS_HAIKU) || \
+    defined(P_OS_BEOS) || defined(P_OS_OS2)  || defined(P_OS_VMS)
 #  undef P_OS_UNIX
 #elif !defined(P_OS_UNIX)
 #  define P_OS_UNIX

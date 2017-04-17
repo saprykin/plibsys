@@ -113,6 +113,13 @@ BOOST_AUTO_TEST_CASE (pmacros_general_test)
 	BOOST_CHECK (false);
 #endif
 
+	/* Test for others */
+#if defined (P_OS_HAIKU) || defined (P_OS_BEOS) || defined (P_OS_OS2) || defined (P_OS_VMS)
+#  if defined (P_OS_UNIX)
+	BOOST_CHECK (false);
+#  endif
+#endif
+
 	/* Test for compiler detection macros */
 #if !defined (P_CC_MSVC)    && !defined (P_CC_GNU)   && !defined (P_CC_MINGW)  && \
     !defined (P_CC_INTEL)   && !defined (P_CC_CLANG) && !defined (P_CC_SUN)    && \
