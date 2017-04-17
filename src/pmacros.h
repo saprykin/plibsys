@@ -936,41 +936,41 @@
 #  elif defined(_M_ARM) && _M_ARM > 1
 #    define P_CPU_ARM _M_ARM
 #  elif defined(__ARM64_ARCH_8__)  || \
-	defined(__aarch64__)       || \
-	defined(__CORE_CORTEXAV8__)
+        defined(__aarch64__)       || \
+        defined(__CORE_CORTEXAV8__)
 #    define P_CPU_ARM 8
 #    define P_CPU_ARM_V8
 #  elif defined(__ARM_ARCH_7__)    || \
-	defined(__ARM_ARCH_7A__)   || \
-	defined(__ARM_ARCH_7R__)   || \
-	defined(__ARM_ARCH_7M__)   || \
-	defined(__ARM_ARCH_7S__)   || \
-	defined(_ARM_ARCH_7)       || \
-	defined(__CORE_CORTEXA__)
+        defined(__ARM_ARCH_7A__)   || \
+        defined(__ARM_ARCH_7R__)   || \
+        defined(__ARM_ARCH_7M__)   || \
+        defined(__ARM_ARCH_7S__)   || \
+        defined(_ARM_ARCH_7)       || \
+        defined(__CORE_CORTEXA__)
 #    define P_CPU_ARM 7
 #    define P_CPU_ARM_V7
 #  elif defined(__ARM_ARCH_6__)    || \
-	defined(__ARM_ARCH_6J__)   || \
-	defined(__ARM_ARCH_6T2__)  || \
-	defined(__ARM_ARCH_6Z__)   || \
-	defined(__ARM_ARCH_6K__)   || \
-	defined(__ARM_ARCH_6ZK__)  || \
-	defined(__ARM_ARCH_6M__)
+        defined(__ARM_ARCH_6J__)   || \
+        defined(__ARM_ARCH_6T2__)  || \
+        defined(__ARM_ARCH_6Z__)   || \
+        defined(__ARM_ARCH_6K__)   || \
+        defined(__ARM_ARCH_6ZK__)  || \
+        defined(__ARM_ARCH_6M__)
 #    define P_CPU_ARM 6
 #    define P_CPU_ARM_V6
 #  elif defined(__ARM_ARCH_5__)    || \
-	defined(__ARM_ARCH_5E__)   || \
-	defined(__ARM_ARCH_5T__)   || \
-	defined(__ARM_ARCH_5TE__)  || \
-	defined(__ARM_ARCH_5TEJ__) ||
+        defined(__ARM_ARCH_5E__)   || \
+        defined(__ARM_ARCH_5T__)   || \
+        defined(__ARM_ARCH_5TE__)  || \
+        defined(__ARM_ARCH_5TEJ__) ||
 #    define P_CPU_ARM 5
 #    define P_CPU_ARM_V5
 #  elif defined(__ARM_ARCH_4__)    || \
-	defined(__ARM_ARCH_4T__)   ||
+        defined(__ARM_ARCH_4T__)   ||
 #    define P_CPU_ARM 4
 #    define P_CPU_ARM_V4
 #  elif defined(__ARM_ARCH_3__)    || \
-	defined(__ARM_ARCH_3M__)
+        defined(__ARM_ARCH_3M__)
 #    define P_CPU_ARM 3
 #    define P_CPU_ARM_V3
 #  elif defined(__ARM_ARCH_2__)
