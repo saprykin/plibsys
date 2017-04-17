@@ -111,7 +111,8 @@ P_LIB_API void			p_library_loader_free		(PLibraryLoader	*loader);
  * @brief Gets the last occurred error.
  * @param loader #PLibraryLoader object to get error for.
  * @return Human readable error string in case of success, NULL otherwise.
- * @since 0.0.2
+ * @since 0.0.1
+ * @version 0.0.3 @p loader parameter was added.
  * @note Caller takes ownership of the returned string.
  *
  * The NULL result may indicate that no error was occurred since the last call.
