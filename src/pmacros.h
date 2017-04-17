@@ -962,11 +962,11 @@
         defined(__ARM_ARCH_5E__)   || \
         defined(__ARM_ARCH_5T__)   || \
         defined(__ARM_ARCH_5TE__)  || \
-        defined(__ARM_ARCH_5TEJ__) ||
+        defined(__ARM_ARCH_5TEJ__)
 #    define P_CPU_ARM 5
 #    define P_CPU_ARM_V5
 #  elif defined(__ARM_ARCH_4__)    || \
-        defined(__ARM_ARCH_4T__)   ||
+        defined(__ARM_ARCH_4T__)
 #    define P_CPU_ARM 4
 #    define P_CPU_ARM_V4
 #  elif defined(__ARM_ARCH_3__)    || \
