@@ -986,37 +986,43 @@
 #  define P_CPU_IA64
 #elif defined(__mips__) || defined(__mips) || defined(_M_MRX000)
 #  define P_CPU_MIPS
-#  if defined(_M_MRX000) && _M_MRX000 >= 4000
-#    define P_CPU_MIPS_I
-#    define P_CPU_MIPS_II
-#    define P_CPU_MIPS_III
-#  endif
-#  if defined(_M_MRX000) &&_M_MRX000 >= 10000
-#    define P_CPU_MIPS_IV
-#  endif
-#  if defined(_MIPS_ARCH_MIPS1) || (defined(__mips) && __mips - 0 >= 1) || \
-     (defined(_MIPS_ISA) && defined(_MIPS_ISA_MIPS1) && __MIPS_ISA - 0 >= _MIPS_ISA_MIPS1)
-#    define P_CPU_MIPS_I
-#  endif
-#  if defined(_MIPS_ARCH_MIPS2) || (defined(__mips) && __mips - 0 >= 2) || \
-     (defined(_MIPS_ISA) && defined(_MIPS_ISA_MIPS2) && __MIPS_ISA - 0 >= _MIPS_ISA_MIPS2)
-#    define P_CPU_MIPS_II
-#  endif
-#  if defined(_MIPS_ARCH_MIPS3) || (defined(__mips) && __mips - 0 >= 3) || \
-     (defined(_MIPS_ISA)&& defined(_MIPS_ISA_MIPS3) && __MIPS_ISA - 0 >= _MIPS_ISA_MIPS3)
-#    define P_CPU_MIPS_III
-#  endif
-#  if defined(_MIPS_ARCH_MIPS4) || (defined(__mips) && __mips - 0 >= 4) || \
-     (defined(_MIPS_ISA) && defined(_MIPS_ISA_MIPS4) && __MIPS_ISA - 0 >= _MIPS_ISA_MIPS4)
-#    define P_CPU_MIPS_IV
-#  endif
-#  if defined(_MIPS_ARCH_MIPS32) || (defined(__mips) && __mips - 0 >= 32) || \
-     (defined(_MIPS_ISA) && defined(_MIPS_ISA_MIPS32) && __MIPS_ISA - 0 >= _MIPS_ISA_MIPS32)
-#    define P_CPU_MIPS_32
+#  if defined(_M_MRX000)
+#    if (_M_MRX000 >= 10000)
+#      define P_CPU_MIPS_IV
+#    else
+#      define P_CPU_MIPS_III
+#    endif
 #  endif
 #  if defined(_MIPS_ARCH_MIPS64) || (defined(__mips) && __mips - 0 >= 64) || \
      (defined(_MIPS_ISA) && defined(_MIPS_ISA_MIPS64) && __MIPS_ISA - 0 >= _MIPS_ISA_MIPS64)
 #    define P_CPU_MIPS_64
+#  elif defined(_MIPS_ARCH_MIPS32) || (defined(__mips) && __mips - 0 >= 32) || \
+       (defined(_MIPS_ISA) && defined(_MIPS_ISA_MIPS32) && __MIPS_ISA - 0 >= _MIPS_ISA_MIPS32)
+#    define P_CPU_MIPS_32
+#  elif defined(_MIPS_ARCH_MIPS4) || (defined(__mips) && __mips - 0 >= 4) || \
+       (defined(_MIPS_ISA) && defined(_MIPS_ISA_MIPS4) && __MIPS_ISA - 0 >= _MIPS_ISA_MIPS4)
+#    define P_CPU_MIPS_IV
+#  elif defined(_MIPS_ARCH_MIPS3) || (defined(__mips) && __mips - 0 >= 3) || \
+       (defined(_MIPS_ISA)&& defined(_MIPS_ISA_MIPS3) && __MIPS_ISA - 0 >= _MIPS_ISA_MIPS3)
+#    define P_CPU_MIPS_III
+#  elif defined(_MIPS_ARCH_MIPS2) || (defined(__mips) && __mips - 0 >= 2) || \
+       (defined(_MIPS_ISA) && defined(_MIPS_ISA_MIPS2) && __MIPS_ISA - 0 >= _MIPS_ISA_MIPS2)
+#    define P_CPU_MIPS_II
+#  elif defined(_MIPS_ARCH_MIPS1) || (defined(__mips) && __mips - 0 >= 1) || \
+     (defined(_MIPS_ISA) && defined(_MIPS_ISA_MIPS1) && __MIPS_ISA - 0 >= _MIPS_ISA_MIPS1)
+#    define P_CPU_MIPS_I
+#  endif
+#  if defined(P_CPU_MIPS_64)
+#    define P_CPU_MIPS_IV
+#  endif
+#  if defined(P_CPU_MIPS_IV)
+#    define P_CPU_MIPS_III
+#  endif
+#  if defined(P_CPU_MIPS_32) || defined(P_CPU_MIPS_III)
+#    define P_CPU_MIPS_II
+#  endif
+#  if defined(P_CPU_MIPS_II)
+#    define P_CPU_MIPS_I
 #  endif
 #elif defined(__powerpc__) || defined(__powerpc) || defined(__ppc__)   || defined(__ppc) || \
       defined(_ARCH_PPC)   || defined(_ARCH_PWR) || defined(_ARCH_COM) || \
