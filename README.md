@@ -32,7 +32,7 @@ plibsys gives you:
 * Files and directories
 * Shared library loading
 * Useful routines for linked lists, strings, hash tables
-* Macros for OS and compiler detection
+* Macros for CPU architecture, OS and compiler detection
 
 To achieve maximum native performance on each platform several implementation models are used:
 
