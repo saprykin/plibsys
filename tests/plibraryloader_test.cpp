@@ -113,6 +113,12 @@ BOOST_AUTO_TEST_CASE (plibraryloader_general_test)
 	p_library_loader_free (NULL);
 
 	/* General tests */
+#if !defined (P_OS_HPUX) || !defined (P_CPU_HPPA_32)
+	BOOST_CHECK (p_library_loader_is_ref_counted () == TRUE);
+#else
+	BOOST_CHECK (p_library_loader_is_ref_counted () == FALSE);
+#endif
+
 	err_msg = p_library_loader_get_last_error (NULL);
 	p_free (err_msg);
 

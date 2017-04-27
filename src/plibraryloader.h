@@ -44,7 +44,7 @@
  *
  * - HP-UX doesn't support loading libraries containing TLS and built with
  * static TLS model. The same rule applies to any library used as dependency.
- * PA-RISC32 doesn't support reference count for loaded libraries when using
+ * PA-RISC32 doesn't support reference counting for loaded libraries when using
  * shl_* family of functions (always removes all library references on unload).
  *
  * - On OpenVMS only shareable images (linked with /SHAREABLE) can be used for
@@ -126,6 +126,20 @@ P_LIB_API void			p_library_loader_free		(PLibraryLoader	*loader);
  * created. In that case try to pass NULL value as a parameter.
  */
 P_LIB_API pchar *		p_library_loader_get_last_error	(PLibraryLoader	*loader);
+
+/**
+ * @brief Checks whether library loading subsystem uses reference counting.
+ * @return TRUE in case of success, FALSE otherwise.
+ * @since 0.0.3
+ *
+ * When reference counting is supported, the same shared library can be opened
+ * several times, but it would be completely unloaded from the memory only when
+ * the last reference to it is removed.
+ *
+ * @note For now, only PA-RISC32 with shl_* model doesn't support reference
+ * counting.
+ */
+P_LIB_API pboolean		p_library_loader_is_ref_counted ();
 
 P_END_DECLS
 

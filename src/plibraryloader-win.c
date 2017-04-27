@@ -114,3 +114,9 @@ p_library_loader_get_last_error (PLibraryLoader *loader)
 
 	return res;
 }
+
+P_LIB_API pboolean
+p_library_loader_is_ref_counted ()
+{
+	return TRUE;
+}
