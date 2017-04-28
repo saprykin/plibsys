@@ -194,6 +194,8 @@ SYMBOL_VECTOR=(p_library_loader_free=PROCEDURE)
 SYMBOL_VECTOR=(P_LIBRARY_LOADER_FREE/p_library_loader_free=PROCEDURE)
 SYMBOL_VECTOR=(p_library_loader_get_last_error=PROCEDURE)
 SYMBOL_VECTOR=(P_LIBRARY_LOADER_GET_LAST_ERROR/p_library_loader_get_last_error=PROCEDURE)
+SYMBOL_VECTOR=(p_library_loader_is_ref_counted=PROCEDURE)
+SYMBOL_VECTOR=(P_LIBRARY_LOADER_IS_REF_COUNTED/p_library_loader_is_ref_counted=PROCEDURE)
 !
 ! plist.h
 !
