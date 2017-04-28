@@ -55,6 +55,11 @@ BOOST_AUTO_TEST_CASE (plibraryloader_nomem_test)
 {
 	p_libsys_init ();
 
+	if (P_UNLIKELY (p_library_loader_is_ref_counted () == FALSE)) {
+		p_libsys_shutdown ();
+		return;
+	}
+
 	/* We assume that 3rd argument is ourself library path */
 	BOOST_REQUIRE (boost::unit_test::framework::master_test_suite().argc > 1);
 
@@ -113,14 +118,19 @@ BOOST_AUTO_TEST_CASE (plibraryloader_general_test)
 	p_library_loader_free (NULL);
 
 	/* General tests */
-#if !defined (P_OS_HPUX) || !defined (P_CPU_HPPA_32)
-	BOOST_CHECK (p_library_loader_is_ref_counted () == TRUE);
-#else
+#if defined (P_OS_HPUX) && defined (P_CPU_HPPA) && (PLIBSYS_SIZEOF_VOID_P == 4)
 	BOOST_CHECK (p_library_loader_is_ref_counted () == FALSE);
+#else
+	BOOST_CHECK (p_library_loader_is_ref_counted () == TRUE);
 #endif
 
 	err_msg = p_library_loader_get_last_error (NULL);
 	p_free (err_msg);
+
+	if (P_UNLIKELY (p_library_loader_is_ref_counted () == FALSE)) {
+		p_libsys_shutdown ();
+		return;
+	}
 
 	int argCount = boost::unit_test::framework::master_test_suite().argc;
 
