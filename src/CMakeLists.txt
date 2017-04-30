@@ -66,6 +66,9 @@ set (PLIBSYS_PUBLIC_HDRS
 	patomic.h
 	ptypes.h
 	pmacros.h
+	pmacroscompiler.h
+	pmacroscpu.h
+	pmacrosos.h
 	pcondvariable.h
 	pcryptohash.h
 	perror.h

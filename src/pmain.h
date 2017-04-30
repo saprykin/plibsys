@@ -52,7 +52,16 @@
  * ptypes.h Data types
  * @endlink
  * - @link
- * pmacros.h Macros
+ * pmacroscpu.h CPU detection macros
+ * @endlink
+ * - @link
+ * pmacrosos.h OS detection macros
+ * @endlink
+ * - @link
+ * pmacroscompiler.h Compiler detection macros
+ * @endlink
+ * - @link
+ * pmacros.h Miscellaneous macros
  * @endlink
  * - @link
  * pstring.h Strings

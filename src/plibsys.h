@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2016 Alexander Saprykin <xelfium@gmail.com>
+ * Copyright (C) 2010-2017 Alexander Saprykin <xelfium@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -32,6 +32,9 @@
 #include "plibraryloader.h"
 #include "plist.h"
 #include "pmacros.h"
+#include "pmacroscompiler.h"
+#include "pmacroscpu.h"
+#include "pmacrosos.h"
 #include "pmain.h"
 #include "pmem.h"
 #include "pmutex.h"
