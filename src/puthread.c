@@ -27,12 +27,60 @@
 #ifdef P_OS_OS2
 #  define INCL_DOSPROCESS
 #  define INCL_DOSERRORS
+#  define INCL_DOSMISC
 #  include <os2.h>
 #endif
 
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+
+#ifndef P_OS_WIN
+#  include <unistd.h>
+#endif
+
+#ifdef P_OS_WIN
+typedef void (WINAPI * SystemInfoFunc) (LPSYSTEM_INFO);
+#endif
+
+#ifdef P_OS_HPUX
+#  include <sys/pstat.h>
+#endif
+
+#ifdef P_OS_BSD4
+#  include <sys/param.h>
+#  include <sys/types.h>
+#  include <sys/sysctl.h>
+#endif
+
+#ifdef P_OS_VMS
+#  define __NEW_STARLET 1
+#  include <starlet.h>
+#  include <ssdef.h>
+#  include <stsdef.h>
+#  include <efndef.h>
+#  include <iledef.h>
+#  include <iosbdef.h>
+#  include <syidef.h>
+#  include <tis.h>
+#  include <lib$routines.h>
+#endif
+
+#ifdef P_OS_QNX6
+#  include <sys/syspage.h>
+#endif
+
+#ifdef P_OS_BEOS
+#  include <kernel/OS.h>
+#endif
+
+#ifdef P_OS_SYLLABLE
+#  include <atheos/sysinfo.h>
+#endif
+
+#if defined (P_OS_SCO) && !defined (_SC_NPROCESSORS_ONLN)
+#  include <sys/utsname.h>
+#endif
 
 extern void p_uthread_init_internal (void);
 extern void p_uthread_shutdown_internal (void);
@@ -208,6 +256,164 @@ p_uthread_current (void)
 	return (PUThread *) base_thread;
 }
 
+P_LIB_API pint
+p_uthread_ideal_count (void)
+{
+#if defined (P_OS_WIN)
+	SYSTEM_INFO	sys_info;
+	SystemInfoFunc	sys_info_func;
+
+	sys_info_func = (SystemInfoFunc) GetProcAddress (GetModuleHandleA ("kernel32.dll"),
+							 "GetNativeSystemInfo");
+
+	if (P_UNLIKELY (sys_info_func == NULL))
+		sys_info_func = (SystemInfoFunc) GetProcAddress (GetModuleHandleA ("kernel32.dll"),
+								 "GetSystemInfo");
+
+	if (P_UNLIKELY (sys_info_func == NULL)) {
+		P_ERROR ("PUThread::p_uthread_ideal_count: failed to get address of system info procedure");
+		return 1;
+	}
+
+	sys_info_func (&sys_info);
+
+	return (pint) sys_info.dwNumberOfProcessors;
+#elif defined (P_OS_HPUX)
+	struct pst_dynamic psd;
+
+	if (P_LIKELY (pstat_getdynamic (&psd, sizeof (psd), 1, 0) != -1))
+		return (pint) psd.psd_proc_cnt;
+	else {
+		P_WARNING ("PUThread::p_uthread_ideal_count: failed to call pstat_getdynamic()");
+		return 1;
+	}
+#elif defined (P_OS_IRIX)
+	pint cores;
+
+	cores = sysconf (_SC_NPROC_ONLN);
+
+	if (P_UNLIKELY (cores < 0)) {
+		P_WARNING ("PUThread::p_uthread_ideal_count: failed to call sysconf(_SC_NPROC_ONLN)");
+		cores = 1;
+	}
+
+	return cores;
+#elif defined (P_OS_BSD4)
+	pint	cores;
+	pint	mib[2];
+	size_t	len = sizeof (cores);
+
+	mib[0] = CTL_HW;
+	mib[1] = HW_NCPU;
+
+	if (P_UNLIKELY (sysctl (mib, 2, &cores, &len, NULL, 0) == -1)) {
+		P_WARNING ("PUThread::p_uthread_ideal_count: failed to call sysctl()");
+		return 1;
+	}
+
+	return (pint) cores;
+#elif defined (P_OS_VMS)
+	pint	cores;
+	pint	status;
+	puint	efn;
+	IOSB	iosb;
+#  if (PLIBSYS_SIZEOF_VOID_P == 4)
+	ILE3	itmlst[] = { { sizeof (cores), SYI$_AVAILCPU_CNT, &cores, NULL},
+			     { 0, 0, NULL, NULL}
+			   };
+#  else
+	ILEB_64	itmlst[] = { { 1, SYI$_AVAILCPU_CNT, -1, sizeof (cores), &cores, NULL},
+			     { 0, 0, 0, 0, NULL, NULL}
+			   };
+#  endif
+
+	status = lib$get_ef (&efn);
+
+	if (P_UNLIKELY (!$VMS_STATUS_SUCCESS (status))) {
+		P_WARNING ("PUThread::p_uthread_ideal_count: failed to call lib$get_ef()");
+		return 1;
+	}
+
+	status = sys$getsyi (efn, NULL, NULL, itmlst, &iosb, tis_io_complete, 0);
+
+	if (P_UNLIKELY (!$VMS_STATUS_SUCCESS (status))) {
+		P_WARNING ("PUThread::p_uthread_ideal_count: failed to call sys$getsyiw()");
+		lib$free_ef (&efn);
+		return 1;
+	}
+
+	status = tis_synch (efn, &iosb);
+
+	if (P_UNLIKELY (!$VMS_STATUS_SUCCESS (status))) {
+		P_WARNING ("PUThread::p_uthread_ideal_count: failed to call tis_synch()");
+		lib$free_ef (&efn);
+		return 1;
+	}
+
+	if (P_UNLIKELY (iosb.iosb$l_getxxi_status != SS$_NORMAL)) {
+		P_WARNING ("PUThread::p_uthread_ideal_count: l_getxxi_status is not normal");
+		lib$free_ef (&efn);
+		return 1;
+	}
+
+	lib$free_ef (&efn);
+
+	return cores;
+#elif defined (P_OS_OS2)
+	APIRET	ulrc;
+	ULONG	cores;
+
+	if (P_UNLIKELY (DosQuerySysInfo (QSV_NUMPROCESSORS,
+					 QSV_NUMPROCESSORS,
+					 &cores,
+					 sizeof (cores)) != NO_ERROR)) {
+		P_WARNING ("PUThread::p_uthread_ideal_count: failed to call DosQuerySysInfo()");
+		return 1;
+	}
+
+	return (pint) cores;
+#elif defined (P_OS_QNX6)
+	return (pint) _syspage_ptr->num_cpu;
+#elif defined (P_OS_BEOS)
+	system_info sys_info;
+
+	get_system_info (&sys_info);
+
+	return (pint) sys_info.cpu_count;
+#elif defined (P_OS_SYLLABLE)
+	system_info sys_info;
+
+	if (P_UNLIKELY (get_system_info_v (&sys_info, SYS_INFO_VERSION) != 0)) {
+		P_WARNING ("PUThread::p_uthread_ideal_count: failed to call get_system_info_v()");
+		return 1;
+	}
+
+	return (pint) sys_info.nCPUCount;
+#elif defined (P_OS_SCO) && !defined (_SC_NPROCESSORS_ONLN)
+	struct scoutsname utsn;
+
+	if (P_UNLIKELY (__scoinfo (&utsn, sizeof (utsn)) == -1)) {
+		P_ERROR ("PUThread::p_uthread_ideal_count: failed to call __scoinfo()");
+		return 1;
+	}
+
+	return (pint) utsn.numcpu;
+#elif defined (_SC_NPROCESSORS_ONLN)
+	pint cores;
+
+	cores = (pint) sysconf (_SC_NPROCESSORS_ONLN);
+
+	if (P_UNLIKELY (cores  == -1)) {
+		P_WARNING ("PUThread::p_uthread_ideal_count: failed to call sysconf(_SC_NPROCESSORS_ONLN)");
+		return 1;
+	}
+
+	return cores;
+#else
+	return 1;
+#endif
+}
+
 P_LIB_API void
 p_uthread_ref (PUThread *thread)
 {
@@ -248,7 +454,7 @@ static pint pp_uthread_nanosleep (puint32 msec)
 	time2wait.tv_sec  = msec / 1000;
 	time2wait.tv_usec = (msec % 1000) * 1000;
 
-	if (gettimeofday (&tstart, NULL) != 0)
+	if (P_UNLIKELY (gettimeofday (&tstart, NULL) != 0))
 		return -1;
 
 	rc = -1;

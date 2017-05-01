@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2016 Alexander Saprykin <xelfium@gmail.com>
+ * Copyright (C) 2010-2017 Alexander Saprykin <xelfium@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -208,6 +208,14 @@ P_LIB_API P_HANDLE	p_uthread_current_id	(void);
  * that structure.
  */
 P_LIB_API PUThread *	p_uthread_current	(void);
+
+/**
+ * @brief Gets the ideal number of threads for the system based on the number of
+ * avaialble CPUs and cores (physical and logical).
+ * @return Ideal number of threads, 1 in case of failed detection.
+ * @since 0.0.3
+ */
+P_LIB_API pint		p_uthread_ideal_count	(void);
 
 /**
  * @brief Incremetns a thread reference counter

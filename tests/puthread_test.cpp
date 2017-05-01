@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2016 Alexander Saprykin <xelfium@gmail.com>
+ * Copyright (C) 2013-2017 Alexander Saprykin <xelfium@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -313,6 +313,8 @@ BOOST_AUTO_TEST_CASE (puthread_general_test)
 
 	PUThread *cur_thr = p_uthread_current ();
 	BOOST_CHECK (cur_thr != NULL);
+
+	BOOST_CHECK (p_uthread_ideal_count () > 0);
 
 	p_libsys_shutdown ();
 }
