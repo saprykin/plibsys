@@ -136,8 +136,9 @@ BOOST_AUTO_TEST_CASE (pmacros_general_test)
 #endif
 
 #if defined (P_CC_INTEL)
-#  if !defined (P_OS_WIN)   && !defined (P_OS_MAC) && \
-      !defined (P_OS_LINUX) && !defined (P_OS_FREEBSD)
+#  if !defined (P_OS_WIN)   && !defined (P_OS_MAC)     && \
+      !defined (P_OS_LINUX) && !defined (P_OS_FREEBSD) && \
+      !defined (P_OS_QNX6)
 	BOOST_CHECK (false);
 #  endif
 #endif
