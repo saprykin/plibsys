@@ -112,7 +112,7 @@ p_library_loader_get_last_error (PLibraryLoader *loader)
 }
 
 P_LIB_API pboolean
-p_library_loader_is_ref_counted ()
+p_library_loader_is_ref_counted (void)
 {
 #if defined (P_OS_HPUX) && defined (P_CPU_HPPA) && (PLIBSYS_SIZEOF_VOID_P == 4)
 	return FALSE;

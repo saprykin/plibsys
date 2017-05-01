@@ -140,7 +140,7 @@ P_LIB_API pchar *		p_library_loader_get_last_error	(PLibraryLoader	*loader);
  * @note For now, only HP-UX on 32-bit PA-RISC systems with shl_* model doesn't
  * support reference counting.
  */
-P_LIB_API pboolean		p_library_loader_is_ref_counted ();
+P_LIB_API pboolean		p_library_loader_is_ref_counted (void);
 
 P_END_DECLS
 
