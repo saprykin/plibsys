@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2016 Alexander Saprykin <xelfium@gmail.com>
+ * Copyright (C) 2010-2017 Alexander Saprykin <xelfium@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -65,11 +65,11 @@ P_BEGIN_DECLS
 /** Socket address family. */
 typedef enum PSocketFamily_ {
 	P_SOCKET_FAMILY_UNKNOWN = 0,		/**< Unknown family.	*/
-#ifdef AF_INET6
 	P_SOCKET_FAMILY_INET	= AF_INET,	/**< IPv4 family.	*/
+#ifdef AF_INET6
 	P_SOCKET_FAMILY_INET6	= AF_INET6	/**< IPv6 family.	*/
 #else
-	P_SOCKET_FAMILY_INET	= AF_INET	/**< IPv4 family.	*/
+	P_SOCKET_FAMILY_INET6	= -1		/**< No IPv6 family.	*/
 #endif
 } PSocketFamily;
 
