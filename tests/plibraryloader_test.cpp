@@ -118,10 +118,12 @@ BOOST_AUTO_TEST_CASE (plibraryloader_general_test)
 	p_library_loader_free (NULL);
 
 	/* General tests */
-#if defined (P_OS_HPUX) && defined (P_CPU_HPPA) && (PLIBSYS_SIZEOF_VOID_P == 4)
-	BOOST_CHECK (p_library_loader_is_ref_counted () == FALSE);
-#else
+
+	/* At least not on HP-UX it should be true */
+#if !defined (P_OS_HPUX)
 	BOOST_CHECK (p_library_loader_is_ref_counted () == TRUE);
+#else
+	p_library_loader_is_ref_counted ();
 #endif
 
 	err_msg = p_library_loader_get_last_error (NULL);
