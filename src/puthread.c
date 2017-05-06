@@ -95,8 +95,10 @@ extern PUThread * p_uthread_create_internal (PUThreadFunc	func,
 static void pp_uthread_cleanup (ppointer data);
 static ppointer pp_uthread_proxy (ppointer data);
 
-#if !defined (P_OS_WIN) && !defined (PLIBSYS_HAS_NANOSLEEP)
+#ifndef P_OS_WIN
+#  if !defined (PLIBSYS_HAS_CLOCKNANOSLEEP) && !defined (PLIBSYS_HAS_NANOSLEEP)
 static pint pp_uthread_nanosleep (puint32 msec);
+#  endif
 #endif
 
 static PUThreadKey * pp_uthread_specific_data = NULL;
@@ -443,7 +445,7 @@ p_uthread_unref (PUThread *thread)
 
 #ifndef P_OS_WIN
 #  include <errno.h>
-#  if !defined (PLIBSYS_HAS_NANOSLEEP)
+#  if !defined (PLIBSYS_HAS_CLOCKNANOSLEEP) && !defined (PLIBSYS_HAS_NANOSLEEP)
 #    include <sys/select.h>
 #    include <sys/time.h>
 static pint pp_uthread_nanosleep (puint32 msec)
@@ -489,7 +491,7 @@ p_uthread_sleep (puint32 msec)
 	return 0;
 #elif defined (P_OS_OS2)
 	return (DosSleep (msec) == NO_ERROR) ? 0 : -1;
-#elif defined (PLIBSYS_HAS_NANOSLEEP)
+#elif defined (PLIBSYS_HAS_CLOCKNANOSLEEP) || defined (PLIBSYS_HAS_NANOSLEEP)
 	pint result;
 	struct timespec time_req;
 	struct timespec time_rem;
@@ -497,11 +499,18 @@ p_uthread_sleep (puint32 msec)
 	memset (&time_rem, 0, sizeof (struct timespec));
 
 	time_req.tv_nsec = (msec % 1000) * 1000000L;
-	time_req.tv_sec = (time_t) (msec / 1000);
+	time_req.tv_sec  = (time_t) (msec / 1000);
 
 	result = -1;
 	while (result != 0) {
+#  ifdef PLIBSYS_HAS_CLOCKNANOSLEEP
+		if (P_UNLIKELY ((result = clock_nanosleep (CLOCK_MONOTONIC,
+							   0,
+							   &time_req,
+							   &time_rem)) != 0)) {
+#  else
 		if (P_UNLIKELY ((result = nanosleep (&time_req, &time_rem)) != 0)) {
+#  endif
 			if (p_error_get_last_system () == EINTR)
 				time_req = time_rem;
 			else

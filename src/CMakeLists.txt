@@ -364,6 +364,25 @@ if (NOT PLIBSYS_NATIVE_WINDOWS)
 		add_definitions (-DPLIBSYS_MMAP_HAS_MAP_ANON)
 	endif()
 
+	# Check for clock_nanosleep() call
+	message (STATUS "Checking whether clock_nanosleep() presents")
+
+	check_c_source_compiles (
+				 "#include <time.h>
+				 int main () {
+					struct timespec time_sp = {0, 500000000L};
+					clock_nanosleep (CLOCK_MONOTONIC, 0, &time_sp, NULL);
+					return 0;
+				 }"
+				 PLIBSYS_HAS_CLOCKNANOSLEEP
+				)
+
+	if (PLIBSYS_HAS_CLOCKNANOSLEEP)
+		message (STATUS "Checking whether clock_nanosleep() presents - yes")
+	else()
+		message (STATUS "Checking whether clock_nanosleep() presents - no")
+	endif()
+
 	# Check for nanosleep() call
 	message (STATUS "Checking whether nanosleep() presents")
 
@@ -382,6 +401,13 @@ if (NOT PLIBSYS_NATIVE_WINDOWS)
 		add_definitions (-DPLIBSYS_HAS_NANOSLEEP)
 	else()
 		message (STATUS "Checking whether nanosleep() presents - no")
+	endif()
+
+	# Prefere clock_nanosleep() over nanosleep() for power consumption
+	if (PLIBSYS_HAS_CLOCKNANOSLEEP)
+		add_definitions (-DPLIBSYS_HAS_CLOCKNANOSLEEP)
+	elseif(PLIBSYS_HAS_NANOSLEEP)
+		add_definitions (-DPLIBSYS_HAS_NANOSLEEP)
 	endif()
 
 	# Check for getaddrinfo() call
