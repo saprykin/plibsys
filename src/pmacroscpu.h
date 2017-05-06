@@ -413,7 +413,11 @@
 #elif defined(__i386__) || defined(__i386) || defined(_M_IX86)
 #  define P_CPU_X86_32
 #  if defined(_M_IX86)
-#    define P_CPU_X86 (_M_IX86 / 100)
+#    if (_M_IX86 <= 600)
+#      define P_CPU_X86 (_M_IX86 / 100)
+#    else
+#      define P_CPU_X86 6
+#    endif
 #  elif defined(__i686__) || defined(__athlon__) || defined(__SSE__) || defined(__pentiumpro__)
 #    define P_CPU_X86 6
 #  elif defined(__i586__) || defined(__k6__) || defined(__pentium__)
