@@ -153,7 +153,7 @@ build_script:
                         } ElseIf ($env:USE_CYGWIN -eq "1") {
                                 $VAR_BOOST_ROOT = "-DBOOST_ROOT=/cygdrive/c/Libraries/boost_1_62_0";
                         } Else {
-                                $VAR_BOOST_ROOT = "-DBOOST_ROOT=C:\Libraries\boost_1_62_0";
+                                $VAR_BOOST_ROOT = "-DBOOST_ROOT=C:/Libraries/boost_1_62_0";
                         }
                 }
 
