@@ -134,7 +134,7 @@
  * p_libsys_shutdown ();
  * @endcode
  * Here a UDP socket was created, bound to the localhost address and the port
- * 5432. Do not forget to close the socket and free memory after its usage.
+ * @a 5432. Do not forget to close the socket and free memory after its usage.
  */
 
 #if !defined (PLIBSYS_H_INSIDE) && !defined (PLIBSYS_COMPILATION)
