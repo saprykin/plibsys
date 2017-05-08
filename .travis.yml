@@ -6,7 +6,7 @@ env:
                 - COVERITY_SCAN_PROJECT_NAME="saprykin/plibsys"
                 - COVERITY_SCAN_BRANCH_PATTERN="coverity_scan"
                 - COVERITY_SCAN_NOTIFICATION_EMAIL="xelfium@gmail.com"
-                - COVERITY_SCAN_BUILD_COMMAND="make"
+                - COVERITY_SCAN_BUILD_COMMAND="cov-configure --comptype gcc --compiler /usr/bin/${CXX} && make"
 
 language: generic
 sudo: false
