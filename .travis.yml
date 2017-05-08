@@ -7,6 +7,7 @@ env:
                 - COVERITY_SCAN_BRANCH_PATTERN="coverity_scan"
                 - COVERITY_SCAN_NOTIFICATION_EMAIL="xelfium@gmail.com"
                 - COVERITY_SCAN_BUILD_COMMAND="make"
+                - COVERITY_SCAN_BUILD_COMMAND_PREPEND="cov-configure --comptype gcc --compiler gcc-4.9 --template"
 
 language: generic
 sudo: false
