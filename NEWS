@@ -1,3 +1,39 @@
+Changes in plibsys 0.0.3
+========================
+
+* Introduce models for shared library loading (#37)
+* HP-UX shared library loading model (#39)
+* Use lldiv() to improve time profiler accuracy
+* Better error handling for shared library loading (#40)
+* CPU architecture detection macros (#44)
+* Prefer clock_nanosleep() over nanosleep() if available (#47)
+
+* New supported platforms and compilers:
+  BeOS on x86 (GCC)
+  OS/2 on x86 (GCC + kLIBC) (#41)
+  PGI (x64) compiler on Linux
+  PGI (x86) compiler on macOS
+
+* New API
+  Add routine to check for IPv6 support
+  Add routine to check if library loading is reference counted
+  Add detection of number of the CPU cores (#43)
+
+* AppVeyor
+  MSYS2 build is disabled due to a bug in CMake package
+
+* Travis
+  Correct Brew formula names for GCC on macOS
+  Update Xcode8 image to 8.3 version
+  Fix Coverity scan
+
+* Fixes
+  Do not use poll() on macOS as it can be broken
+  Do not treat some non-UNIX systems as UNIX (#42)
+  Always define P_SOCKET_FAMILY_INET6
+  Use PLIBSYS_PLATFORM_LDFLAGS to perform system checks
+  Prevent Doxygen from generating duplicate macros (#46)
+
 Changes in plibsys 0.0.2
 ========================
 
