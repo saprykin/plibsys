@@ -93,6 +93,10 @@ plibsys was tested with the following compilers:
 
 Use CMake to build plibsys for target platform. For OpenVMS see platforms/vms-general directory.
 
+## Documentation
+
+Documentation for the latest stable verison is avaialble through the [GitHub Pages](http://saprykin.github.io/plibsys-docs).
+
 ## License
 
 plibsys is distributed under the terms of GNU LGPLv2 or higher license.
