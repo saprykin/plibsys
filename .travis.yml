@@ -27,9 +27,6 @@ matrix:
                 - os: linux
                   addons: { apt: { sources: ubuntu-toolchain-r-test, packages: [gcc-6, g++-6, libboost-test-dev] } }
                   env: CC=gcc-6 CXX=g++-6 ARCH=64
-                - os: linux
-                  addons: { apt: { sources: ubuntu-toolchain-r-test, packages: [gcc-7, g++-7, libboost-test-dev] } }
-                  env: CC=gcc-7 CXX=g++-7 ARCH=64
                 # Linux x86 builds (GCC)
                 - os: linux
                   addons: { apt: { sources: ubuntu-toolchain-r-test, packages: [gcc-4.9, g++-4.9, gcc-multilib, g++-multilib, gcc-4.9-multilib, g++-4.9-multilib, linux-libc-dev] } }
@@ -40,9 +37,6 @@ matrix:
                 - os: linux
                   addons: { apt: { sources: ubuntu-toolchain-r-test, packages: [gcc-6, g++-6, gcc-multilib, g++-multilib, gcc-6-multilib, g++-6-multilib, linux-libc-dev] } }
                   env: CC=gcc-6 CXX=g++-6 ARCH=32 BUNDLED_BOOST=1
-                - os: linux
-                  addons: { apt: { sources: ubuntu-toolchain-r-test, packages: [gcc-7, g++-7, gcc-multilib, g++-multilib, gcc-7-multilib, g++-7-multilib, linux-libc-dev] } }
-                  env: CC=gcc-7 CXX=g++-7 ARCH=32 BUNDLED_BOOST=1
                 # Linux x64 builds (Clang)
                 - os: linux
                   addons: { apt: { packages: libboost-test-dev } }
