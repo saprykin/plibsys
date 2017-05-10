@@ -210,8 +210,6 @@ SET (PLIBSYS_TESTS_SUMMARY
         == Tests configuration ==
 
         Build static tests:     ${PLIBSYS_TESTS_STATIC}
-        Build static library:   ${PLIBSYS_BUILD_STATIC}
-
         Boost directory:        ${BOOST_ROOT}
 ")
 

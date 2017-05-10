@@ -811,6 +811,7 @@ SET (PLIBSYS_SUMMARY
 	Platform LDFLAGS:       ${PLIBSYS_PLATFORM_LDFLAGS}
 	Platform libraries:     ${PLIBSYS_PLATFORM_LINK_LIBRARIES}
 
+	Build static library:   ${PLIBSYS_BUILD_STATIC}
 	Coverage support:       ${PLIBSYS_COVERAGE}
 
 ")
