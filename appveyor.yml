@@ -123,7 +123,11 @@ install:
                         Set-Location "$MINGW_BASE" | Out-Null;
                         & 7z x -y "$MINGW_ARCHIVE";
 
-                        $env:PATH = "c:\projects\$MINGW_BASE\mingw32\bin;C:\Program Files (x86)\CMake\bin";
+                        If ($env:USE_MINGW64 -eq "1") {
+                                $env:PATH = "c:\projects\$MINGW_BASE\mingw64\bin;C:\Program Files (x86)\CMake\bin";
+                        } Else {
+                                $env:PATH = "c:\projects\$MINGW_BASE\mingw32\bin;C:\Program Files (x86)\CMake\bin";
+                        }
                 } ElseIf ($env:USE_WATCOM -eq "1") {
                         $WATCOM_BASE      = "open-watcom-c-win32-1.9";
                         $WATCOM_INSTALLER = "$WATCOM_BASE.exe";
