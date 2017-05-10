@@ -13,9 +13,11 @@ environment:
                   USE_MINGW_493:   "1"
                 - CMAKE_GENERATOR: "MinGW Makefiles"
                   USE_MINGW:       "1"
+                  USE_MINGW64:     "1"
                   USE_MINGW_540:   "1"
                 - CMAKE_GENERATOR: "MinGW Makefiles"
                   USE_MINGW:       "1"
+                  USE_MINGW64:     "1"
                   USE_MINGW_630:   "1"
 #                - CMAKE_GENERATOR: "Unix Makefiles"
 #                  USE_MSYS64:      "1"
@@ -56,8 +58,8 @@ clone_folder: c:\projects\plibsys
 
 cache:
         - c:\projects\i686-4.9.3-release-win32-dwarf-rt_v4-rev1.7z
-        - c:\projects\i686-5.4.0-release-win32-dwarf-rt_v5-rev0.7z
-        - c:\projects\i686-6.3.0-release-win32-dwarf-rt_v5-rev1.7z
+        - c:\projects\x86_64-5.4.0-release-win32-seh-rt_v5-rev0.7z
+        - c:\projects\x86_64-6.3.0-release-win32-seh-rt_v5-rev1.7z
         - c:\projects\open-watcom-c-win32-1.9.exe
         - c:\cygwin-setup-cache
 
@@ -86,15 +88,20 @@ install:
                                 $MINGW_BASE    = "i686-4.9.3-release-win32-dwarf-rt_v4-rev1";
                                 $MINGW_VERSION = "4.9.3";
                         } ElseIf ($env:USE_MINGW_540 -eq "1") {
-                                $MINGW_BASE    = "i686-5.4.0-release-win32-dwarf-rt_v5-rev0";
+                                $MINGW_BASE    = "x86_64-5.4.0-release-win32-seh-rt_v5-rev0";
                                 $MINGW_VERSION = "5.4.0";
                         } ElseIf ($env:USE_MINGW_630 -eq "1") {
-                                $MINGW_BASE    = "i686-6.3.0-release-win32-dwarf-rt_v5-rev1";
+                                $MINGW_BASE    = "x86_64-6.3.0-release-win32-seh-rt_v5-rev1";
                                 $MINGW_VERSION = "6.3.0";
                         }
 
                         $MINGW_ARCHIVE = "$MINGW_BASE.7z";
-                        $MINGW_URL     = "https://sourceforge.net/projects/mingw-w64/files/Toolchains%20targetting%20Win32/Personal%20Builds/mingw-builds/$MINGW_VERSION/threads-win32/dwarf/$MINGW_ARCHIVE/download";
+
+                        If ($env:USE_MINGW64 -eq "1") {
+                                $MINGW_URL = "https://sourceforge.net/projects/mingw-w64/files/Toolchains%20targetting%20Win64/Personal%20Builds/mingw-builds/$MINGW_VERSION/threads-win32/seh/$MINGW_ARCHIVE/download";
+                        } Else {
+                                $MINGW_URL = "https://sourceforge.net/projects/mingw-w64/files/Toolchains%20targetting%20Win32/Personal%20Builds/mingw-builds/$MINGW_VERSION/threads-win32/dwarf/$MINGW_ARCHIVE/download";
+                        }
 
                         Set-Location c:\projects | Out-Null;
 
