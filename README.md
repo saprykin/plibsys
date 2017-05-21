@@ -47,7 +47,7 @@ To achieve maximum native performance on each platform several implementation mo
 ## Platforms
 
 plibsys is a cross-platform, highly portable library, it is fully covered
-with unit tests and was tested on the following platforms:
+with unit tests and was tested on the following desktop platforms:
 
 * GNU/Linux
 * macOS
@@ -69,6 +69,10 @@ with unit tests and was tested on the following platforms:
 * Syllable
 * BeOS
 
+plibsys also supports the following mobile platforms:
+
+* BlackBerry 10
+
 It should also work on other *nix systems with or without minimal efforts.
 
 ## Compilers
@@ -82,7 +86,7 @@ plibsys was tested with the following compilers:
 * GCC (x86, x64, PPC32be, PPC64be/le, IA-64/32, IA-64, Alpha, HPPA2.0-32, MIPS32, AArch32, SPARCv9)
 * Clang (x86, x64, PPC32be)
 * Intel (x86, x64)
-* QCC (x86)
+* QCC (x86, AArch32)
 * Oracle Solaris Studio (x86, x64, SPARCv9)
 * MIPSpro (MIPS32)
 * XL C (PPC64le)
