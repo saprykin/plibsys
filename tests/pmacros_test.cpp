@@ -242,6 +242,12 @@ BOOST_AUTO_TEST_CASE (pmacros_general_test)
 #  endif
 #endif
 
+#if defined (P_OS_BB10)
+#  if !defined(P_CPU_X86) && !defined (P_CPU_ARM)
+	BOOST_CHECK (false);
+#  endif
+#endif
+
 #if defined (P_OS_SCO)
 #  if !defined (P_CPU_X86)
 	BOOST_CHECK (false);

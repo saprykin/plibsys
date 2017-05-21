@@ -52,6 +52,7 @@
  * SOLARIS           - Sun (Oracle) Solaris
  * QNX               - QNX 4.x
  * QNX6              - QNX Neutrino 6.x
+ * BB10              - BlackBerry 10
  * SCO               - SCO OpenServer 5/6
  * UNIXWARE          - UnixWare 7
  * IRIX              - SGI IRIX
@@ -153,6 +154,12 @@
  * @def P_OS_QNX6
  * @brief QNX Neutrino 6.x operating system.
  * @since 0.0.1
+ */
+
+/**
+ * @def P_OS_BB10
+ * @brief BlackBerry 10 operating system.
+ * @since 0.0.4
  */
 
 /**
@@ -304,7 +311,11 @@
 #elif defined(__sun) || defined(sun)
 #  define P_OS_SOLARIS
 #elif defined(__QNXNTO__)
-#  define P_OS_QNX6
+#  ifdef __BLACKBERRY10__
+#    define P_OS_BB10
+#  else
+#    define P_OS_QNX6
+#  endif
 #elif defined(__QNX__)
 #  define P_OS_QNX
 #elif defined(_SCO_DS)
@@ -391,6 +402,9 @@
 #  endif
 #  ifndef P_OS_QNX6
 #    define P_OS_QNX6
+#  endif
+#  ifndef P_OS_BB10
+#    define P_OS_BB10
 #  endif
 #  ifndef P_OS_SCO
 #    define P_OS_SCO
