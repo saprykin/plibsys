@@ -64,7 +64,7 @@ endif()
 if (PLIBSYS_BUILD_DOC)
         find_package (Doxygen)
 
-        if (Doxygen_FOUND)
+        if (DOXYGEN_FOUND)
                 configure_file (${PROJECT_SOURCE_DIR}/Doxyfile.in ${PROJECT_BINARY_DIR}/Doxyfile)
 
                 add_custom_target (doc ALL
