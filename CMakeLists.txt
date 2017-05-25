@@ -12,15 +12,11 @@ set (VERSION ${PLIBSYS_VERSION})
 
 set (top_srcdir ${PROJECT_SOURCE_DIR})
 
-configure_file (
-        "${PROJECT_SOURCE_DIR}/Doxyfile.in"
-        "${PROJECT_BINARY_DIR}/Doxyfile"
-)
-
 option (PLIBSYS_TESTS "Build unit tests" ON)
 option (PLIBSYS_TESTS_STATIC "Use Boost Unit Test Framework without compilation" OFF)
 option (PLIBSYS_BUILD_STATIC "Also build static version of the library" ON)
 option (PLIBSYS_COVERAGE "Enable gcov coverage (GCC and Clang)" OFF)
+option (PLIBSYS_BUILD_DOC "Enable building HTML documentation" ON)
 
 if (NOT CMAKE_BUILD_TYPE)
         set (CMAKE_BUILD_TYPE "Debug")
@@ -62,6 +58,23 @@ if (PLIBSYS_TESTS)
                 else()
                         message (STATUS "Checking whether to enable unit tests - no")
                 endif()
+        endif()
+endif()
+
+if (PLIBSYS_BUILD_DOC)
+        find_package (Doxygen)
+
+        if (Doxygen_FOUND)
+                configure_file (${PROJECT_SOURCE_DIR}/Doxyfile.in ${PROJECT_BINARY_DIR}/Doxyfile)
+
+                add_custom_target (doc ALL
+                        COMMAND ${DOXYGEN_EXECUTABLE} Doxyfile
+                        WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
+                        COMMENT "Generating API documentation with Doxygen"
+                        VERBATIM
+                )
+
+                install (DIRECTORY ${PROJECT_BINARY_DIR}/doc/html DESTINATION share/doc)
         endif()
 endif()
 
