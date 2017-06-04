@@ -37,6 +37,16 @@ static P_GNUC_WARN_UNUSED_RESULT pint unused_result_test_func ()
 	return 0;
 }
 
+P_LIB_INTERNAL_API int internal_api_test ()
+{
+	return 0;
+}
+
+P_LIB_GLOBAL_API int global_api_test ()
+{
+	return 0;
+}
+
 BOOST_AUTO_TEST_SUITE (BOOST_TEST_MODULE)
 
 BOOST_AUTO_TEST_CASE (pmacros_general_test)
@@ -572,6 +582,9 @@ BOOST_AUTO_TEST_CASE (pmacros_general_test)
 	P_UNUSED (unused);
 
 	pint result = unused_result_test_func ();
+
+	BOOST_CHECK (internal_api_test () == 0);
+	BOOST_CHECK (global_api_test () == 0);
 
 	P_WARNING ("Test warning output");
 	P_ERROR ("Test error output");
