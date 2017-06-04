@@ -16,6 +16,7 @@ option (PLIBSYS_TESTS "Build unit tests" ON)
 option (PLIBSYS_TESTS_STATIC "Use Boost Unit Test Framework without compilation" OFF)
 option (PLIBSYS_BUILD_STATIC "Also build static version of the library" ON)
 option (PLIBSYS_COVERAGE "Enable gcov coverage (GCC and Clang)" OFF)
+option (PLIBSYS_VISIBILITY "Use explicit symbols visibility if possible" ON)
 option (PLIBSYS_BUILD_DOC "Enable building HTML documentation" ON)
 
 if (NOT CMAKE_BUILD_TYPE)

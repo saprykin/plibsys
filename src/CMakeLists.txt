@@ -3,6 +3,7 @@ include (CheckTypeSize)
 include (CheckIncludeFile)
 include (TestBigEndian)
 include (${PROJECT_SOURCE_DIR}/cmake/PlatformDetect.cmake)
+include (${PROJECT_SOURCE_DIR}/cmake/VisibilityDetect.cmake)
 set (OUTPUT_DIR ${CMAKE_BINARY_DIR})
 
 # Try to detect target platform
@@ -691,6 +692,28 @@ else()
 	message (STATUS "Checking whether lldiv() presents - no")
 endif()
 
+# Symbols visibility attributes
+if (PLIBSYS_VISIBILITY)
+	message (STATUS "Checking whether compiler supports visibility")
+	plibsys_detect_visibility (PLIBSYS_VISIBILITY_CFLAGS PLIBSYS_VISIBILITY_LDFLAGS)
+
+	if (NOT PLIBSYS_VISIBILITY_CFLAGS AND NOT PLIBSYS_VISIBILITY_LDFLAGS)
+		message (STATUS "Checking whether compiler supports visibility - no")
+		set (PLIBSYS_VISIBILITY OFF)
+	else()
+		message (STATUS "Checking whether compiler supports visibility - yes")
+
+		if (PLIBSYS_VISIBILITY_CFLAGS)
+			set (PLIBSYS_PLATFORM_CFLAGS "${PLIBSYS_PLATFORM_CFLAGS} ${PLIBSYS_VISIBILITY_CFLAGS}")
+		endif()
+
+		if (PLIBSYS_VISIBILITY_LDFLAGS)
+			set (PLIBSYS_PLATFORM_LDFLAGS "${PLIBSYS_PLATFORM_LDFLAGS} ${PLIBSYS_VISIBILITY_LDFLAGS}")
+		endif()
+	endif()
+endif()
+
+# Add targets
 add_library (plibsys SHARED ${PLIBSYS_SRCS} ${PLIBSYS_PLATFORM_SRCS} ${PLIBSYS_PUBLIC_HDRS} ${PLIBSYS_PRIVATE_HDRS})
 
 if (PLIBSYS_BUILD_STATIC)
@@ -778,9 +801,9 @@ install (TARGETS ${PLIBSYS_INSTALL_TARGETS} EXPORT plibsys-targets
 	COMPONENT Core
 )
 install (TARGETS ${PLIBSYS_INSTALL_TARGETS}
-	 DESTINATION lib
-	 ARCHIVE DESTINATION lib
-	 COMPONENT Core
+	DESTINATION lib
+	ARCHIVE DESTINATION lib
+	COMPONENT Core
 )
 install (FILES
 	${PLIBSYS_PUBLIC_HDRS}
@@ -813,6 +836,7 @@ SET (PLIBSYS_SUMMARY
 
 	Build static library:   ${PLIBSYS_BUILD_STATIC}
 	Coverage support:       ${PLIBSYS_COVERAGE}
+	Visibility:             ${PLIBSYS_VISIBILITY}
 
 ")
 
