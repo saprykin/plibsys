@@ -1,9 +1,9 @@
 function (plibsys_detect_visibility cflags ldflags)
         # Check GCC
         check_c_source_compiles ("int main () {
-                                        #if (__GNUC__ >= 4) && \
-                                            !defined(__sun)  && !defined(sun)  && \
-                                            !defined(__hpux) && !defined(hpux) && \
+                                        #if (__GNUC__ >= 4) && \\
+                                            !defined(__sun)  && !defined(sun)  && \\
+                                            !defined(__hpux) && !defined(hpux) && \\
                                             !defined(_AIX) && !defined(__CYGWIN__) && !defined(__MSYS__)
                                         return 0;
                                         #else
@@ -21,7 +21,7 @@ function (plibsys_detect_visibility cflags ldflags)
 
         # Check Sun Studio
         check_c_source_compiles ("int main () {
-                                        #if (defined(__SUNPRO_C) && (__SUNPRO_C >= 0x550)) || \
+                                        #if (defined(__SUNPRO_C) && (__SUNPRO_C >= 0x550)) || \\
                                             (defined(__SUNPRO_CC) && (__SUNPRO_CC >= 0x5110))
                                         return 0;
                                         #else
@@ -56,7 +56,7 @@ function (plibsys_detect_visibility cflags ldflags)
 
         # Check HP C/aC++
         check_c_source_compiles ("int main () {
-                                        #if (defined(__HP_cc)  && (__HP_cc >= 0x061500)) || \
+                                        #if (defined(__HP_cc)  && (__HP_cc >= 0x061500)) || \\
                                             (defined(__HP_aCC) && (__HP_aCC >= 0x061500))
                                         return 0;
                                         #else
