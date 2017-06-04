@@ -68,6 +68,7 @@
  * MAC32             - 32-bit macOS
  * MAC64             - 64-bit macOS
  * CYGWIN            - Cygwin
+ * MSYS              - MSYS
  * WIN               - 32-bit Windows
  * WIN64             - 64-bit Windows
  */
