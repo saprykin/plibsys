@@ -52,7 +52,7 @@ with unit tests and was tested on the following desktop platforms:
 * GNU/Linux
 * macOS
 * Windows
-* Cygwin
+* Cygwin, MSYS
 * FreeBSD, NetBSD, OpenBSD
 * DragonFlyBSD
 * Solaris
