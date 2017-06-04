@@ -65,9 +65,29 @@
 #endif
 
 /**
- * @def P_LIB_API
- * @brief Exports a symbol from a shared library.
- * @since 0.0.1
+ * @def P_LIB_INTERNAL_API
+ * @brief Marks a symbol (variable, function) as local.
+ * @since 0.0.4
+ *
+ * Local symbols are not exported during the linkage and are not available from
+ * the outside of the module they are defined in. Use it for internal API.
+ *
+ * @note Some compilers allow to put this attribute at the beginning of the
+ * symbol declaration, and some also at the end of the declaration. Thus it is
+ * better to put it in the beginning for more portability.
+ */
+
+/**
+ * @def P_LIB_GLOBAL_API
+ * @brief Marks a symbol (variable, function) as global.
+ * @since 0.0.4
+ *
+ * Global symbols are exported during the linkage and are available from the
+ * outside of the module they are defined in. Use it for public API.
+ *
+ * @note Some compilers allow to put this attribute at the beginning of the
+ * symbol declaration, and some also at the end of the declaration. Thus it is
+ * better to put it in the beginning for more portability.
  */
 
 /*
@@ -82,7 +102,8 @@
     defined(P_OS_OS2)  || (defined(P_OS_BEOS)  && !defined(P_CC_GNU))   || \
     (defined(P_OS_WIN) && defined(P_CC_PGI)) || \
     ((defined(P_OS_WIN) || defined(P_OS_CYGWIN) || defined(P_OS_MSYS)) && defined(P_CC_GNU))
-#  define P_LIB_API __declspec(dllexport)
+#  define P_LIB_GLOBAL_API __declspec(dllexport)
+#  define P_LIB_INTERNAL_API
 #elif ((__GNUC__ >= 4) && !defined(P_OS_SOLARIS) && !defined(P_OS_HPUX) && !defined(P_OS_AIX)) || \
       (defined(P_CC_SUN) && __SUNPRO_C  >= 0x590)  || \
       (defined(P_CC_SUN) && __SUNPRO_CC >= 0x5110) || \
@@ -90,12 +111,23 @@
       (defined(P_CC_HP)  && __HP_aCC >= 0x061500)  || \
       (defined(P_CC_HP)  && __HP_cc >= 0x061500)   || \
       __has_attribute(visibility)
-#  define P_LIB_API __attribute__ ((visibility ("default")))
+#  define P_LIB_GLOBAL_API __attribute__ ((visibility ("default")))
+#  define P_LIB_INTERNAL_API __attribute__ ((visibility ("hidden")))
 #elif defined(__SUNPRO_C) && (__SUNPRO_C >= 0x550)
-#  define P_LIB_API __global
+#  define P_LIB_GLOBAL_API __global
+#  define P_LIB_INTERNAL_API __hidden
 #else
-#  define P_LIB_API
+#  define P_LIB_GLOBAL_API
+#  define P_LIB_INTERNAL_API
 #endif
+
+/**
+ * @def P_LIB_API
+ * @brief Exports a symbol from a shared library.
+ * @since 0.0.1
+ */
+
+#define P_LIB_API P_LIB_GLOBAL_API
 
 /* Oracle Solaris Studio at least since 12.2 has ((noreturn)) attribute */
 
