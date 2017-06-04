@@ -7,7 +7,7 @@ function (plibsys_detect_visibility cflags ldflags)
                                             !defined(_AIX) && !defined(__CYGWIN__) && !defined(__MSYS__)
                                         return 0;
                                         #else
-                                        #  error \"No visibility\"
+                                        stop_compile_here
                                         #endif
                                  }"
                                  PLIBSYS_HAS_GCC_VISIBILITY
@@ -25,7 +25,7 @@ function (plibsys_detect_visibility cflags ldflags)
                                             (defined(__SUNPRO_CC) && (__SUNPRO_CC >= 0x5110))
                                         return 0;
                                         #else
-                                        #  error \"No visibility\"
+                                        stop_compile_here
                                         #endif
                                  }"
                                  PLIBSYS_HAS_SUN_VISIBILITY
@@ -42,7 +42,7 @@ function (plibsys_detect_visibility cflags ldflags)
                                         #if (defined(__xlC__) && (__xlC__ >= 0x0D01))
                                         return 0;
                                         #else
-                                        #  error \"No visibility\"
+                                        stop_compile_here
                                         #endif
                                  }"
                                  PLIBSYS_HAS_XLC_VISIBILITY
@@ -60,7 +60,7 @@ function (plibsys_detect_visibility cflags ldflags)
                                             (defined(__HP_aCC) && (__HP_aCC >= 0x061500))
                                         return 0;
                                         #else
-                                        #  error \"No visibility\"
+                                        stop_compile_here
                                         #endif
                                  }"
                                  PLIBSYS_HAS_HP_VISIBILITY
@@ -77,7 +77,7 @@ function (plibsys_detect_visibility cflags ldflags)
                                         #if defined(__has_attribute) && __has_attribute(visibility)
                                         return 0;
                                         #else
-                                        #  error \"No visibility\"
+                                        stop_compile_here
                                         #endif
                                  }"
                                  PLIBSYS_HAS_CLANG_VISIBILITY
