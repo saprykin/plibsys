@@ -70,10 +70,29 @@
  * @since 0.0.1
  */
 
+/*
+ * Oracle Solaris Studio since version 12 has visibility attribute for C
+ * compiler, and since version 12.2 for C++ compiler, or since version 8.0
+ * specific __global attribute which is the same.
+ * IBM XL C has support for visibility attributes since version 13.1.
+ * HP C/aC++ has support for visibility attributes since version A.06.15.
+ */
+
 #if defined(P_CC_MSVC) || defined(P_CC_BORLAND) || defined(P_CC_WATCOM) || \
-    defined(P_OS_OS2)  || (defined(P_OS_BEOS) && !defined(P_CC_GNU))    || \
-    (defined(P_OS_WIN) && defined(P_CC_PGI))
+    defined(P_OS_OS2)  || (defined(P_OS_BEOS)  && !defined(P_CC_GNU))   || \
+    (defined(P_OS_WIN) && defined(P_CC_PGI)) || \
+    ((defined(P_OS_WIN) || defined(P_OS_CYGWIN) || defined(P_OS_MSYS)) && defined(P_CC_GNU))
 #  define P_LIB_API __declspec(dllexport)
+#elif ((__GNUC__ >= 4) && !defined(P_OS_SOLARIS) && !defined(P_OS_HPUX) && !defined(P_OS_AIX)) || \
+      (defined(P_CC_SUN) && __SUNPRO_C  >= 0x590)  || \
+      (defined(P_CC_SUN) && __SUNPRO_CC >= 0x5110) || \
+      (defined(P_CC_XLC) && __xlC__ >= 0x0D01)     || \
+      (defined(P_CC_HP)  && __HP_aCC >= 0x061500)  || \
+      (defined(P_CC_HP)  && __HP_cc >= 0x061500)   || \
+      __has_attribute(visibility)
+#  define P_LIB_API __attribute__ ((visibility ("default")))
+#elif defined(__SUNPRO_C) && (__SUNPRO_C >= 0x550)
+#  define P_LIB_API __global
 #else
 #  define P_LIB_API
 #endif
