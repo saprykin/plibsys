@@ -1,4 +1,10 @@
 function (plibsys_detect_visibility cflags ldflags)
+        if (WIN32 OR CYGWIN OR MSYS)
+            set (${cflags} "" PARENT_SCOPE)
+            set (${ldflags} "" PARENT_SCOPE)
+            return()
+        endif()
+
         # Check GCC
         check_c_source_compiles ("int main () {
                                         #if (__GNUC__ >= 4) && \\\\
