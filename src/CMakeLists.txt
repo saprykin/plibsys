@@ -20,7 +20,7 @@ endif()
 if (PLIBSYS_COVERAGE)
 	if (PLIBSYS_C_COMPILER MATCHES "gcc|clang")
 		set (CMAKE_BUILD_TYPE "Debug")
-		set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} --coverage")
+		list (APPEND CMAKE_C_FLAGS "--coverage")
 	endif()
 endif()
 
@@ -54,13 +54,7 @@ include (${PROJECT_SOURCE_DIR}/platforms/${PLIBSYS_TARGET_PLATFORM}/platform.cma
 
 set (PLIBSYS_INCLUDE_DIRS
 	${PROJECT_SOURCE_DIR}/src
-	${PROJECT_BINARY_DIR}
-)
-
-include_directories (
 	${CMAKE_BINARY_DIR}
-	${PROJECT_SOURCE_DIR}
-	${PLIBSYS_INCLUDE_DIRS}
 )
 
 set (PLIBSYS_PUBLIC_HDRS
@@ -187,20 +181,18 @@ set (PLIBSYS_PLATFORM_SRCS
 )
 
 if (NOT PLIBSYS_IPC_MODEL STREQUAL none)
-	set (PLIBSYS_PRIVATE_HDRS
-		${PLIBSYS_PRIVATE_HDRS}
-		pipc-private.h
-	)
-
-	set (PLIBSYS_SRCS
-		${PLIBSYS_SRCS}
-		pipc.c
-	)
+	list (APPEND PLIBSYS_PRIVATE_HDRS pipc-private.h)
+	list (APPEND PLIBSYS_SRCS pipc.c)
 endif()
 
-set (CMAKE_REQUIRED_DEFINITIONS "${CMAKE_REQUIRED_DEFINITIONS} ${PLIBSYS_PLATFORM_DEFINES}")
-set (CMAKE_REQUIRED_LIBRARIES ${CMAKE_REQUIRED_LIBRARIES} ${PLIBSYS_PLATFORM_LINK_LIBRARIES})
-set (CMAKE_REQUIRED_FLAGS ${CMAKE_REQUIRED_FLAGS} ${PLIBSYS_PLATFORM_LDFLAGS})
+# Save compiler flags
+set (SAVED_CMAKE_REQUIRED_DEFINITIONS ${CMAKE_REQUIRED_DEFINITIONS})
+set (SAVED_CMAKE_REQUIRED_LIBRARIES ${CMAKE_REQUIRED_LIBRARIES})
+set (SAVED_CMAKE_REQUIRED_FLAGS ${SAVED_CMAKE_REQUIRED_FLAGS})
+
+list (APPEND CMAKE_REQUIRED_DEFINITIONS ${PLIBSYS_PLATFORM_DEFINES})
+list (APPEND CMAKE_REQUIRED_LIBRARIES ${PLIBSYS_PLATFORM_LINK_LIBRARIES})
+list (APPEND CMAKE_REQUIRED_FLAGS ${PLIBSYS_PLATFORM_LDFLAGS})
 
 set (PLIBSYS_ATOMIC_LOCK_FREE no)
 
@@ -266,10 +258,9 @@ if (NOT PLIBSYS_ATOMIC_MODEL)
 	endif()
 endif()
 
-set (PLIBSYS_SRCS
+list (APPEND PLIBSYS_SRCS
 	patomic-${PLIBSYS_ATOMIC_MODEL}.c
 	pspinlock-${PLIBSYS_ATOMIC_MODEL}.c
-	${PLIBSYS_SRCS}
 )
 
 if (EXISTS PLIBSYS_CONFIG_FILE)
@@ -360,9 +351,9 @@ if (NOT PLIBSYS_NATIVE_WINDOWS)
 	endif()
 
 	if (PLIBSYS_MMAP_HAS_MAP_ANONYMOUS)
-		add_definitions (-DPLIBSYS_MMAP_HAS_MAP_ANONYMOUS)
+		list (APPEND PLIBSYS_COMPILE_DEFS -DPLIBSYS_MMAP_HAS_MAP_ANONYMOUS)
 	elseif (PLIBSYS_MMAP_HAS_MAP_ANON)
-		add_definitions (-DPLIBSYS_MMAP_HAS_MAP_ANON)
+		list (APPEND PLIBSYS_COMPILE_DEFS -DPLIBSYS_MMAP_HAS_MAP_ANON)
 	endif()
 
 	# Check for clock_nanosleep() call
@@ -399,16 +390,16 @@ if (NOT PLIBSYS_NATIVE_WINDOWS)
 
 	if (PLIBSYS_HAS_NANOSLEEP)
 		message (STATUS "Checking whether nanosleep() presents - yes")
-		add_definitions (-DPLIBSYS_HAS_NANOSLEEP)
+		list (APPEND PLIBSYS_COMPILE_DEFS -DPLIBSYS_HAS_NANOSLEEP)
 	else()
 		message (STATUS "Checking whether nanosleep() presents - no")
 	endif()
 
 	# Prefere clock_nanosleep() over nanosleep() for power consumption
 	if (PLIBSYS_HAS_CLOCKNANOSLEEP)
-		add_definitions (-DPLIBSYS_HAS_CLOCKNANOSLEEP)
+		list (APPEND PLIBSYS_COMPILE_DEFS -DPLIBSYS_HAS_CLOCKNANOSLEEP)
 	elseif(PLIBSYS_HAS_NANOSLEEP)
-		add_definitions (-DPLIBSYS_HAS_NANOSLEEP)
+		list (APPEND PLIBSYS_COMPILE_DEFS -DPLIBSYS_HAS_NANOSLEEP)
 	endif()
 
 	# Check for getaddrinfo() call
@@ -428,7 +419,7 @@ if (NOT PLIBSYS_NATIVE_WINDOWS)
 
 	if (PLIBSYS_HAS_GETADDRINFO)
 		message (STATUS "Checking whether getaddrinfo() presents - yes")
-		add_definitions (-DPLIBSYS_HAS_GETADDRINFO)
+		list (APPEND PLIBSYS_COMPILE_DEFS -DPLIBSYS_HAS_GETADDRINFO)
 	else()
 		message (STATUS "Checking whether getaddrinfo() presents - no")
 	endif()
@@ -473,7 +464,7 @@ if (PLIBSYS_THREAD_MODEL STREQUAL posix)
 
 	if (PLIBSYS_HAS_POSIX_SCHEDULING)
 		message (STATUS "Checking whether POSIX thread scheduling presents - yes")
-		add_definitions (-DPLIBSYS_HAS_POSIX_SCHEDULING)
+		list (APPEND PLIBSYS_COMPILE_DEFS -DPLIBSYS_HAS_POSIX_SCHEDULING)
 	else()
 		message (STATUS "Checking whether POSIX thread scheduling presents - no")
 	endif()
@@ -495,7 +486,7 @@ if (PLIBSYS_THREAD_MODEL STREQUAL posix)
 
 	if (PLIBSYS_HAS_POSIX_STACKSIZE)
 		message (STATUS "Checking whether POSIX thread stack size is supported - yes")
-		add_definitions (-DPLIBSYS_HAS_POSIX_STACKSIZE)
+		list (APPEND PLIBSYS_COMPILE_DEFS -DPLIBSYS_HAS_POSIX_STACKSIZE)
 	else()
 		message (STATUS "Checking whether POSIX thread stack size is supported - no")
 	endif()
@@ -530,10 +521,7 @@ if (PLIBSYS_THREAD_MODEL STREQUAL posix AND
 	endif()
 endif()
 
-set (PLIBSYS_PLATFORM_SRCS
-	${PLIBSYS_PLATFORM_SRCS}
-	prwlock-${PLIBSYS_RWLOCK_MODEL}.c
-)
+list (APPEND PLIBSYS_PLATFORM_SRCS prwlock-${PLIBSYS_RWLOCK_MODEL}.c)
 
 if (PLIBSYS_NATIVE_WINDOWS)
 	set (PLIBSYS_SOCKET_INCLUDES "#include <winsock2.h>
@@ -559,7 +547,7 @@ check_c_source_compiles (
 
 if (PLIBSYS_HAS_SOCKLEN_T)
 	message (STATUS "Checking whether socklen_t is defined - yes")
-	add_definitions (-DPLIBSYS_HAS_SOCKLEN_T)
+	list (APPEND PLIBSYS_COMPILE_DEFS -DPLIBSYS_HAS_SOCKLEN_T)
 else()
 	message (STATUS "Checking whether socklen_t is defined - no")
 endif()
@@ -580,7 +568,7 @@ check_c_source_compiles (
 
 if (PLIBSYS_HAS_SOCKADDR_STORAGE)
 	message (STATUS "Checking whether struct sockaddr_storage is defined - yes")
-	add_definitions (-DPLIBSYS_HAS_SOCKADDR_STORAGE)
+	list (APPEND PLIBSYS_COMPILE_DEFS -DPLIBSYS_HAS_SOCKADDR_STORAGE)
 else()
 	message (STATUS "Checking whether struct sockaddr_storage is defined - no")
 endif()
@@ -601,7 +589,7 @@ check_c_source_compiles (
 
 if (PLIBSYS_SOCKADDR_HAS_SA_LEN)
 	message (STATUS "Checking whether struct sockaddr has sa_len - yes")
-	add_definitions (-DPLIBSYS_SOCKADDR_HAS_SA_LEN)
+	list (APPEND PLIBSYS_COMPILE_DEFS -DPLIBSYS_SOCKADDR_HAS_SA_LEN)
 else()
 	message (STATUS "Checking whether struct sockaddr has sa_len - no")
 endif()
@@ -622,7 +610,7 @@ check_c_source_compiles (
 
 if (PLIBSYS_SOCKADDR_IN6_HAS_SCOPEID)
 	message (STATUS "Checking whether struct sockaddr_in6 has sin6_scope_id - yes")
-	add_definitions (-DPLIBSYS_SOCKADDR_IN6_HAS_SCOPEID)
+	list (APPEND PLIBSYS_COMPILE_DEFS -DPLIBSYS_SOCKADDR_IN6_HAS_SCOPEID)
 else()
 	message (STATUS "Checking whether struct sockaddr_in6 has sin6_scope_id - no")
 endif()
@@ -643,7 +631,7 @@ check_c_source_compiles (
 
 if (PLIBSYS_SOCKADDR_IN6_HAS_FLOWINFO)
 	message (STATUS "Checking whether struct sockaddr_in6 has sin6_flowinfo - yes")
-	add_definitions (-DPLIBSYS_SOCKADDR_IN6_HAS_FLOWINFO)
+	list (APPEND PLIBSYS_COMPILE_DEFS -DPLIBSYS_SOCKADDR_IN6_HAS_FLOWINFO)
 else()
 	message (STATUS "Checking whether struct sockaddr_in6 has sin6_flowinfo - no")
 endif()
@@ -687,7 +675,7 @@ check_c_source_compiles (
 
 if (PLIBSYS_HAS_LLDIV)
 	message (STATUS "Checking whether lldiv() presents - yes")
-	add_definitions (-DPLIBSYS_HAS_LLDIV)
+	list (APPEND PLIBSYS_COMPILE_DEFS -DPLIBSYS_HAS_LLDIV)
 else()
 	message (STATUS "Checking whether lldiv() presents - no")
 endif()
@@ -704,13 +692,31 @@ if (PLIBSYS_VISIBILITY)
 		message (STATUS "Checking whether compiler supports visibility - yes")
 
 		if (PLIBSYS_VISIBILITY_CFLAGS)
-			set (PLIBSYS_PLATFORM_CFLAGS "${PLIBSYS_PLATFORM_CFLAGS} ${PLIBSYS_VISIBILITY_CFLAGS}")
+			list (APPEND PLIBSYS_PLATFORM_CFLAGS ${PLIBSYS_VISIBILITY_CFLAGS})
 		endif()
 
 		if (PLIBSYS_VISIBILITY_LDFLAGS)
-			set (PLIBSYS_PLATFORM_LDFLAGS "${PLIBSYS_PLATFORM_LDFLAGS} ${PLIBSYS_VISIBILITY_LDFLAGS}")
+			list (APPEND PLIBSYS_PLATFORM_LDFLAGS ${PLIBSYS_VISIBILITY_LDFLAGS})
 		endif()
 	endif()
+endif()
+
+# Restore compiler flags
+set (CMAKE_REQUIRED_DEFINITIONS ${SAVED_CMAKE_REQUIRED_DEFINITIONS})
+set (CMAKE_REQUIRED_LIBRARIES ${SAVED_CMAKE_REQUIRED_LIBRARIES})
+set (SAVED_CMAKE_REQUIRED_FLAGS ${SAVED_CMAKE_REQUIRED_FLAGS})
+
+# Disable useless warnings
+if (MSVC)
+	list (APPEND PLIBSYS_COMPILE_DEFS -D_CRT_SECURE_NO_WARNINGS)
+	list (APPEND PLIBSYS_COMPILE_DEFS -D_WINSOCK_DEPRECATED_NO_WARNINGS)
+endif()
+
+# Prepare compile definitions
+list (APPEND PLIBSYS_COMPILE_DEFS -DPLIBSYS_COMPILATION)
+
+if (PLIBSYS_PLATFORM_DEFINES)
+	list (APPEND PLIBSYS_COMPILE_DEFS ${PLIBSYS_PLATFORM_DEFINES})
 endif()
 
 # Add targets
@@ -720,10 +726,26 @@ if (PLIBSYS_BUILD_STATIC)
 	add_library (plibsysstatic STATIC ${PLIBSYS_SRCS} ${PLIBSYS_PLATFORM_SRCS} ${PLIBSYS_PUBLIC_HDRS} ${PLIBSYS_PRIVATE_HDRS})
 endif()
 
-add_definitions (-DPLIBSYS_COMPILATION)
+# Add include directories
+if (COMMAND target_include_directories)
+	target_include_directories (plibsys PUBLIC ${PLIBSYS_INCLUDE_DIRS})
 
-if (PLIBSYS_PLATFORM_DEFINES)
-	add_definitions (${PLIBSYS_PLATFORM_DEFINES})
+	if (PLIBSYS_BUILD_STATIC)
+		target_include_directories (plibsysstatic PUBLIC ${PLIBSYS_INCLUDE_DIRS})
+	endif()
+else()
+	include_directories (${PLIBSYS_INCLUDE_DIRS})
+endif()
+
+# Add compile definitions
+if (COMMAND target_compile_definitions)
+	target_compile_definitions (plibsys PRIVATE ${PLIBSYS_COMPILE_DEFS})
+
+	if (PLIBSYS_BUILD_STATIC)
+		target_compile_definitions (plibsysstatic PRIVATE ${PLIBSYS_COMPILE_DEFS})
+	endif()
+else()
+	add_definitions (${PLIBSYS_COMPILE_DEFS})
 endif()
 
 set_target_properties (plibsys PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${OUTPUT_DIR})
@@ -756,11 +778,6 @@ if (PLIBSYS_PLATFORM_LDFLAGS)
 	if (PLIBSYS_BUILD_STATIC)
 		set_target_properties (plibsysstatic PROPERTIES LINK_FLAGS "${PLIBSYS_PLATFORM_LDFLAGS}")
 	endif()
-endif()
-
-if (MSVC)
-	add_definitions (-D_CRT_SECURE_NO_WARNINGS)
-	add_definitions (-D_WINSOCK_DEPRECATED_NO_WARNINGS)
 endif()
 
 target_link_libraries (plibsys ${PLIBSYS_PLATFORM_LINK_LIBRARIES})
