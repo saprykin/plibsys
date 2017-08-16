@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2016 Alexander Saprykin <xelfium@gmail.com>
+ * Copyright (C) 2010-2017 Alexander Saprykin <xelfium@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -30,7 +30,7 @@
  * be suspended until the lock is released with p_mutex_unlock(). After
  * releasing the lock one of the waiting threads is resumed to continue
  * execution. On most systems it is not specified whether a mutex waiting queue
- * is fair (FIFO) on not.
+ * is fair (FIFO) or not.
  *
  * The typical mutex usage:
  * @code

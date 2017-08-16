@@ -218,7 +218,7 @@ P_LIB_API PUThread *	p_uthread_current	(void);
 P_LIB_API pint		p_uthread_ideal_count	(void);
 
 /**
- * @brief Incremetns a thread reference counter
+ * @brief Increments a thread reference counter
  * @param thread #PUThread to increment the reference counter.
  * @since 0.0.1
  * @note The #PUThread object will not be removed until the reference counter is
