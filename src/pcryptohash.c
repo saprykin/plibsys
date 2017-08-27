@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2016 Alexander Saprykin <xelfium@gmail.com>
+ * Copyright (C) 2010-2017 Alexander Saprykin <xelfium@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -68,7 +68,7 @@ p_crypto_hash_new (PCryptoHashType type)
 {
 	PCryptoHash *ret;
 
-	if (type < P_CRYPTO_HASH_TYPE_MD5 || type > P_CRYPTO_HASH_TYPE_GOST)
+	if (P_UNLIKELY (!(type >= P_CRYPTO_HASH_TYPE_MD5 && type <= P_CRYPTO_HASH_TYPE_GOST)))
 		return NULL;
 
 	if (P_UNLIKELY ((ret = p_malloc0 (sizeof (PCryptoHash))) == NULL)) {

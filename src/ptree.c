@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2016 Alexander Saprykin <xelfium@gmail.com>
+ * Copyright (C) 2015-2017 Alexander Saprykin <xelfium@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -75,7 +75,7 @@ p_tree_new_full (PTreeType		type,
 {
 	PTree *ret;
 
-	if (P_UNLIKELY (type < P_TREE_TYPE_BINARY || type > P_TREE_TYPE_AVL))
+	if (P_UNLIKELY (!(type >= P_TREE_TYPE_BINARY && type <= P_TREE_TYPE_AVL)))
 		return NULL;
 
 	if (P_UNLIKELY (func == NULL))
