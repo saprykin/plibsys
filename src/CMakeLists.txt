@@ -204,9 +204,14 @@ if (NOT PLIBSYS_ATOMIC_MODEL)
 		check_c_source_compiles (
 					 "int main () {
 					  int i, tmp_int = 0;
+					  void *ptr, *tmp_ptr = 0;
 					  __atomic_store_4 (&i, 0, __ATOMIC_SEQ_CST);
 					  __atomic_compare_exchange_n (&i, &tmp_int, 1, 0,
 								       __ATOMIC_SEQ_CST, __ATOMIC_SEQ_CST);
+					  __atomic_compare_exchange_n ((unsigned long long *) &ptr,
+					  			       (unsigned long long *) &tmp_ptr,
+					  			       (unsigned long long) 1, 0,
+					  			       __ATOMIC_SEQ_CST, __ATOMIC_SEQ_CST);
 					  __atomic_fetch_add (&i, 1, __ATOMIC_SEQ_CST);
 					  return 0;
 					 }"
