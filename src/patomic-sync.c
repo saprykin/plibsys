@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2016 Alexander Saprykin <xelfium@gmail.com>
+ * Copyright (C) 2010-2017 Alexander Saprykin <xelfium@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -17,10 +17,18 @@
 
 #include "patomic.h"
 
+#ifdef P_CC_CRAY
+#  include <intrinsics.h>
+#endif
+
 P_LIB_API pint
 p_atomic_int_get (const volatile pint *atomic)
 {
+#ifdef P_CC_CRAY
+	__builtin_ia32_mfence ();
+#else
 	__sync_synchronize ();
+#endif
 	return *atomic;
 }
 
@@ -29,7 +37,11 @@ p_atomic_int_set (volatile pint	*atomic,
 		  pint		val)
 {
 	*atomic = val;
+#ifdef P_CC_CRAY
+	__builtin_ia32_mfence ();
+#else
 	__sync_synchronize ();
+#endif
 }
 
 P_LIB_API void
@@ -49,7 +61,11 @@ p_atomic_int_compare_and_exchange (volatile pint	*atomic,
 				   pint			oldval,
 				   pint			newval)
 {
+#ifdef P_CC_CRAY
+	return __sync_val_compare_and_swap (atomic, oldval, newval) == oldval ? TRUE : FALSE;
+#else
 	return (pboolean) __sync_bool_compare_and_swap (atomic, oldval, newval);
+#endif
 }
 
 P_LIB_API pint
@@ -83,7 +99,11 @@ p_atomic_int_xor (volatile puint	*atomic,
 P_LIB_API ppointer
 p_atomic_pointer_get (const volatile void *atomic)
 {
+#ifdef P_CC_CRAY
+	__builtin_ia32_mfence ();
+#else
 	__sync_synchronize ();
+#endif
 	return (ppointer) *((const volatile psize *) atomic);
 }
 
@@ -94,7 +114,11 @@ p_atomic_pointer_set (volatile void	*atomic,
 	volatile psize *cur_val = (volatile psize *) atomic;
 
 	*cur_val = (psize) val;
+#ifdef P_CC_CRAY
+	__builtin_ia32_mfence ();
+#else
 	__sync_synchronize ();
+#endif
 }
 
 P_LIB_API pboolean
@@ -102,9 +126,15 @@ p_atomic_pointer_compare_and_exchange (volatile void	*atomic,
 				       ppointer		oldval,
 				       ppointer		newval)
 {
+#ifdef P_CC_CRAY
+	return __sync_val_compare_and_swap ((volatile psize *) atomic,
+					    (psize) oldval,
+					    (psize) newval) == ((psize) oldval) ? TRUE : FALSE;
+#else
 	return (pboolean) __sync_bool_compare_and_swap ((volatile psize *) atomic,
 							(psize) oldval,
 							(psize) newval);
+#endif
 }
 
 P_LIB_API pssize
