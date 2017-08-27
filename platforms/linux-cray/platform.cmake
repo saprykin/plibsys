@@ -5,4 +5,4 @@ set (PLIBSYS_DIR_MODEL posix)
 set (PLIBSYS_LIBRARYLOADER_MODEL posix)
 
 set (PLIBSYS_PLATFORM_LINK_LIBRARIES rt dl)
-set (PLIBSYS_PLATFORM_CFLAGS "-h threadsafe")
+set (PLIBSYS_PLATFORM_CFLAGS "-h threadsafe -h nomessage=186")
