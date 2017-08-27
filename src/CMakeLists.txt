@@ -230,7 +230,7 @@ if (NOT PLIBSYS_ATOMIC_MODEL)
 					 "int main () {
 					  int i;
 					  __sync_synchronize ();
-					  __sync_bool_compare_and_swap (&i, 0, 1);
+					  __sync_val_compare_and_swap (&i, 0, 1);
 					  __sync_fetch_and_add (&i, 1);
 					  return 0;
 					 }"
