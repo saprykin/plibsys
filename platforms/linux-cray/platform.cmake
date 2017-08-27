@@ -5,4 +5,10 @@ set (PLIBSYS_DIR_MODEL posix)
 set (PLIBSYS_LIBRARYLOADER_MODEL posix)
 
 set (PLIBSYS_PLATFORM_LINK_LIBRARIES rt dl)
-set (PLIBSYS_PLATFORM_CFLAGS "-h threadsafe -h nomessage=186")
+set (PLIBSYS_PLATFORM_CFLAGS "-h threadsafe -h nomessage=186 -O1")
+
+message ("
+         Cray compiler has an optimization bug on SHA-1 algorithm
+         when using optimization levels higher than O1. Thus
+         O1 is enabled by default.
+         ")
