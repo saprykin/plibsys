@@ -52,6 +52,7 @@
  * WATCOM          - Watcom C/C++
  * BORLAND         - Borland C/C++
  * PGI             - Portland Group C/C++
+ * CRAY            - CRAY C/C++
  */
 
 /**
@@ -138,6 +139,12 @@
  * @since 0.0.3
  */
 
+/**
+ * @def P_CC_CRAY
+ * @brief Cray C/C++ compiler.
+ * @since 0.0.4
+ */
+
 #if defined(_MSC_VER)
 #  define P_CC_MSVC
 #  if defined(__INTEL_COMPILER)
@@ -156,6 +163,9 @@
 #  endif
 #  if defined(__clang__)
 #    define P_CC_CLANG
+#  endif
+#  if defined(_CRAYC)
+#    defined P_CC_CRAY
 #  endif
 #elif defined(__SUNPRO_C) || defined(__SUNPRO_CC)
 #  define P_CC_SUN
@@ -178,6 +188,8 @@
 #  define P_CC_INTEL
 #elif defined(__PGI)
 #  define P_CC_PGI
+#elif defined(_CRAYC)
+#  define P_CC_CRAY
 #endif
 
 /* We need this to generate full Doxygen documentation */
@@ -224,6 +236,9 @@
 #  endif
 #  ifndef P_CC_PGI
 #    define P_CC_PGI
+#  endif
+#  ifndef P_CC_CRAY
+#    define P_CC_CRAY
 #  endif
 #endif
 
