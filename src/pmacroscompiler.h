@@ -165,7 +165,7 @@
 #    define P_CC_CLANG
 #  endif
 #  if defined(_CRAYC)
-#    defined P_CC_CRAY
+#    define P_CC_CRAY
 #  endif
 #elif defined(__SUNPRO_C) || defined(__SUNPRO_CC)
 #  define P_CC_SUN
