@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2016 Alexander Saprykin <xelfium@gmail.com>
+ * Copyright (C) 2015-2017 Alexander Saprykin <xelfium@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -30,8 +30,10 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 
-#if defined(P_OS_SOLARIS) || defined(P_OS_QNX6) || defined(P_OS_UNIXWARE) || defined(P_OS_SCO) || \
-    defined(P_OS_IRIX)    || defined(P_OS_HAIKU)
+#if defined (__GLIBC__) && (__GLIBC__ >= 2) && (__GLIBC_MINOR__ >= 24)
+#  define P_DIR_NON_REENTRANT 1
+# elif defined(P_OS_SOLARIS) || defined(P_OS_QNX6) || defined(P_OS_UNIXWARE) || defined(P_OS_SCO) || \
+       defined(P_OS_IRIX)    || defined(P_OS_HAIKU)
 #  define P_DIR_NEED_BUF_ALLOC 1
 #endif
 
@@ -198,9 +200,10 @@ p_dir_get_next_entry (PDir	*dir,
 		return NULL;
 	}
 
-#if defined(P_OS_SOLARIS)
+#ifdef P_DIR_NEED_BUF_ALLOC
+#  if defined(P_OS_SOLARIS)
 	name_max = (pint) (FILENAME_MAX);
-#elif defined(P_OS_SCO) || defined(P_OS_IRIX)
+#  elif defined(P_OS_SCO) || defined(P_OS_IRIX)
 	name_max = (pint) pathconf (dir->orig_path, _PC_NAME_MAX);
 
 	if (name_max == -1) {
@@ -214,11 +217,10 @@ p_dir_get_next_entry (PDir	*dir,
 			return NULL;
 		}
 	}
-#elif defined(P_OS_QNX6) || defined(P_OS_UNIXWARE) || defined(P_OS_HAIKU)
+#  elif defined(P_OS_QNX6) || defined(P_OS_UNIXWARE) || defined(P_OS_HAIKU)
 	name_max = (pint) (NAME_MAX);
-#endif
+#  endif
 
-#ifdef P_DIR_NEED_BUF_ALLOC
 	if (P_UNLIKELY ((dirent_st = p_malloc0 (sizeof (struct dirent) + name_max + 1)) == NULL)) {
 		p_error_set_error_p (error,
 				     (pint) P_ERROR_IO_NO_RESOURCES,
