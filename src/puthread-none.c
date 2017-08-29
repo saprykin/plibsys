@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2016 Alexander Saprykin <xelfium@gmail.com>
+ * Copyright (C) 2010-2017 Alexander Saprykin <xelfium@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -22,8 +22,7 @@
 #include <stdlib.h>
 
 struct PUThread_ {
-	PUThreadBase	base;
-	pint		hdl;
+	pint	hdl;
 };
 
 void
@@ -47,22 +46,12 @@ p_uthread_create_internal (PUThreadFunc		func,
 			   PUThreadPriority	prio,
 			   psize		stack_size)
 {
-	PUThread	*ret;
-
+	P_UNUSED (func);
+	P_UNUSED (joinable);
+	P_UNUSED (prio);
 	P_UNUSED (stack_size);
 
-	if (P_UNLIKELY ((ret = p_malloc0 (sizeof (PUThread))) == NULL)) {
-		P_ERROR ("PUThread::p_uthread_create_internal: failed to allocate memory");
-		return NULL;
-	}
-
-	ret->hdl           = -1;
-	ret->base.joinable = joinable;
-	ret->base.prio     = prio;
-
-	ret->base.func (ret);
-
-	return ret;
+	return NULL;
 }
 
 void
@@ -79,7 +68,7 @@ p_uthread_wait_internal (PUThread *thread)
 void
 p_uthread_free_internal (PUThread *thread)
 {
-	p_free (thread);
+	P_UNUSED (thread);
 }
 
 P_LIB_API void
@@ -91,10 +80,8 @@ P_LIB_API pboolean
 p_uthread_set_priority (PUThread		*thread,
 			PUThreadPriority	prio)
 {
-	if (P_UNLIKELY (thread == NULL))
-		return FALSE;
-
-	thread->base.prio = prio;
+	P_UNUSED (thread);
+	P_UNUSED (prio);
 
 	return FALSE;
 }
