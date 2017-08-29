@@ -53,10 +53,12 @@ macro (plibsys_add_test_executable TEST_NAME SRC_FILE)
         endif()
 
         # Add compile definitions
-        if (COMMAND target_compile_definitions)
-                target_compile_definitions (${TEST_NAME} PRIVATE ${PLIBSYS_TEST_COMPILE_DEFS})
-        else()
-                add_definitions (${PLIBSYS_TEST_COMPILE_DEFS})
+        if (PLIBSYS_TEST_COMPILE_DEFS)
+                if (COMMAND target_compile_definitions)
+                        target_compile_definitions (${TEST_NAME} PRIVATE ${PLIBSYS_TEST_COMPILE_DEFS})
+                else()
+                        add_definitions (${PLIBSYS_TEST_COMPILE_DEFS})
+                endif()
         endif()
 
         if (${TEST_NAME} STREQUAL "plibraryloader_test")
