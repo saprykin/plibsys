@@ -15,19 +15,10 @@
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef PLIBSYS_TESTS_STATIC
-#  define BOOST_TEST_DYN_LINK
-#endif
-
-#define BOOST_TEST_MODULE pcondvariable_test
-
 #include "plibsys.h"
+#include "ptestmacros.h"
 
-#ifdef PLIBSYS_TESTS_STATIC
-#  include <boost/test/included/unit_test.hpp>
-#else
-#  include <boost/test/unit_test.hpp>
-#endif
+P_TEST_MODULE_INIT ();
 
 #define PCONDTEST_MAX_QUEUE 10
 
@@ -140,9 +131,7 @@ static void * consumer_test_thread (void *)
 	return NULL;
 }
 
-BOOST_AUTO_TEST_SUITE (BOOST_TEST_MODULE)
-
-BOOST_AUTO_TEST_CASE (pcondvariable_nomem_test)
+P_TEST_CASE_BEGIN (pcondvariable_nomem_test)
 {
 	p_libsys_init ();
 
@@ -152,64 +141,66 @@ BOOST_AUTO_TEST_CASE (pcondvariable_nomem_test)
 	vtable.malloc  = pmem_alloc;
 	vtable.realloc = pmem_realloc;
 
-	BOOST_CHECK (p_mem_set_vtable (&vtable) == TRUE);
-	BOOST_CHECK (p_cond_variable_new () == NULL);
+	P_TEST_CHECK (p_mem_set_vtable (&vtable) == TRUE);
+	P_TEST_CHECK (p_cond_variable_new () == NULL);
 
 	p_mem_restore_vtable ();
 
 	p_libsys_shutdown ();
 }
+P_TEST_CASE_END ()
 
-BOOST_AUTO_TEST_CASE (pcondvariable_bad_input_test)
+P_TEST_CASE_BEGIN (pcondvariable_bad_input_test)
 {
 	p_libsys_init ();
 
-	BOOST_REQUIRE (p_cond_variable_broadcast (NULL) == FALSE);
-	BOOST_REQUIRE (p_cond_variable_signal (NULL) == FALSE);
-	BOOST_REQUIRE (p_cond_variable_wait (NULL, NULL) == FALSE);
+	P_TEST_REQUIRE (p_cond_variable_broadcast (NULL) == FALSE);
+	P_TEST_REQUIRE (p_cond_variable_signal (NULL) == FALSE);
+	P_TEST_REQUIRE (p_cond_variable_wait (NULL, NULL) == FALSE);
 	p_cond_variable_free (NULL);
 
 	p_libsys_shutdown ();
 }
+P_TEST_CASE_END ()
 
-BOOST_AUTO_TEST_CASE (pcondvariable_general_test)
+P_TEST_CASE_BEGIN (pcondvariable_general_test)
 {
 	PUThread *thr1, *thr2, *thr3;
 
 	p_libsys_init ();
 
 	queue_empty_cond = p_cond_variable_new ();
-	BOOST_REQUIRE (queue_empty_cond != NULL);
+	P_TEST_REQUIRE (queue_empty_cond != NULL);
 	queue_full_cond = p_cond_variable_new ();
-	BOOST_REQUIRE (queue_full_cond != NULL);
+	P_TEST_REQUIRE (queue_full_cond != NULL);
 	cond_mutex = p_mutex_new ();
-	BOOST_REQUIRE (cond_mutex != NULL);
+	P_TEST_REQUIRE (cond_mutex != NULL);
 
 	is_working     = TRUE;
 	thread_wakeups = 0;
 	thread_queue   = 0;
 
 	thr1 = p_uthread_create ((PUThreadFunc) producer_test_thread, NULL, TRUE);
-	BOOST_REQUIRE (thr1 != NULL);
+	P_TEST_REQUIRE (thr1 != NULL);
 
 	thr2 = p_uthread_create ((PUThreadFunc) consumer_test_thread, NULL, TRUE);
-	BOOST_REQUIRE (thr2 != NULL);
+	P_TEST_REQUIRE (thr2 != NULL);
 
 	thr3 = p_uthread_create ((PUThreadFunc) consumer_test_thread, NULL, TRUE);
-	BOOST_REQUIRE (thr3 != NULL);
+	P_TEST_REQUIRE (thr3 != NULL);
 
-	BOOST_REQUIRE (p_cond_variable_broadcast (queue_empty_cond) == TRUE);
-	BOOST_REQUIRE (p_cond_variable_broadcast (queue_full_cond) == TRUE);
+	P_TEST_REQUIRE (p_cond_variable_broadcast (queue_empty_cond) == TRUE);
+	P_TEST_REQUIRE (p_cond_variable_broadcast (queue_full_cond) == TRUE);
 
 	p_uthread_sleep (4000);
 
 	is_working = FALSE;
 
-	BOOST_CHECK (p_uthread_join (thr1) == 0);
-	BOOST_CHECK (p_uthread_join (thr2) == 0);
-	BOOST_CHECK (p_uthread_join (thr3) == 0);
+	P_TEST_CHECK (p_uthread_join (thr1) == 0);
+	P_TEST_CHECK (p_uthread_join (thr2) == 0);
+	P_TEST_CHECK (p_uthread_join (thr3) == 0);
 
-	BOOST_REQUIRE (thread_wakeups > 0 && thread_queue >= 0 && thread_queue <= 10);
+	P_TEST_REQUIRE (thread_wakeups > 0 && thread_queue >= 0 && thread_queue <= 10);
 
 	p_uthread_unref (thr1);
 	p_uthread_unref (thr2);
@@ -220,5 +211,12 @@ BOOST_AUTO_TEST_CASE (pcondvariable_general_test)
 
 	p_libsys_shutdown ();
 }
+P_TEST_CASE_END ()
 
-BOOST_AUTO_TEST_SUITE_END()
+P_TEST_SUITE_BEGIN()
+{
+	P_TEST_SUITE_RUN_CASE (pcondvariable_nomem_test);
+	P_TEST_SUITE_RUN_CASE (pcondvariable_bad_input_test);
+	P_TEST_SUITE_RUN_CASE (pcondvariable_general_test);
+}
+P_TEST_SUITE_END()
