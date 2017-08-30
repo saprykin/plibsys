@@ -15,54 +15,53 @@ matrix:
         include:
                 # Code coverage build
                 - os: linux
-                  addons: { apt: { packages: [libboost-test-dev, lcov] } }
+                  addons: { apt: { packages: [lcov] } }
                   env: CC=gcc CXX=g++ GCOV=gcov USE_GCOV=1
                 # Linux x64 builds (GCC)
                 - os: linux
-                  addons: { apt: { sources: ubuntu-toolchain-r-test, packages: [gcc-4.9, g++-4.9, libboost-test-dev] } }
+                  addons: { apt: { sources: ubuntu-toolchain-r-test, packages: [gcc-4.9, g++-4.9] } }
                   env: CC=gcc-4.9 CXX=g++-4.9 ARCH=64 USE_COVERITY=1
                 - os: linux
-                  addons: { apt: { sources: ubuntu-toolchain-r-test, packages: [gcc-5, g++-5, libboost-test-dev] } }
+                  addons: { apt: { sources: ubuntu-toolchain-r-test, packages: [gcc-5, g++-5] } }
                   env: CC=gcc-5 CXX=g++-5 ARCH=64
                 - os: linux
-                  addons: { apt: { sources: ubuntu-toolchain-r-test, packages: [gcc-6, g++-6, libboost-test-dev] } }
+                  addons: { apt: { sources: ubuntu-toolchain-r-test, packages: [gcc-6, g++-6] } }
                   env: CC=gcc-6 CXX=g++-6 ARCH=64
                 # Linux x86 builds (GCC)
                 - os: linux
                   addons: { apt: { sources: ubuntu-toolchain-r-test, packages: [gcc-4.9, g++-4.9, gcc-multilib, g++-multilib, gcc-4.9-multilib, g++-4.9-multilib, linux-libc-dev] } }
-                  env: CC=gcc-4.9 CXX=g++-4.9 ARCH=32 BUNDLED_BOOST=1
+                  env: CC=gcc-4.9 CXX=g++-4.9 ARCH=32
                 - os: linux
                   addons: { apt: { sources: ubuntu-toolchain-r-test, packages: [gcc-5, g++-5, gcc-multilib, g++-multilib, gcc-5-multilib, g++-5-multilib, linux-libc-dev] } }
-                  env: CC=gcc-5 CXX=g++-5 ARCH=32 BUNDLED_BOOST=1
+                  env: CC=gcc-5 CXX=g++-5 ARCH=32
                 - os: linux
                   addons: { apt: { sources: ubuntu-toolchain-r-test, packages: [gcc-6, g++-6, gcc-multilib, g++-multilib, gcc-6-multilib, g++-6-multilib, linux-libc-dev] } }
-                  env: CC=gcc-6 CXX=g++-6 ARCH=32 BUNDLED_BOOST=1
+                  env: CC=gcc-6 CXX=g++-6 ARCH=32
                 # Linux x64 builds (Clang)
                 - os: linux
-                  addons: { apt: { packages: libboost-test-dev } }
                   env: CC=clang CXX=clang++
                 - os: linux
-                  addons: { apt: { sources: [ubuntu-toolchain-r-test, llvm-toolchain-precise-3.6], packages: [clang-3.6, libc++-dev, libboost-test-dev] } }
+                  addons: { apt: { sources: [ubuntu-toolchain-r-test, llvm-toolchain-precise-3.6], packages: [clang-3.6, libc++-dev] } }
                   env: CC=clang-3.6 CXX=clang++-3.6
                 - os: linux
-                  addons: { apt: { sources: [ubuntu-toolchain-r-test, llvm-toolchain-precise-3.7], packages: [clang-3.7, libc++-dev, libboost-test-dev] } }
+                  addons: { apt: { sources: [ubuntu-toolchain-r-test, llvm-toolchain-precise-3.7], packages: [clang-3.7, libc++-dev] } }
                   env: CC=clang-3.7 CXX=clang++-3.7
                 - os: linux
-                  addons: { apt: { sources: [ubuntu-toolchain-r-test, llvm-toolchain-precise-3.8], packages: [clang-3.8, libc++-dev, libboost-test-dev] } }
+                  addons: { apt: { sources: [ubuntu-toolchain-r-test, llvm-toolchain-precise-3.8], packages: [clang-3.8, libc++-dev] } }
                   env: CC=clang-3.8 CXX=clang++-3.8
                 # macOS builds (GCC)
                 - os: osx
                   osx_image: xcode7.3
-                  env: FORMULA=gcc@4.9 CC=gcc-4.9 CXX=g++-4.9 GCOV=gcov-4.9 USE_GCOV=1 BUNDLED_BOOST=1
+                  env: FORMULA=gcc@4.9 CC=gcc-4.9 CXX=g++-4.9 GCOV=gcov-4.9 USE_GCOV=1
                 - os: osx
                   osx_image: xcode7.3
-                  env: FORMULA=gcc@5 CC=gcc-5 CXX=g++-5 BUNDLED_BOOST=1
+                  env: FORMULA=gcc@5 CC=gcc-5 CXX=g++-5
                 - os: osx
                   osx_image: xcode7.3
-                  env: FORMULA=gcc@6 CC=gcc-6 CXX=g++-6 BUNDLED_BOOST=1
+                  env: FORMULA=gcc@6 CC=gcc-6 CXX=g++-6
                 - os: osx
                   osx_image: xcode7.3
-                  env: FORMULA=gcc@7 CC=gcc-7 CXX=g++-7 BUNDLED_BOOST=1
+                  env: FORMULA=gcc@7 CC=gcc-7 CXX=g++-7
                 # macOS builds (Clang)
                 - os: osx
                   osx_image: xcode6.4
@@ -94,11 +93,8 @@ before_script:
         - ${CC} --version
         - ${CXX} --version
         - if ! [[ -z ${ARCH+x} ]]; then export CMAKE_ARCH_PARAM=-m${ARCH} ; fi
-        - if [[ "${BUNDLED_BOOST}" == "1" ]]; then cd ../boost && tar -xzvf ./boost_1_60_0_mini.tar.gz && cd ../plibsys-build ; fi
-        - if [[ "${BUNDLED_BOOST}" == "1" ]]; then export TESTS_STATIC=ON ; else export TESTS_STATIC=OFF ; fi
-        - if [[ "${BUNDLED_BOOST}" == "1" ]]; then export BOOST_ROOT=../boost/boost_1_60_0_mini ; fi
-        - if [[ "${USE_GCOV}" == "1" ]]; then cmake -DPLIBSYS_TESTS_STATIC=${TESTS_STATIC} -DPLIBSYS_COVERAGE=ON -DCMAKE_C_COMPILER=${CC} -DCMAKE_CXX_COMPILER=${CXX} -DCMAKE_C_FLAGS=${CMAKE_ARCH_PARAM} -DCMAKE_CXX_FLAGS=${CMAKE_ARCH_PARAM} -DBOOST_ROOT=${BOOST_ROOT} .. ; fi
-        - if ! [[ "${USE_GCOV}" == "1" ]]; then cmake -DPLIBSYS_TESTS_STATIC=${TESTS_STATIC} -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=${CC} -DCMAKE_CXX_COMPILER=${CXX} -DCMAKE_C_FLAGS=${CMAKE_ARCH_PARAM} -DCMAKE_CXX_FLAGS=${CMAKE_ARCH_PARAM} -DBOOST_ROOT=${BOOST_ROOT} .. ; fi
+        - if [[ "${USE_GCOV}" == "1" ]]; then cmake -DPLIBSYS_COVERAGE=ON -DCMAKE_C_COMPILER=${CC} -DCMAKE_CXX_COMPILER=${CXX} -DCMAKE_C_FLAGS=${CMAKE_ARCH_PARAM} -DCMAKE_CXX_FLAGS=${CMAKE_ARCH_PARAM} .. ; fi
+        - if ! [[ "${USE_GCOV}" == "1" ]]; then cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=${CC} -DCMAKE_CXX_COMPILER=${CXX} -DCMAKE_C_FLAGS=${CMAKE_ARCH_PARAM} -DCMAKE_CXX_FLAGS=${CMAKE_ARCH_PARAM} .. ; fi
         - if [[ "${TRAVIS_BRANCH}" == "coverity_scan" ]] && [[ "${USE_COVERITY}" == "1" ]]; then export COVERITY_SCAN_BUILD_COMMAND_PREPEND="cov-configure --comptype gcc --compiler ${CC} --template" ; fi
         - if [[ "${TRAVIS_BRANCH}" == "coverity_scan" ]] && [[ "${USE_COVERITY}" == "1" ]]; then curl -s "https://scan.coverity.com/scripts/travisci_build_coverity_scan.sh" | bash || true ; fi
 
