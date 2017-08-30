@@ -28,8 +28,6 @@ $!                  empty to build all the tests.
 $!                  Example 1 (curtain tests): TESTS=(pmem,puthread)
 $!                  Example 2 (all tests): TESTS
 $!    RUN_TESTS     Runs all tests.
-$!    BOOST_ROOT=x  Boost root directory.
-$!                  Example: BOOST_ROOT=/SYS$COMMON/boost_1_43_1
 $!    NOLIB         Skip library buidling. Useful when you want to rebuild
 $!                  particular tests.
 $!===========================================================================
@@ -205,26 +203,6 @@ $ run_tests = 0
 $ if f$locate(",run_tests,", args_lower) .lt. args_lower_len
 $ then
 $     run_tests = 1
-$ endif
-$!
-$ boost_root = ""
-$ args_loc = f$locate(",boost_root=", args_lower)
-$ if args_loc .lt. args_lower_len
-$ then
-$     arg = f$extract(args_loc + 1, args_lower_len, args_lower)
-$     arg_val = f$element(0, ",", arg)
-$     boost_root = f$element(1, "=", arg_val)
-$ endif
-$!
-$ if is_tests .eqs. "1" .and. boost_root .eqs. ""
-$ then
-$     'vo_c' "%PLIBSYS-I-NOTESTS, tests couldn't be built without BOOST_ROOT parameter, disabling."
-$     is_tests = 0
-$ endif
-$!
-$ if is_tests .eqs. "0" .and. boost_root .nes. ""
-$ then
-$     'vo_c' "%PLIBSYS-I-BOOSTIGN, BOOST_ROOT parameter will be ignored without tests enabled."
 $ endif
 $!
 $! Prepare build directory
@@ -497,8 +475,8 @@ $ 'vo_c' "Compiling test executables..."
 $ test_counter = 0
 $ plibsys_tests = f$edit(plibsys_tests, "COMPRESS")
 $!
-$ cxx_params = "/INCLUDE=(''objdir',''base_src_dir',""''boost_root'"")"
-$ cxx_params = cxx_params + "/DEFINE=(__USE_STD_IOSTREAM,PLIBSYS_TESTS_STATIC)/NAMES=(AS_IS, SHORTENED)"
+$ cxx_params = "/INCLUDE=(''objdir',''base_src_dir')"
+$ cxx_params = cxx_params + "/DEFINE=(__USE_STD_IOSTREAM)/NAMES=(AS_IS, SHORTENED)"
 $ cxx_params = cxx_params + "/FLOAT=IEEE/IEEE_MODE=DENORM_RESULTS"
 $!
 $ if build_64 .eqs. "1"
