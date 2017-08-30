@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2016 Alexander Saprykin <xelfium@gmail.com>
+ * Copyright (C) 2013-2017 Alexander Saprykin <xelfium@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -15,22 +15,13 @@
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef PLIBSYS_TESTS_STATIC
-#  define BOOST_TEST_DYN_LINK
-#endif
-
-#define BOOST_TEST_MODULE pmain_test
-
 #include "plibsys.h"
+#include "ptestmacros.h"
 
 #include <stdlib.h>
 #include <string.h>
 
-#ifdef PLIBSYS_TESTS_STATIC
-#  include <boost/test/included/unit_test.hpp>
-#else
-#  include <boost/test/unit_test.hpp>
-#endif
+P_TEST_MODULE_INIT ();
 
 static pint alloc_counter   = 0;
 static pint realloc_counter = 0;
@@ -54,23 +45,23 @@ extern "C" void pmem_free (ppointer block)
 	free (block);
 }
 
-BOOST_AUTO_TEST_SUITE (BOOST_TEST_MODULE)
-
-BOOST_AUTO_TEST_CASE (pmain_general_test)
+P_TEST_CASE_BEGIN (pmain_general_test)
 {
 	p_libsys_init ();
 	p_libsys_shutdown ();
 }
+P_TEST_CASE_END ()
 
-BOOST_AUTO_TEST_CASE (pmain_double_test)
+P_TEST_CASE_BEGIN (pmain_double_test)
 {
 	p_libsys_init_full (NULL);
 	p_libsys_init ();
 	p_libsys_shutdown ();
 	p_libsys_shutdown ();
 }
+P_TEST_CASE_END ()
 
-BOOST_AUTO_TEST_CASE (pmain_vtable_test)
+P_TEST_CASE_BEGIN (pmain_vtable_test)
 {
 	PMemVTable	vtable;
 
@@ -87,19 +78,26 @@ BOOST_AUTO_TEST_CASE (pmain_vtable_test)
 	pchar *buf = (pchar *) p_malloc0 (10);
 	pchar *new_buf = (pchar *) p_realloc ((ppointer) buf, 20);
 
-	BOOST_REQUIRE (new_buf != NULL);
+	P_TEST_REQUIRE (new_buf != NULL);
 
 	buf = new_buf;
 
 	p_free (buf);
 
-	BOOST_CHECK (alloc_counter > 0);
-	BOOST_CHECK (realloc_counter > 0);
-	BOOST_CHECK (free_counter > 0);
+	P_TEST_CHECK (alloc_counter > 0);
+	P_TEST_CHECK (realloc_counter > 0);
+	P_TEST_CHECK (free_counter > 0);
 
-	BOOST_CHECK (strcmp (p_libsys_version (), PLIBSYS_VERSION_STR) == 0);
+	P_TEST_CHECK (strcmp (p_libsys_version (), PLIBSYS_VERSION_STR) == 0);
 
 	p_libsys_shutdown ();
 }
+P_TEST_CASE_END ()
 
-BOOST_AUTO_TEST_SUITE_END()
+P_TEST_SUITE_BEGIN()
+{
+	P_TEST_SUITE_RUN_CASE (pmain_general_test);
+	P_TEST_SUITE_RUN_CASE (pmain_double_test);
+	P_TEST_SUITE_RUN_CASE (pmain_vtable_test);
+}
+P_TEST_SUITE_END()
