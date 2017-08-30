@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2016 Alexander Saprykin <xelfium@gmail.com>
+ * Copyright (C) 2013-2017 Alexander Saprykin <xelfium@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -15,22 +15,13 @@
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef PLIBSYS_TESTS_STATIC
-#  define BOOST_TEST_DYN_LINK
-#endif
-
-#define BOOST_TEST_MODULE pshm_test
-
 #include "plibsys.h"
+#include "ptestmacros.h"
 
 #include <stdlib.h>
 #include <time.h>
 
-#ifdef PLIBSYS_TESTS_STATIC
-#  include <boost/test/included/unit_test.hpp>
-#else
-#  include <boost/test/unit_test.hpp>
-#endif
+P_TEST_MODULE_INIT ();
 
 static void * shm_test_thread (void *arg)
 {
@@ -82,9 +73,7 @@ extern "C" void pmem_free (ppointer block)
 	P_UNUSED (block);
 }
 
-BOOST_AUTO_TEST_SUITE (BOOST_TEST_MODULE)
-
-BOOST_AUTO_TEST_CASE (pshm_nomem_test)
+P_TEST_CASE_BEGIN (pshm_nomem_test)
 {
 	p_libsys_init ();
 
@@ -94,24 +83,25 @@ BOOST_AUTO_TEST_CASE (pshm_nomem_test)
 	vtable.malloc  = pmem_alloc;
 	vtable.realloc = pmem_realloc;
 
-	BOOST_CHECK (p_mem_set_vtable (&vtable) == TRUE);
+	P_TEST_CHECK (p_mem_set_vtable (&vtable) == TRUE);
 
-	BOOST_CHECK (p_shm_new ("p_shm_test_memory_block", 1024, P_SHM_ACCESS_READWRITE, NULL) == NULL);
+	P_TEST_CHECK (p_shm_new ("p_shm_test_memory_block", 1024, P_SHM_ACCESS_READWRITE, NULL) == NULL);
 
 	p_mem_restore_vtable ();
 
 	p_libsys_shutdown ();
 }
+P_TEST_CASE_END ()
 
-BOOST_AUTO_TEST_CASE (pshm_invalid_test)
+P_TEST_CASE_BEGIN (pshm_invalid_test)
 {
 	p_libsys_init ();
 
-	BOOST_CHECK (p_shm_new (NULL, 0, P_SHM_ACCESS_READWRITE, NULL) == NULL);
-	BOOST_CHECK (p_shm_lock (NULL, NULL) == FALSE);
-	BOOST_CHECK (p_shm_unlock (NULL, NULL) == FALSE);
-	BOOST_CHECK (p_shm_get_address (NULL) == NULL);
-	BOOST_CHECK (p_shm_get_size (NULL) == 0);
+	P_TEST_CHECK (p_shm_new (NULL, 0, P_SHM_ACCESS_READWRITE, NULL) == NULL);
+	P_TEST_CHECK (p_shm_lock (NULL, NULL) == FALSE);
+	P_TEST_CHECK (p_shm_unlock (NULL, NULL) == FALSE);
+	P_TEST_CHECK (p_shm_get_address (NULL) == NULL);
+	P_TEST_CHECK (p_shm_get_size (NULL) == 0);
 	p_shm_take_ownership (NULL);
 
 	PShm *shm = p_shm_new ("p_shm_invalid_test", 0, P_SHM_ACCESS_READWRITE, NULL);
@@ -124,8 +114,9 @@ BOOST_AUTO_TEST_CASE (pshm_invalid_test)
 
 	p_libsys_shutdown ();
 }
+P_TEST_CASE_END ()
 
-BOOST_AUTO_TEST_CASE (pshm_general_test)
+P_TEST_CASE_BEGIN (pshm_general_test)
 {
 	PShm		*shm = NULL;
 #ifndef P_OS_HPUX
@@ -137,16 +128,16 @@ BOOST_AUTO_TEST_CASE (pshm_general_test)
 	p_libsys_init ();
 
 	shm = p_shm_new ("p_shm_test_memory_block", 1024, P_SHM_ACCESS_READWRITE, NULL);
-	BOOST_REQUIRE (shm != NULL);
+	P_TEST_REQUIRE (shm != NULL);
 	p_shm_take_ownership (shm);
 	p_shm_free (shm);
 
 	shm = p_shm_new ("p_shm_test_memory_block", 1024, P_SHM_ACCESS_READWRITE, NULL);
-	BOOST_REQUIRE (shm != NULL);
-	BOOST_REQUIRE (p_shm_get_size (shm) == 1024);
+	P_TEST_REQUIRE (shm != NULL);
+	P_TEST_REQUIRE (p_shm_get_size (shm) == 1024);
 
 	addr = p_shm_get_address (shm);
-	BOOST_REQUIRE (addr != NULL);
+	P_TEST_REQUIRE (addr != NULL);
 
 #ifndef P_OS_HPUX
 	shm2 = p_shm_new ("p_shm_test_memory_block", 1024, P_SHM_ACCESS_READONLY, NULL);
@@ -156,78 +147,78 @@ BOOST_AUTO_TEST_CASE (pshm_general_test)
 		shm2 = p_shm_new ("p_shm_test_memory_block", 1024, P_SHM_ACCESS_READWRITE, NULL);
 	}
 
-	BOOST_REQUIRE (shm2 != NULL);
-	BOOST_REQUIRE (p_shm_get_size (shm2) == 1024);
+	P_TEST_REQUIRE (shm2 != NULL);
+	P_TEST_REQUIRE (p_shm_get_size (shm2) == 1024);
 
 	addr2 = p_shm_get_address (shm2);
-	BOOST_REQUIRE (shm2 != NULL);
+	P_TEST_REQUIRE (shm2 != NULL);
 #endif
 
 	for (i = 0; i < 512; ++i) {
-		BOOST_CHECK (p_shm_lock (shm, NULL));
+		P_TEST_CHECK (p_shm_lock (shm, NULL));
 		*(((pchar *) addr) + i) = 'a';
-		BOOST_CHECK (p_shm_unlock (shm, NULL));
+		P_TEST_CHECK (p_shm_unlock (shm, NULL));
 	}
 
 #ifndef P_OS_HPUX
 	for (i = 0; i < 512; ++i) {
-		BOOST_CHECK (p_shm_lock (shm2, NULL));
-		BOOST_CHECK (*(((pchar *) addr) + i) == 'a');
-		BOOST_CHECK (p_shm_unlock (shm2, NULL));
+		P_TEST_CHECK (p_shm_lock (shm2, NULL));
+		P_TEST_CHECK (*(((pchar *) addr) + i) == 'a');
+		P_TEST_CHECK (p_shm_unlock (shm2, NULL));
 	}
 #else
 	for (i = 0; i < 512; ++i) {
-		BOOST_CHECK (p_shm_lock (shm, NULL));
-		BOOST_CHECK (*(((pchar *) addr) + i) == 'a');
-		BOOST_CHECK (p_shm_unlock (shm, NULL));
+		P_TEST_CHECK (p_shm_lock (shm, NULL));
+		P_TEST_CHECK (*(((pchar *) addr) + i) == 'a');
+		P_TEST_CHECK (p_shm_unlock (shm, NULL));
 	}
 #endif
 
 	for (i = 0; i < 1024; ++i) {
-		BOOST_CHECK (p_shm_lock (shm, NULL));
+		P_TEST_CHECK (p_shm_lock (shm, NULL));
 		*(((pchar *) addr) + i) = 'b';
-		BOOST_CHECK (p_shm_unlock (shm, NULL));
+		P_TEST_CHECK (p_shm_unlock (shm, NULL));
 	}
 
 #ifndef P_OS_HPUX
 	for (i = 0; i < 1024; ++i) {
-		BOOST_CHECK (p_shm_lock (shm2, NULL));
-		BOOST_CHECK (*(((pchar *) addr) + i) != 'c');
-		BOOST_CHECK (p_shm_unlock (shm2, NULL));
+		P_TEST_CHECK (p_shm_lock (shm2, NULL));
+		P_TEST_CHECK (*(((pchar *) addr) + i) != 'c');
+		P_TEST_CHECK (p_shm_unlock (shm2, NULL));
 	}
 
 	for (i = 0; i < 1024; ++i) {
-		BOOST_CHECK (p_shm_lock (shm2, NULL));
-		BOOST_CHECK (*(((pchar *) addr) + i) == 'b');
-		BOOST_CHECK (p_shm_unlock (shm2, NULL));
+		P_TEST_CHECK (p_shm_lock (shm2, NULL));
+		P_TEST_CHECK (*(((pchar *) addr) + i) == 'b');
+		P_TEST_CHECK (p_shm_unlock (shm2, NULL));
 	}
 #else
 	for (i = 0; i < 1024; ++i) {
-		BOOST_CHECK (p_shm_lock (shm, NULL));
-		BOOST_CHECK (*(((pchar *) addr) + i) != 'c');
-		BOOST_CHECK (p_shm_unlock (shm, NULL));
+		P_TEST_CHECK (p_shm_lock (shm, NULL));
+		P_TEST_CHECK (*(((pchar *) addr) + i) != 'c');
+		P_TEST_CHECK (p_shm_unlock (shm, NULL));
 	}
 
 	for (i = 0; i < 1024; ++i) {
-		BOOST_CHECK (p_shm_lock (shm, NULL));
-		BOOST_CHECK (*(((pchar *) addr) + i) == 'b');
-		BOOST_CHECK (p_shm_unlock (shm, NULL));
+		P_TEST_CHECK (p_shm_lock (shm, NULL));
+		P_TEST_CHECK (*(((pchar *) addr) + i) == 'b');
+		P_TEST_CHECK (p_shm_unlock (shm, NULL));
 	}
 #endif
 
 	p_shm_free (shm);
 
 	shm = p_shm_new ("p_shm_test_memory_block_2", 1024, P_SHM_ACCESS_READWRITE, NULL);
-	BOOST_REQUIRE (shm != NULL);
-	BOOST_REQUIRE (p_shm_get_size (shm) == 1024);
+	P_TEST_REQUIRE (shm != NULL);
+	P_TEST_REQUIRE (p_shm_get_size (shm) == 1024);
 
 	addr = p_shm_get_address (shm);
-	BOOST_REQUIRE (addr != NULL);
+	P_TEST_REQUIRE (addr != NULL);
 
 	for (i = 0; i < 1024; ++i) {
-		BOOST_CHECK (p_shm_lock (shm, NULL));
-		BOOST_CHECK (*(((pchar *) addr) + i) != 'b');
-		BOOST_CHECK (p_shm_unlock (shm, NULL));
+		P_TEST_CHECK (p_shm_lock (shm, NULL));
+		P_TEST_CHECK (*(((pchar *) addr) + i) != 'b');
+		P_TEST_CHECK (p_shm_unlock (shm, NULL));
 	}
 
 	p_shm_free (shm);
@@ -238,8 +229,9 @@ BOOST_AUTO_TEST_CASE (pshm_general_test)
 
 	p_libsys_shutdown ();
 }
+P_TEST_CASE_END ()
 
-BOOST_AUTO_TEST_CASE (pshm_thread_test)
+P_TEST_CASE_BEGIN (pshm_thread_test)
 {
 	PShm		*shm;
 	PUThread	*thr1, *thr2, *thr3;
@@ -252,36 +244,36 @@ BOOST_AUTO_TEST_CASE (pshm_thread_test)
 	srand ((puint) time (NULL));
 
 	shm = p_shm_new ("p_shm_test_memory_block", 1024 * 1024, P_SHM_ACCESS_READWRITE, NULL);
-	BOOST_REQUIRE (shm != NULL);
+	P_TEST_REQUIRE (shm != NULL);
 	p_shm_take_ownership (shm);
 	p_shm_free (shm);
 
 	shm = p_shm_new ("p_shm_test_memory_block", 1024 * 1024, P_SHM_ACCESS_READWRITE, NULL);
-	BOOST_REQUIRE (shm != NULL);
+	P_TEST_REQUIRE (shm != NULL);
 
 	if (p_shm_get_size (shm) != 1024 * 1024) {
 		p_shm_free (shm);
 		shm = p_shm_new ("p_shm_test_memory_block", 1024 * 1024, P_SHM_ACCESS_READWRITE, NULL);
-		BOOST_REQUIRE (shm != NULL);
+		P_TEST_REQUIRE (shm != NULL);
 	}
 
-	BOOST_REQUIRE (p_shm_get_size (shm) == 1024 * 1024);
+	P_TEST_REQUIRE (p_shm_get_size (shm) == 1024 * 1024);
 
 	addr = p_shm_get_address (shm);
-	BOOST_REQUIRE (addr != NULL);
+	P_TEST_REQUIRE (addr != NULL);
 
 	thr1 = p_uthread_create ((PUThreadFunc) shm_test_thread, (ppointer) shm, true);
-	BOOST_REQUIRE (thr1 != NULL);
+	P_TEST_REQUIRE (thr1 != NULL);
 
 	thr2 = p_uthread_create ((PUThreadFunc) shm_test_thread, (ppointer) shm, true);
-	BOOST_REQUIRE (thr2 != NULL);
+	P_TEST_REQUIRE (thr2 != NULL);
 
 	thr3 = p_uthread_create ((PUThreadFunc) shm_test_thread, (ppointer) shm, true);
-	BOOST_REQUIRE (thr3 != NULL);
+	P_TEST_REQUIRE (thr3 != NULL);
 
-	BOOST_CHECK (p_uthread_join (thr1) == 0);
-	BOOST_CHECK (p_uthread_join (thr2) == 0);
-	BOOST_CHECK (p_uthread_join (thr3) == 0);
+	P_TEST_CHECK (p_uthread_join (thr1) == 0);
+	P_TEST_CHECK (p_uthread_join (thr2) == 0);
+	P_TEST_CHECK (p_uthread_join (thr3) == 0);
 
 	test_ok = TRUE;
 	val = *((pchar *) addr);
@@ -292,7 +284,7 @@ BOOST_AUTO_TEST_CASE (pshm_thread_test)
 			break;
 		}
 
-	BOOST_REQUIRE (test_ok == TRUE);
+	P_TEST_REQUIRE (test_ok == TRUE);
 
 	p_uthread_unref (thr1);
 	p_uthread_unref (thr2);
@@ -301,5 +293,13 @@ BOOST_AUTO_TEST_CASE (pshm_thread_test)
 
 	p_libsys_shutdown ();
 }
+P_TEST_CASE_END ()
 
-BOOST_AUTO_TEST_SUITE_END()
+P_TEST_SUITE_BEGIN()
+{
+	P_TEST_SUITE_RUN_CASE (pshm_nomem_test);
+	P_TEST_SUITE_RUN_CASE (pshm_invalid_test);
+	P_TEST_SUITE_RUN_CASE (pshm_general_test);
+	P_TEST_SUITE_RUN_CASE (pshm_thread_test);
+}
+P_TEST_SUITE_END()
