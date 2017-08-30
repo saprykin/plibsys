@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2016 Alexander Saprykin <xelfium@gmail.com>
+ * Copyright (C) 2013-2017 Alexander Saprykin <xelfium@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -15,19 +15,10 @@
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef PLIBSYS_TESTS_STATIC
-#  define BOOST_TEST_DYN_LINK
-#endif
-
-#define BOOST_TEST_MODULE psemaphore_test
-
 #include "plibsys.h"
+#include "ptestmacros.h"
 
-#ifdef PLIBSYS_TESTS_STATIC
-#  include <boost/test/included/unit_test.hpp>
-#else
-#  include <boost/test/unit_test.hpp>
-#endif
+P_TEST_MODULE_INIT ();
 
 #define PSEMAPHORE_MAX_VAL 10
 
@@ -106,9 +97,7 @@ extern "C" void pmem_free (ppointer block)
 	P_UNUSED (block);
 }
 
-BOOST_AUTO_TEST_SUITE (BOOST_TEST_MODULE)
-
-BOOST_AUTO_TEST_CASE (psemaphore_nomem_test)
+P_TEST_CASE_BEGIN (psemaphore_nomem_test)
 {
 	p_libsys_init ();
 
@@ -118,16 +107,17 @@ BOOST_AUTO_TEST_CASE (psemaphore_nomem_test)
 	vtable.malloc  = pmem_alloc;
 	vtable.realloc = pmem_realloc;
 
-	BOOST_CHECK (p_mem_set_vtable (&vtable) == TRUE);
+	P_TEST_CHECK (p_mem_set_vtable (&vtable) == TRUE);
 
-	BOOST_CHECK (p_semaphore_new ("p_semaphore_test_object", 1, P_SEM_ACCESS_CREATE, NULL) == NULL);
+	P_TEST_CHECK (p_semaphore_new ("p_semaphore_test_object", 1, P_SEM_ACCESS_CREATE, NULL) == NULL);
 
 	p_mem_restore_vtable ();
 
 	p_libsys_shutdown ();
 }
+P_TEST_CASE_END ()
 
-BOOST_AUTO_TEST_CASE (psemaphore_general_test)
+P_TEST_CASE_BEGIN (psemaphore_general_test)
 {
 	PSemaphore	*sem = NULL;
 	PError		*error = NULL;
@@ -135,46 +125,47 @@ BOOST_AUTO_TEST_CASE (psemaphore_general_test)
 
 	p_libsys_init ();
 
-	BOOST_CHECK (p_semaphore_new (NULL, 0, P_SEM_ACCESS_CREATE, &error) == NULL);
-	BOOST_CHECK (error != NULL);
+	P_TEST_CHECK (p_semaphore_new (NULL, 0, P_SEM_ACCESS_CREATE, &error) == NULL);
+	P_TEST_CHECK (error != NULL);
 	clean_error (&error);
 
-	BOOST_REQUIRE (p_semaphore_acquire (sem, &error) == FALSE);
-	BOOST_CHECK (error != NULL);
+	P_TEST_REQUIRE (p_semaphore_acquire (sem, &error) == FALSE);
+	P_TEST_CHECK (error != NULL);
 	clean_error (&error);
 
-	BOOST_REQUIRE (p_semaphore_release (sem, &error) == FALSE);
-	BOOST_CHECK (error != NULL);
+	P_TEST_REQUIRE (p_semaphore_release (sem, &error) == FALSE);
+	P_TEST_CHECK (error != NULL);
 	clean_error (&error);
 
 	p_semaphore_take_ownership (sem);
 	p_semaphore_free (NULL);
 
 	sem = p_semaphore_new ("p_semaphore_test_object", 10, P_SEM_ACCESS_CREATE, NULL);
-	BOOST_REQUIRE (sem != NULL);
+	P_TEST_REQUIRE (sem != NULL);
 	p_semaphore_take_ownership (sem);
 	p_semaphore_free (sem);
 
 	sem = p_semaphore_new ("p_semaphore_test_object", 10, P_SEM_ACCESS_CREATE, NULL);
-	BOOST_REQUIRE (sem != NULL);
+	P_TEST_REQUIRE (sem != NULL);
 
 	for (i = 0; i < 10; ++i)
-		BOOST_CHECK (p_semaphore_acquire (sem, NULL));
+		P_TEST_CHECK (p_semaphore_acquire (sem, NULL));
 
 	for (i = 0; i < 10; ++i)
-		BOOST_CHECK (p_semaphore_release (sem, NULL));
+		P_TEST_CHECK (p_semaphore_release (sem, NULL));
 
 	for (i = 0; i < 1000; ++i) {
-		BOOST_CHECK (p_semaphore_acquire (sem, NULL));
-		BOOST_CHECK (p_semaphore_release (sem, NULL));
+		P_TEST_CHECK (p_semaphore_acquire (sem, NULL));
+		P_TEST_CHECK (p_semaphore_release (sem, NULL));
 	}
 
 	p_semaphore_free (sem);
 
 	p_libsys_shutdown ();
 }
+P_TEST_CASE_END ()
 
-BOOST_AUTO_TEST_CASE (psemaphore_thread_test)
+P_TEST_CASE_BEGIN (psemaphore_thread_test)
 {
 	PUThread	*thr1, *thr2;
 	PSemaphore	*sem = NULL;
@@ -182,7 +173,7 @@ BOOST_AUTO_TEST_CASE (psemaphore_thread_test)
 	p_libsys_init ();
 
 	sem = p_semaphore_new ("p_semaphore_test_object", 10, P_SEM_ACCESS_CREATE, NULL);
-	BOOST_REQUIRE (sem != NULL);
+	P_TEST_REQUIRE (sem != NULL);
 	p_semaphore_take_ownership (sem);
 	p_semaphore_free (sem);
 
@@ -191,23 +182,23 @@ BOOST_AUTO_TEST_CASE (psemaphore_thread_test)
 	semaphore_test_val = PSEMAPHORE_MAX_VAL;
 
 	thr1 = p_uthread_create ((PUThreadFunc) semaphore_test_thread, NULL, true);
-	BOOST_REQUIRE (thr1 != NULL);
+	P_TEST_REQUIRE (thr1 != NULL);
 
 	thr2 = p_uthread_create ((PUThreadFunc) semaphore_test_thread, NULL, true);
-	BOOST_REQUIRE (thr2 != NULL);
+	P_TEST_REQUIRE (thr2 != NULL);
 
-	BOOST_CHECK (p_uthread_join (thr1) == 0);
-	BOOST_CHECK (p_uthread_join (thr2) == 0);
+	P_TEST_CHECK (p_uthread_join (thr1) == 0);
+	P_TEST_CHECK (p_uthread_join (thr2) == 0);
 
-	BOOST_REQUIRE (semaphore_test_val == PSEMAPHORE_MAX_VAL);
+	P_TEST_REQUIRE (semaphore_test_val == PSEMAPHORE_MAX_VAL);
 
-	BOOST_REQUIRE (p_semaphore_acquire (sem, NULL) == FALSE);
-	BOOST_REQUIRE (p_semaphore_release (sem, NULL) == FALSE);
+	P_TEST_REQUIRE (p_semaphore_acquire (sem, NULL) == FALSE);
+	P_TEST_REQUIRE (p_semaphore_release (sem, NULL) == FALSE);
 	p_semaphore_free (sem);
 	p_semaphore_take_ownership (sem);
 
 	sem = p_semaphore_new ("p_semaphore_test_object", 1, P_SEM_ACCESS_OPEN, NULL);
-	BOOST_REQUIRE (sem != NULL);
+	P_TEST_REQUIRE (sem != NULL);
 	p_semaphore_take_ownership (sem);
 	p_semaphore_free (sem);
 
@@ -216,5 +207,12 @@ BOOST_AUTO_TEST_CASE (psemaphore_thread_test)
 
 	p_libsys_shutdown ();
 }
+P_TEST_CASE_END ()
 
-BOOST_AUTO_TEST_SUITE_END()
+P_TEST_SUITE_BEGIN()
+{
+	P_TEST_SUITE_RUN_CASE (psemaphore_nomem_test);
+	P_TEST_SUITE_RUN_CASE (psemaphore_general_test);
+	P_TEST_SUITE_RUN_CASE (psemaphore_thread_test);
+}
+P_TEST_SUITE_END()
