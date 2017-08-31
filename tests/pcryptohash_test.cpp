@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2016 Alexander Saprykin <xelfium@gmail.com>
+ * Copyright (C) 2013-2017 Alexander Saprykin <xelfium@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -586,18 +586,18 @@ BOOST_AUTO_TEST_CASE (gost3411_94_test)
 {
 	PCryptoHash	*gost3411_94_hash;
 	pchar		*hash_str;
-	const puchar	hash_etalon_1[] = {177, 196, 102, 211, 117,  25, 184,  46,
-					   131,  25, 129, 159, 243,  37, 149, 224,
-					    71, 162, 140, 182, 248,  62, 255,  28,
-					   105,  22, 168,  21, 166,  55, 255, 250};
-	const puchar	hash_etalon_2[] = { 71,  26, 186,  87, 166,  10, 119,  13,
-					    58, 118,  19,   6,  53, 193, 251, 234,
-					    78, 241,  77, 229,  31, 120, 180, 174,
-					    87, 221, 137,  59,  98, 245,  82,   8};
-	const puchar	hash_etalon_3[] = { 92,   0, 204, 194, 115,  76, 221,  51,
-					    50, 211, 212, 116, 149, 118, 227, 193,
-					   167, 219, 175,  14, 126, 167,  78, 159,
-					   166,   2,  65,  60, 144, 161,  41, 250};
+	const puchar	hash_etalon_1[] = { 44, 239, 194, 247, 183, 189, 197,  20,
+					   225, 142, 165, 127, 167,  79, 243,  87,
+					   231, 250,  23, 214,  82, 199,  95, 105,
+					   203,  27, 231, 137,  62, 222,  72, 235};
+	const puchar	hash_etalon_2[] = {195, 115,  12,  92, 188, 202, 207, 145,
+					    90, 194, 146, 103, 111,  33, 232, 189,
+					    78, 247,  83,  49, 217,  64,  94,  95,
+					    26,  97, 220,  49,  48, 166,  80,  17};
+	const puchar	hash_etalon_3[] = {134, 147,  40, 122, 166,  47, 148, 120,
+					   247, 203,  49,  46, 192, 134, 107, 108,
+					    78,  74,  15,  17,  22,   4,  65, 232,
+					   244, 255, 205,  39,  21, 221,  85,  79};
 
 	p_libsys_init ();
 
@@ -608,10 +608,10 @@ BOOST_AUTO_TEST_CASE (gost3411_94_test)
 			   hash_etalon_1,
 			   hash_etalon_2,
 			   hash_etalon_3,
-			   "b1c466d37519b82e8319819ff32595e047a28cb6f83eff1c6916a815a637fffa",
-			   "471aba57a60a770d3a76130635c1fbea4ef14de51f78b4ae57dd893b62f55208",
-			   "5c00ccc2734cdd3332d3d4749576e3c1a7dbaf0e7ea74e9fa602413c90a129fa",
-			   "110ddcb6697d508710c64a62f39e7f202d1ffa20314011a0ebaad1281583d77e");
+			   "2cefc2f7b7bdc514e18ea57fa74ff357e7fa17d652c75f69cb1be7893ede48eb",
+			   "c3730c5cbccacf915ac292676f21e8bd4ef75331d9405e5f1a61dc3130a65011",
+			   "8693287aa62f9478f7cb312ec0866b6c4e4a0f11160441e8f4ffcd2715dd554f",
+			   "3738fb45a7f0de6a5447163c0b441ead7a23e48e7af553829dc4300a99f86343");
 
 	gost3411_94_hash = p_crypto_hash_new (P_CRYPTO_HASH_TYPE_GOST);
 
@@ -624,7 +624,7 @@ BOOST_AUTO_TEST_CASE (gost3411_94_test)
 	p_crypto_hash_update (gost3411_94_hash, (const puchar *) "message digest", 14);
 
 	hash_str = p_crypto_hash_get_string (gost3411_94_hash);
-	BOOST_CHECK (strcmp (hash_str, "1564064cce4fe1386be063f98d7ab17fc724fa7f02be4fa6847a2162be20d807") == 0);
+	BOOST_CHECK (strcmp (hash_str, "9c7b5288c8b3343b29e8ee4a5579593bd90131db7f6fed9b13af4399698b5d29") == 0);
 	p_free (hash_str);
 
 	p_crypto_hash_reset (gost3411_94_hash);
