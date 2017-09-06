@@ -60,11 +60,6 @@ inline double p_test_safe_division (double f1, double f2)
 	{										\
 		pint P_TEST_SUITE_FAIL_COUNTER = 0;
 
-#define P_TEST_SUITE_PARAMS_BEGIN()							\
-	int main (int argc, char *argv[])						\
-	{										\
-		pint P_TEST_SUITE_FAIL_COUNTER = 0;
-
 #define P_TEST_SUITE_END()								\
 		if (P_TEST_SUITE_FAIL_COUNTER == 0)					\
 			printf ("Test passed\n");					\
