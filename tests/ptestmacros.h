@@ -28,12 +28,16 @@
 
 #include <plibsys.h>
 
-#ifdef P_CC_MSVC
+#if defined (P_CC_MSVC)
 #  pragma warning (push)
 #  pragma warning (disable : 4723)
 #elif defined (P_CC_BORLAND)
 #  pragma option -w-8008
 #  pragma option -w-8066
+#elif defined (P_CC_WATCOM)
+#  pragma disable_message (13)
+#  pragma disable_message (367)
+#  pragma disable_message (368)
 #endif
 
 inline double p_test_safe_division (double f1, double f2)
