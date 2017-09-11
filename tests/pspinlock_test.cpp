@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Alexander Saprykin <xelfium@gmail.com>
+ * Copyright (C) 2016-2017 Alexander Saprykin <xelfium@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -15,19 +15,10 @@
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef PLIBSYS_TESTS_STATIC
-#  define BOOST_TEST_DYN_LINK
-#endif
-
-#define BOOST_TEST_MODULE pspinlock_test
-
 #include "plibsys.h"
+#include "ptestmacros.h"
 
-#ifdef PLIBSYS_TESTS_STATIC
-#  include <boost/test/included/unit_test.hpp>
-#else
-#  include <boost/test/unit_test.hpp>
-#endif
+P_TEST_MODULE_INIT ();
 
 #define PSPINLOCK_MAX_VAL 10
 
@@ -78,9 +69,7 @@ static void * spinlock_test_thread (void *)
 	return NULL;
 }
 
-BOOST_AUTO_TEST_SUITE (BOOST_TEST_MODULE)
-
-BOOST_AUTO_TEST_CASE (pspinlock_nomem_test)
+P_TEST_CASE_BEGIN (pspinlock_nomem_test)
 {
 	p_libsys_init ();
 
@@ -90,27 +79,29 @@ BOOST_AUTO_TEST_CASE (pspinlock_nomem_test)
 	vtable.malloc  = pmem_alloc;
 	vtable.realloc = pmem_realloc;
 
-	BOOST_CHECK (p_mem_set_vtable (&vtable) == TRUE);
-	BOOST_CHECK (p_spinlock_new () == NULL);
+	P_TEST_CHECK (p_mem_set_vtable (&vtable) == TRUE);
+	P_TEST_CHECK (p_spinlock_new () == NULL);
 
 	p_mem_restore_vtable ();
 
 	p_libsys_shutdown ();
 }
+P_TEST_CASE_END ()
 
-BOOST_AUTO_TEST_CASE (pspinlock_bad_input_test)
+P_TEST_CASE_BEGIN (pspinlock_bad_input_test)
 {
 	p_libsys_init ();
 
-	BOOST_REQUIRE (p_spinlock_lock (NULL) == FALSE);
-	BOOST_REQUIRE (p_spinlock_unlock (NULL) == FALSE);
-	BOOST_REQUIRE (p_spinlock_trylock (NULL) == FALSE);
+	P_TEST_REQUIRE (p_spinlock_lock (NULL) == FALSE);
+	P_TEST_REQUIRE (p_spinlock_unlock (NULL) == FALSE);
+	P_TEST_REQUIRE (p_spinlock_trylock (NULL) == FALSE);
 	p_spinlock_free (NULL);
 
 	p_libsys_shutdown ();
 }
+P_TEST_CASE_END ()
 
-BOOST_AUTO_TEST_CASE (pspinlock_general_test)
+P_TEST_CASE_BEGIN (pspinlock_general_test)
 {
 	PUThread *thr1, *thr2;
 
@@ -119,18 +110,18 @@ BOOST_AUTO_TEST_CASE (pspinlock_general_test)
 	spinlock_test_val = PSPINLOCK_MAX_VAL;
 	global_spinlock   = p_spinlock_new ();
 
-	BOOST_REQUIRE (global_spinlock != NULL);
+	P_TEST_REQUIRE (global_spinlock != NULL);
 
 	thr1 = p_uthread_create ((PUThreadFunc) spinlock_test_thread, NULL, true);
-	BOOST_REQUIRE (thr1 != NULL);
+	P_TEST_REQUIRE (thr1 != NULL);
 
 	thr2 = p_uthread_create ((PUThreadFunc) spinlock_test_thread, NULL, true);
-	BOOST_REQUIRE (thr2 != NULL);
+	P_TEST_REQUIRE (thr2 != NULL);
 
-	BOOST_CHECK (p_uthread_join (thr1) == 0);
-	BOOST_CHECK (p_uthread_join (thr2) == 0);
+	P_TEST_CHECK (p_uthread_join (thr1) == 0);
+	P_TEST_CHECK (p_uthread_join (thr2) == 0);
 
-	BOOST_REQUIRE (spinlock_test_val == PSPINLOCK_MAX_VAL);
+	P_TEST_REQUIRE (spinlock_test_val == PSPINLOCK_MAX_VAL);
 
 	p_uthread_unref (thr1);
 	p_uthread_unref (thr2);
@@ -138,5 +129,12 @@ BOOST_AUTO_TEST_CASE (pspinlock_general_test)
 
 	p_libsys_shutdown ();
 }
+P_TEST_CASE_END ()
 
-BOOST_AUTO_TEST_SUITE_END()
+P_TEST_SUITE_BEGIN()
+{
+	P_TEST_SUITE_RUN_CASE (pspinlock_nomem_test);
+	P_TEST_SUITE_RUN_CASE (pspinlock_bad_input_test);
+	P_TEST_SUITE_RUN_CASE (pspinlock_general_test);
+}
+P_TEST_SUITE_END()

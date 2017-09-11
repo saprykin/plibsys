@@ -15,23 +15,12 @@
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef PLIBSYS_TESTS_STATIC
-#  define BOOST_TEST_DYN_LINK
-#endif
-
-#define BOOST_TEST_MODULE pcryptohash_test
-
 #include "plibsys.h"
+#include "ptestmacros.h"
 
 #include <string.h>
 
-#ifdef PLIBSYS_TESTS_STATIC
-#  include <boost/test/included/unit_test.hpp>
-#else
-#  include <boost/test/unit_test.hpp>
-#endif
-
-BOOST_AUTO_TEST_SUITE (BOOST_TEST_MODULE)
+P_TEST_MODULE_INIT ();
 
 #define PCRYPTO_STRESS_LENGTH	10000
 #define PCRYPTO_MAX_UPDATES	1000000
@@ -75,19 +64,19 @@ general_hash_test (PCryptoHashType	type,
 
 	crypto_hash = p_crypto_hash_new (type);
 
-	BOOST_REQUIRE ((psize) p_crypto_hash_get_length (crypto_hash) == hash_len);
-	BOOST_REQUIRE (p_crypto_hash_get_type (crypto_hash) == type);
+	P_TEST_REQUIRE ((psize) p_crypto_hash_get_length (crypto_hash) == hash_len);
+	P_TEST_REQUIRE (p_crypto_hash_get_type (crypto_hash) == type);
 
 	hash_str = p_crypto_hash_get_string (crypto_hash);
-	BOOST_REQUIRE (hash_str != NULL);
+	P_TEST_REQUIRE (hash_str != NULL);
 	p_crypto_hash_reset (crypto_hash);
 	p_free (hash_str);
 
 	hash_dig = (puchar *) p_malloc0 (hash_len);
-	BOOST_REQUIRE (hash_dig != NULL);
+	P_TEST_REQUIRE (hash_dig != NULL);
 
 	long_str = (pchar *) p_malloc0 (PCRYPTO_STRESS_LENGTH);
-	BOOST_REQUIRE (long_str != NULL);
+	P_TEST_REQUIRE (long_str != NULL);
 
 	for (int i = 0; i < PCRYPTO_STRESS_LENGTH; ++i)
 		long_str[i] = (pchar) (97 + i % 20);
@@ -97,7 +86,7 @@ general_hash_test (PCryptoHashType	type,
 	/* Check string */
 	p_crypto_hash_update (crypto_hash, (const puchar *) msg1, strlen (msg1));
 	hash_str = p_crypto_hash_get_string (crypto_hash);
-	BOOST_CHECK (strcmp (hash_str, hash1) == 0);
+	P_TEST_CHECK (strcmp (hash_str, hash1) == 0);
 	p_free (hash_str);
 
 	p_crypto_hash_reset (crypto_hash);
@@ -107,10 +96,10 @@ general_hash_test (PCryptoHashType	type,
 	p_crypto_hash_update (crypto_hash, (const puchar *) msg1, strlen (msg1));
 	p_crypto_hash_get_digest (crypto_hash, hash_dig, &dig_len);
 
-	BOOST_CHECK (dig_len == hash_len);
+	P_TEST_CHECK (dig_len == hash_len);
 
 	for (unsigned int i = 0; i < hash_len; ++i)
-		BOOST_CHECK (hash_dig[i] == etalon1[i]);
+		P_TEST_CHECK (hash_dig[i] == etalon1[i]);
 
 	p_crypto_hash_reset (crypto_hash);
 
@@ -119,7 +108,7 @@ general_hash_test (PCryptoHashType	type,
 	/* Check string */
 	p_crypto_hash_update (crypto_hash, (const puchar *) msg2, strlen (msg2));
 	hash_str = p_crypto_hash_get_string (crypto_hash);
-	BOOST_CHECK (strcmp (hash_str, hash2) == 0);
+	P_TEST_CHECK (strcmp (hash_str, hash2) == 0);
 	p_free (hash_str);
 
 	p_crypto_hash_reset (crypto_hash);
@@ -129,10 +118,10 @@ general_hash_test (PCryptoHashType	type,
 	p_crypto_hash_update (crypto_hash, (const puchar *) msg2, strlen (msg2));
 	p_crypto_hash_get_digest (crypto_hash, hash_dig, &dig_len);
 
-	BOOST_CHECK (dig_len == hash_len);
+	P_TEST_CHECK (dig_len == hash_len);
 
 	for (unsigned int i = 0; i < hash_len; ++i)
-		BOOST_CHECK (hash_dig[i] == etalon2[i]);
+		P_TEST_CHECK (hash_dig[i] == etalon2[i]);
 
 	p_crypto_hash_reset (crypto_hash);
 
@@ -144,7 +133,7 @@ general_hash_test (PCryptoHashType	type,
 
 	hash_str = p_crypto_hash_get_string (crypto_hash);
 
-	BOOST_CHECK (strcmp (hash_str, hash3) == 0);
+	P_TEST_CHECK (strcmp (hash_str, hash3) == 0);
 	p_free (hash_str);
 
 	p_crypto_hash_reset (crypto_hash);
@@ -155,10 +144,10 @@ general_hash_test (PCryptoHashType	type,
 		p_crypto_hash_update (crypto_hash, (const puchar *) "a", 1);
 
 	p_crypto_hash_get_digest (crypto_hash, hash_dig, &dig_len);
-	BOOST_CHECK (dig_len == hash_len);
+	P_TEST_CHECK (dig_len == hash_len);
 
 	for (unsigned int i = 0; i < hash_len; ++i)
-		BOOST_CHECK (hash_dig[i] == etalon3[i]);
+		P_TEST_CHECK (hash_dig[i] == etalon3[i]);
 
 	p_crypto_hash_reset (crypto_hash);
 
@@ -166,7 +155,7 @@ general_hash_test (PCryptoHashType	type,
 	p_crypto_hash_update (crypto_hash, (const puchar *) long_str, PCRYPTO_STRESS_LENGTH);
 	hash_str = p_crypto_hash_get_string (crypto_hash);
 
-	BOOST_CHECK (strcmp (hash_str, hash_stress) == 0);
+	P_TEST_CHECK (strcmp (hash_str, hash_stress) == 0);
 	p_free (hash_str);
 
 	p_crypto_hash_reset (crypto_hash);
@@ -176,7 +165,7 @@ general_hash_test (PCryptoHashType	type,
 	p_crypto_hash_free (crypto_hash);
 }
 
-BOOST_AUTO_TEST_CASE (pcryptohash_nomem_test)
+P_TEST_CASE_BEGIN (pcryptohash_nomem_test)
 {
 	p_libsys_init ();
 
@@ -186,18 +175,19 @@ BOOST_AUTO_TEST_CASE (pcryptohash_nomem_test)
 	vtable.malloc  = pmem_alloc;
 	vtable.realloc = pmem_realloc;
 
-	BOOST_CHECK (p_mem_set_vtable (&vtable) == TRUE);
+	P_TEST_CHECK (p_mem_set_vtable (&vtable) == TRUE);
 
-	BOOST_CHECK (p_crypto_hash_new (P_CRYPTO_HASH_TYPE_MD5) == NULL);
-	BOOST_CHECK (p_crypto_hash_new (P_CRYPTO_HASH_TYPE_SHA1) == NULL);
-	BOOST_CHECK (p_crypto_hash_new (P_CRYPTO_HASH_TYPE_GOST) == NULL);
+	P_TEST_CHECK (p_crypto_hash_new (P_CRYPTO_HASH_TYPE_MD5) == NULL);
+	P_TEST_CHECK (p_crypto_hash_new (P_CRYPTO_HASH_TYPE_SHA1) == NULL);
+	P_TEST_CHECK (p_crypto_hash_new (P_CRYPTO_HASH_TYPE_GOST) == NULL);
 
 	p_mem_restore_vtable ();
 
 	p_libsys_shutdown ();
 }
+P_TEST_CASE_END ()
 
-BOOST_AUTO_TEST_CASE (pcryptohash_invalid_test)
+P_TEST_CASE_BEGIN (pcryptohash_invalid_test)
 {
 	PCryptoHash	*hash;
 	psize		len;
@@ -207,44 +197,44 @@ BOOST_AUTO_TEST_CASE (pcryptohash_invalid_test)
 
 	p_libsys_init ();
 
-	BOOST_CHECK (p_crypto_hash_new ((PCryptoHashType) -1) == NULL);
-	BOOST_CHECK (p_crypto_hash_get_length (NULL) == 0);
-	BOOST_CHECK (p_crypto_hash_get_string (NULL) == NULL);
-	BOOST_CHECK ((pint) p_crypto_hash_get_type (NULL) == -1);
+	P_TEST_CHECK (p_crypto_hash_new ((PCryptoHashType) -1) == NULL);
+	P_TEST_CHECK (p_crypto_hash_get_length (NULL) == 0);
+	P_TEST_CHECK (p_crypto_hash_get_string (NULL) == NULL);
+	P_TEST_CHECK ((pint) p_crypto_hash_get_type (NULL) == -1);
 	p_crypto_hash_free (NULL);
 
 	p_crypto_hash_update (NULL, NULL, 0);
 	p_crypto_hash_get_digest (NULL, NULL, NULL);
 
 	p_crypto_hash_get_digest (NULL, NULL, &len);
-	BOOST_CHECK (len == 0);
+	P_TEST_CHECK (len == 0);
 
 	p_crypto_hash_reset (NULL);
 
 	hash = p_crypto_hash_new (P_CRYPTO_HASH_TYPE_MD5);
-	BOOST_CHECK (hash != NULL);
+	P_TEST_CHECK (hash != NULL);
 
 	md5_len = p_crypto_hash_get_length (hash);
-	BOOST_CHECK (md5_len > 0);
+	P_TEST_CHECK (md5_len > 0);
 
 	buf = (puchar *) p_malloc0 (md5_len);
-	BOOST_CHECK (buf != NULL);
+	P_TEST_CHECK (buf != NULL);
 
 	p_crypto_hash_get_digest (hash, buf, &len);
-	BOOST_CHECK (len == 0);
+	P_TEST_CHECK (len == 0);
 
 	p_crypto_hash_update (hash, (const puchar *) ("abc"), 3);
 	len = ((psize) md5_len) - 1;
 	p_crypto_hash_get_digest (hash, buf, &len);
-	BOOST_CHECK (len == 0);
+	P_TEST_CHECK (len == 0);
 
 	hash_str = p_crypto_hash_get_string (hash);
-	BOOST_CHECK (strcmp (hash_str, "900150983cd24fb0d6963f7d28e17f72") == 0);
+	P_TEST_CHECK (strcmp (hash_str, "900150983cd24fb0d6963f7d28e17f72") == 0);
 	p_free (hash_str);
 
 	p_crypto_hash_update (hash, (const puchar *) ("abc"), 3);
 	hash_str = p_crypto_hash_get_string (hash);
-	BOOST_CHECK (strcmp (hash_str, "900150983cd24fb0d6963f7d28e17f72") == 0);
+	P_TEST_CHECK (strcmp (hash_str, "900150983cd24fb0d6963f7d28e17f72") == 0);
 	p_free (hash_str);
 
 	p_crypto_hash_free (hash);
@@ -252,8 +242,9 @@ BOOST_AUTO_TEST_CASE (pcryptohash_invalid_test)
 
 	p_libsys_shutdown ();
 }
+P_TEST_CASE_END ()
 
-BOOST_AUTO_TEST_CASE (md5_test)
+P_TEST_CASE_BEGIN (md5_test)
 {
 	const puchar	hash_etalon_1[] = {144,   1,  80, 152,  60, 210,  79, 176,
 					   214, 150,  63, 125,  40, 225, 127, 114};
@@ -278,8 +269,9 @@ BOOST_AUTO_TEST_CASE (md5_test)
 
 	p_libsys_shutdown ();
 }
+P_TEST_CASE_END ()
 
-BOOST_AUTO_TEST_CASE (sha1_test)
+P_TEST_CASE_BEGIN (sha1_test)
 {
 	const puchar	hash_etalon_1[] = {169, 153,  62,  54,  71,   6, 129, 106,
 					   186,  62,  37, 113, 120,  80, 194, 108,
@@ -307,8 +299,9 @@ BOOST_AUTO_TEST_CASE (sha1_test)
 
 	p_libsys_shutdown ();
 }
+P_TEST_CASE_END ()
 
-BOOST_AUTO_TEST_CASE (sha2_224_test)
+P_TEST_CASE_BEGIN (sha2_224_test)
 {
 	const puchar	hash_etalon_1[] = { 35,   9, 125,  34,  52,   5, 216,  34, 134,  66,
 					   164, 119, 189, 162,  85, 179,  42, 173, 188, 228,
@@ -336,8 +329,9 @@ BOOST_AUTO_TEST_CASE (sha2_224_test)
 
 	p_libsys_shutdown ();
 }
+P_TEST_CASE_END ()
 
-BOOST_AUTO_TEST_CASE (sha2_256_test)
+P_TEST_CASE_BEGIN (sha2_256_test)
 {
 	const puchar	hash_etalon_1[] = {186, 120,  22, 191, 143,   1, 207, 234,
 					    65,  65,  64, 222,  93, 174,  34,  35,
@@ -368,8 +362,9 @@ BOOST_AUTO_TEST_CASE (sha2_256_test)
 
 	p_libsys_shutdown ();
 }
+P_TEST_CASE_END ()
 
-BOOST_AUTO_TEST_CASE (sha2_384_test)
+P_TEST_CASE_BEGIN (sha2_384_test)
 {
 	const puchar	hash_etalon_1[] = {203,   0, 117,  63,  69, 163,  94, 139, 181, 160,  61, 105,
 					   154, 198,  80,   7,  39,  44,  50, 171,  14, 222, 209,  99,
@@ -400,8 +395,9 @@ BOOST_AUTO_TEST_CASE (sha2_384_test)
 
 	p_libsys_shutdown ();
 }
+P_TEST_CASE_END ()
 
-BOOST_AUTO_TEST_CASE (sha2_512_test)
+P_TEST_CASE_BEGIN (sha2_512_test)
 {
 	const puchar	hash_etalon_1[] = {221, 175,  53, 161, 147,  97, 122, 186,
 					   204,  65, 115,  73, 174,  32,  65,  49,
@@ -444,8 +440,9 @@ BOOST_AUTO_TEST_CASE (sha2_512_test)
 
 	p_libsys_shutdown ();
 }
+P_TEST_CASE_END ()
 
-BOOST_AUTO_TEST_CASE (sha3_224_test)
+P_TEST_CASE_BEGIN (sha3_224_test)
 {
 	const puchar	hash_etalon_1[] = {230,  66, 130,  76,  63, 140, 242,  74, 208, 146,
 					    52, 238, 125,  60, 118, 111, 201, 163, 165,  22,
@@ -473,8 +470,9 @@ BOOST_AUTO_TEST_CASE (sha3_224_test)
 
 	p_libsys_shutdown ();
 }
+P_TEST_CASE_END ()
 
-BOOST_AUTO_TEST_CASE (sha3_256_test)
+P_TEST_CASE_BEGIN (sha3_256_test)
 {
 	const puchar	hash_etalon_1[] = { 58, 152,  93, 167,  79, 226,  37, 178,
 					     4,  92,  23,  45, 107, 211, 144, 189,
@@ -505,8 +503,9 @@ BOOST_AUTO_TEST_CASE (sha3_256_test)
 
 	p_libsys_shutdown ();
 }
+P_TEST_CASE_END ()
 
-BOOST_AUTO_TEST_CASE (sha3_384_test)
+P_TEST_CASE_BEGIN (sha3_384_test)
 {
 	const puchar	hash_etalon_1[] = {236,   1,  73, 130, 136,  81, 111, 201,  38,  69, 159,  88,
 					   226, 198, 173, 141, 249, 180, 115, 203,  15, 192, 140,  37,
@@ -537,8 +536,9 @@ BOOST_AUTO_TEST_CASE (sha3_384_test)
 
 	p_libsys_shutdown ();
 }
+P_TEST_CASE_END ()
 
-BOOST_AUTO_TEST_CASE (sha3_512_test)
+P_TEST_CASE_BEGIN (sha3_512_test)
 {
 	const puchar	hash_etalon_1[] = {183,  81, 133,  11,  26,  87,  22, 138,
 					    86, 147, 205, 146,  75, 107,   9, 110,
@@ -581,8 +581,9 @@ BOOST_AUTO_TEST_CASE (sha3_512_test)
 
 	p_libsys_shutdown ();
 }
+P_TEST_CASE_END ()
 
-BOOST_AUTO_TEST_CASE (gost3411_94_test)
+P_TEST_CASE_BEGIN (gost3411_94_test)
 {
 	PCryptoHash	*gost3411_94_hash;
 	pchar		*hash_str;
@@ -615,7 +616,7 @@ BOOST_AUTO_TEST_CASE (gost3411_94_test)
 
 	gost3411_94_hash = p_crypto_hash_new (P_CRYPTO_HASH_TYPE_GOST);
 
-	BOOST_REQUIRE (gost3411_94_hash != NULL);
+	P_TEST_REQUIRE (gost3411_94_hash != NULL);
 
 	/* Repeat test */
 	p_crypto_hash_update (gost3411_94_hash, (const puchar *) "message digest", 14);
@@ -624,7 +625,7 @@ BOOST_AUTO_TEST_CASE (gost3411_94_test)
 	p_crypto_hash_update (gost3411_94_hash, (const puchar *) "message digest", 14);
 
 	hash_str = p_crypto_hash_get_string (gost3411_94_hash);
-	BOOST_CHECK (strcmp (hash_str, "9c7b5288c8b3343b29e8ee4a5579593bd90131db7f6fed9b13af4399698b5d29") == 0);
+	P_TEST_CHECK (strcmp (hash_str, "1564064cce4fe1386be063f98d7ab17fc724fa7f02be4fa6847a2162be20d807") == 0);
 	p_free (hash_str);
 
 	p_crypto_hash_reset (gost3411_94_hash);
@@ -632,5 +633,22 @@ BOOST_AUTO_TEST_CASE (gost3411_94_test)
 
 	p_libsys_shutdown ();
 }
+P_TEST_CASE_END ()
 
-BOOST_AUTO_TEST_SUITE_END()
+P_TEST_SUITE_BEGIN()
+{
+	P_TEST_SUITE_RUN_CASE (pcryptohash_nomem_test);
+	P_TEST_SUITE_RUN_CASE (pcryptohash_invalid_test);
+	P_TEST_SUITE_RUN_CASE (md5_test);
+	P_TEST_SUITE_RUN_CASE (sha1_test);
+	P_TEST_SUITE_RUN_CASE (sha2_224_test);
+	P_TEST_SUITE_RUN_CASE (sha2_256_test);
+	P_TEST_SUITE_RUN_CASE (sha2_384_test);
+	P_TEST_SUITE_RUN_CASE (sha2_512_test);
+	P_TEST_SUITE_RUN_CASE (sha3_224_test);
+	P_TEST_SUITE_RUN_CASE (sha3_256_test);
+	P_TEST_SUITE_RUN_CASE (sha3_384_test);
+	P_TEST_SUITE_RUN_CASE (sha3_512_test);
+	P_TEST_SUITE_RUN_CASE (gost3411_94_test);
+}
+P_TEST_SUITE_END()

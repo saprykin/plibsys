@@ -866,6 +866,7 @@ SET (PLIBSYS_SUMMARY
 	Platform libraries:     ${PLIBSYS_PLATFORM_LINK_LIBRARIES}
 
 	Build static library:   ${PLIBSYS_BUILD_STATIC}
+	Build tests:            ${PLIBSYS_TESTS}
 	Coverage support:       ${PLIBSYS_COVERAGE}
 	Visibility:             ${PLIBSYS_VISIBILITY}
 

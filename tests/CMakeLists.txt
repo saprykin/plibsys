@@ -4,31 +4,6 @@ set (OUTPUT_DIR ${CMAKE_BINARY_DIR})
 include (${PROJECT_SOURCE_DIR}/../cmake/PlatformDetect.cmake)
 plibsys_detect_target_os (PLIBSYS_TESTS_TARGET_OS)
 
-if (NOT PLIBSYS_TESTS_STATIC)
-        find_package (Boost COMPONENTS unit_test_framework REQUIRED)
-        list (APPEND PLIBSYS_TEST_INCLUDE_DIRS ${Boost_INCLUDE_DIR})
-else()
-        find_package (Boost COMPONENTS unit_test_framework)
-
-        if (NOT Boost_FOUND AND NOT BOOST_ROOT)
-                message (FATAL_ERROR "You must specify BOOST_ROOT variable when building static tests without proper Boost installation")
-        elseif (Boost_FOUND)
-                list (APPEND PLIBSYS_TEST_COMPILE_DEFS -DPLIBSYS_TESTS_STATIC)
-                list (APPEND PLIBSYS_TEST_INCLUDE_DIRS ${Boost_INCLUDE_DIR})
-                set (Boost_LIBRARIES "")
-        else()
-                list (APPEND PLIBSYS_TEST_COMPILE_DEFS -DPLIBSYS_TESTS_STATIC)
-                set (Boost_LIBRARIES "")
-
-                if (NOT IS_ABSOLUTE "${BOOST_ROOT}")
-                        get_filename_component (BOOST_ROOT_ABSOLUTE "${CMAKE_CURRENT_BINARY_DIR}/${BOOST_ROOT}" ABSOLUTE)
-                        set (BOOST_ROOT ${BOOST_ROOT_ABSOLUTE})
-                endif()
-
-                list (APPEND PLIBSYS_TEST_INCLUDE_DIRS ${BOOST_ROOT})
-        endif()
-endif()
-
 list (APPEND PLIBSYS_TEST_INCLUDE_DIRS ${PROJECT_SOURCE_DIR}/../src ${CMAKE_BINARY_DIR})
 
 if (MSVC)
@@ -37,7 +12,7 @@ endif()
 
 macro (plibsys_add_test_executable TEST_NAME SRC_FILE)
         add_executable (${TEST_NAME} ${SRC_FILE})
-        target_link_libraries (${TEST_NAME} ${Boost_LIBRARIES} plibsys)
+        target_link_libraries (${TEST_NAME} plibsys)
         set_target_properties (${TEST_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${OUTPUT_DIR})
 
         # QNX requires libm for sqrt() and friends
@@ -95,14 +70,3 @@ plibsys_add_test_executable (ptimeprofiler_test ptimeprofiler_test.cpp)
 plibsys_add_test_executable (ptree_test ptree_test.cpp)
 plibsys_add_test_executable (ptypes_test ptypes_test.cpp)
 plibsys_add_test_executable (puthread_test puthread_test.cpp)
-
-# Print summary 
-set (PLIBSYS_TESTS_SUMMARY
-"
-        == Tests configuration ==
-
-        Build static tests:     ${PLIBSYS_TESTS_STATIC}
-        Boost directory:        ${BOOST_ROOT}
-")
-
-message ("${PLIBSYS_TESTS_SUMMARY}")

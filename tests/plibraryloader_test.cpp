@@ -15,21 +15,15 @@
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef PLIBSYS_TESTS_STATIC
-#  define BOOST_TEST_DYN_LINK
-#endif
-
-#define BOOST_TEST_MODULE plibraryloader_test
-
 #include "plibsys.h"
+#include "ptestmacros.h"
 
 #include <stdio.h>
 
-#ifdef PLIBSYS_TESTS_STATIC
-#  include <boost/test/included/unit_test.hpp>
-#else
-#  include <boost/test/unit_test.hpp>
-#endif
+P_TEST_MODULE_INIT ();
+
+static int g_argc    = 0;
+static char **g_argv = NULL;
 
 extern "C" ppointer pmem_alloc (psize nbytes)
 {
@@ -49,26 +43,24 @@ extern "C" void pmem_free (ppointer block)
 	P_UNUSED (block);
 }
 
-BOOST_AUTO_TEST_SUITE (BOOST_TEST_MODULE)
-
-BOOST_AUTO_TEST_CASE (plibraryloader_nomem_test)
+P_TEST_CASE_BEGIN (plibraryloader_nomem_test)
 {
 	p_libsys_init ();
 
 	if (P_UNLIKELY (p_library_loader_is_ref_counted () == FALSE)) {
 		p_libsys_shutdown ();
-		return;
+		P_TEST_CASE_RETURN ();
 	}
 
 	/* We assume that 3rd argument is ourself library path */
-	BOOST_REQUIRE (boost::unit_test::framework::master_test_suite().argc > 1);
+	P_TEST_REQUIRE (g_argc > 1);
 
 	/* Cleanup from previous run */
 	p_file_remove ("." P_DIR_SEPARATOR "p_empty_file.txt", NULL);
 
 	FILE *file = fopen ("." P_DIR_SEPARATOR "p_empty_file.txt", "w");
-	BOOST_CHECK (file != NULL);
-	BOOST_CHECK (fclose (file) == 0);
+	P_TEST_CHECK (file != NULL);
+	P_TEST_CHECK (fclose (file) == 0);
 
 	PMemVTable vtable;
 
@@ -76,16 +68,14 @@ BOOST_AUTO_TEST_CASE (plibraryloader_nomem_test)
 	vtable.malloc  = pmem_alloc;
 	vtable.realloc = pmem_realloc;
 
-	BOOST_CHECK (p_mem_set_vtable (&vtable) == TRUE);
+	P_TEST_CHECK (p_mem_set_vtable (&vtable) == TRUE);
 
 #ifdef P_OS_WIN
 	SetErrorMode (SEM_FAILCRITICALERRORS);
 #endif
 
-	int argCount = boost::unit_test::framework::master_test_suite().argc;
-
-	BOOST_CHECK (p_library_loader_new ("." P_DIR_SEPARATOR "p_empty_file.txt") == NULL);
-	BOOST_CHECK (p_library_loader_new (boost::unit_test::framework::master_test_suite().argv[argCount - 1]) == NULL);
+	P_TEST_CHECK (p_library_loader_new ("." P_DIR_SEPARATOR "p_empty_file.txt") == NULL);
+	P_TEST_CHECK (p_library_loader_new (g_argv[g_argc - 1]) == NULL);
 
 #ifdef P_OS_WIN
 	SetErrorMode (0);
@@ -93,12 +83,13 @@ BOOST_AUTO_TEST_CASE (plibraryloader_nomem_test)
 
 	p_mem_restore_vtable ();
 
-	BOOST_CHECK (p_file_remove ("." P_DIR_SEPARATOR "p_empty_file.txt", NULL) == TRUE);
+	P_TEST_CHECK (p_file_remove ("." P_DIR_SEPARATOR "p_empty_file.txt", NULL) == TRUE);
 
 	p_libsys_shutdown ();
 }
+P_TEST_CASE_END ()
 
-BOOST_AUTO_TEST_CASE (plibraryloader_general_test)
+P_TEST_CASE_BEGIN (plibraryloader_general_test)
 {
 	PLibraryLoader	*loader;
 	pchar		*err_msg;
@@ -107,13 +98,13 @@ BOOST_AUTO_TEST_CASE (plibraryloader_general_test)
 	p_libsys_init ();
 
 	/* We assume that 3rd argument is ourself library path */
-	BOOST_REQUIRE (boost::unit_test::framework::master_test_suite().argc > 1);
+	P_TEST_REQUIRE (g_argc > 1);
 
 	/* Invalid usage */
-	BOOST_CHECK (p_library_loader_new (NULL) == NULL);
-	BOOST_CHECK (p_library_loader_new ("./unexistent_file.nofile") == NULL);
-	BOOST_CHECK (p_library_loader_get_symbol (NULL, NULL) == NULL);
-	BOOST_CHECK (p_library_loader_get_symbol (NULL, "unexistent_symbol") == NULL);
+	P_TEST_CHECK (p_library_loader_new (NULL) == NULL);
+	P_TEST_CHECK (p_library_loader_new ("./unexistent_file.nofile") == NULL);
+	P_TEST_CHECK (p_library_loader_get_symbol (NULL, NULL) == NULL);
+	P_TEST_CHECK (p_library_loader_get_symbol (NULL, "unexistent_symbol") == NULL);
 
 	p_library_loader_free (NULL);
 
@@ -121,7 +112,7 @@ BOOST_AUTO_TEST_CASE (plibraryloader_general_test)
 
 	/* At least not on HP-UX it should be true */
 #if !defined (P_OS_HPUX)
-	BOOST_CHECK (p_library_loader_is_ref_counted () == TRUE);
+	P_TEST_CHECK (p_library_loader_is_ref_counted () == TRUE);
 #else
 	p_library_loader_is_ref_counted ();
 #endif
@@ -131,18 +122,16 @@ BOOST_AUTO_TEST_CASE (plibraryloader_general_test)
 
 	if (P_UNLIKELY (p_library_loader_is_ref_counted () == FALSE)) {
 		p_libsys_shutdown ();
-		return;
+		P_TEST_CASE_RETURN ();
 	}
 
-	int argCount = boost::unit_test::framework::master_test_suite().argc;
+	loader = p_library_loader_new (g_argv[g_argc - 1]);
+	P_TEST_REQUIRE (loader != NULL);
 
-	loader = p_library_loader_new (boost::unit_test::framework::master_test_suite().argv[argCount - 1]);
-	BOOST_REQUIRE (loader != NULL);
-
-	BOOST_CHECK (p_library_loader_get_symbol (loader, "there_is_no_such_a_symbol") == (PFuncAddr) NULL);
+	P_TEST_CHECK (p_library_loader_get_symbol (loader, "there_is_no_such_a_symbol") == (PFuncAddr) NULL);
 
 	err_msg = p_library_loader_get_last_error (loader);
-	BOOST_CHECK (err_msg != NULL);
+	P_TEST_CHECK (err_msg != NULL);
 	p_free (err_msg);
 
 	shutdown_func = (void (*) (void)) p_library_loader_get_symbol (loader, "p_libsys_shutdown");
@@ -150,7 +139,7 @@ BOOST_AUTO_TEST_CASE (plibraryloader_general_test)
 	if (shutdown_func == NULL)
 		shutdown_func = (void (*) (void)) p_library_loader_get_symbol (loader, "_p_libsys_shutdown");
 
-	BOOST_REQUIRE (shutdown_func != NULL);
+	P_TEST_REQUIRE (shutdown_func != NULL);
 
 	err_msg = p_library_loader_get_last_error (loader);
 	p_free (err_msg);
@@ -164,5 +153,14 @@ BOOST_AUTO_TEST_CASE (plibraryloader_general_test)
 	shutdown_func ();
 #endif
 }
+P_TEST_CASE_END ()
 
-BOOST_AUTO_TEST_SUITE_END()
+P_TEST_SUITE_ARGS_BEGIN()
+{
+	g_argc = argc;
+	g_argv = argv;
+
+	P_TEST_SUITE_RUN_CASE (plibraryloader_nomem_test);
+	P_TEST_SUITE_RUN_CASE (plibraryloader_general_test);
+}
+P_TEST_SUITE_END()

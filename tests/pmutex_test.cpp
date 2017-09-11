@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2016 Alexander Saprykin <xelfium@gmail.com>
+ * Copyright (C) 2013-2017 Alexander Saprykin <xelfium@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -15,19 +15,10 @@
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef PLIBSYS_TESTS_STATIC
-#  define BOOST_TEST_DYN_LINK
-#endif
-
-#define BOOST_TEST_MODULE pmutex_test
-
 #include "plibsys.h"
+#include "ptestmacros.h"
 
-#ifdef PLIBSYS_TESTS_STATIC
-#  include <boost/test/included/unit_test.hpp>
-#else
-#  include <boost/test/unit_test.hpp>
-#endif
+P_TEST_MODULE_INIT ();
 
 static pint mutex_test_val  = 0;
 static PMutex *global_mutex = NULL;
@@ -76,9 +67,7 @@ static void * mutex_test_thread (void *)
 	return NULL;
 }
 
-BOOST_AUTO_TEST_SUITE (BOOST_TEST_MODULE)
-
-BOOST_AUTO_TEST_CASE (pmutex_nomem_test)
+P_TEST_CASE_BEGIN (pmutex_nomem_test)
 {
 	p_libsys_init ();
 
@@ -88,47 +77,49 @@ BOOST_AUTO_TEST_CASE (pmutex_nomem_test)
 	vtable.malloc  = pmem_alloc;
 	vtable.realloc = pmem_realloc;
 
-	BOOST_CHECK (p_mem_set_vtable (&vtable) == TRUE);
-	BOOST_CHECK (p_mutex_new () == NULL);
+	P_TEST_CHECK (p_mem_set_vtable (&vtable) == TRUE);
+	P_TEST_CHECK (p_mutex_new () == NULL);
 
 	p_mem_restore_vtable ();
 
 	p_libsys_shutdown ();
 }
+P_TEST_CASE_END ()
 
-BOOST_AUTO_TEST_CASE (pmutex_bad_input_test)
+P_TEST_CASE_BEGIN (pmutex_bad_input_test)
 {
 	p_libsys_init ();
 
-	BOOST_REQUIRE (p_mutex_lock (NULL) == FALSE);
-	BOOST_REQUIRE (p_mutex_unlock (NULL) == FALSE);
-	BOOST_REQUIRE (p_mutex_trylock (NULL) == FALSE);
+	P_TEST_REQUIRE (p_mutex_lock (NULL) == FALSE);
+	P_TEST_REQUIRE (p_mutex_unlock (NULL) == FALSE);
+	P_TEST_REQUIRE (p_mutex_trylock (NULL) == FALSE);
 	p_mutex_free (NULL);
 
 	p_libsys_shutdown ();
 }
+P_TEST_CASE_END ()
 
-BOOST_AUTO_TEST_CASE (pmutex_general_test)
+P_TEST_CASE_BEGIN (pmutex_general_test)
 {
 	PUThread *thr1, *thr2;
 
 	p_libsys_init ();
 
 	global_mutex = p_mutex_new ();
-	BOOST_REQUIRE (global_mutex != NULL);
+	P_TEST_REQUIRE (global_mutex != NULL);
 
 	mutex_test_val = 10;
 
 	thr1 = p_uthread_create ((PUThreadFunc) mutex_test_thread, NULL, true);
-	BOOST_REQUIRE (thr1 != NULL);
+	P_TEST_REQUIRE (thr1 != NULL);
 
 	thr2 = p_uthread_create ((PUThreadFunc) mutex_test_thread, NULL, true);
-	BOOST_REQUIRE (thr2 != NULL);
+	P_TEST_REQUIRE (thr2 != NULL);
 
-	BOOST_CHECK (p_uthread_join (thr1) == 0);
-	BOOST_CHECK (p_uthread_join (thr2) == 0);
+	P_TEST_CHECK (p_uthread_join (thr1) == 0);
+	P_TEST_CHECK (p_uthread_join (thr2) == 0);
 
-	BOOST_REQUIRE (mutex_test_val == 10);
+	P_TEST_REQUIRE (mutex_test_val == 10);
 
 	p_uthread_unref (thr1);
 	p_uthread_unref (thr2);
@@ -136,5 +127,12 @@ BOOST_AUTO_TEST_CASE (pmutex_general_test)
 
 	p_libsys_shutdown ();
 }
+P_TEST_CASE_END ()
 
-BOOST_AUTO_TEST_SUITE_END()
+P_TEST_SUITE_BEGIN()
+{
+	P_TEST_SUITE_RUN_CASE (pmutex_nomem_test);
+	P_TEST_SUITE_RUN_CASE (pmutex_bad_input_test);
+	P_TEST_SUITE_RUN_CASE (pmutex_general_test);
+}
+P_TEST_SUITE_END()

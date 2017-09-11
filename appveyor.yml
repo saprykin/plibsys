@@ -23,8 +23,8 @@ environment:
                   USE_MINGW:       "1"
                   USE_MINGW64:     "1"
                   USE_MINGW_710:   "1"
-#                - CMAKE_GENERATOR: "Unix Makefiles"
-#                  USE_MSYS64:      "1"
+                - CMAKE_GENERATOR: "Unix Makefiles"
+                  USE_MSYS64:      "1"
                 - CMAKE_GENERATOR: "MSYS Makefiles"
                   USE_MSYS64:      "1"
                   USE_MINGW64:     "1"
@@ -164,18 +164,6 @@ build_script:
                 New-Item -ItemType directory -Path $BUILD_DIR | Out-Null;
                 Set-Location $BUILD_DIR | Out-Null;
 
-                If ($env:APPVEYOR_REPO_BRANCH -eq "appveyor_test" -And -Not ($env:SKIP_TESTS -eq "1")) {
-                        $VAR_BOOST_TESTS = "-DPLIBSYS_TESTS_STATIC=ON";
-
-                        If ($env:USE_MSYS64 -eq "1" -And -Not ($env:USE_MINGW64 -eq "1")) {
-                                $VAR_BOOST_ROOT = "-DBOOST_ROOT=/c/Libraries/boost_1_62_0";
-                        } ElseIf ($env:USE_CYGWIN -eq "1") {
-                                $VAR_BOOST_ROOT = "-DBOOST_ROOT=/cygdrive/c/Libraries/boost_1_62_0";
-                        } Else {
-                                $VAR_BOOST_ROOT = "-DBOOST_ROOT=C:/Libraries/boost_1_62_0";
-                        }
-                }
-
                 If ($env:USE_MSYS64 -eq "1") {
                         if ($env:USE_MINGW64 -eq "1") {
                                 $BUILD_TYPE = "";
@@ -253,7 +241,7 @@ build_script:
                         Get-ChildItem -Path ./ -Recurse | Remove-Item -Force -Recurse;
                 }
 
-                & cmake -G"$env:CMAKE_GENERATOR" $BUILD_TYPE $VAR_BOOST_TESTS $VAR_BOOST_ROOT $CMAKE_C_COMPILER $CMAKE_CXX_COMPILER ../plibsys;
+                & cmake -G"$env:CMAKE_GENERATOR" $BUILD_TYPE $CMAKE_C_COMPILER $CMAKE_CXX_COMPILER ../plibsys;
                 & $BUILD_COMMAND $BUILD_PARAMS;
 
                 If ($env:APPVEYOR_REPO_BRANCH -eq "appveyor_test") {

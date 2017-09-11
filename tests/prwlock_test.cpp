@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Alexander Saprykin <xelfium@gmail.com>
+ * Copyright (C) 2016-2017 Alexander Saprykin <xelfium@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -15,21 +15,12 @@
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef PLIBSYS_TESTS_STATIC
-#  define BOOST_TEST_DYN_LINK
-#endif
-
-#define BOOST_TEST_MODULE prwlock_test
-
 #include "plibsys.h"
+#include "ptestmacros.h"
 
 #include <string.h>
 
-#ifdef PLIBSYS_TESTS_STATIC
-#  include <boost/test/included/unit_test.hpp>
-#else
-#  include <boost/test/unit_test.hpp>
-#endif
+P_TEST_MODULE_INIT ();
 
 #define PRWLOCK_TEST_STRING_1 "This is a test string."
 #define PRWLOCK_TEST_STRING_2 "Ouh, yet another string to check!"
@@ -124,9 +115,7 @@ static void * writer_thread_func (void *data)
 	return NULL;
 }
 
-BOOST_AUTO_TEST_SUITE (BOOST_TEST_MODULE)
-
-BOOST_AUTO_TEST_CASE (prwlock_nomem_test)
+P_TEST_CASE_BEGIN (prwlock_nomem_test)
 {
 	p_libsys_init ();
 
@@ -136,37 +125,39 @@ BOOST_AUTO_TEST_CASE (prwlock_nomem_test)
 	vtable.malloc  = pmem_alloc;
 	vtable.realloc = pmem_realloc;
 
-	BOOST_CHECK (p_mem_set_vtable (&vtable) == TRUE);
+	P_TEST_CHECK (p_mem_set_vtable (&vtable) == TRUE);
 
-	BOOST_CHECK (p_rwlock_new () == NULL);
+	P_TEST_CHECK (p_rwlock_new () == NULL);
 
 	p_mem_restore_vtable ();
 
 	p_libsys_shutdown ();
 }
+P_TEST_CASE_END ()
 
-BOOST_AUTO_TEST_CASE (prwlock_bad_input_test)
+P_TEST_CASE_BEGIN (prwlock_bad_input_test)
 {
 	p_libsys_init ();
 
-	BOOST_CHECK (p_rwlock_reader_lock (NULL) == FALSE);
-	BOOST_CHECK (p_rwlock_reader_trylock (NULL) == FALSE);
-	BOOST_CHECK (p_rwlock_reader_unlock (NULL) == FALSE);
-	BOOST_CHECK (p_rwlock_writer_lock (NULL) == FALSE);
-	BOOST_CHECK (p_rwlock_writer_trylock (NULL) == FALSE);
-	BOOST_CHECK (p_rwlock_writer_unlock (NULL) == FALSE);
+	P_TEST_CHECK (p_rwlock_reader_lock (NULL) == FALSE);
+	P_TEST_CHECK (p_rwlock_reader_trylock (NULL) == FALSE);
+	P_TEST_CHECK (p_rwlock_reader_unlock (NULL) == FALSE);
+	P_TEST_CHECK (p_rwlock_writer_lock (NULL) == FALSE);
+	P_TEST_CHECK (p_rwlock_writer_trylock (NULL) == FALSE);
+	P_TEST_CHECK (p_rwlock_writer_unlock (NULL) == FALSE);
 	p_rwlock_free (NULL);
 
 	p_libsys_shutdown ();
 }
+P_TEST_CASE_END ()
 
-BOOST_AUTO_TEST_CASE (prwlock_general_test)
+P_TEST_CASE_BEGIN (prwlock_general_test)
 {
 	p_libsys_init ();
 
 	test_rwlock = p_rwlock_new ();
 
-	BOOST_REQUIRE (test_rwlock != NULL);
+	P_TEST_REQUIRE (test_rwlock != NULL);
 
 	is_threads_working = TRUE;
 	writers_counter    = 0;
@@ -187,19 +178,19 @@ BOOST_AUTO_TEST_CASE (prwlock_general_test)
 						  NULL,
 						  TRUE);
 
-	BOOST_REQUIRE (reader_thr1 != NULL);
-	BOOST_REQUIRE (reader_thr2 != NULL);
-	BOOST_REQUIRE (writer_thr1 != NULL);
-	BOOST_REQUIRE (writer_thr2 != NULL);
+	P_TEST_REQUIRE (reader_thr1 != NULL);
+	P_TEST_REQUIRE (reader_thr2 != NULL);
+	P_TEST_REQUIRE (writer_thr1 != NULL);
+	P_TEST_REQUIRE (writer_thr2 != NULL);
 
 	p_uthread_sleep (10000);
 
 	is_threads_working = FALSE;
 
-	BOOST_CHECK (p_uthread_join (reader_thr1) > 0);
-	BOOST_CHECK (p_uthread_join (reader_thr2) > 0);
-	BOOST_CHECK (p_uthread_join (writer_thr1) > 0);
-	BOOST_CHECK (p_uthread_join (writer_thr2) > 0);
+	P_TEST_CHECK (p_uthread_join (reader_thr1) > 0);
+	P_TEST_CHECK (p_uthread_join (reader_thr2) > 0);
+	P_TEST_CHECK (p_uthread_join (writer_thr1) > 0);
+	P_TEST_CHECK (p_uthread_join (writer_thr2) > 0);
 
 	p_uthread_unref (reader_thr1);
 	p_uthread_unref (reader_thr2);
@@ -210,5 +201,12 @@ BOOST_AUTO_TEST_CASE (prwlock_general_test)
 
 	p_libsys_shutdown ();
 }
+P_TEST_CASE_END ()
 
-BOOST_AUTO_TEST_SUITE_END()
+P_TEST_SUITE_BEGIN()
+{
+	P_TEST_SUITE_RUN_CASE (prwlock_nomem_test);
+	P_TEST_SUITE_RUN_CASE (prwlock_bad_input_test);
+	P_TEST_SUITE_RUN_CASE (prwlock_general_test);
+}
+P_TEST_SUITE_END()

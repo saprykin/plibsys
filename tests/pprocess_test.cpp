@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2016 Alexander Saprykin <xelfium@gmail.com>
+ * Copyright (C) 2013-2017 Alexander Saprykin <xelfium@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -15,33 +15,27 @@
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef PLIBSYS_TESTS_STATIC
-#  define BOOST_TEST_DYN_LINK
-#endif
-
-#define BOOST_TEST_MODULE pprocess_test
-
 #include "plibsys.h"
+#include "ptestmacros.h"
 
-#ifdef PLIBSYS_TESTS_STATIC
-#  include <boost/test/included/unit_test.hpp>
-#else
-#  include <boost/test/unit_test.hpp>
-#endif
+P_TEST_MODULE_INIT ();
 
-BOOST_AUTO_TEST_SUITE (BOOST_TEST_MODULE)
-
-BOOST_AUTO_TEST_CASE (pprocess_general_test)
+P_TEST_CASE_BEGIN (pprocess_general_test)
 {
 	puint32	pid;
 
 	p_libsys_init ();
 
 	pid = p_process_get_current_pid ();
-	BOOST_CHECK (pid > 0);
-	BOOST_REQUIRE (p_process_is_running (pid) == TRUE);
+	P_TEST_CHECK (pid > 0);
+	P_TEST_REQUIRE (p_process_is_running (pid) == TRUE);
 
 	p_libsys_shutdown ();
 }
+P_TEST_CASE_END ()
 
-BOOST_AUTO_TEST_SUITE_END()
+P_TEST_SUITE_BEGIN()
+{
+	P_TEST_SUITE_RUN_CASE (pprocess_general_test);
+}
+P_TEST_SUITE_END()

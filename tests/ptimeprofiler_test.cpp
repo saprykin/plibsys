@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2016 Alexander Saprykin <xelfium@gmail.com>
+ * Copyright (C) 2013-2017 Alexander Saprykin <xelfium@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -15,19 +15,10 @@
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef PLIBSYS_TESTS_STATIC
-#  define BOOST_TEST_DYN_LINK
-#endif
-
-#define BOOST_TEST_MODULE ptimeprofiler_test
-
 #include "plibsys.h"
+#include "ptestmacros.h"
 
-#ifdef PLIBSYS_TESTS_STATIC
-#  include <boost/test/included/unit_test.hpp>
-#else
-#  include <boost/test/unit_test.hpp>
-#endif
+P_TEST_MODULE_INIT ();
 
 extern "C" ppointer pmem_alloc (psize nbytes)
 {
@@ -47,9 +38,7 @@ extern "C" void pmem_free (ppointer block)
 	P_UNUSED (block);
 }
 
-BOOST_AUTO_TEST_SUITE (BOOST_TEST_MODULE)
-
-BOOST_AUTO_TEST_CASE (ptimeprofiler_nomem_test)
+P_TEST_CASE_BEGIN (ptimeprofiler_nomem_test)
 {
 	p_libsys_init ();
 
@@ -59,27 +48,29 @@ BOOST_AUTO_TEST_CASE (ptimeprofiler_nomem_test)
 	vtable.malloc  = pmem_alloc;
 	vtable.realloc = pmem_realloc;
 
-	BOOST_CHECK (p_mem_set_vtable (&vtable) == TRUE);
+	P_TEST_CHECK (p_mem_set_vtable (&vtable) == TRUE);
 
-	BOOST_CHECK (p_time_profiler_new () == NULL);
+	P_TEST_CHECK (p_time_profiler_new () == NULL);
 
 	p_mem_restore_vtable ();
 
 	p_libsys_shutdown ();
 }
+P_TEST_CASE_END ()
 
-BOOST_AUTO_TEST_CASE (ptimeprofiler_bad_input_test)
+P_TEST_CASE_BEGIN (ptimeprofiler_bad_input_test)
 {
 	p_libsys_init ();
 
-	BOOST_CHECK (p_time_profiler_elapsed_usecs (NULL) == 0);
+	P_TEST_CHECK (p_time_profiler_elapsed_usecs (NULL) == 0);
 	p_time_profiler_reset (NULL);
 	p_time_profiler_free (NULL);
 
 	p_libsys_shutdown ();
 }
+P_TEST_CASE_END ()
 
-BOOST_AUTO_TEST_CASE (ptimeprofiler_general_test)
+P_TEST_CASE_BEGIN (ptimeprofiler_general_test)
 {
 	PTimeProfiler	*profiler = NULL;
 	puint64		prev_val, val;
@@ -87,34 +78,41 @@ BOOST_AUTO_TEST_CASE (ptimeprofiler_general_test)
 	p_libsys_init ();
 
 	profiler = p_time_profiler_new ();
-	BOOST_REQUIRE (profiler != NULL);
+	P_TEST_REQUIRE (profiler != NULL);
 
 	p_uthread_sleep (50);
 	prev_val = p_time_profiler_elapsed_usecs (profiler);
-	BOOST_CHECK (prev_val > 0);
+	P_TEST_CHECK (prev_val > 0);
 
 	p_uthread_sleep (100);
 	val = p_time_profiler_elapsed_usecs (profiler);
-	BOOST_CHECK (val > prev_val);
+	P_TEST_CHECK (val > prev_val);
 	prev_val = val;
 
 	p_uthread_sleep (1000);
 	val = p_time_profiler_elapsed_usecs (profiler);
-	BOOST_CHECK (val > prev_val);
+	P_TEST_CHECK (val > prev_val);
 
 	p_time_profiler_reset (profiler);
 
 	p_uthread_sleep (15);
 	prev_val = p_time_profiler_elapsed_usecs (profiler);
-	BOOST_CHECK (prev_val > 0);
+	P_TEST_CHECK (prev_val > 0);
 
 	p_uthread_sleep (178);
 	val = p_time_profiler_elapsed_usecs (profiler);
-	BOOST_CHECK (val > prev_val);
+	P_TEST_CHECK (val > prev_val);
 
 	p_time_profiler_free (profiler);
 
 	p_libsys_shutdown ();
 }
+P_TEST_CASE_END ()
 
-BOOST_AUTO_TEST_SUITE_END()
+P_TEST_SUITE_BEGIN()
+{
+	P_TEST_SUITE_RUN_CASE (ptimeprofiler_nomem_test);
+	P_TEST_SUITE_RUN_CASE (ptimeprofiler_bad_input_test);
+	P_TEST_SUITE_RUN_CASE (ptimeprofiler_general_test);
+}
+P_TEST_SUITE_END()

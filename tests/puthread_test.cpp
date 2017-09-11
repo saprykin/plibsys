@@ -15,19 +15,10 @@
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef PLIBSYS_TESTS_STATIC
-#  define BOOST_TEST_DYN_LINK
-#endif
-
-#define BOOST_TEST_MODULE puthread_test
-
 #include "plibsys.h"
+#include "ptestmacros.h"
 
-#ifdef PLIBSYS_TESTS_STATIC
-#  include <boost/test/included/unit_test.hpp>
-#else
-#  include <boost/test/unit_test.hpp>
-#endif
+P_TEST_MODULE_INIT ();
 
 static pint              thread_wakes_1     = 0;
 static pint              thread_wakes_2     = 0;
@@ -179,14 +170,12 @@ static void * test_thread_tls_create_func (void *data)
 	return NULL;
 }
 
-BOOST_AUTO_TEST_SUITE (BOOST_TEST_MODULE)
-
-BOOST_AUTO_TEST_CASE (puthread_nomem_test)
+P_TEST_CASE_BEGIN (puthread_nomem_test)
 {
 	p_libsys_init ();
 
 	PUThreadKey *thread_key = p_uthread_local_new (p_free);
-	BOOST_CHECK (thread_key != NULL);
+	P_TEST_CHECK (thread_key != NULL);
 
 	PMemVTable vtable;
 
@@ -194,23 +183,23 @@ BOOST_AUTO_TEST_CASE (puthread_nomem_test)
 	vtable.malloc  = pmem_alloc;
 	vtable.realloc = pmem_realloc;
 
-	BOOST_CHECK (p_mem_set_vtable (&vtable) == TRUE);
+	P_TEST_CHECK (p_mem_set_vtable (&vtable) == TRUE);
 
 	thread_wakes_1 = 0;
 	thread_wakes_2 = 0;
 
-	BOOST_CHECK (p_uthread_create ((PUThreadFunc) test_thread_func,
+	P_TEST_CHECK (p_uthread_create ((PUThreadFunc) test_thread_func,
 				       (ppointer) &thread_wakes_1,
 				       TRUE) == NULL);
 
-	BOOST_CHECK (p_uthread_create_full ((PUThreadFunc) test_thread_func,
+	P_TEST_CHECK (p_uthread_create_full ((PUThreadFunc) test_thread_func,
 					    (ppointer) &thread_wakes_2,
 					    TRUE,
 					    P_UTHREAD_PRIORITY_NORMAL,
 					    0) == NULL);
 
-	BOOST_CHECK (p_uthread_current () == NULL);
-	BOOST_CHECK (p_uthread_local_new (NULL) == NULL);
+	P_TEST_CHECK (p_uthread_current () == NULL);
+	P_TEST_CHECK (p_uthread_local_new (NULL) == NULL);
 
 	p_uthread_exit (0);
 
@@ -219,7 +208,7 @@ BOOST_AUTO_TEST_CASE (puthread_nomem_test)
 	ppointer tls_value = p_uthread_get_local (thread_key);
 
 	if (tls_value != NULL) {
-		BOOST_CHECK (tls_value == PINT_TO_POINTER (10));
+		P_TEST_CHECK (tls_value == PINT_TO_POINTER (10));
 		p_uthread_set_local (thread_key, NULL);
 	}
 
@@ -228,7 +217,7 @@ BOOST_AUTO_TEST_CASE (puthread_nomem_test)
 	tls_value = p_uthread_get_local (thread_key);
 
 	if (tls_value != NULL) {
-		BOOST_CHECK (tls_value == PINT_TO_POINTER (12));
+		P_TEST_CHECK (tls_value == PINT_TO_POINTER (12));
 		p_uthread_set_local (thread_key, NULL);
 	}
 
@@ -238,16 +227,17 @@ BOOST_AUTO_TEST_CASE (puthread_nomem_test)
 
 	p_libsys_shutdown ();
 }
+P_TEST_CASE_END ()
 
-BOOST_AUTO_TEST_CASE (puthread_bad_input_test)
+P_TEST_CASE_BEGIN (puthread_bad_input_test)
 {
 	p_libsys_init ();
 
-	BOOST_CHECK (p_uthread_create (NULL, NULL, false) == NULL);
-	BOOST_CHECK (p_uthread_create_full (NULL, NULL, false, P_UTHREAD_PRIORITY_NORMAL, 0) == NULL);
-	BOOST_CHECK (p_uthread_join (NULL) == -1);
-	BOOST_CHECK (p_uthread_set_priority (NULL, P_UTHREAD_PRIORITY_NORMAL) == FALSE);
-	BOOST_CHECK (p_uthread_get_local (NULL) == NULL);
+	P_TEST_CHECK (p_uthread_create (NULL, NULL, false) == NULL);
+	P_TEST_CHECK (p_uthread_create_full (NULL, NULL, false, P_UTHREAD_PRIORITY_NORMAL, 0) == NULL);
+	P_TEST_CHECK (p_uthread_join (NULL) == -1);
+	P_TEST_CHECK (p_uthread_set_priority (NULL, P_UTHREAD_PRIORITY_NORMAL) == FALSE);
+	P_TEST_CHECK (p_uthread_get_local (NULL) == NULL);
 	p_uthread_set_local (NULL, NULL);
 	p_uthread_replace_local (NULL, NULL);
 	p_uthread_ref (NULL);
@@ -257,8 +247,9 @@ BOOST_AUTO_TEST_CASE (puthread_bad_input_test)
 
 	p_libsys_shutdown ();
 }
+P_TEST_CASE_END ()
 
-BOOST_AUTO_TEST_CASE (puthread_general_test)
+P_TEST_CASE_BEGIN (puthread_general_test)
 {
 	p_libsys_init ();
 
@@ -270,7 +261,7 @@ BOOST_AUTO_TEST_CASE (puthread_general_test)
 	thread2_obj    = NULL;
 
 	tls_key = p_uthread_local_new (NULL);
-	BOOST_CHECK (tls_key != NULL);
+	P_TEST_CHECK (tls_key != NULL);
 
 	is_threads_working = TRUE;
 
@@ -288,22 +279,22 @@ BOOST_AUTO_TEST_CASE (puthread_general_test)
 
 	p_uthread_set_priority (thr1, P_UTHREAD_PRIORITY_NORMAL);
 
-	BOOST_REQUIRE (thr1 != NULL);
-	BOOST_REQUIRE (thr2 != NULL);
+	P_TEST_REQUIRE (thr1 != NULL);
+	P_TEST_REQUIRE (thr2 != NULL);
 
 	p_uthread_sleep (5000);
 
 	is_threads_working = FALSE;
 
-	BOOST_CHECK (p_uthread_join (thr1) == thread_wakes_1);
-	BOOST_CHECK (p_uthread_join (thr2) == thread_wakes_2);
+	P_TEST_CHECK (p_uthread_join (thr1) == thread_wakes_1);
+	P_TEST_CHECK (p_uthread_join (thr2) == thread_wakes_2);
 
-	BOOST_REQUIRE (thread1_id != thread2_id);
-	BOOST_CHECK (thread1_id != p_uthread_current_id () &&
+	P_TEST_REQUIRE (thread1_id != thread2_id);
+	P_TEST_CHECK (thread1_id != p_uthread_current_id () &&
 		     thread2_id != p_uthread_current_id ());
 
-	BOOST_CHECK (thread1_obj == thr1);
-	BOOST_CHECK (thread2_obj == thr2);
+	P_TEST_CHECK (thread1_obj == thr1);
+	P_TEST_CHECK (thread2_obj == thr2);
 
 	p_uthread_local_free (tls_key);
 	p_uthread_unref (thr1);
@@ -312,14 +303,15 @@ BOOST_AUTO_TEST_CASE (puthread_general_test)
 	p_uthread_unref (thr1);
 
 	PUThread *cur_thr = p_uthread_current ();
-	BOOST_CHECK (cur_thr != NULL);
+	P_TEST_CHECK (cur_thr != NULL);
 
-	BOOST_CHECK (p_uthread_ideal_count () > 0);
+	P_TEST_CHECK (p_uthread_ideal_count () > 0);
 
 	p_libsys_shutdown ();
 }
+P_TEST_CASE_END ()
 
-BOOST_AUTO_TEST_CASE (puthread_nonjoinable_test)
+P_TEST_CASE_BEGIN (puthread_nonjoinable_test)
 {
 	p_libsys_init ();
 
@@ -331,23 +323,24 @@ BOOST_AUTO_TEST_CASE (puthread_nonjoinable_test)
 					   (ppointer) &thread_wakes_1,
 					   FALSE);
 
-	BOOST_REQUIRE (thr1 != NULL);
+	P_TEST_REQUIRE (thr1 != NULL);
 
 	p_uthread_sleep (3000);
 
-	BOOST_CHECK (p_uthread_join (thr1) == -1);
+	P_TEST_CHECK (p_uthread_join (thr1) == -1);
 
 	while (is_threads_working == TRUE)
 		p_uthread_sleep (10);
 
-	BOOST_CHECK (thread_wakes_1 == thread_to_wakes);
+	P_TEST_CHECK (thread_wakes_1 == thread_to_wakes);
 
 	p_uthread_unref (thr1);
 
 	p_libsys_shutdown ();
 }
+P_TEST_CASE_END ()
 
-BOOST_AUTO_TEST_CASE (puthread_tls_test)
+P_TEST_CASE_BEGIN (puthread_tls_test)
 {
 	p_libsys_init ();
 
@@ -367,8 +360,8 @@ BOOST_AUTO_TEST_CASE (puthread_tls_test)
 					   (ppointer) &self_thread_free,
 					   TRUE);
 
-	BOOST_REQUIRE (thr1 != NULL);
-	BOOST_REQUIRE (thr2 != NULL);
+	P_TEST_REQUIRE (thr1 != NULL);
+	P_TEST_REQUIRE (thr2 != NULL);
 
 	p_uthread_sleep (5000);
 
@@ -379,7 +372,7 @@ BOOST_AUTO_TEST_CASE (puthread_tls_test)
 	total_counter += (p_uthread_join (thr1) + 1);
 	total_counter += (p_uthread_join (thr2) + 1);
 
-	BOOST_CHECK (total_counter == free_counter);
+	P_TEST_CHECK (total_counter == free_counter);
 
 	p_uthread_local_free (tls_key);
 	p_uthread_unref (thr1);
@@ -400,8 +393,8 @@ BOOST_AUTO_TEST_CASE (puthread_tls_test)
 				 (ppointer) &self_thread_free,
 				 TRUE);
 
-	BOOST_REQUIRE (thr1 != NULL);
-	BOOST_REQUIRE (thr2 != NULL);
+	P_TEST_REQUIRE (thr1 != NULL);
+	P_TEST_REQUIRE (thr2 != NULL);
 
 	p_uthread_sleep (5000);
 
@@ -412,8 +405,8 @@ BOOST_AUTO_TEST_CASE (puthread_tls_test)
 	total_counter += (p_uthread_join (thr1) + 1);
 	total_counter += (p_uthread_join (thr2) + 1);
 
-	BOOST_CHECK (total_counter > 0);
-	BOOST_CHECK (free_counter == 0);
+	P_TEST_CHECK (total_counter > 0);
+	P_TEST_CHECK (free_counter == 0);
 
 	p_uthread_local_free (tls_key);
 	p_uthread_unref (thr1);
@@ -432,13 +425,13 @@ BOOST_AUTO_TEST_CASE (puthread_tls_test)
 				 NULL,
 				 TRUE);
 
-	BOOST_REQUIRE (thr1 != NULL);
-	BOOST_REQUIRE (thr2 != NULL);
+	P_TEST_REQUIRE (thr1 != NULL);
+	P_TEST_REQUIRE (thr2 != NULL);
 
 	p_uthread_join (thr1);
 	p_uthread_join (thr2);
 
-	BOOST_CHECK (free_counter == 4);
+	P_TEST_CHECK (free_counter == 4);
 
 	p_uthread_local_free (tls_key);
 	p_uthread_local_free (tls_key_2);
@@ -447,5 +440,14 @@ BOOST_AUTO_TEST_CASE (puthread_tls_test)
 
 	p_libsys_shutdown ();
 }
+P_TEST_CASE_END ()
 
-BOOST_AUTO_TEST_SUITE_END()
+P_TEST_SUITE_BEGIN()
+{
+	P_TEST_SUITE_RUN_CASE (puthread_nomem_test);
+	P_TEST_SUITE_RUN_CASE (puthread_bad_input_test);
+	P_TEST_SUITE_RUN_CASE (puthread_general_test);
+	P_TEST_SUITE_RUN_CASE (puthread_nonjoinable_test);
+	P_TEST_SUITE_RUN_CASE (puthread_tls_test);
+}
+P_TEST_SUITE_END()
