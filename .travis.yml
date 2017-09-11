@@ -56,6 +56,12 @@ matrix:
                 - os: linux
                   addons: { apt: { packages: [clang-3.8, libc++-dev] } }
                   env: CC=clang-3.8 CXX=clang++-3.8
+                - os: linux
+                  addons: { apt: { packages: [clang-4.0, libc++-dev] } }
+                  env: CC=clang-4.0 CXX=clang++-4.0
+                - os: linux
+                  addons: { apt: { packages: [clang-5.0, libc++-dev] } }
+                  env: CC=clang-5.0 CXX=clang++-5.0
                 # macOS builds (GCC)
                 - os: osx
                   osx_image: xcode7.3
