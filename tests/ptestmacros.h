@@ -31,6 +31,9 @@
 #ifdef P_CC_MSVC
 #  pragma warning (push)
 #  pragma warning (disable : 4723)
+#elif defined (P_CC_BORLAND)
+#  pragma option -w-8008
+#  pragma option -w-8066
 #endif
 
 inline double p_test_safe_division (double f1, double f2)
