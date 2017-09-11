@@ -28,11 +28,20 @@
 
 #include <plibsys.h>
 
+#ifdef P_CC_MSVC
+#  pragma warning (push)
+#  pragma warning (disable : 4723)
+#endif
+
 inline double p_test_safe_division (double f1, double f2)
 {
 	return (f2 < 1.0 && f1 > f2 * P_MAXDOUBLE) ? P_MAXDOUBLE :
 	        (((f2 > 1.0 && f1 < f2 * P_MINDOUBLE) || f1 == 0) ? 0 : f1 / f2);
 }
+
+#ifdef P_CC_MSVC
+#  pragma warning (pop)
+#endif
 
 #define P_TEST_MODULE_FAIL_COUNTER p_test_module_fail_counter
 #define P_TEST_SUITE_FAIL_COUNTER p_test_suite_fail_counter
