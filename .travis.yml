@@ -56,7 +56,7 @@ matrix:
                   env: CC=clang-3.8 CXX=clang++-3.8
                 - os: linux
                   addons: { apt: { sources: [ubuntu-toolchain-r-test, llvm-toolchain-trusty-3.9], packages: [clang-3.9, libc++-dev] } }
-                  env: CC=clang-3.8 CXX=clang++-3.9
+                  env: CC=clang-3.9 CXX=clang++-3.9
                 - os: linux
                   addons: { apt: { sources: [ubuntu-toolchain-r-test, llvm-toolchain-trusty-4.0], packages: [clang-4.0, libc++-dev] } }
                   env: CC=clang-4.0 CXX=clang++-4.0
