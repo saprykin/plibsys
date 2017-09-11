@@ -68,7 +68,7 @@ static void pp_crypto_hash_gost3411_process (PHashGOST3411 *ctx, const puint32 d
 		{0x1, 0x3, 0xA, 0x9, 0x5, 0xB, 0x4, 0xF, 0x8, 0x6, 0x7, 0xE, 0xD, 0x0, 0x2, 0xC}
  };
 
-/* GOST 28147-89 transformation to generate keys*/
+/* GOST 28147-89 transformation to generate keys */
 #define P_GOST_28147_ROUND(N, key)							\
 {											\
 	puint32 CM1;									\
