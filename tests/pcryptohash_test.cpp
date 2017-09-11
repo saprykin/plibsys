@@ -625,7 +625,7 @@ P_TEST_CASE_BEGIN (gost3411_94_test)
 	p_crypto_hash_update (gost3411_94_hash, (const puchar *) "message digest", 14);
 
 	hash_str = p_crypto_hash_get_string (gost3411_94_hash);
-	P_TEST_CHECK (strcmp (hash_str, "1564064cce4fe1386be063f98d7ab17fc724fa7f02be4fa6847a2162be20d807") == 0);
+	P_TEST_CHECK (strcmp (hash_str, "9c7b5288c8b3343b29e8ee4a5579593bd90131db7f6fed9b13af4399698b5d29") == 0);
 	p_free (hash_str);
 
 	p_crypto_hash_reset (gost3411_94_hash);
