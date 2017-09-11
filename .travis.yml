@@ -48,19 +48,19 @@ matrix:
                 - os: linux
                   env: CC=clang CXX=clang++
                 - os: linux
-                  addons: { apt: { sources: llvm-toolchain-precise-3.6, packages: [clang-3.6, libc++-dev] } }
+                  addons: { apt: { sources: [ubuntu-toolchain-r-test, llvm-toolchain-precise-3.6], packages: [clang-3.6, libc++-dev] } }
                   env: CC=clang-3.6 CXX=clang++-3.6
                 - os: linux
-                  addons: { apt: { sources: llvm-toolchain-precise-3.7, packages: [clang-3.7, libc++-dev] } }
+                  addons: { apt: { sources: [ubuntu-toolchain-r-test, llvm-toolchain-precise-3.7], packages: [clang-3.7, libc++-dev] } }
                   env: CC=clang-3.7 CXX=clang++-3.7
                 - os: linux
-                  addons: { apt: { sources: llvm-toolchain-precise-3.8, packages: [clang-3.8, libc++-dev] } }
+                  addons: { apt: { sources: [ubuntu-toolchain-r-test, llvm-toolchain-precise-3.8], packages: [clang-3.8, libc++-dev] } }
                   env: CC=clang-3.8 CXX=clang++-3.8
                 - os: linux
-                  addons: { apt: { sources: llvm-toolchain-trusty-4.0, packages: [clang-4.0, libc++-dev] } }
+                  addons: { apt: { sources: [ubuntu-toolchain-r-test, llvm-toolchain-trusty-4.0], packages: [clang-4.0, libc++-dev] } }
                   env: CC=clang-4.0 CXX=clang++-4.0
                 - os: linux
-                  addons: { apt: { sources: llvm-toolchain-trusty-5.0, packages: [clang-5.0, libc++-dev] } }
+                  addons: { apt: { sources: [ubuntu-toolchain-r-test, llvm-toolchain-trusty-5.0], packages: [clang-5.0, libc++-dev] } }
                   env: CC=clang-5.0 CXX=clang++-5.0
                 # macOS builds (GCC)
                 - os: osx
