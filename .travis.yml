@@ -20,26 +20,26 @@ matrix:
                   env: CC=gcc CXX=g++ GCOV=gcov USE_GCOV=1
                 # Linux x64 builds (GCC)
                 - os: linux
-                  addons: { apt: { packages: [gcc-4.9, g++-4.9] } }
+                  addons: { apt: { sources: ubuntu-toolchain-r-test, packages: [gcc-4.9, g++-4.9] } }
                   env: CC=gcc-4.9 CXX=g++-4.9 ARCH=64 USE_COVERITY=1
                 - os: linux
-                  addons: { apt: { packages: [gcc-5, g++-5] } }
+                  addons: { apt: { sources: ubuntu-toolchain-r-test, packages: [gcc-5, g++-5] } }
                   env: CC=gcc-5 CXX=g++-5 ARCH=64
                 - os: linux
-                  addons: { apt: { packages: [gcc-6, g++-6] } }
+                  addons: { apt: { sources: ubuntu-toolchain-r-test, packages: [gcc-6, g++-6] } }
                   env: CC=gcc-6 CXX=g++-6 ARCH=64
                 - os: linux
                   addons: { apt: { sources: ubuntu-toolchain-r-test, packages: [gcc-7, g++-7] } }
                   env: CC=gcc-7 CXX=g++-7 ARCH=64
                 # Linux x86 builds (GCC)
                 - os: linux
-                  addons: { apt: { packages: [gcc-4.9, g++-4.9, gcc-multilib, g++-multilib, gcc-4.9-multilib, g++-4.9-multilib, linux-libc-dev] } }
+                  addons: { apt: { sources: ubuntu-toolchain-r-test, packages: [gcc-4.9, g++-4.9, gcc-multilib, g++-multilib, gcc-4.9-multilib, g++-4.9-multilib, linux-libc-dev] } }
                   env: CC=gcc-4.9 CXX=g++-4.9 ARCH=32
                 - os: linux
-                  addons: { apt: { packages: [gcc-5, g++-5, gcc-multilib, g++-multilib, gcc-5-multilib, g++-5-multilib, linux-libc-dev] } }
+                  addons: { apt: { sources: ubuntu-toolchain-r-test, packages: [gcc-5, g++-5, gcc-multilib, g++-multilib, gcc-5-multilib, g++-5-multilib, linux-libc-dev] } }
                   env: CC=gcc-5 CXX=g++-5 ARCH=32
                 - os: linux
-                  addons: { apt: { packages: [gcc-6, g++-6, gcc-multilib, g++-multilib, gcc-6-multilib, g++-6-multilib, linux-libc-dev] } }
+                  addons: { apt: { sources: ubuntu-toolchain-r-test, packages: [gcc-6, g++-6, gcc-multilib, g++-multilib, gcc-6-multilib, g++-6-multilib, linux-libc-dev] } }
                   env: CC=gcc-6 CXX=g++-6 ARCH=32
                 - os: linux
                   addons: { apt: { sources: ubuntu-toolchain-r-test, packages: [gcc-7, g++-7, gcc-multilib, g++-multilib, gcc-7-multilib, g++-7-multilib, linux-libc-dev] } }
@@ -48,19 +48,19 @@ matrix:
                 - os: linux
                   env: CC=clang CXX=clang++
                 - os: linux
-                  addons: { apt: { packages: [clang-3.6, libc++-dev] } }
+                  addons: { apt: { sources: llvm-toolchain-precise-3.6, packages: [clang-3.6, libc++-dev] } }
                   env: CC=clang-3.6 CXX=clang++-3.6
                 - os: linux
-                  addons: { apt: { packages: [clang-3.7, libc++-dev] } }
+                  addons: { apt: { sources: llvm-toolchain-precise-3.7, packages: [clang-3.7, libc++-dev] } }
                   env: CC=clang-3.7 CXX=clang++-3.7
                 - os: linux
-                  addons: { apt: { packages: [clang-3.8, libc++-dev] } }
+                  addons: { apt: { sources: llvm-toolchain-precise-3.8, packages: [clang-3.8, libc++-dev] } }
                   env: CC=clang-3.8 CXX=clang++-3.8
                 - os: linux
-                  addons: { apt: { packages: [clang-4.0, libc++-dev] } }
+                  addons: { apt: { sources: llvm-toolchain-trusty-4.0, packages: [clang-4.0, libc++-dev] } }
                   env: CC=clang-4.0 CXX=clang++-4.0
                 - os: linux
-                  addons: { apt: { packages: [clang-5.0, libc++-dev] } }
+                  addons: { apt: { sources: llvm-toolchain-trusty-5.0, packages: [clang-5.0, libc++-dev] } }
                   env: CC=clang-5.0 CXX=clang++-5.0
                 # macOS builds (GCC)
                 - os: osx
