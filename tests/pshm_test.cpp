@@ -151,7 +151,7 @@ P_TEST_CASE_BEGIN (pshm_general_test)
 	P_TEST_REQUIRE (p_shm_get_size (shm2) == 1024);
 
 	addr2 = p_shm_get_address (shm2);
-	P_TEST_REQUIRE (shm2 != NULL);
+	P_TEST_REQUIRE (addr2 != NULL);
 #endif
 
 	for (i = 0; i < 512; ++i) {
