@@ -159,6 +159,8 @@ static void * test_thread_tls_func (void *data)
 
 static void * test_thread_tls_create_func (void *data)
 {
+	P_UNUSED (data);
+
 	pint *tls_value = (pint *) p_malloc0 (sizeof (pint));
 	*tls_value = 0;
 	p_uthread_set_local (tls_key, (ppointer) tls_value);
