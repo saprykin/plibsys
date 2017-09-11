@@ -578,6 +578,8 @@ P_TEST_CASE_BEGIN (pmacros_general_test)
 
 	pint result = unused_result_test_func ();
 
+	P_UNUSED (result);
+
 	P_TEST_CHECK (internal_api_test () == 0);
 	P_TEST_CHECK (global_api_test () == 0);
 
