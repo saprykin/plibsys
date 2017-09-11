@@ -46,8 +46,6 @@ matrix:
                   env: CC=gcc-7 CXX=g++-7 ARCH=32
                 # Linux x64 builds (Clang)
                 - os: linux
-                  env: CC=clang CXX=clang++
-                - os: linux
                   addons: { apt: { sources: [ubuntu-toolchain-r-test, llvm-toolchain-precise-3.6], packages: [clang-3.6, libc++-dev] } }
                   env: CC=clang-3.6 CXX=clang++-3.6
                 - os: linux
@@ -56,6 +54,9 @@ matrix:
                 - os: linux
                   addons: { apt: { sources: [ubuntu-toolchain-r-test, llvm-toolchain-precise-3.8], packages: [clang-3.8, libc++-dev] } }
                   env: CC=clang-3.8 CXX=clang++-3.8
+                - os: linux
+                  addons: { apt: { sources: [ubuntu-toolchain-r-test, llvm-toolchain-trusty-3.9], packages: [clang-3.9, libc++-dev] } }
+                  env: CC=clang-3.8 CXX=clang++-3.9
                 - os: linux
                   addons: { apt: { sources: [ubuntu-toolchain-r-test, llvm-toolchain-trusty-4.0], packages: [clang-4.0, libc++-dev] } }
                   env: CC=clang-4.0 CXX=clang++-4.0
