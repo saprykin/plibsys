@@ -139,6 +139,11 @@ P_TEST_CASE_BEGIN (plibraryloader_general_test)
 	if (shutdown_func == NULL)
 		shutdown_func = (void (*) (void)) p_library_loader_get_symbol (loader, "_p_libsys_shutdown");
 
+	/* For Watcom C */
+
+	if (shutdown_func == NULL)
+		shutdown_func = (void (*) (void)) p_library_loader_get_symbol (loader, "p_libsys_shutdown_");
+
 	P_TEST_REQUIRE (shutdown_func != NULL);
 
 	err_msg = p_library_loader_get_last_error (loader);
