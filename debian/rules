@@ -8,7 +8,7 @@ DPKG_EXPORT_BUILDFLAGS = 1
 include /usr/share/dpkg/default.mk
 
 # see FEATURE AREAS in dpkg-buildflags(1)
-#export DEB_BUILD_MAINT_OPTIONS = hardening=+all
+export DEB_BUILD_MAINT_OPTIONS = hardening=+all
 
 # see ENVIRONMENT in dpkg-buildflags(1)
 # package maintainers to append CFLAGS
@@ -17,6 +17,9 @@ include /usr/share/dpkg/default.mk
 #export DEB_LDFLAGS_MAINT_APPEND = -Wl,--as-needed
 
 DEB_HOST_MULTIARCH ?= $(shell dpkg-architecture -qDEB_HOST_MULTIARCH)
+
+CFLAGS+=$(CPPFLAGS)
+CXXFLAGS+=$(CPPFLAGS)
 
 # main packaging script based on dh7 syntax
 %:
