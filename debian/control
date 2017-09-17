@@ -15,7 +15,7 @@ Pre-Depends: ${misc:Pre-Depends}
 Multi-Arch: same
 Description: Highly portable C system library
  plibsys is a cross-platform system C library with some helpful routines. It
- has zero third-party dependecies and uses only native system calls.
+ has zero third-party dependencies and uses only native system calls.
  .
  plibsys provides:
  .
@@ -45,7 +45,7 @@ Depends: libplibsys0 (= ${binary:Version}), ${misc:Depends}
 Suggests: libplibsys0-doc, libplibsys0-dbg
 Description: Development files for plibsys
  plibsys is a cross-platform system C library with some helpful routines. It
- has zero third-party dependecies and uses only native system calls.
+ has zero third-party dependencies and uses only native system calls.
  .
  plibsys provides:
  .
@@ -68,7 +68,7 @@ Description: Development files for plibsys
  Useful routines for linked lists, strings, hash tables
  Macros for CPU architecture, OS and compiler detection
  .
- This package provides the development files that allow to build software
+ This package provides the development files that allow one to build software
  which uses plibsys.
 
 Package: libplibsys0-dbg
@@ -79,7 +79,7 @@ Depends: libplibsys0 (= ${binary:Version}), ${misc:Depends}
 Multi-Arch: same
 Description: Debug symbols for plibsys
  plibsys is a cross-platform system C library with some helpful routines. It
- has zero third-party dependecies and uses only native system calls.
+ has zero third-party dependencies and uses only native system calls.
  .
  plibsys provides:
  .
@@ -112,7 +112,7 @@ Multi-Arch: foreign
 Depends: ${misc:Depends}
 Description: Documentation for plibsys
  plibsys is a cross-platform system C library with some helpful routines. It
- has zero third-party dependecies and uses only native system calls.
+ has zero third-party dependencies and uses only native system calls.
  .
  plibsys provides:
  .
