@@ -1,0 +1,9 @@
+Document: plibsys0
+Title: plibsys documentation
+Author: Alexander Saprykin
+Abstract: HTML API documentation for the plibsys library
+Section: Programming/C
+
+Format: HTML
+Index: /usr/share/doc/libplibsys0-doc/html/index.html
+Files: /usr/share/doc/libplibsys0-doc/html/*.html
