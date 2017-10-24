@@ -2,7 +2,7 @@
  * Copyright (C) 2008 Christian Kellner, Samuel Cormier-Iijima
  * Copyright (C) 2009 Codethink Limited
  * Copyright (C) 2009 Red Hat, Inc
- * Copyright (C) 2010-2016 Alexander Saprykin <xelfium@gmail.com>
+ * Copyright (C) 2010-2017 Alexander Saprykin <xelfium@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -42,7 +42,7 @@
 
 #ifndef P_OS_WIN
 #  if defined (P_OS_BEOS) || defined (P_OS_MAC) || defined (P_OS_MAC9) || \
-      defined (P_OS_OS2)
+      defined (P_OS_OS2)  || defined (P_OS_AMIGA)
 #    define P_SOCKET_USE_SELECT
 #    include <sys/select.h>
 #    include <sys/time.h>
