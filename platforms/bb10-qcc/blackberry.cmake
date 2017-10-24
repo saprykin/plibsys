@@ -38,47 +38,47 @@ endif()
 
 set (CMAKE_MAKE_PROGRAM
         "${QNX_HOST}/usr/bin/make${HOST_EXECUTABLE_SUFFIX}"
-        CACHE PATH "QNX Make Program"
+        CACHE PATH "QNX make program"
 )
 
 set (CMAKE_SH
         "${QNX_HOST}/usr/bin/sh${HOST_EXECUTABLE_SUFFIX}"
-        CACHE PATH "QNX shell Program"
+        CACHE PATH "QNX shell program"
 )
 
 set (CMAKE_AR
         "${QNX_HOST}/usr/bin/nto${CMAKE_SYSTEM_PROCESSOR}-ar${HOST_EXECUTABLE_SUFFIX}"
-        CACHE PATH "QNX ar Program"
+        CACHE PATH "QNX ar program"
 )
 
 set (CMAKE_RANLIB
         "${QNX_HOST}/usr/bin/nto${CMAKE_SYSTEM_PROCESSOR}-ranlib${HOST_EXECUTABLE_SUFFIX}"
-        CACHE PATH "QNX ranlib Program"
+        CACHE PATH "QNX ranlib program"
 )
 
 set (CMAKE_NM
         "${QNX_HOST}/usr/bin/nto${CMAKE_SYSTEM_PROCESSOR}-nm${HOST_EXECUTABLE_SUFFIX}"
-        CACHE PATH "QNX nm Program"
+        CACHE PATH "QNX nm program"
 )
 
 set (CMAKE_OBJCOPY
         "${QNX_HOST}/usr/bin/nto${CMAKE_SYSTEM_PROCESSOR}-objcopy${HOST_EXECUTABLE_SUFFIX}"
-        CACHE PATH "QNX objcopy Program"
+        CACHE PATH "QNX objcopy program"
 )
 
 set (CMAKE_OBJDUMP
         "${QNX_HOST}/usr/bin/nto${CMAKE_SYSTEM_PROCESSOR}-objdump${HOST_EXECUTABLE_SUFFIX}"
-        CACHE PATH "QNX objdump Program"
+        CACHE PATH "QNX objdump program"
 )
 
 set (CMAKE_LINKER
         "${QNX_HOST}/usr/bin/nto${CMAKE_SYSTEM_PROCESSOR}-ld${HOST_EXECUTABLE_SUFFIX}"
-        CACHE PATH "QNX Linker Program"
+        CACHE PATH "QNX linker program"
 )
 
 set (CMAKE_STRIP
         "${QNX_HOST}/usr/bin/nto${CMAKE_SYSTEM_PROCESSOR}-strip${HOST_EXECUTABLE_SUFFIX}"
-        CACHE PATH "QNX Strip Program"
+        CACHE PATH "QNX strip program"
 )
 
 set (CMAKE_C_COMPILER "${QNX_HOST}/usr/bin/qcc${HOST_EXECUTABLE_SUFFIX}")
