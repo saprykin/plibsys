@@ -50,7 +50,7 @@ P_TEST_CASE_BEGIN (pmacros_general_test)
     !defined (P_OS_SCO)    && !defined (P_OS_UNIXWARE) && !defined (P_OS_VMS)       && \
     !defined (P_OS_IRIX)   && !defined (P_OS_MSYS)     && !defined (P_OS_DRAGONFLY) && \
     !defined (P_OS_HAIKU)  && !defined (P_OS_TRU64)    && !defined (P_OS_SYLLABLE)  && \
-    !defined (P_OS_BEOS)   && !defined (P_OS_OS2)
+    !defined (P_OS_BEOS)   && !defined (P_OS_OS2)      && !defined (P_OS_AMIGA)
 	P_TEST_CHECK (false);
 #endif
 
@@ -113,7 +113,8 @@ P_TEST_CASE_BEGIN (pmacros_general_test)
 #endif
 
 	/* Test for others */
-#if defined (P_OS_HAIKU) || defined (P_OS_BEOS) || defined (P_OS_OS2) || defined (P_OS_VMS)
+#if defined (P_OS_HAIKU) || defined (P_OS_BEOS) || defined (P_OS_OS2) || defined (P_OS_VMS) || \
+    defined (P_OS_AMIGA)
 #  if defined (P_OS_UNIX)
 	P_TEST_CHECK (false);
 #  endif
@@ -206,6 +207,12 @@ P_TEST_CASE_BEGIN (pmacros_general_test)
 	/* Test for CPU architecture detection macros */
 #if defined (P_OS_VMS)
 #  if !defined (P_CPU_ALPHA) && !defined (P_CPU_IA64)
+	P_TEST_CHECK (false);
+#  endif
+#endif
+
+#if defined (P_OS_AMIGA)
+#  if !defined (P_CPU_POWER)
 	P_TEST_CHECK (false);
 #  endif
 #endif
