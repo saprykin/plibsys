@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2016 Alexander Saprykin <xelfium@gmail.com>
+ * Copyright (C) 2010-2017 Alexander Saprykin <xelfium@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -336,7 +336,11 @@ p_uthread_free_internal (PUThread *thread)
 P_LIB_API void
 p_uthread_yield (void)
 {
+	/* AmigaOS doesn't have thread rescheduling */
+
+#ifndef P_OS_AMIGA
 	sched_yield ();
+#endif
 }
 
 P_LIB_API pboolean
