@@ -90,7 +90,7 @@ p_cond_variable_wait (PCondVariable	*cond,
 		P_ERROR ("PCondVariable::p_cond_variable_wait: failed to lock internal spinlock");
 		return FALSE;
 	}
-	
+
 	if (cond->wait_head != NULL)
 		cond->wait_head->next = wait_thread;
 	else
@@ -151,7 +151,7 @@ p_cond_variable_signal (PCondVariable *cond)
 	}
 
 	memset (&thr_info, 0, sizeof (thr_info));
-	
+
 	while (get_thread_info (wait_thread->thread, &thr_info) == 0) {
 		if (thr_info.ti_state != TS_READY)
 			break;
