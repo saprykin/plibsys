@@ -22,7 +22,6 @@
 
 #include <stdlib.h>
 
-#include <proto/dos.h>
 #include <proto/exec.h>
 
 typedef struct _PCondThread {
@@ -91,9 +90,8 @@ p_cond_variable_wait (PCondVariable	*cond,
 	signal = IExec->AllocSignal (-1);
 	
 	if (signal == -1) {
-		P_WARNING ("PCondVariable::p_cond_variable_wait: no free signal slot left, using CTDL_D as fallbak");
-		signal = SIGBREAKB_CTRL_D;
-		IExec->SetSignal (1 << SIGBREAKB_CTRL_D, 0);
+		P_WARNING ("PCondVariable::p_cond_variable_wait: no free signal slot left");
+		return FALSE;
 	}
 
 	wait_thread->sigmask = 1 << signal;
@@ -127,8 +125,7 @@ p_cond_variable_wait (PCondVariable	*cond,
 		return FALSE;
 	}
 
-	if (signal != SIGBREAKB_CTRL_D)
-		IExec->FreeSignal (signal);
+	IExec->FreeSignal (signal);
 
 	return TRUE;
 }
