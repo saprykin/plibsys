@@ -336,11 +336,7 @@ p_uthread_free_internal (PUThread *thread)
 P_LIB_API void
 p_uthread_yield (void)
 {
-	/* AmigaOS doesn't have thread rescheduling */
-
-#ifndef P_OS_AMIGA
 	sched_yield ();
-#endif
 }
 
 P_LIB_API pboolean
