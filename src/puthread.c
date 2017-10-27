@@ -83,8 +83,7 @@ typedef void (WINAPI * SystemInfoFunc) (LPSYSTEM_INFO);
 #endif
 
 #ifdef P_OS_AMIGA
-#  include <dos/dos.h>
-#  include <proto/exec.h>
+#  include <clib/alib_protos.h> 
 #  include <proto/dos.h>
 #endif
 
@@ -498,7 +497,7 @@ p_uthread_sleep (puint32 msec)
 #elif defined (P_OS_OS2)
 	return (DosSleep (msec) == NO_ERROR) ? 0 : -1;
 #elif defined (P_OS_AMIGA)
-	IDOS->Delay ((TICKS_PER_SECOND * msec) / 1000);
+	return TimeDelay (0, msec / 1000, (msec % 1000) * 1000) == 0 ? 0 : -1;
 #elif defined (PLIBSYS_HAS_CLOCKNANOSLEEP) || defined (PLIBSYS_HAS_NANOSLEEP)
 	pint result;
 	struct timespec time_req;
