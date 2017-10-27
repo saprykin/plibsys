@@ -122,3 +122,13 @@ p_library_loader_is_ref_counted (void)
 {
 	return TRUE;
 }
+
+void
+p_library_loader_init (void)
+{
+}
+
+void
+p_library_loader_shutdown (void)
+{
+}
