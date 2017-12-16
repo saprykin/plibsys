@@ -4,6 +4,7 @@ include (CheckIncludeFile)
 include (TestBigEndian)
 include (${PROJECT_SOURCE_DIR}/cmake/PlatformDetect.cmake)
 include (${PROJECT_SOURCE_DIR}/cmake/VisibilityDetect.cmake)
+include (${PROJECT_SOURCE_DIR}/cmake/StdargDetect.cmake)
 set (OUTPUT_DIR ${CMAKE_BINARY_DIR})
 
 # Try to detect target platform
@@ -11,6 +12,7 @@ plibsys_detect_target_platform (PLIBSYS_TARGET_PLATFORM)
 plibsys_detect_c_compiler (PLIBSYS_C_COMPILER)
 plibsys_detect_target_os (PLIBSYS_TARGET_OS)
 plibsys_detect_os_bits (PLIBSYS_OS_BITS)
+plibsys_detect_va_copy (PLIBSYS_VA_COPY)
 
 if ((PLIBSYS_TARGET_OS STREQUAL windows) AND NOT (PLIBSYS_TARGET_OS STREQUAL cygwin)
 					 AND NOT (PLIBSYS_TARGET_OS STREQUAL msys))
@@ -869,6 +871,8 @@ SET (PLIBSYS_SUMMARY
 	Build tests:            ${PLIBSYS_TESTS}
 	Coverage support:       ${PLIBSYS_COVERAGE}
 	Visibility:             ${PLIBSYS_VISIBILITY}
+
+	va_copy availibility:   ${PLIBSYS_VA_COPY}
 
 ")
 
