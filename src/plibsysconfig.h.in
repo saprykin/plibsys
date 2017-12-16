@@ -77,7 +77,7 @@ P_BEGIN_DECLS
 #ifdef PLIBSYS_VA_COPY
 #  define p_va_copy(dst, src) PLIBSYS_VA_COPY(dst, src)
 #else
-#  define p_va_copy(dst, src)
+#  define p_va_copy(dst, src) ((void) memcpy(&(dst), &(src), sizeof(va_list)))
 #endif
 
 P_END_DECLS
