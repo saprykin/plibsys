@@ -20,6 +20,7 @@
 
 #include <stdio.h>
 #include <stdarg.h>
+#include <string.h>
 
 P_TEST_MODULE_INIT ();
 
