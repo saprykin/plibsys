@@ -1,0 +1,78 @@
+# Object files
+*.o
+*.ko
+*.obj
+*.elf
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Libraries
+*.lib
+*.a
+*.la
+*.lo
+
+# Shared objects (inc. Windows DLLs)
+*.dll
+*.so
+*.so.*
+*.dylib
+
+# Executables
+*.exe
+*.out
+*.app
+*.i*86
+*.x86_64
+*.hex
+
+# Debug files
+*.dSYM/
+
+# Cmake garbage
+CMakeCache.txt
+CMakeFiles/
+CMakeScripts/
+CTestTestfile.cmake
+Makefile
+cmake_install.cmake
+install_manifest.txt
+install_manifest_*.txt
+CPackConfig.cmake
+CPackSourceConfig.cmake
+
+# Visual Studio garbage
+*.vcxproj
+*.vcxproj.filters
+*.vcxproj.user
+*.opensdf
+*.sln
+*.suo
+*.sdf
+*.dir/
+Testing/
+Win32/
+ipch/
+*.psess
+*.vsp
+
+# Code::Blocks garbage
+*.cbp
+*.layout
+
+# Valgrind garbage
+*.out.*
+
+# Editors garbage
+*~
+
+# Windows pdb
+*.pdb
+
+# Test files
+*_test
+
+# Generated files
+plibsysconfig.h
