@@ -33,6 +33,7 @@ plibsys gives you:
 * Shared library loading
 * Useful routines for linked lists, strings, hash tables
 * Macros for CPU architecture, OS and compiler detection
+* Macros for variadic arguments
 
 To achieve maximum native performance on each platform several implementation models are used:
 

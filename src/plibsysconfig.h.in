@@ -13,6 +13,7 @@
 #cmakedefine PLIBSYS_NEED_VALUES_H
 #cmakedefine PLIBSYS_IS_BIGENDIAN
 #cmakedefine PLIBSYS_SIZEOF_SAFAMILY_T @PLIBSYS_SIZEOF_SAFAMILY_T@
+#cmakedefine PLIBSYS_VA_COPY @PLIBSYS_VA_COPY@
 
 #define PLIBSYS_NTDDI_VERSION_FROM_WIN32_WINNT2(ver)    ver##0000
 #define PLIBSYS_NTDDI_VERSION_FROM_WIN32_WINNT(ver)     PLIBSYS_NTDDI_VERSION_FROM_WIN32_WINNT2(ver)
@@ -67,6 +68,16 @@ P_BEGIN_DECLS
 #  define P_BYTE_ORDER P_BIG_ENDIAN
 #else
 #  define P_BYTE_ORDER P_LITTLE_ENDIAN
+#endif
+
+#define p_va_list va_list
+#define p_va_start(ap, last) va_start(ap, last)
+#define p_va_arg(ap, type) va_arg(ap, type)
+#define p_va_end(ap) va_end(ap)
+#ifdef PLIBSYS_VA_COPY
+#  define p_va_copy(dst, src) PLIBSYS_VA_COPY(dst, src)
+#else
+#  define p_va_copy(dst, src)
 #endif
 
 P_END_DECLS
