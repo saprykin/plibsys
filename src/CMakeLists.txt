@@ -88,6 +88,7 @@ set (PLIBSYS_PUBLIC_HDRS
 	psocket.h
 	psocketaddress.h
 	pspinlock.h
+	pstdarg.h
 	pstring.h
 	ptimeprofiler.h
 	ptree.h
