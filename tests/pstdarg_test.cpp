@@ -67,20 +67,20 @@ static const pdouble  pdouble_var[2]  = {           -1.567,             1.567 };
   } while (0)
 
 #define P_TEST_VA_ARG_TRAIL(ap) do {				\
-	P_TEST_VA_ARG(ap, pdouble, pdouble_var[0]);		\
-	P_TEST_VA_ARG(ap, pfloat, pfloat_var[0]);		\
-	P_TEST_VA_ARG(ap, ppointer, ppointer_var[0]);		\
-	P_TEST_VA_ARG(ap, pchar, pchar_var[0]);			\
-	P_TEST_VA_ARG(ap, plong, plong_var[0]);			\
-	P_TEST_VA_ARG(ap, pshort, pshort_var[0]);		\
-	P_TEST_VA_ARG(ap, puint64, puint64_var[0]);		\
-	P_TEST_VA_ARG(ap, pint64, pint64_var[0]);		\
-	P_TEST_VA_ARG(ap, puint32, puint32_var[0]);		\
-	P_TEST_VA_ARG(ap, pint32, pint32_var[0]);		\
-	P_TEST_VA_ARG(ap, puint16, puint16_var[0]);		\
-	P_TEST_VA_ARG(ap, pint16, pint16_var[0]);		\
-	P_TEST_VA_ARG(ap, puint8, puint8_var[0]);		\
-	P_TEST_VA_ARG(ap, pint8, pint8_var[0]);			\
+	P_TEST_VA_ARG(ap, pdouble, pdouble_var[1]);		\
+	P_TEST_VA_ARG(ap, pfloat, pfloat_var[1]);		\
+	P_TEST_VA_ARG(ap, ppointer, ppointer_var[1]);		\
+	P_TEST_VA_ARG(ap, pchar, pchar_var[1]);			\
+	P_TEST_VA_ARG(ap, plong, plong_var[1]);			\
+	P_TEST_VA_ARG(ap, pshort, pshort_var[1]);		\
+	P_TEST_VA_ARG(ap, puint64, puint64_var[1]);		\
+	P_TEST_VA_ARG(ap, pint64, pint64_var[1]);		\
+	P_TEST_VA_ARG(ap, puint32, puint32_var[1]);		\
+	P_TEST_VA_ARG(ap, pint32, pint32_var[1]);		\
+	P_TEST_VA_ARG(ap, puint16, puint16_var[1]);		\
+	P_TEST_VA_ARG(ap, pint16, pint16_var[1]);		\
+	P_TEST_VA_ARG(ap, puint8, puint8_var[1]);		\
+	P_TEST_VA_ARG(ap, pint8, pint8_var[1]);			\
   } while (0)
 
 static void variadic_function_copy_all (pint unused, p_va_list ap)
@@ -158,20 +158,20 @@ P_TEST_CASE_BEGIN (pstdarg_general_test)
 			   pfloat_var[0],
 			   pdouble_var[0],
 			   /* Cut is here when testing p_va_copy, we stack in reverse order */
-			   pdouble_var[0],
-			   pfloat_var[0],
-			   ppointer_var[0],
-			   pchar_var[0],
-			   plong_var[0],
-			   pshort_var[0],
-			   puint64_var[0],
-			   pint64_var[0],
-			   puint32_var[0],
-			   pint32_var[0],
-			   puint16_var[0],
-			   pint16_var[0],
-			   puint8_var[0],
-			   pint8_var[0]);
+			   pdouble_var[1],
+			   pfloat_var[1],
+			   ppointer_var[1],
+			   pchar_var[1],
+			   plong_var[1],
+			   pshort_var[1],
+			   puint64_var[1],
+			   pint64_var[1],
+			   puint32_var[1],
+			   pint32_var[1],
+			   puint16_var[1],
+			   pint16_var[1],
+			   puint8_var[1],
+			   pint8_var[1]);
 
 	p_libsys_shutdown ();
 }
