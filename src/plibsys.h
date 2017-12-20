@@ -51,5 +51,6 @@
 #include "ptree.h"
 #include "ptypes.h"
 #include "puthread.h"
+#include "pstdarg.h"
 
 #endif /* PLIBSYS_HEADER_PLIBSYS_H */

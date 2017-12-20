@@ -15,33 +15,161 @@
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <limits.h>
 #include "plibsys.h"
 #include "ptestmacros.h"
 
-#include <stdio.h>
-#include <stdarg.h>
-#include <string.h>
-
 P_TEST_MODULE_INIT ();
 
-static void f (int i, ...) {
-  p_va_list args1, args2;
+static void variadic_function (pint unused, ...);
+static void variadic_function_copy_all (pint unused, p_va_list ap);
+static void variadic_function_copy_trail (pint unused, p_va_list ap);
 
-  p_va_start (args1, i);
-  p_va_copy(args2, args1);
+/* The "runtime" thingies here are just to avoid compiler warnings */
+/*                                                 In head,          In trail */
+static const pint8    pint8_var[2]    = {        P_MININT8,         P_MAXINT8 };
+static const puint8   puint8_var[2]   = {                0,        P_MAXUINT8 };
+static const pint16   pint16_var[2]   = {       P_MININT16,        P_MAXINT16 };
+static const puint16  puint16_var[2]  = {                0,       P_MAXUINT16 };
+static       pint32   pint32_var[2]   = {  0 /* runtime */,   0 /* runtime */ };
+static       puint32  puint32_var[2]  = {                0,   0 /* runtime */ };
+static       pint64   pint64_var[2]   = {  0 /* runtime */,   0 /* runtime */ };
+static       puint64  puint64_var[2]  = {                0,   0 /* runtime */ };
+static const pint     pint_var[2]     = {          INT_MIN,           INT_MAX };
+static const pshort   pshort_var[2]   = {         SHRT_MIN,          SHRT_MAX };
+static const plong    plong_var[2]    = {         LONG_MIN,          LONG_MAX };
+static const pchar    pchar_var[2]    = {             '\0',               'z' };
+static const ppointer ppointer_var[2] = {             NULL, (ppointer) p_libsys_init };
+static const pfloat   pfloat_var[2]   = {           -1.234,             1.234 };
+static const pdouble  pdouble_var[2]  = {           -1.567,             1.567 };
 
-  P_TEST_CHECK (va_arg (args1, int) == 42);
-  P_TEST_CHECK (va_arg (args2, int) == 42);
+/* You may say but why doing that with macros and not functions !?!? */
+/* This is because these tests MUST play with the CURRENT stack. */
 
-  p_va_end (args1);
-  p_va_end (args2);
+#define P_TEST_VA_ARG(ap, type, wantedvalue) do {                           \
+	P_DEBUG ("unstacking a " #type);                                    \
+	P_TEST_CHECK (type##_va_arg(ap) == wantedvalue);                    \
+  } while (0)
+
+#define P_TEST_VA_ARG_HEAD(ap) do {                          \
+	P_TEST_VA_ARG(ap, pint8, pint8_var[0]);              \
+	P_TEST_VA_ARG(ap, puint8, puint8_var[0]);            \
+	P_TEST_VA_ARG(ap, pint16, pint16_var[0]);            \
+	P_TEST_VA_ARG(ap, puint16, puint16_var[0]);          \
+	P_TEST_VA_ARG(ap, pint32, pint32_var[0]);            \
+	P_TEST_VA_ARG(ap, puint32, puint32_var[0]);          \
+	P_TEST_VA_ARG(ap, pint64, pint64_var[0]);            \
+	P_TEST_VA_ARG(ap, puint64, puint64_var[0]);          \
+	P_TEST_VA_ARG(ap, pshort, pshort_var[0]);            \
+	P_TEST_VA_ARG(ap, plong, plong_var[0]);              \
+	P_TEST_VA_ARG(ap, pchar, pchar_var[0]);              \
+	P_TEST_VA_ARG(ap, ppointer, ppointer_var[0]);        \
+	P_TEST_VA_ARG(ap, pfloat, pfloat_var[0]);            \
+	P_TEST_VA_ARG(ap, pdouble, pdouble_var[0]);          \
+  } while (0)
+
+#define P_TEST_VA_ARG_TRAIL(ap) do {                         \
+	P_TEST_VA_ARG(ap, pdouble, pdouble_var[0]);          \
+	P_TEST_VA_ARG(ap, pfloat, pfloat_var[0]);            \
+	P_TEST_VA_ARG(ap, ppointer, ppointer_var[0]);        \
+	P_TEST_VA_ARG(ap, pchar, pchar_var[0]);              \
+	P_TEST_VA_ARG(ap, plong, plong_var[0]);              \
+	P_TEST_VA_ARG(ap, pshort, pshort_var[0]);            \
+	P_TEST_VA_ARG(ap, puint64, puint64_var[0]);          \
+	P_TEST_VA_ARG(ap, pint64, pint64_var[0]);            \
+	P_TEST_VA_ARG(ap, puint32, puint32_var[0]);          \
+	P_TEST_VA_ARG(ap, pint32, pint32_var[0]);            \
+	P_TEST_VA_ARG(ap, puint16, puint16_var[0]);          \
+	P_TEST_VA_ARG(ap, pint16, pint16_var[0]);            \
+	P_TEST_VA_ARG(ap, puint8, puint8_var[0]);            \
+	P_TEST_VA_ARG(ap, pint8, pint8_var[0]);              \
+  } while (0)
+
+static void variadic_function_copy_all (pint unused, p_va_list ap) {
+	P_DEBUG ("Unstacking a copy of all the arguments");
+	P_TEST_VA_ARG_HEAD(ap);
+	P_TEST_VA_ARG_TRAIL(ap);
+}
+
+static void variadic_function_copy_trail (pint unused, p_va_list ap) {
+	P_DEBUG ("Unstacking second part of the arguments");
+	P_TEST_VA_ARG_TRAIL(ap);
+}
+
+static void variadic_function (pint unused, ...) {
+	p_va_list ap;
+	p_va_list ap2;
+
+	p_va_start (ap, unused);
+
+	P_DEBUG ("Copy of arguments");
+	p_va_copy (ap2, ap);
+	variadic_function_copy_all (unused, ap2);
+	p_va_end (ap2);
+
+	P_DEBUG ("Unstacking first part of arguments");
+	P_TEST_VA_ARG_HEAD(ap);
+
+	P_DEBUG ("Copy of arguments at current unstack state, i.e. in the middle");
+	p_va_copy (ap2, ap);
+	variadic_function_copy_trail (unused, ap2);
+	p_va_end (ap2);
+
+	P_DEBUG ("Unstacking second part of arguments");
+	P_TEST_VA_ARG_TRAIL(ap);
+
+	p_va_end (ap);
 }
 
 P_TEST_CASE_BEGIN (pstdarg_general_test)
 {
 	p_libsys_init ();
 
-        f(0 ,42);
+	pint32_var[0] = P_MININT16;
+	pint32_var[0] <<= 16;
+	pint32_var[1] = P_MAXINT16;
+	pint32_var[1] <<= 16;
+	puint32_var[1] = P_MAXUINT16;
+	puint32_var[1] <<= 16;
+
+	pint64_var[0] = pint32_var[0];
+	pint64_var[0] <<= 32;
+	pint64_var[1] = pint32_var[1];
+	pint64_var[1] <<= 32;
+	puint64_var[1] = puint32_var[1];
+	puint64_var[1] <<= 32;
+
+	variadic_function (0,
+			   pint8_var[0],
+			   puint8_var[0],
+			   pint16_var[0],
+			   puint16_var[0],
+			   pint32_var[0],
+			   puint32_var[0],
+			   pint64_var[0],
+			   puint64_var[0],
+			   pshort_var[0],
+			   plong_var[0],
+			   pchar_var[0],
+			   ppointer_var[0],
+			   pfloat_var[0],
+			   pdouble_var[0],
+	                       /* Cut is here when testing p_va_copy, we stack in reverse order */
+			   pdouble_var[0],
+			   pfloat_var[0],
+			   ppointer_var[0],
+			   pchar_var[0],
+			   plong_var[0],
+			   pshort_var[0],
+			   puint64_var[0],
+			   pint64_var[0],
+			   puint32_var[0],
+			   pint32_var[0],
+			   puint16_var[0],
+			   pint16_var[0],
+			   puint8_var[0],
+			   pint8_var[0]
+			  );
 
 	p_libsys_shutdown ();
 }

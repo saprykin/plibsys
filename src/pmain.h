@@ -147,6 +147,11 @@
  * - @link
  * pinifile.h INI file parser
  * @endlink
+ *
+ * Stack
+ * - @link
+ * pstdarg.h Varying number of arguments
+ * @endlink
  */
 
 #if !defined (PLIBSYS_H_INSIDE) && !defined (PLIBSYS_COMPILATION)
