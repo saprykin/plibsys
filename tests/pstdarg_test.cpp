@@ -15,7 +15,6 @@
  * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <limits.h>
 #include "plibsys.h"
 #include "ptestmacros.h"
 
@@ -35,68 +34,72 @@ static       pint32   pint32_var[2]   = {  0 /* runtime */,   0 /* runtime */ };
 static       puint32  puint32_var[2]  = {                0,   0 /* runtime */ };
 static       pint64   pint64_var[2]   = {  0 /* runtime */,   0 /* runtime */ };
 static       puint64  puint64_var[2]  = {                0,   0 /* runtime */ };
-static const pint     pint_var[2]     = {          INT_MIN,           INT_MAX };
-static const pshort   pshort_var[2]   = {         SHRT_MIN,          SHRT_MAX };
-static const plong    plong_var[2]    = {         LONG_MIN,          LONG_MAX };
+static const pint     pint_var[2]     = {         P_MININT,          P_MAXINT };
+static const pshort   pshort_var[2]   = {       P_MINSHORT,        P_MAXSHORT };
+static const plong    plong_var[2]    = {        P_MINLONG,         P_MAXLONG };
 static const pchar    pchar_var[2]    = {             '\0',               'z' };
 static const ppointer ppointer_var[2] = {             NULL, (ppointer) p_libsys_init };
-static const pfloat   pfloat_var[2]   = {           -1.234,             1.234 };
+static const pfloat   pfloat_var[2]   = {          -1.234f,            1.234f };
 static const pdouble  pdouble_var[2]  = {           -1.567,             1.567 };
 
-/* You may say but why doing that with macros and not functions !?!? */
-/* This is because these tests MUST play with the CURRENT stack. */
+/* Macros are used for testing because these tests MUST play with the CURRENT stack. */
 
-#define P_TEST_VA_ARG(ap, type, wantedvalue) do {                           \
-	P_DEBUG ("unstacking a " #type);                                    \
-	P_TEST_CHECK (type##_va_arg(ap) == wantedvalue);                    \
+#define P_TEST_VA_ARG(ap, type, wantedvalue) do {		\
+	P_DEBUG ("Unstacking a " #type);			\
+	P_TEST_CHECK (type##_va_arg(ap) == wantedvalue);	\
   } while (0)
 
-#define P_TEST_VA_ARG_HEAD(ap) do {                          \
-	P_TEST_VA_ARG(ap, pint8, pint8_var[0]);              \
-	P_TEST_VA_ARG(ap, puint8, puint8_var[0]);            \
-	P_TEST_VA_ARG(ap, pint16, pint16_var[0]);            \
-	P_TEST_VA_ARG(ap, puint16, puint16_var[0]);          \
-	P_TEST_VA_ARG(ap, pint32, pint32_var[0]);            \
-	P_TEST_VA_ARG(ap, puint32, puint32_var[0]);          \
-	P_TEST_VA_ARG(ap, pint64, pint64_var[0]);            \
-	P_TEST_VA_ARG(ap, puint64, puint64_var[0]);          \
-	P_TEST_VA_ARG(ap, pshort, pshort_var[0]);            \
-	P_TEST_VA_ARG(ap, plong, plong_var[0]);              \
-	P_TEST_VA_ARG(ap, pchar, pchar_var[0]);              \
-	P_TEST_VA_ARG(ap, ppointer, ppointer_var[0]);        \
-	P_TEST_VA_ARG(ap, pfloat, pfloat_var[0]);            \
-	P_TEST_VA_ARG(ap, pdouble, pdouble_var[0]);          \
+#define P_TEST_VA_ARG_HEAD(ap) do {				\
+	P_TEST_VA_ARG(ap, pint8, pint8_var[0]);			\
+	P_TEST_VA_ARG(ap, puint8, puint8_var[0]);		\
+	P_TEST_VA_ARG(ap, pint16, pint16_var[0]);		\
+	P_TEST_VA_ARG(ap, puint16, puint16_var[0]);		\
+	P_TEST_VA_ARG(ap, pint32, pint32_var[0]);		\
+	P_TEST_VA_ARG(ap, puint32, puint32_var[0]);		\
+	P_TEST_VA_ARG(ap, pint64, pint64_var[0]);		\
+	P_TEST_VA_ARG(ap, puint64, puint64_var[0]);		\
+	P_TEST_VA_ARG(ap, pshort, pshort_var[0]);		\
+	P_TEST_VA_ARG(ap, plong, plong_var[0]);			\
+	P_TEST_VA_ARG(ap, pchar, pchar_var[0]);			\
+	P_TEST_VA_ARG(ap, ppointer, ppointer_var[0]);		\
+	P_TEST_VA_ARG(ap, pfloat, pfloat_var[0]);		\
+	P_TEST_VA_ARG(ap, pdouble, pdouble_var[0]);		\
   } while (0)
 
-#define P_TEST_VA_ARG_TRAIL(ap) do {                         \
-	P_TEST_VA_ARG(ap, pdouble, pdouble_var[0]);          \
-	P_TEST_VA_ARG(ap, pfloat, pfloat_var[0]);            \
-	P_TEST_VA_ARG(ap, ppointer, ppointer_var[0]);        \
-	P_TEST_VA_ARG(ap, pchar, pchar_var[0]);              \
-	P_TEST_VA_ARG(ap, plong, plong_var[0]);              \
-	P_TEST_VA_ARG(ap, pshort, pshort_var[0]);            \
-	P_TEST_VA_ARG(ap, puint64, puint64_var[0]);          \
-	P_TEST_VA_ARG(ap, pint64, pint64_var[0]);            \
-	P_TEST_VA_ARG(ap, puint32, puint32_var[0]);          \
-	P_TEST_VA_ARG(ap, pint32, pint32_var[0]);            \
-	P_TEST_VA_ARG(ap, puint16, puint16_var[0]);          \
-	P_TEST_VA_ARG(ap, pint16, pint16_var[0]);            \
-	P_TEST_VA_ARG(ap, puint8, puint8_var[0]);            \
-	P_TEST_VA_ARG(ap, pint8, pint8_var[0]);              \
+#define P_TEST_VA_ARG_TRAIL(ap) do {				\
+	P_TEST_VA_ARG(ap, pdouble, pdouble_var[0]);		\
+	P_TEST_VA_ARG(ap, pfloat, pfloat_var[0]);		\
+	P_TEST_VA_ARG(ap, ppointer, ppointer_var[0]);		\
+	P_TEST_VA_ARG(ap, pchar, pchar_var[0]);			\
+	P_TEST_VA_ARG(ap, plong, plong_var[0]);			\
+	P_TEST_VA_ARG(ap, pshort, pshort_var[0]);		\
+	P_TEST_VA_ARG(ap, puint64, puint64_var[0]);		\
+	P_TEST_VA_ARG(ap, pint64, pint64_var[0]);		\
+	P_TEST_VA_ARG(ap, puint32, puint32_var[0]);		\
+	P_TEST_VA_ARG(ap, pint32, pint32_var[0]);		\
+	P_TEST_VA_ARG(ap, puint16, puint16_var[0]);		\
+	P_TEST_VA_ARG(ap, pint16, pint16_var[0]);		\
+	P_TEST_VA_ARG(ap, puint8, puint8_var[0]);		\
+	P_TEST_VA_ARG(ap, pint8, pint8_var[0]);			\
   } while (0)
 
-static void variadic_function_copy_all (pint unused, p_va_list ap) {
+static void variadic_function_copy_all (pint unused, p_va_list ap)
+{
+	P_UNUSED (unused);
 	P_DEBUG ("Unstacking a copy of all the arguments");
-	P_TEST_VA_ARG_HEAD(ap);
-	P_TEST_VA_ARG_TRAIL(ap);
+	P_TEST_VA_ARG_HEAD (ap);
+	P_TEST_VA_ARG_TRAIL (ap);
 }
 
-static void variadic_function_copy_trail (pint unused, p_va_list ap) {
+static void variadic_function_copy_trail (pint unused, p_va_list ap)
+{
+	P_UNUSED (unused);
 	P_DEBUG ("Unstacking second part of the arguments");
-	P_TEST_VA_ARG_TRAIL(ap);
+	P_TEST_VA_ARG_TRAIL (ap);
 }
 
-static void variadic_function (pint unused, ...) {
+static void variadic_function (pint unused, ...)
+{
 	p_va_list ap;
 	p_va_list ap2;
 
@@ -108,7 +111,7 @@ static void variadic_function (pint unused, ...) {
 	p_va_end (ap2);
 
 	P_DEBUG ("Unstacking first part of arguments");
-	P_TEST_VA_ARG_HEAD(ap);
+	P_TEST_VA_ARG_HEAD (ap);
 
 	P_DEBUG ("Copy of arguments at current unstack state, i.e. in the middle");
 	p_va_copy (ap2, ap);
@@ -116,7 +119,7 @@ static void variadic_function (pint unused, ...) {
 	p_va_end (ap2);
 
 	P_DEBUG ("Unstacking second part of arguments");
-	P_TEST_VA_ARG_TRAIL(ap);
+	P_TEST_VA_ARG_TRAIL (ap);
 
 	p_va_end (ap);
 }
@@ -154,7 +157,7 @@ P_TEST_CASE_BEGIN (pstdarg_general_test)
 			   ppointer_var[0],
 			   pfloat_var[0],
 			   pdouble_var[0],
-	                       /* Cut is here when testing p_va_copy, we stack in reverse order */
+			   /* Cut is here when testing p_va_copy, we stack in reverse order */
 			   pdouble_var[0],
 			   pfloat_var[0],
 			   ppointer_var[0],
@@ -168,8 +171,7 @@ P_TEST_CASE_BEGIN (pstdarg_general_test)
 			   puint16_var[0],
 			   pint16_var[0],
 			   puint8_var[0],
-			   pint8_var[0]
-			  );
+			   pint8_var[0]);
 
 	p_libsys_shutdown ();
 }
