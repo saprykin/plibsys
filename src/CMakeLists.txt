@@ -873,7 +873,7 @@ SET (PLIBSYS_SUMMARY
 	Coverage support:       ${PLIBSYS_COVERAGE}
 	Visibility:             ${PLIBSYS_VISIBILITY}
 
-	va_copy availibility:   ${PLIBSYS_VA_COPY}
+	va_copy availability:   ${PLIBSYS_VA_COPY}
 
 ")
 
