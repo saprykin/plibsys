@@ -150,7 +150,7 @@
  *
  * Stack
  * - @link
- * pstdarg.h Varying number of arguments
+ * pstdarg.h Variable number of arguments
  * @endlink
  */
 
