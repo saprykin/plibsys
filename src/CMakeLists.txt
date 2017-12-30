@@ -855,6 +855,12 @@ install (FILES
 	COMPONENT Core
 )
 
+if (PLIBSYS_VA_COPY)
+	set(PLIBSYS_VA_COPY_STATUS "YES")
+else()
+	set(PLIBSYS_VA_COPY_STATUS "NO")
+endif()
+
 # Print summary
 SET (PLIBSYS_SUMMARY
 "
@@ -882,7 +888,7 @@ SET (PLIBSYS_SUMMARY
 	Coverage support:       ${PLIBSYS_COVERAGE}
 	Visibility:             ${PLIBSYS_VISIBILITY}
 
-	va_copy availability:   ${PLIBSYS_VA_COPY}
+	va_copy availability:   ${PLIBSYS_VA_COPY_STATUS}
 
 ")
 
