@@ -35,6 +35,7 @@ static       puint32  puint32_var[2]  = {                0,   0 /* runtime */ };
 static       pint64   pint64_var[2]   = {  0 /* runtime */,   0 /* runtime */ };
 static       puint64  puint64_var[2]  = {                0,   0 /* runtime */ };
 static const pint     pint_var[2]     = {         P_MININT,          P_MAXINT };
+static const puint    puint_var[2]    = {                0,         P_MAXUINT };
 static const pshort   pshort_var[2]   = {       P_MINSHORT,        P_MAXSHORT };
 static const plong    plong_var[2]    = {        P_MINLONG,         P_MAXLONG };
 static const pchar    pchar_var[2]    = {             '\0',               'z' };
@@ -58,6 +59,8 @@ static const pdouble  pdouble_var[2]  = {           -1.567,             1.567 };
 	P_TEST_VA_ARG(ap, puint32, puint32_var[0]);		\
 	P_TEST_VA_ARG(ap, pint64, pint64_var[0]);		\
 	P_TEST_VA_ARG(ap, puint64, puint64_var[0]);		\
+	P_TEST_VA_ARG(ap, pint, pint_var[0]);			\
+	P_TEST_VA_ARG(ap, puint, puint_var[0]);			\
 	P_TEST_VA_ARG(ap, pshort, pshort_var[0]);		\
 	P_TEST_VA_ARG(ap, plong, plong_var[0]);			\
 	P_TEST_VA_ARG(ap, pchar, pchar_var[0]);			\
@@ -73,6 +76,8 @@ static const pdouble  pdouble_var[2]  = {           -1.567,             1.567 };
 	P_TEST_VA_ARG(ap, pchar, pchar_var[1]);			\
 	P_TEST_VA_ARG(ap, plong, plong_var[1]);			\
 	P_TEST_VA_ARG(ap, pshort, pshort_var[1]);		\
+	P_TEST_VA_ARG(ap, puint, puint_var[1]);			\
+	P_TEST_VA_ARG(ap, pint, pint_var[1]);			\
 	P_TEST_VA_ARG(ap, puint64, puint64_var[1]);		\
 	P_TEST_VA_ARG(ap, pint64, pint64_var[1]);		\
 	P_TEST_VA_ARG(ap, puint32, puint32_var[1]);		\
@@ -151,6 +156,8 @@ P_TEST_CASE_BEGIN (pstdarg_general_test)
 			   puint32_var[0],
 			   pint64_var[0],
 			   puint64_var[0],
+			   pint_var[0],
+			   puint_var[0],
 			   pshort_var[0],
 			   plong_var[0],
 			   pchar_var[0],
@@ -164,6 +171,8 @@ P_TEST_CASE_BEGIN (pstdarg_general_test)
 			   pchar_var[1],
 			   plong_var[1],
 			   pshort_var[1],
+			   puint_var[1],
+			   pint_var[1],
 			   puint64_var[1],
 			   pint64_var[1],
 			   puint32_var[1],
