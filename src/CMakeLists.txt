@@ -12,7 +12,6 @@ plibsys_detect_target_platform (PLIBSYS_TARGET_PLATFORM)
 plibsys_detect_c_compiler (PLIBSYS_C_COMPILER)
 plibsys_detect_target_os (PLIBSYS_TARGET_OS)
 plibsys_detect_os_bits (PLIBSYS_OS_BITS)
-plibsys_detect_va_copy (PLIBSYS_VA_COPY)
 
 if ((PLIBSYS_TARGET_OS STREQUAL windows) AND NOT (PLIBSYS_TARGET_OS STREQUAL cygwin)
 					 AND NOT (PLIBSYS_TARGET_OS STREQUAL msys))
@@ -708,6 +707,16 @@ if (PLIBSYS_VISIBILITY)
 		endif()
 	endif()
 endif()
+
+# Variaable arguments
+
+check_include_file ("stdarg.h" PLIBSYS_HAVE_STDARG_H)
+
+if (NOT PLIBSYS_HAVE_STDARG_H)
+	message (FATAL_ERROR "Support for <stdarg.h> is required for target plarform, not found")
+endif()
+
+plibsys_detect_va_copy (PLIBSYS_VA_COPY)
 
 # Restore compiler flags
 set (CMAKE_REQUIRED_DEFINITIONS ${SAVED_CMAKE_REQUIRED_DEFINITIONS})
