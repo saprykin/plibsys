@@ -46,6 +46,11 @@
  * lead to program crash. In order to avoid type casting mistakes, consider
  * using macros for variable arguments with explicit type casting provided below.
  * Though you still can use #p_va_arg if you know what are you doing.
+ *
+ * Please note, that stdarg.h implementation is not compatible with varargs.h,
+ * and only one of them should be used in a compilation unit. You must be sure
+ * that you don't use varargs.h along with the current implmenetation, otherwise
+ * runtime failures are inevitable.
  */
 
 #if !defined (PLIBSYS_H_INSIDE) && !defined (PLIBSYS_COMPILATION)
