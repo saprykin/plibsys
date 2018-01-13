@@ -18,6 +18,10 @@
 #include "plibsys.h"
 #include "ptestmacros.h"
 
+#if defined(P_CC_WATCOM)
+#  pragma disable_message (7)
+#endif
+
 P_TEST_MODULE_INIT ();
 
 static void variadic_function (pint unused, ...);
