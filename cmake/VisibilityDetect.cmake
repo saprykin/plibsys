@@ -12,6 +12,7 @@ function (plibsys_detect_visibility cflags ldflags)
                                             !defined(__hpux)  && !defined(hpux)   && \\\\
                                             !defined(__sgi)   && !defined(sgi)    && \\\\
                                             !defined(__osf__) && !defined(__osf)  && \\\\
+                                            !defined(__OS2__)                        \\\\
                                             !defined(_AIX)   && !defined(__CYGWIN__) && !defined(__MSYS__)
                                         return 0;
                                         #else
