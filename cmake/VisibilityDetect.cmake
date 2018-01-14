@@ -10,6 +10,7 @@ function (plibsys_detect_visibility cflags ldflags)
                                         #if (__GNUC__ >= 4) && !defined(_CRAYC) && \\\\
                                             !defined(__sun)  && !defined(sun)  && \\\\
                                             !defined(__hpux) && !defined(hpux) && \\\\
+                                            !defined(__sgi)  && !defined(sgi)  && \\\\
                                             !defined(_AIX)   && !defined(__CYGWIN__) && !defined(__MSYS__)
                                         return 0;
                                         #else
