@@ -708,7 +708,7 @@ if (PLIBSYS_VISIBILITY)
 	endif()
 endif()
 
-# Variaable arguments
+# Variable arguments
 
 check_include_file ("stdarg.h" PLIBSYS_HAVE_STDARG_H)
 
