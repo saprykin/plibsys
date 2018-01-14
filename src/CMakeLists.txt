@@ -4,6 +4,7 @@ include (CheckIncludeFile)
 include (TestBigEndian)
 include (${PROJECT_SOURCE_DIR}/cmake/PlatformDetect.cmake)
 include (${PROJECT_SOURCE_DIR}/cmake/VisibilityDetect.cmake)
+include (${PROJECT_SOURCE_DIR}/cmake/StdargDetect.cmake)
 set (OUTPUT_DIR ${CMAKE_BINARY_DIR})
 
 # Try to detect target platform
@@ -86,6 +87,7 @@ set (PLIBSYS_PUBLIC_HDRS
 	psocket.h
 	psocketaddress.h
 	pspinlock.h
+	pstdarg.h
 	pstring.h
 	ptimeprofiler.h
 	ptree.h
@@ -706,6 +708,16 @@ if (PLIBSYS_VISIBILITY)
 	endif()
 endif()
 
+# Variaable arguments
+
+check_include_file ("stdarg.h" PLIBSYS_HAVE_STDARG_H)
+
+if (NOT PLIBSYS_HAVE_STDARG_H)
+	message (FATAL_ERROR "Support for <stdarg.h> is required for target plarform, not found")
+endif()
+
+plibsys_detect_va_copy (PLIBSYS_VA_COPY)
+
 # Restore compiler flags
 set (CMAKE_REQUIRED_DEFINITIONS ${SAVED_CMAKE_REQUIRED_DEFINITIONS})
 set (CMAKE_REQUIRED_LIBRARIES ${SAVED_CMAKE_REQUIRED_LIBRARIES})
@@ -843,6 +855,12 @@ install (FILES
 	COMPONENT Core
 )
 
+if (PLIBSYS_VA_COPY)
+	set(PLIBSYS_VA_COPY_STATUS "YES")
+else()
+	set(PLIBSYS_VA_COPY_STATUS "NO")
+endif()
+
 # Print summary
 SET (PLIBSYS_SUMMARY
 "
@@ -869,6 +887,8 @@ SET (PLIBSYS_SUMMARY
 	Build tests:            ${PLIBSYS_TESTS}
 	Coverage support:       ${PLIBSYS_COVERAGE}
 	Visibility:             ${PLIBSYS_VISIBILITY}
+
+	va_copy availability:   ${PLIBSYS_VA_COPY_STATUS}
 
 ")
 

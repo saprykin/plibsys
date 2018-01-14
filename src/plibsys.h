@@ -46,6 +46,7 @@
 #include "psocket.h"
 #include "psocketaddress.h"
 #include "pspinlock.h"
+#include "pstdarg.h"
 #include "pstring.h"
 #include "ptimeprofiler.h"
 #include "ptree.h"

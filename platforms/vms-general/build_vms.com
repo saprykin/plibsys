@@ -442,8 +442,8 @@ $ build_tests:
 $ test_list_full = "patomic pcondvariable pcryptohash pdir"
 $ test_list_full = test_list_full + " perror pfile phashtable pinifile plibraryloader plist"
 $ test_list_full = test_list_full + " pmacros pmain pmem pmutex pprocess prwlock psemaphore"
-$ test_list_full = test_list_full + " pshm pshmbuffer psocket psocketaddress pspinlock pstring"
-$ test_list_full = test_list_full + " ptimeprofiler ptree ptypes puthread"
+$ test_list_full = test_list_full + " pshm pshmbuffer psocket psocketaddress pspinlock pstdarg"
+$ test_list_full = test_list_full + " pstring ptimeprofiler ptree ptypes puthread"
 $!
 $ if is_tests .eqs. "0"
 $ then
