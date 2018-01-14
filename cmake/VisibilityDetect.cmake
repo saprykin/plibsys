@@ -7,10 +7,11 @@ function (plibsys_detect_visibility cflags ldflags)
 
         # Check GCC
         check_c_source_compiles ("int main () {
-                                        #if (__GNUC__ >= 4) && !defined(_CRAYC) && \\\\
-                                            !defined(__sun)  && !defined(sun)  && \\\\
-                                            !defined(__hpux) && !defined(hpux) && \\\\
-                                            !defined(__sgi)  && !defined(sgi)  && \\\\
+                                        #if (__GNUC__ >= 4)   && !defined(_CRAYC) && \\\\
+                                            !defined(__sun)   && !defined(sun)    && \\\\
+                                            !defined(__hpux)  && !defined(hpux)   && \\\\
+                                            !defined(__sgi)   && !defined(sgi)    && \\\\
+                                            !defined(__osf__) && !defined(__osf)  && \\\\
                                             !defined(_AIX)   && !defined(__CYGWIN__) && !defined(__MSYS__)
                                         return 0;
                                         #else
