@@ -65,6 +65,9 @@
  * process, but it will close the object after the first close call from any of
  * the threads within the process.
  *
+ * - AmigaOS has process-wide semaphores without actual tracking of counter,
+ * which means that semaphore behaves the same way as recursive mutex.
+ *
  * - OpenVMS (as of 8.4 release) has declared prototypes for process-wide named
  * semaphores but the actual implementation is broken.
  *
