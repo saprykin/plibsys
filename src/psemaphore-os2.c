@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Alexander Saprykin <xelfium@gmail.com>
+ * Copyright (C) 2017-2018 Alexander Saprykin <xelfium@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -48,7 +48,7 @@ p_semaphore_take_ownership (PSemaphore *sem)
 }
 
 P_LIB_API pboolean
-p_semaphore_acquire (PSemaphore *sem,
+p_semaphore_acquire (PSemaphore	*sem,
 		     PError	**error)
 {
 	P_UNUSED (sem);
@@ -62,7 +62,7 @@ p_semaphore_acquire (PSemaphore *sem,
 }
 
 P_LIB_API pboolean
-p_semaphore_release (PSemaphore *sem,
+p_semaphore_release (PSemaphore	*sem,
 		     PError	**error)
 {
 	P_UNUSED (sem);
