@@ -93,6 +93,8 @@ pp_shm_create_handle (PShm	*shm,
 			return FALSE;
 		}
 
+		memset (mem_area, 0, shm->size + P_SHM_PRIV_SIZE);
+
 		/* Set size and counter */
 		*((psize *) mem_area)     = shm->size;
 		*((psize *) mem_area + 1) = 1;
@@ -197,7 +199,7 @@ p_shm_free (PShm *shm)
 
 		if (shm->is_owner || *((psize *) shm->addr - 1) == 0) {
 			p_semaphore_free (shm->sem);
-			shm->sem         = NULL;
+			shm->sem = NULL;
 
 			IExec->FreeNamedMemory (P_SHM_NAMESPACE, shm->platform_key);			
 		}
