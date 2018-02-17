@@ -28,16 +28,16 @@
 #include <proto/exec.h>
 
 #define P_SEM_SUFFIX	"_p_sem_object"
+#define P_SEM_PRIV_SIZE	(sizeof (psize))
 
 struct PSemaphore_ {
 	struct SignalSemaphore	*sem_shared;
 	pchar			*platform_key;
-	pboolean		sem_created;
+	pboolean		is_owner;
 	PSemaphoreAccessMode	mode;
 };
 
 static pboolean pp_semaphore_create_handle (PSemaphore *sem, PError **error);
-static void pp_semaphore_clean_handle (PSemaphore *sem);
 
 static pboolean
 pp_semaphore_create_handle (PSemaphore	*sem,
@@ -60,19 +60,18 @@ pp_semaphore_create_handle (PSemaphore	*sem,
 	sem_sys = (struct SignalSemaphore *) IExec->FindSemaphore (sem->platform_key);
 
 	if (sem_sys != NULL && sem->mode != P_SEM_ACCESS_CREATE) {
-		sem->sem_created = FALSE;
-		sem->sem_shared  = sem_sys;
+		sem->sem_shared = sem_sys;
 	} else {
 		if (sem_sys != NULL && sem->mode == P_SEM_ACCESS_CREATE) {
-			IExec->RemSemaphore ((struct SignalSemaphore *) sem_sys);
-			IExec->ObtainSemaphore ((struct SignalSemaphore *) sem_sys);
-			IExec->ReleaseSemaphore ((struct SignalSemaphore *) sem_sys);
+			IExec->RemSemaphore (sem_sys);
+			IExec->ObtainSemaphore (sem_sys);
+			IExec->ReleaseSemaphore (sem_sys);
 
 			IExec->FreeVec (sem_sys->ss_Link.ln_Name);
-			IExec->FreeVec (sem_sys);
+			IExec->FreeVec (((psize *) sem_sys) - 1);
 		}
 
-		sem_sys = (struct SignalSemaphore *) IExec->AllocVecTags (sizeof (struct SignalSemaphore),
+		sem_sys = (struct SignalSemaphore *) IExec->AllocVecTags (sizeof (struct SignalSemaphore) + P_SEM_PRIV_SIZE,
 									  AVT_Type, MEMF_SHARED,
 									  AVT_ClearWithValue, 0,
 									  TAG_END);
@@ -83,11 +82,8 @@ pp_semaphore_create_handle (PSemaphore	*sem,
 					     (pint) P_ERROR_IPC_NO_RESOURCES,
 					     0,
 					     "Failed to call AllocMem() to create semaphore");
-			pp_semaphore_clean_handle (sem);
 			return FALSE;
 		}
-
-		sem_sys->ss_Link.ln_Pri  = 0;
 
 		name_len = strlen (sem->platform_key);
 		name     = (pchar *) IExec->AllocVecTags (name_len + 1,
@@ -95,46 +91,32 @@ pp_semaphore_create_handle (PSemaphore	*sem,
 							  TAG_END);
 
 		if (P_UNLIKELY (name == NULL)) {
+			IExec->FreeVec (sem_sys);
 			IExec->Permit ();
 			p_error_set_error_p (error,
 					     (pint) P_ERROR_IPC_NO_RESOURCES,
 					     0,
 					     "Failed to call AllocMem() to create semaphore name");
-			pp_semaphore_clean_handle (sem);
 			return FALSE;
 		}
 
 		memcpy (name, sem->platform_key, name_len);
 
-		sem_sys->ss_Link.ln_Name = name;
+		/* Leave space in memory for counter */
+		sem_sys = (struct SignalSemaphore *) (((psize *) sem_sys) + 1);
 
-		sem->sem_shared  = sem_sys;
-		sem->sem_created = sem->mode == P_SEM_ACCESS_CREATE ? TRUE : FALSE;
+		sem_sys->ss_Link.ln_Name = name;
+		sem->sem_shared = sem_sys;
 
 		/* Add to system list */
 		IExec->AddSemaphore (sem_sys);
 	}
 
+	*(((psize *) sem_sys) - 1) += 1;
+
 	IExec->Permit ();
 
 	return TRUE;
-}
-
-static void
-pp_semaphore_clean_handle (PSemaphore *sem)
-{
-	if (sem->sem_shared == NULL)
-		return;
-
-	if (sem->sem_created == TRUE) {
-		if (sem->sem_shared->ss_Link.ln_Name != NULL)
-			IExec->FreeVec (sem->sem_shared->ss_Link.ln_Name);
-
-		IExec->FreeVec (sem->sem_shared);
-	}
-
-	sem->sem_created = FALSE;
-	sem->sem_shared  = NULL;
 }
 
 P_LIB_API PSemaphore *
@@ -193,7 +175,7 @@ p_semaphore_take_ownership (PSemaphore *sem)
 	if (P_UNLIKELY (sem == NULL))
 		return;
 
-	sem->sem_created = TRUE;
+	sem->is_owner = TRUE;
 }
 
 P_LIB_API pboolean
@@ -236,13 +218,22 @@ p_semaphore_free (PSemaphore *sem)
 	if (P_UNLIKELY (sem == NULL))
 		return;
 
-	if (sem->sem_created == TRUE && sem->sem_shared != NULL) {
-		IExec->RemSemaphore ((struct SignalSemaphore *) sem->sem_shared);
-		IExec->ObtainSemaphore ((struct SignalSemaphore *) sem->sem_shared);
-		IExec->ReleaseSemaphore ((struct SignalSemaphore *) sem->sem_shared);
-	}
+	if (P_UNLIKELY (sem->sem_shared != NULL)) {
+		IExec->Forbid ();
 
-	pp_semaphore_clean_handle (sem);
+		*(((psize *) sem->sem_shared) - 1) -= 1;
+
+		if (*(((psize *) sem->sem_shared) - 1) == 0 || sem->is_owner == TRUE) {
+			IExec->RemSemaphore (sem->sem_shared);
+			IExec->ObtainSemaphore (sem->sem_shared);
+			IExec->ReleaseSemaphore (sem->sem_shared);
+
+			IExec->FreeVec (sem->sem_shared->ss_Link.ln_Name);
+			IExec->FreeVec (((psize *) sem->sem_shared) - 1);
+		}
+
+		IExec->Permit ();
+	}
 
 	if (P_LIKELY (sem->platform_key != NULL))
 		p_free (sem->platform_key);
