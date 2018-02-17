@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2017 Alexander Saprykin <xelfium@gmail.com>
+ * Copyright (C) 2010-2018 Alexander Saprykin <xelfium@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -85,6 +85,7 @@ typedef void (WINAPI * SystemInfoFunc) (LPSYSTEM_INFO);
 #ifdef P_OS_AMIGA
 #  include <clib/alib_protos.h> 
 #  include <proto/dos.h>
+#  include <proto/exec.h>
 #endif
 
 extern void p_uthread_init_internal (void);
@@ -396,6 +397,12 @@ p_uthread_ideal_count (void)
 	}
 
 	return (pint) sys_info.nCPUCount;
+#elif defined (P_OS_AMIGA)
+	puint32 cores;
+
+	IExec->GetCPUInfoTags (GCIT_NumberOfCPUs, &cores, TAG_END);
+
+	return (pint) cores;
 #elif defined (P_OS_SCO) && !defined (_SC_NPROCESSORS_ONLN)
 	struct scoutsname utsn;
 
