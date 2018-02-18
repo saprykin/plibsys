@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2017 Alexander Saprykin <xelfium@gmail.com>
+ * Copyright (C) 2016-2018 Alexander Saprykin <xelfium@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -249,7 +249,7 @@ p_error_get_io_from_system (pint err_code)
 		return P_ERROR_IO_INVALID_ARGUMENT;
 #  endif
 
-			/* On Linux these errors can have same codes */
+	/* On Linux these errors can have same codes */
 #  if defined(ENOTSUP) && (!defined(EOPNOTSUPP) || ENOTSUP != EOPNOTSUPP)
 	case ENOTSUP:
 			return P_ERROR_IO_NOT_SUPPORTED;
