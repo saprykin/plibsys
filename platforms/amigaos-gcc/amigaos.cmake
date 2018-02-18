@@ -1,3 +1,7 @@
+# In order to suppress CMake warnings about unknown platform
+get_filename_component (cur_dir ${CMAKE_CURRENT_LIST_FILE} PATH)
+list (APPEND CMAKE_MODULE_PATH "${cur_dir}")
+
 set (CMAKE_SYSTEM_NAME AmigaOS)
 set (CMAKE_SYSTEM_VERSION 4)
 set (CMAKE_SYSTEM_PROCESSOR ppc)
