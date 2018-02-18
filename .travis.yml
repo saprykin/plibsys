@@ -99,6 +99,7 @@ before_install:
         - if [[ "${TRAVIS_BRANCH}" == "coverity_scan" ]]; then export USE_GCOV="" ; fi
         - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew update ; fi
         - if [[ "${TRAVIS_OS_NAME}" == "osx" ]] && [[ "${USE_GCOV}" == "1" ]]; then brew install lcov ; fi
+        - if [[ "${TRAVIS_OS_NAME}" == "osx" ]] && ! [[ -z ${FORMULA+x} ]]; then brew cask uninstall oclint || true; fi
         - if [[ "${TRAVIS_OS_NAME}" == "osx" ]] && ! [[ -z ${FORMULA+x} ]]; then brew unlink gcc || true; fi
         - if [[ "${TRAVIS_OS_NAME}" == "osx" ]] && ! [[ -z ${FORMULA+x} ]]; then brew unlink ${FORMULA} || true; fi
         - if [[ "${TRAVIS_OS_NAME}" == "osx" ]] && ! [[ -z ${FORMULA+x} ]]; then brew install ${FORMULA}; fi
