@@ -65,16 +65,16 @@ matrix:
                   env: CC=clang-5.0 CXX=clang++-5.0
                 # macOS builds (GCC)
                 - os: osx
-                  osx_image: xcode7.3
+                  osx_image: xcode8.3
                   env: FORMULA=gcc@4.9 CC=gcc-4.9 CXX=g++-4.9 GCOV=gcov-4.9 USE_GCOV=1
                 - os: osx
-                  osx_image: xcode7.3
+                  osx_image: xcode8.3
                   env: FORMULA=gcc@5 CC=gcc-5 CXX=g++-5
                 - os: osx
-                  osx_image: xcode7.3
+                  osx_image: xcode8.3
                   env: FORMULA=gcc@6 CC=gcc-6 CXX=g++-6
                 - os: osx
-                  osx_image: xcode7.3
+                  osx_image: xcode8.3
                   env: FORMULA=gcc@7 CC=gcc-7 CXX=g++-7
                 # macOS builds (Clang)
                 - os: osx
