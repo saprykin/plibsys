@@ -65,6 +65,8 @@ static pboolean
 pp_semaphore_create_handle (PSemaphore	*sem,
 			    PError	**error)
 {
+	pint init_val;
+
 	if (P_UNLIKELY (sem == NULL || sem->platform_key == NULL)) {
 		p_error_set_error_p (error,
 				     (pint) P_ERROR_IPC_INVALID_ARGUMENT,
@@ -73,11 +75,13 @@ pp_semaphore_create_handle (PSemaphore	*sem,
 		return FALSE;
 	}
 
+	init_val = sem->init_val;
+
 	/* Solaris may interrupt sem_open() call */
 	while ((sem->sem_hdl = sem_open (sem->platform_key,
 					 O_CREAT | O_EXCL,
 					 0660,
-					 sem->init_val)) == P_SEM_INVALID_HDL &&
+					 init_val)) == P_SEM_INVALID_HDL &&
 		p_error_get_last_system () == EINTR)
 	;
 
@@ -85,11 +89,13 @@ pp_semaphore_create_handle (PSemaphore	*sem,
 		if (p_error_get_last_system () == EEXIST) {
 			if (sem->mode == P_SEM_ACCESS_CREATE)
 				sem_unlink (sem->platform_key);
+			else
+				init_val = 0;
 
 			while ((sem->sem_hdl = sem_open (sem->platform_key,
 							 0,
 							 0,
-							 0)) == P_SEM_INVALID_HDL &&
+							 init_val)) == P_SEM_INVALID_HDL &&
 				p_error_get_last_system () == EINTR)
 			;
 		}
