@@ -32,17 +32,17 @@
 
 #if defined (__GLIBC__) && (__GLIBC__ >= 2) && (__GLIBC_MINOR__ >= 24)
 #  define P_DIR_NON_REENTRANT 1
-# elif defined(P_OS_SOLARIS) || defined(P_OS_QNX6) || defined(P_OS_UNIXWARE) || defined(P_OS_SCO) || \
-       defined(P_OS_IRIX)    || defined(P_OS_HAIKU)
+# elif defined (P_OS_SOLARIS) || defined (P_OS_QNX6) || defined (P_OS_UNIXWARE) || \
+       defined (P_OS_SCO)     || defined (P_OS_IRIX) || defined (P_OS_HAIKU)
 #  define P_DIR_NEED_BUF_ALLOC 1
 #endif
 
 #ifdef P_DIR_NEED_BUF_ALLOC
-#  if defined(P_OS_SCO)
+#  if defined (P_OS_SCO)
 #    define P_DIR_NEED_SIMPLE_R 1
 #  endif
 #else
-#  if defined(P_OS_BEOS)
+#  if defined (P_OS_BEOS) || defined (P_OS_AMIGA)
 #    define P_DIR_NON_REENTRANT 1
 #  endif
 #endif
@@ -182,7 +182,7 @@ p_dir_get_next_entry (PDir	*dir,
 	PDirEntry	*ret;
 #ifdef P_DIR_NEED_BUF_ALLOC
 	struct dirent	*dirent_st;
-#elif !defined(P_DIR_NON_REENTRANT)
+#elif !defined (P_DIR_NON_REENTRANT)
 	struct dirent	dirent_st;
 #endif
 	struct stat	sb;
@@ -201,9 +201,9 @@ p_dir_get_next_entry (PDir	*dir,
 	}
 
 #ifdef P_DIR_NEED_BUF_ALLOC
-#  if defined(P_OS_SOLARIS)
+#  if defined (P_OS_SOLARIS)
 	name_max = (pint) (FILENAME_MAX);
-#  elif defined(P_OS_SCO) || defined(P_OS_IRIX)
+#  elif defined (P_OS_SCO) || defined (P_OS_IRIX)
 	name_max = (pint) pathconf (dir->orig_path, _PC_NAME_MAX);
 
 	if (name_max == -1) {
@@ -217,7 +217,7 @@ p_dir_get_next_entry (PDir	*dir,
 			return NULL;
 		}
 	}
-#  elif defined(P_OS_QNX6) || defined(P_OS_UNIXWARE) || defined(P_OS_HAIKU)
+#  elif defined (P_OS_QNX6) || defined (P_OS_UNIXWARE) || defined (P_OS_HAIKU)
 	name_max = (pint) (NAME_MAX);
 #  endif
 

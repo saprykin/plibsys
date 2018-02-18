@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2016 Alexander Saprykin <xelfium@gmail.com>
+ * Copyright (C) 2010-2017 Alexander Saprykin <xelfium@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by

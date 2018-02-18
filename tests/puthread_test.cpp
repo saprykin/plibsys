@@ -265,6 +265,11 @@ P_TEST_CASE_BEGIN (puthread_general_test)
 	tls_key = p_uthread_local_new (NULL);
 	P_TEST_CHECK (tls_key != NULL);
 
+	/* Threre is no guarantee that we wouldn't get one of the IDs
+	 * of the finished test threads */
+
+	P_HANDLE main_id = p_uthread_current_id ();
+
 	is_threads_working = TRUE;
 
 	PUThread *thr1 = p_uthread_create ((PUThreadFunc) test_thread_func,
@@ -292,8 +297,7 @@ P_TEST_CASE_BEGIN (puthread_general_test)
 	P_TEST_CHECK (p_uthread_join (thr2) == thread_wakes_2);
 
 	P_TEST_REQUIRE (thread1_id != thread2_id);
-	P_TEST_CHECK (thread1_id != p_uthread_current_id () &&
-		     thread2_id != p_uthread_current_id ());
+	P_TEST_CHECK (thread1_id != main_id && thread2_id != main_id);
 
 	P_TEST_CHECK (thread1_obj == thr1);
 	P_TEST_CHECK (thread2_obj == thr2);

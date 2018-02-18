@@ -1,0 +1,87 @@
+# In order to suppress CMake warnings about unknown platform
+get_filename_component (cur_dir ${CMAKE_CURRENT_LIST_FILE} PATH)
+list (APPEND CMAKE_MODULE_PATH "${cur_dir}")
+
+set (CMAKE_SYSTEM_NAME AmigaOS)
+set (CMAKE_SYSTEM_VERSION 4)
+set (CMAKE_SYSTEM_PROCESSOR ppc)
+
+if (NOT AMIGA_ROOT)
+        set (AMIGA_ROOT $ENV{AMIGA_ROOT})
+
+        if (NOT AMIGA_ROOT)
+                message (FATAL_ERROR "You must define AMIGA_ROOT environment variable for toolchain")
+        endif()
+endif()
+
+set (CMAKE_SHARED_LIBRARY_PREFIX "lib")
+set (CMAKE_SHARED_LIBRARY_SUFFIX ".so")
+set (CMAKE_STATIC_LIBRARY_PREFIX "lib")
+set (CMAKE_STATIC_LIBRARY_SUFFIX ".a")
+
+if (CMAKE_HOST_WIN32)
+        set (HOST_EXECUTABLE_SUFFIX ".exe")
+endif()
+
+set (CMAKE_AR
+        "${AMIGA_ROOT}/bin/${CMAKE_SYSTEM_PROCESSOR}-amigaos-ar${HOST_EXECUTABLE_SUFFIX}"
+        CACHE PATH "AmigaOS ar program"
+)
+
+set (CMAKE_RANLIB
+        "${AMIGA_ROOT}/bin/${CMAKE_SYSTEM_PROCESSOR}-amigaos-ranlib${HOST_EXECUTABLE_SUFFIX}"
+        CACHE PATH "AmigaOS ranlib program"
+)
+
+set (CMAKE_NM
+        "${AMIGA_ROOT}/bin/${CMAKE_SYSTEM_PROCESSOR}-amigaos-nm${HOST_EXECUTABLE_SUFFIX}"
+        CACHE PATH "AmigaOS nm program"
+)
+
+set (CMAKE_OBJCOPY
+        "${AMIGA_ROOT}/bin/${CMAKE_SYSTEM_PROCESSOR}-amigaos-objcopy${HOST_EXECUTABLE_SUFFIX}"
+        CACHE PATH "AmigaOS objcopy program"
+)
+
+set (CMAKE_OBJDUMP
+        "${AMIGA_ROOT}/bin/${CMAKE_SYSTEM_PROCESSOR}-amigaos-objdump${HOST_EXECUTABLE_SUFFIX}"
+        CACHE PATH "AmigaOS objdump program"
+)
+
+set (CMAKE_LINKER
+        "${AMIGA_ROOT}/bin/${CMAKE_SYSTEM_PROCESSOR}-amigaos-ld${HOST_EXECUTABLE_SUFFIX}"
+        CACHE PATH "AmigaOS linker program"
+)
+
+set (CMAKE_STRIP
+        "${AMIGA_ROOT}/bin/${CMAKE_SYSTEM_PROCESSOR}-amigaos-strip${HOST_EXECUTABLE_SUFFIX}"
+        CACHE PATH "AmigaOS strip program"
+)
+
+set (CMAKE_C_COMPILER "${AMIGA_ROOT}/bin/${CMAKE_SYSTEM_PROCESSOR}-amigaos-gcc${HOST_EXECUTABLE_SUFFIX}")
+set (CMAKE_CXX_COMPILER "${AMIGA_ROOT}/bin/${CMAKE_SYSTEM_PROCESSOR}-amigaos-g++${HOST_EXECUTABLE_SUFFIX}")
+set (CMAKE_ASM_COMPILER "${AMIGA_ROOT}/bin/${CMAKE_SYSTEM_PROCESSOR}-amigaos-as${HOST_EXECUTABLE_SUFFIX}")
+
+set (CMAKE_SHARED_LIBRARY_CXX_FLAGS -fPIC)
+set (CMAKE_SHARED_LIBRARY_C_FLAGS -fPIC)
+set (CMAKE_SHARED_LIBRARY_CREATE_CXX_FLAGS -shared)
+set (CMAKE_SHARED_LIBRARY_CREATE_C_FLAGS -shared)
+
+set (CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -use-dynld")
+
+set (CMAKE_SHARED_LIBRARY_RUNTIME_CXX_FLAG "-Wl,-rpath,")
+set (CMAKE_SHARED_LIBRARY_RUNTIME_CXX_FLAG_SEP ":")
+set (CMAKE_SHARED_LIBRARY_RPATH_LINK_CXX_FLAG "-Wl,-rpath-link,")
+set (CMAKE_SHARED_LIBRARY_SONAME_CXX_FLAG "-Wl,-soname,")
+set (CMAKE_EXE_EXPORTS_CXX_FLAG "-Wl,--export-dynamic")
+
+set (CMAKE_SHARED_LIBRARY_RUNTIME_C_FLAG "-Wl,-rpath,")
+set (CMAKE_SHARED_LIBRARY_RUNTIME_C_FLAG_SEP ":")
+set (CMAKE_SHARED_LIBRARY_RPATH_LINK_C_FLAG "-Wl,-rpath-link,")
+set (CMAKE_SHARED_LIBRARY_SONAME_C_FLAG "-Wl,-soname,")
+set (CMAKE_EXE_EXPORTS_C_FLAG "-Wl,--export-dynamic")
+
+set (CMAKE_FIND_ROOT_PATH ${AMIGA_ROOT})
+set (CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
+set (CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
+set (CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)

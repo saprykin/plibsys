@@ -23,7 +23,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#if !defined (P_OS_WIN) && !defined (P_OS_OS2)
+#if !defined (P_OS_WIN) && !defined (P_OS_OS2) && !defined (P_OS_AMIGA)
 #  include <unistd.h>
 #  include <errno.h>
 #  include <fcntl.h>
@@ -32,7 +32,7 @@
 #  include <sys/ipc.h>
 #endif
 
-#if !defined (P_OS_WIN) && !defined (P_OS_OS2)
+#if !defined (P_OS_WIN) && !defined (P_OS_OS2) && !defined (P_OS_AMIGA)
 pchar *
 p_ipc_unix_get_temp_dir (void)
 {
@@ -103,7 +103,7 @@ p_ipc_unix_get_ftok_key (const pchar *file_name)
 
 	return ftok (file_name, 'P');
 }
-#endif /* !P_OS_WIN && !P_OS_OS2 */
+#endif /* !P_OS_WIN && !P_OS_OS2 && !P_OS_AMIGA */
 
 /* Returns a platform-independent key for IPC usage, object name for Windows and
  * a file name to use with ftok () for UNIX-like systems */
@@ -113,7 +113,7 @@ p_ipc_get_platform_key (const pchar *name, pboolean posix)
 	PCryptoHash	*sha1;
 	pchar		*hash_str;
 
-#if defined (P_OS_WIN) || defined (P_OS_OS2)
+#if defined (P_OS_WIN) || defined (P_OS_OS2) || defined (P_OS_AMIGA)
 	P_UNUSED (posix);
 #else
 	pchar		*path_name, *tmp_path;
@@ -133,7 +133,7 @@ p_ipc_get_platform_key (const pchar *name, pboolean posix)
 	if (P_UNLIKELY (hash_str == NULL))
 		return NULL;
 
-#if defined (P_OS_WIN) || defined (P_OS_OS2)
+#if defined (P_OS_WIN) || defined (P_OS_OS2) || defined (P_OS_AMIGA)
 	return hash_str;
 #else
 	if (posix) {

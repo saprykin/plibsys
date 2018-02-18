@@ -27,10 +27,10 @@
 #  if defined (P_OS_BEOS)
 #    include <be/kernel/OS.h>
 #  elif defined (P_OS_OS2)
-#  define INCL_DOSMEMMGR
-#  define INCL_DOSERRORS
-#  include <os2.h>
-#  else
+#    define INCL_DOSMEMMGR
+#    define INCL_DOSERRORS
+#    include <os2.h>
+#  elif !defined (P_OS_AMIGA)
 #    include <unistd.h>
 #    include <sys/types.h>
 #    include <sys/mman.h>
@@ -146,7 +146,7 @@ p_mem_mmap (psize	n_bytes,
 	area_id		area;
 #elif defined (P_OS_OS2)
 	APIRET		ulrc;
-#else
+#elif !defined (P_OS_AMIGA)
 	int		fd;
 	int		map_flags = MAP_PRIVATE;
 #endif
@@ -223,6 +223,16 @@ p_mem_mmap (psize	n_bytes,
 			return NULL;
 		}
 	}
+#elif defined (P_OS_AMIGA)
+	addr = malloc (n_bytes);
+
+	if (P_UNLIKELY (addr == NULL)) {
+		p_error_set_error_p (error,
+				     (pint) p_error_get_last_io (),
+				     p_error_get_last_system (),
+				     "Failed to allocate system memory");
+		return NULL;
+	}
 #else
 #  if !defined (PLIBSYS_MMAP_HAS_MAP_ANONYMOUS) && !defined (PLIBSYS_MMAP_HAS_MAP_ANON)
 	if (P_UNLIKELY ((fd = open ("/dev/zero", O_RDWR | O_EXCL, 0754)) == -1)) {
@@ -283,6 +293,9 @@ p_mem_munmap (ppointer	mem,
 	area_id	area;
 #elif defined (P_OS_OS2)
 	APIRET	ulrc;
+#elif defined (P_OS_AMIGA)
+	P_UNUSED (n_bytes);
+	P_UNUSED (error);
 #endif
 
 	if (P_UNLIKELY (mem == NULL || n_bytes == 0)) {
@@ -319,6 +332,10 @@ p_mem_munmap (ppointer	mem,
 				     (pint) p_error_get_io_from_system ((pint) ulrc),
 				     ulrc,
 				     "Failed to call DosFreeMem() to free memory");
+#elif defined (P_OS_AMIGA)
+	free (mem);
+
+	if (P_UNLIKELY (FALSE)) {
 #else
 	if (P_UNLIKELY (munmap (mem, n_bytes) != 0)) {
 		p_error_set_error_p (error,

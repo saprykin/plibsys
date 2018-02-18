@@ -32,6 +32,8 @@ extern void p_rwlock_init		(void);
 extern void p_rwlock_shutdown		(void);
 extern void p_time_profiler_init	(void);
 extern void p_time_profiler_shutdown	(void);
+extern void p_library_loader_init	(void);
+extern void p_library_loader_shutdown	(void);
 
 static pboolean pp_plibsys_inited = FALSE;
 static pchar pp_plibsys_version[] = PLIBSYS_VERSION_STR;
@@ -51,6 +53,7 @@ p_libsys_init (void)
 	p_cond_variable_init ();
 	p_rwlock_init ();
 	p_time_profiler_init ();
+	p_library_loader_init ();
 }
 
 P_LIB_API void
@@ -70,6 +73,7 @@ p_libsys_shutdown (void)
 
 	pp_plibsys_inited = FALSE;
 
+	p_library_loader_init ();
 	p_time_profiler_shutdown ();
 	p_rwlock_shutdown ();
 	p_cond_variable_shutdown ();

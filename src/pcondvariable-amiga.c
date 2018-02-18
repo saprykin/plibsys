@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Alexander Saprykin <xelfium@gmail.com>
+ * Copyright (C) 2017 Alexander Saprykin <xelfium@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -16,19 +16,18 @@
  */
 
 #include "pcondvariable.h"
-#include "pspinlock.h"
 #include "patomic.h"
 #include "pmem.h"
+#include "pspinlock.h"
 
 #include <stdlib.h>
-#include <string.h>
 
-#include <atheos/semaphore.h>
-#include <atheos/threads.h>
+#include <proto/exec.h>
 
 typedef struct _PCondThread {
-	thread_id		thread;
+	struct Task		*thread;
 	struct _PCondThread	*next;
+	ULONG			sigmask;
 } PCondThread;
 
 struct PCondVariable_ {
@@ -73,7 +72,9 @@ P_LIB_API pboolean
 p_cond_variable_wait (PCondVariable	*cond,
 		      PMutex		*mutex)
 {
-	PCondThread *wait_thread;
+	PCondThread	*wait_thread;
+	BYTE		signal;
+	ULONG		wait_singnals;
 
 	if (P_UNLIKELY (cond == NULL || mutex == NULL))
 		return FALSE;
@@ -83,9 +84,18 @@ p_cond_variable_wait (PCondVariable	*cond,
 		return FALSE;
 	}
 
-	wait_thread->thread = get_thread_id (NULL);
+	wait_thread->thread = IExec->FindTask (NULL);
 	wait_thread->next   = NULL;
 	
+	signal = IExec->AllocSignal (-1);
+	
+	if (signal == -1) {
+		P_WARNING ("PCondVariable::p_cond_variable_wait: no free signal slot left");
+		return FALSE;
+	}
+
+	wait_thread->sigmask = 1 << signal;
+
 	if (p_spinlock_lock (cond->lock) != TRUE) {
 		P_ERROR ("PCondVariable::p_cond_variable_wait: failed to lock internal spinlock");
 		return FALSE;
@@ -108,12 +118,14 @@ p_cond_variable_wait (PCondVariable	*cond,
 		return FALSE;
 	}
 
-	suspend_thread (wait_thread->thread);
+	wait_singnals = IExec->Wait (wait_thread->sigmask);
 
 	if (p_mutex_lock (mutex) != TRUE) {
 		P_ERROR ("PCondVariable::p_cond_variable_wait: failed to lock mutex");
 		return FALSE;
 	}
+
+	IExec->FreeSignal (signal);
 
 	return TRUE;
 }
@@ -122,7 +134,6 @@ P_LIB_API pboolean
 p_cond_variable_signal (PCondVariable *cond)
 {
 	PCondThread	*wait_thread;
-	thread_info	thr_info;
 
 	if (P_UNLIKELY (cond == NULL))
 		return FALSE;
@@ -150,14 +161,7 @@ p_cond_variable_signal (PCondVariable *cond)
 		return FALSE;
 	}
 
-	memset (&thr_info, 0, sizeof (thr_info));
-
-	while (get_thread_info (wait_thread->thread, &thr_info) == 0) {
-		if (thr_info.ti_state != TS_READY)
-			break;
-	}
-
-	resume_thread (wait_thread->thread);
+	IExec->Signal (wait_thread->thread, wait_thread->sigmask);
 
 	p_free (wait_thread);
 	return TRUE;
@@ -171,7 +175,6 @@ p_cond_variable_broadcast (PCondVariable *cond)
 
 	PCondThread	*cur_thread;
 	PCondThread	*next_thread;
-	thread_info	thr_info;
 
 	if (p_spinlock_lock (cond->lock) != TRUE) {
 		P_ERROR ("PCondVariable::p_cond_variable_broadcast: failed to lock internal spinlock");
@@ -189,14 +192,7 @@ p_cond_variable_broadcast (PCondVariable *cond)
 	cur_thread = cond->wait_head;
 
 	do {
-		memset (&thr_info, 0, sizeof (thr_info)); 
-
-		while (get_thread_info (cur_thread->thread, &thr_info) == 0) {
-			if (thr_info.ti_state != TS_READY)
-				break;
-		}
-
-		resume_thread (cur_thread->thread);
+		IExec->Signal (cur_thread->thread, cur_thread->sigmask);
 
 		next_thread = cur_thread->next;
 		p_free (cur_thread);

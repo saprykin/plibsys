@@ -769,7 +769,7 @@ set_target_properties (plibsys PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${OUTPUT_DIR}
 set_target_properties (plibsys PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${OUTPUT_DIR})
 set_target_properties (plibsys PROPERTIES ARCHIVE_OUTPUT_DIRECTORY ${OUTPUT_DIR})
 
-if (NOT PLIBSYS_TARGET_OS STREQUAL os2)
+if (NOT PLIBSYS_TARGET_OS STREQUAL os2 AND NOT PLIBSYS_TARGET_OS STREQUAL amigaos)
         set_target_properties (plibsys PROPERTIES SOVERSION ${PLIBSYS_VERSION})
 endif()
 
@@ -782,18 +782,26 @@ if (PLIBSYS_BUILD_STATIC)
 endif()
 
 if (PLIBSYS_PLATFORM_CFLAGS)
-        set_target_properties (plibsys PROPERTIES COMPILE_FLAGS "${PLIBSYS_PLATFORM_CFLAGS}")
+        foreach (PLATFORM_CFLAG ${PLIBSYS_PLATFORM_CFLAGS})
+                set (PLIBSYS_PLATFORM_CFLAGS_STR "${PLIBSYS_PLATFORM_CFLAGS_STR} ${PLATFORM_CFLAG}")
+        endforeach()
+
+        set_target_properties (plibsys PROPERTIES COMPILE_FLAGS "${PLIBSYS_PLATFORM_CFLAGS_STR}")
 
         if (PLIBSYS_BUILD_STATIC)
-                set_target_properties (plibsysstatic PROPERTIES COMPILE_FLAGS "${PLIBSYS_PLATFORM_CFLAGS}")
+                set_target_properties (plibsysstatic PROPERTIES COMPILE_FLAGS "${PLIBSYS_PLATFORM_CFLAGS_STR}")
         endif()
 endif()
 
 if (PLIBSYS_PLATFORM_LDFLAGS)
-        set_target_properties (plibsys PROPERTIES LINK_FLAGS "${PLIBSYS_PLATFORM_LDFLAGS}")
+        foreach (PLATFORM_LDFLAG ${PLIBSYS_PLATFORM_LDFLAGS})
+                set (PLIBSYS_PLATFORM_LDFLAGS_STR "${PLIBSYS_PLATFORM_LDFLAGS_STR} ${PLATFORM_LDFLAG}")
+        endforeach()
+
+        set_target_properties (plibsys PROPERTIES LINK_FLAGS "${PLIBSYS_PLATFORM_LDFLAGS_STR}")
 
         if (PLIBSYS_BUILD_STATIC)
-                set_target_properties (plibsysstatic PROPERTIES LINK_FLAGS "${PLIBSYS_PLATFORM_LDFLAGS}")
+                set_target_properties (plibsysstatic PROPERTIES LINK_FLAGS "${PLIBSYS_PLATFORM_LDFLAGS_STR}")
         endif()
 endif()
 

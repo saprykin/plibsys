@@ -61,6 +61,7 @@
  * BEOS              - BeOS
  * OS2               - OS/2
  * VMS               - OpenVMS
+ * AMIGA             - AmigaOS
  * UNIX              - Any UNIX BSD/SYSV based system
  * LINUX             - Linux
  * MAC9              - Mac OS 9 (Classic)
@@ -212,6 +213,12 @@
  */
 
 /**
+ * @def P_OS_AMIGA
+ * @brief AmigaOS operating system.
+ * @since 0.0.4
+ */
+
+/**
  * @def P_OS_UNIX
  * @brief UNIX based operating system.
  * @since 0.0.1
@@ -337,6 +344,8 @@
 #  define P_OS_OS2
 #elif defined(VMS) || defined(__VMS)
 #  define P_OS_VMS
+#elif defined(AMIGA) || defined(__amigaos__)
+#  define P_OS_AMIGA
 #endif
 
 #ifdef P_OS_WIN64
@@ -353,7 +362,8 @@
 #endif
 
 #if defined(P_OS_WIN)  || defined(P_OS_MAC9) || defined(P_OS_HAIKU) || \
-    defined(P_OS_BEOS) || defined(P_OS_OS2)  || defined(P_OS_VMS)
+    defined(P_OS_BEOS) || defined(P_OS_OS2)  || defined(P_OS_VMS)   || \
+    defined(P_OS_AMIGA)
 #  undef P_OS_UNIX
 #elif !defined(P_OS_UNIX)
 #  define P_OS_UNIX
@@ -430,6 +440,9 @@
 #  endif
 #  ifndef P_OS_VMS
 #    define P_OS_VMS
+#  endif
+#  ifndef P_OS_AMIGA
+#    define P_OS_AMIGA
 #  endif
 #  ifndef P_OS_UNIX
 #    define P_OS_UNIX
