@@ -73,6 +73,7 @@ with unit tests and was tested on the following desktop platforms:
 
 plibsys also supports the following mobile platforms:
 
+* Android
 * BlackBerry 10
 
 It should also work on other *nix systems with or without minimal efforts.
