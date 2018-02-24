@@ -31,11 +31,13 @@ files=$(ls $1)
 
 export LD_LIBRARY_PATH=$1:$LD_LIBRARY_PATH
 
+selfname=$(basename $0)
+
 echo "Running tests..."
 
 for file in $files
 do
-    if [[ $file == *"_test"* ]]; then
+    if [[ $file == *"_test"* && $file != $selfname ]]; then
         test_name=${file%.*}
         total_counter=$((total_counter + 1))
         echo "[RUN ] $test_name"
