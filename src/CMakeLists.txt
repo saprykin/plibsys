@@ -445,6 +445,8 @@ if (PLIBSYS_THREAD_MODEL STREQUAL posix)
         # Some systems only need the difinition to be available
         if (PLIBSYS_TARGET_OS MATCHES "darwin|aix")
                 set (PLIBSYS_SCHED_CHECK "defined (_POSIX_THREAD_PRIORITY_SCHEDULING)")
+        elseif (PLIBSYS_TARGET_OS STREQUAL android)
+                set (PLIBSYS_SCHED_CHECK "0")
         else()
                 set (PLIBSYS_SCHED_CHECK "defined (_POSIX_THREAD_PRIORITY_SCHEDULING) && (_POSIX_THREAD_PRIORITY_SCHEDULING - 0 >= 0)")
         endif()
