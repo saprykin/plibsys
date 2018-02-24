@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# Copyright 2017, Alexander Saprykin <xelfium@gmail.com>
+# Copyright 2017-2018, Alexander Saprykin <xelfium@gmail.com>
 #
 # Permission to use, copy, modify, and/or distribute this software for any
 # purpose with or without fee is hereby granted, provided that the above
@@ -28,6 +28,8 @@ pass_counter=0
 
 IFS=$'\n'
 files=$(ls $1)
+
+export LD_LIBRARY_PATH=$1:$LD_LIBRARY_PATH
 
 echo "Running tests..."
 
