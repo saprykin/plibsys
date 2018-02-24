@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2017 Alexander Saprykin <xelfium@gmail.com>
+ * Copyright (C) 2014-2018 Alexander Saprykin <xelfium@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -109,6 +109,11 @@ P_TEST_CASE_BEGIN (pmacros_general_test)
 
 	/* Test for OpenBSD */
 #if defined (P_OS_OPENBSD) && !defined (P_OS_BSD4)
+	P_TEST_CHECK (false);
+#endif
+
+	/* Test for Android */
+#if defined (P_OS_ANDROID) && !defined (P_OS_LINUX)
 	P_TEST_CHECK (false);
 #endif
 
@@ -317,6 +322,12 @@ P_TEST_CASE_BEGIN (pmacros_general_test)
 #if defined (P_OS_WIN)
 #  if !defined (P_CPU_X86)  && !defined (P_CPU_ARM)   && !defined (P_CPU_IA64) && \
       !defined (P_CPU_MIPS) && !defined (P_CPU_POWER) && !defined (P_CPU_ALPHA)
+	P_TEST_CHECK (false);
+#  endif
+#endif
+
+#if defined (P_OS_ANDROID)
+#  if !defined (P_CPU_X86) && !defined (P_CPU_ARM) && !defined (P_CPU_MIPS)
 	P_TEST_CHECK (false);
 #  endif
 #endif

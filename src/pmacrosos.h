@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Alexander Saprykin <xelfium@gmail.com>
+ * Copyright (C) 2017-2018 Alexander Saprykin <xelfium@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -72,6 +72,7 @@
  * MSYS              - MSYS
  * WIN               - 32-bit Windows
  * WIN64             - 64-bit Windows
+ * ANDROID           - Android
  */
 
 /**
@@ -278,6 +279,12 @@
  * @since 0.0.1
  */
 
+/**
+ * @def P_OS_ANDROID
+ * @brief Google Android
+ * @since 0.0.4
+ */
+
 #if defined(__APPLE__) && (defined(__GNUC__) || defined(__xlC__) || defined(__xlc__))
 #  define P_OS_DARWIN
 #  define P_OS_BSD4
@@ -296,6 +303,9 @@
 #  define P_OS_WIN64
 #elif defined(__WIN32__) || defined(_WIN32) || defined(WIN32)
 #  define P_OS_WIN
+#elif defined(__ANDROID__)
+#  define P_OS_ANDROID
+#  define P_OS_LINUX
 #elif defined(__linux) || defined(__linux__)
 #  define P_OS_LINUX
 #elif defined(__FreeBSD__)
@@ -473,6 +483,9 @@
 #  endif
 #  ifndef P_OS_WIN64
 #    define P_OS_WIN64
+#  endif
+#  ifndef P_OS_ANDROID
+#    define P_OS_ANDROID
 #  endif
 #endif
 
