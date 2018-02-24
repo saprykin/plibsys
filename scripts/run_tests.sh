@@ -43,9 +43,9 @@ do
         echo "[RUN ] $test_name"
 
         if [[ $test_name == "plibraryloader_test" ]]; then
-            $(${file} $2 > /dev/null 2>&1)
+            $($1/${file} $2 > /dev/null 2>&1)
         else
-            $(${file} > /dev/null 2>&1)
+            $($1/${file} > /dev/null 2>&1)
         fi
 
         if [[ $? -ne 0 ]]; then
