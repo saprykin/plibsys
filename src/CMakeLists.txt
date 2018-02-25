@@ -2,6 +2,12 @@ include (CheckCSourceCompiles)
 include (CheckTypeSize)
 include (CheckIncludeFile)
 include (TestBigEndian)
+
+# First of all, detect size of the pointer for the target machine.
+# We can't rely on CMAKE_SIZEOF_VOID_P when building universal
+# binaries.
+check_type_size ("void *" PLIBSYS_SIZEOF_VOID_P)
+
 include (${PROJECT_SOURCE_DIR}/cmake/PlatformDetect.cmake)
 include (${PROJECT_SOURCE_DIR}/cmake/VisibilityDetect.cmake)
 include (${PROJECT_SOURCE_DIR}/cmake/StdargDetect.cmake)
@@ -12,6 +18,10 @@ plibsys_detect_target_platform (PLIBSYS_TARGET_PLATFORM)
 plibsys_detect_c_compiler (PLIBSYS_C_COMPILER)
 plibsys_detect_target_os (PLIBSYS_TARGET_OS)
 plibsys_detect_os_bits (PLIBSYS_OS_BITS)
+
+if (PLIBSYS_OS_BITS STREQUAL "unknown")
+    message (FATAL_ERROR "Failed to detect bitness of the target system")
+endif()
 
 if ((PLIBSYS_TARGET_OS STREQUAL windows) AND NOT (PLIBSYS_TARGET_OS STREQUAL cygwin)
                                          AND NOT (PLIBSYS_TARGET_OS STREQUAL msys))
@@ -871,6 +881,12 @@ else()
         set(PLIBSYS_VA_COPY_STATUS "NO")
 endif()
 
+if (PLIBSYS_OS_BITS STREQUAL "universal")
+    set (PLIBSYS_ADDRESS_MODEL "universal")
+else()
+    set (PLIBSYS_ADDRESS_MODEL "${PLIBSYS_OS_BITS} bit")
+endif()
+
 # Print summary
 SET (PLIBSYS_SUMMARY
 "
@@ -878,7 +894,7 @@ SET (PLIBSYS_SUMMARY
 
         Platfrom:               ${PLIBSYS_TARGET_OS}
         Compiler:               ${PLIBSYS_C_COMPILER}
-        Address model:          ${PLIBSYS_OS_BITS} bit
+        Address model:          ${PLIBSYS_ADDRESS_MODEL}
 
         Thread model:           ${PLIBSYS_THREAD_MODEL}
         RW lock model:          ${PLIBSYS_RWLOCK_MODEL}

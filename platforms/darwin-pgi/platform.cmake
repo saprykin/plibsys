@@ -1,4 +1,4 @@
-if (CMAKE_SIZEOF_VOID_P EQUAL 8)
+if (NOT PLIBSYS_SIZEOF_VOID_P EQUAL 4)
         message (FATAL_ERROR
                  "
                  PGI compiler doesn't support 64-bit shared libraries on 
