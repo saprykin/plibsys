@@ -73,6 +73,7 @@ with unit tests and was tested on the following desktop platforms:
 
 plibsys also supports the following mobile platforms:
 
+* iOS, watchOS, tvOS
 * Android
 * BlackBerry 10
 
@@ -87,7 +88,7 @@ plibsys was tested with the following compilers:
 * Open Watcom (x86)
 * Borland (x86)
 * GCC (x86, x64, PPC32be, PPC64be/le, IA-64/32, IA-64, Alpha, HPPA2.0-32, MIPS32, AArch32, SPARCv9)
-* Clang (x86, x64, PPC32be)
+* Clang (x86, x64, PPC32be, AArch32, AArch64)
 * Intel (x86, x64)
 * QCC (x86, AArch32)
 * Oracle Solaris Studio (x86, x64, SPARCv9)
