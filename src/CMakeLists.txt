@@ -37,6 +37,8 @@ endif()
 
 # CMP0042, see http://www.cmake.org/Wiki/CMake_RPATH_handling
 if (PLIBSYS_TARGET_OS STREQUAL darwin)
+        cmake_policy(SET CMP0068 NEW)
+
         set (CMAKE_MACOSX_RPATH TRUE)
         set (CMAKE_SKIP_BUILD_RPATH FALSE)
 
