@@ -44,6 +44,10 @@
 #    SIMULATOR64 = Build for x64 iPhone simulator.
 #    TVOS = Build for Apple tvOS.
 #    SIMULATOR_TVOS = Build for x64 Apple TV Simulator.
+#    WATCHOS = Build for Apple watchOS.
+#    SIMULATOR_WATCHOS = Build for x86 watchOS Simulator.
+#    SIMULATOR64_WATCHOS = Build for x64 watchOS Simulator.
+# IOS_DEPLOYMENT_TARGET: Minimum version for deployment target.
 # CMAKE_OSX_SYSROOT: Path to the iOS SDK to use. By default this is
 #    automatically determined from IOS_PLATFORM and xcodebuild, but can also be
 #    manually specified (although this should not be required).
@@ -53,13 +57,16 @@
 #    should not be required).
 # ENABLE_BITCODE: (ON / OFF) Enables or disables bitcode support. Default: ON.
 # ENABLE_ARC: (ON / OFF) Enables or disables ARC support. Default: ON.
-# IOS_ARCH: (armv7 armv7s arm64 i386 x86_64) If specified, will override the
+# IOS_ARCH: (armv7 armv7s armv7k arm64 i386 x86_64) If specified, will override the
 #    default architectures for the given IOS_PLATFORM. Default architectures:
 #    OS = armv7 armv7s arm64
 #    SIMULATOR = i386
 #    SIMULATOR64 = x86_64
 #    TVOS = arm64
 #    SIMULATOR_TVOS = x86_64
+#    WATCHOS = armv7k
+#    SIMULATOR_WATCHOS = i386
+#    SIMULATOR64_WATCHOS = x86_64
 #
 # Copyright 2018, Alexander Saprykin <xelfium@gmail.com>
 #
@@ -134,6 +141,26 @@ elseif (IOS_PLATFORM STREQUAL "SIMULATOR_TVOS")
         if (NOT IOS_ARCH)
                 set (IOS_ARCH "x86_64")
         endif()
+elseif (IOS_PLATFORM STREQUAL "WATCHOS")
+        set (XCODE_IOS_PLATFORM "watchos")
+
+        if (NOT IOS_ARCH)
+                set (IOS_ARCH "armv7k")
+        endif()
+elseif (IOS_PLATFORM STREQUAL "SIMULATOR_WATCHOS")
+        set (XCODE_IOS_PLATFORM "watchsimulator")
+        set (ENABLE_BITCODE OFF)
+
+        if (NOT IOS_ARCH)
+                set (IOS_ARCH "i386")
+        endif()
+elseif (IOS_PLATFORM STREQUAL "SIMULATOR64_WATCHOS")
+        set (XCODE_IOS_PLATFORM "watchsimulator")
+        set (ENABLE_BITCODE OFF)
+
+        if (NOT IOS_ARCH)
+                set (IOS_ARCH "x86_64")
+        endif()
 else()
         message (FATAL_ERROR "Invalid IOS_PLATFORM: ${IOS_PLATFORM}")
 endif()
@@ -158,8 +185,12 @@ endif()
 # Specify minimum version of deployment target.
 
 if (NOT DEFINED IOS_DEPLOYMENT_TARGET)
-        # Unless specified, SDK version 8.0 is used by default as minimum target version.
-        set (IOS_DEPLOYMENT_TARGET "8.0" CACHE STRING "Minimum iOS version to build for." )
+        if (IOS_PLATFORM MATCHES ".*WATCHOS")
+                set (IOS_DEPLOYMENT_TARGET "2.0" CACHE STRING "Minimum watchOS version to build for." )
+        else()
+                set (IOS_DEPLOYMENT_TARGET "8.0" CACHE STRING "Minimum iOS version to build for." )
+        endif()
+
         message (STATUS "Using the default min-version since IOS_DEPLOYMENT_TARGET not provided.")
 endif()
 
@@ -263,10 +294,10 @@ set (CMAKE_C_OSX_CURRENT_VERSION_FLAG "-current_version ")
 set (CMAKE_CXX_OSX_COMPATIBILITY_VERSION_FLAG "${CMAKE_C_OSX_COMPATIBILITY_VERSION_FLAG}")
 set (CMAKE_CXX_OSX_CURRENT_VERSION_FLAG "${CMAKE_C_OSX_CURRENT_VERSION_FLAG}")
 
-if (NOT IOS_DEPLOYMENT_TARGET VERSION_LESS 11.0)
+if (NOT IOS_DEPLOYMENT_TARGET VERSION_LESS 11.0 AND NOT IOS_PLATFORM MATCHES ".*WATCHOS")
     # iOS 11 does not support 32-bit (armv7*).
     foreach (ARCH ${IOS_ARCH})
-        if (ARCH MATCHES "armv7*")
+        if (ARCH MATCHES "armv7.*")
             message (STATUS "iOS architecture removed from build: ${ARCH} is not supported by "
                             "the minimum deployment iOS version ${IOS_DEPLOYMENT_TARGET}."
             )
@@ -278,7 +309,7 @@ if (NOT IOS_DEPLOYMENT_TARGET VERSION_LESS 11.0)
     set (IOS_ARCH ${VALID_IOS_ARCH})
 endif()
 
-message (STATUS "Building for minimum iOS version: ${IOS_DEPLOYMENT_TARGET} (SDK version: ${IOS_SDK_VERSION})")
+message (STATUS "Building for minimum OS version: ${IOS_DEPLOYMENT_TARGET} (SDK version: ${IOS_SDK_VERSION})")
 
 # Note that only Xcode 7+ supports the newer more specific:
 # -m${XCODE_IOS_PLATFORM}-version-min flags, older versions of Xcode use:
@@ -294,6 +325,10 @@ elseif (IOS_PLATFORM STREQUAL "TVOS")
         set (XCODE_IOS_PLATFORM_VERSION_FLAGS "-mtvos-version-min=${IOS_DEPLOYMENT_TARGET}")
 elseif (IOS_PLATFORM STREQUAL "SIMULATOR_TVOS")
         set (XCODE_IOS_PLATFORM_VERSION_FLAGS "-mtvos-simulator-version-min=${IOS_DEPLOYMENT_TARGET}")
+elseif (IOS_PLATFORM STREQUAL "WATCHOS")
+        set (XCODE_IOS_PLATFORM_VERSION_FLAGS "-mwatchos-version-min=${IOS_DEPLOYMENT_TARGET}")
+elseif (IOS_PLATFORM STREQUAL "SIMULATOR_WATCHOS" OR IOS_PLATFORM STREQUAL "SIMULATOR64_WATCHOS")
+        set (XCODE_IOS_PLATFORM_VERSION_FLAGS "-mwatchos-simulator-version-min=${IOS_DEPLOYMENT_TARGET}")
 else()
         # SIMULATOR or SIMULATOR64 both use -mios-simulator-version-min.
         set (XCODE_IOS_PLATFORM_VERSION_FLAGS "-mios-simulator-version-min=${IOS_DEPLOYMENT_TARGET}")
