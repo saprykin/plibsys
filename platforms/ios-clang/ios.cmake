@@ -194,6 +194,21 @@ if (NOT DEFINED IOS_DEPLOYMENT_TARGET)
         message (STATUS "Using the default min-version since IOS_DEPLOYMENT_TARGET not provided.")
 endif()
 
+if (NOT IOS_DEPLOYMENT_TARGET VERSION_LESS 11.0 AND NOT IOS_PLATFORM MATCHES ".*WATCHOS")
+    # iOS 11 does not support 32-bit (armv7*).
+    foreach (ARCH ${IOS_ARCH})
+        if (ARCH MATCHES "armv7.*")
+            message (STATUS "iOS architecture removed: ${ARCH} is not supported by "
+                            "the minimum deployment iOS version ${IOS_DEPLOYMENT_TARGET}."
+            )
+        else()
+            list (APPEND VALID_IOS_ARCH ${ARCH})
+        endif()
+    endforeach()
+    
+    set (IOS_ARCH ${VALID_IOS_ARCH})
+endif()
+
 # Use bitcode or not
 
 if (NOT DEFINED ENABLE_BITCODE)
@@ -293,21 +308,6 @@ set (CMAKE_C_OSX_COMPATIBILITY_VERSION_FLAG "-compatibility_version ")
 set (CMAKE_C_OSX_CURRENT_VERSION_FLAG "-current_version ")
 set (CMAKE_CXX_OSX_COMPATIBILITY_VERSION_FLAG "${CMAKE_C_OSX_COMPATIBILITY_VERSION_FLAG}")
 set (CMAKE_CXX_OSX_CURRENT_VERSION_FLAG "${CMAKE_C_OSX_CURRENT_VERSION_FLAG}")
-
-if (NOT IOS_DEPLOYMENT_TARGET VERSION_LESS 11.0 AND NOT IOS_PLATFORM MATCHES ".*WATCHOS")
-    # iOS 11 does not support 32-bit (armv7*).
-    foreach (ARCH ${IOS_ARCH})
-        if (ARCH MATCHES "armv7.*")
-            message (STATUS "iOS architecture removed from build: ${ARCH} is not supported by "
-                            "the minimum deployment iOS version ${IOS_DEPLOYMENT_TARGET}."
-            )
-        else()
-            list (APPEND VALID_IOS_ARCH ${ARCH})
-        endif()
-    endforeach()
-    
-    set (IOS_ARCH ${VALID_IOS_ARCH})
-endif()
 
 message (STATUS "Building for minimum OS version: ${IOS_DEPLOYMENT_TARGET} (SDK version: ${IOS_SDK_VERSION})")
 
