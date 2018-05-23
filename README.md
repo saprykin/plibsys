@@ -4,7 +4,7 @@
 [![](https://scan.coverity.com/projects/8333/badge.svg)](https://scan.coverity.com/projects/saprykin-plibsys)
 [![](https://codecov.io/gh/saprykin/plibsys/branch/master/graph/badge.svg)](https://codecov.io/gh/saprykin/plibsys)
 [![](https://codedocs.xyz/saprykin/plibsys.svg)](https://codedocs.xyz/saprykin/plibsys/)
-[![](http://img.shields.io/:license-lgpl2-blue.svg?style=flat)](http://www.gnu.org/licenses/lgpl-2.1.html)
+[![](https://img.shields.io/badge/License-MIT-ff69b4.svg)](https://opensource.org/licenses/MIT)
 
 ## About
 
@@ -108,7 +108,7 @@ Documentation for the latest stable verison is avaialble through the [GitHub Pag
 
 ## License
 
-plibsys is distributed under the terms of GNU LGPLv2 or higher license.
+plibsys is distributed under the terms of MIT license.
 
 ## More
 

@@ -5,7 +5,7 @@ env:
                 - secure: "Jw8Q8kFOfP4kiicGpZX496H0Hhi2+PzQ5wSpSJ/+e4rdQ/PnQuCvJfyAJ/k6+7BmgeS80T4sfK5xB5nX3yZG1FA4VE4kXuppJlVSwTZer0dlbbK3rvdSChBf5/Nnfjsj/Ch2SjjwhOt8zhjVutWuT2wz9RwOO39heQf3KFb4qbaVbnaBRTiGYJ+6D/28dX5foMehTohtcN1WKUZULum4cP8tqdn2+0cH+afwDwODap4v8brEW8HifS4QGDejAE7zR9fr3BaJl2m9s8art5lGzoK6Qaf2SS8WBW0MVzv2CP6zfsLUmPm3WijGUzAIPPi5GRFSy7O0GdkhHziMof1vyE3irXLSFlhg5g76lHEI2vpE6m+/PQ4I9jp7+oBT0N4SadgiXReXxewAZRrInCOstNN/mWIF0C0r1gWvPS3uM5u4PfGRa72GJ39SWmDvQqmOHOy15ZGA2eyw8piLAVkVJKvhufNfwEULITHE9xQXCV3e0YZrNIjMofuRszz7yLHEXlhwJxG++E4h0uCKnCqLTcLas8sBcRw98H/k9s8yZR3u9v0F0qqX/wus2TvfMjsfOqMm9MyqTXexpsMiODiN0a8zpdhufDlyxgr+2S96NlER7Iu0aRPBVgfDP2COPxmVW4ZwDpZYxK6iANeiYVuQGHccDHjZRyiSCG2c47EKV14="
                 - COVERITY_SCAN_PROJECT_NAME="saprykin/plibsys"
                 - COVERITY_SCAN_BRANCH_PATTERN="coverity_scan"
-                - COVERITY_SCAN_NOTIFICATION_EMAIL="xelfium@gmail.com"
+                - COVERITY_SCAN_NOTIFICATION_EMAIL="saprykin.spb@gmail.com"
                 - COVERITY_SCAN_BUILD_COMMAND="make"
 
 language: generic

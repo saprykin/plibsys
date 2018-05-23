@@ -1,3 +1,10 @@
+plibsys (0.0.3~git20170912.7069e03-1) unstable; urgency=low
+
+  * Switch license to MIT (Expat)
+  * Update package description
+
+ -- Alexander Saprykin <saprykin.spb@gmail.com>  Wed, 23 May 2018 23:43:00 -0200
+
 plibsys (0.0.3~git20170912.7069e03) unstable; urgency=low
 
   * Initial release (Closes: #871541)

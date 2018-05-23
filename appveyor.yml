@@ -1,6 +1,6 @@
 environment:
         COVERITY_SCAN_PROJECT_NAME:       "saprykin/plibsys"
-        COVERITY_SCAN_NOTIFICATION_EMAIL: "xelfium@gmail.com"
+        COVERITY_SCAN_NOTIFICATION_EMAIL: "saprykin.spb@gmail.com"
         COVERITY_SCAN_TOKEN:
                 secure: 6WFXzLxAMuUovtYc+u8OoruE/V6zhK2M4mZlrszRBIA=
 

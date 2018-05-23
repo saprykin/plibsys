@@ -68,7 +68,7 @@
 #    SIMULATOR_WATCHOS = i386
 #    SIMULATOR64_WATCHOS = x86_64
 #
-# Copyright 2018, Alexander Saprykin <xelfium@gmail.com>
+# Copyright 2018, Alexander Saprykin <saprykin.spb@gmail.com>
 #
 
 # Get the Xcode version being used.

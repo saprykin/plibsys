@@ -37,6 +37,7 @@ Description: Highly portable C system library
  Shared library loading
  Useful routines for linked lists, strings, hash tables
  Macros for CPU architecture, OS and compiler detection
+ Macros for variable arguments
 
 Package: libplibsys0-dev
 Section: libdevel
@@ -67,6 +68,7 @@ Description: Development files for plibsys
  Shared library loading
  Useful routines for linked lists, strings, hash tables
  Macros for CPU architecture, OS and compiler detection
+ Macros for variable arguments
  .
  This package provides the development files that allow one to build software
  which uses plibsys.
@@ -101,6 +103,7 @@ Description: Debug symbols for plibsys
  Shared library loading
  Useful routines for linked lists, strings, hash tables
  Macros for CPU architecture, OS and compiler detection
+ Macros for variable arguments
  .
  This package provides the debug symbols to match the runtime component
  of the plibsys, allowing debugging of a program using plibsys.
@@ -134,6 +137,7 @@ Description: Documentation for plibsys
  Shared library loading
  Useful routines for linked lists, strings, hash tables
  Macros for CPU architecture, OS and compiler detection
+ Macros for variable arguments
  .
  This package provides the documentation files for plibsys.
 
