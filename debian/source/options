@@ -1,2 +1,2 @@
-tar-ignore = "3dparty/scosv/*"
+tar-ignore = "3dparty"
 
