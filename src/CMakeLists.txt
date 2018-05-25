@@ -29,7 +29,19 @@ include (TestBigEndian)
 # First of all, detect size of the pointer for the target machine.
 # We can't rely on CMAKE_SIZEOF_VOID_P when building universal
 # binaries.
+
 check_type_size ("void *" PLIBSYS_SIZEOF_VOID_P)
+check_type_size ("size_t" PLIBSYS_SIZEOF_SIZE_T)
+check_type_size ("long" PLIBSYS_SIZEOF_LONG)
+
+# Without generated code multi-arch builds are not supported anyway,
+# so the best we can do is to fallback to detected size values
+
+if (CMAKE_VERSION VERSION_LESS 2.8.1)
+        set (PLIBSYS_SIZEOF_VOID_P_CODE "#define PLIBSYS_SIZEOF_VOID_P ${PLIBSYS_SIZEOF_VOID_P}")
+        set (PLIBSYS_SIZEOF_SIZE_T_CODE "#define PLIBSYS_SIZEOF_SIZE_T ${PLIBSYS_SIZEOF_SIZE_T}")
+        set (PLIBSYS_SIZEOF_LONG_CODE "#define PLIBSYS_SIZEOF_LONG ${PLIBSYS_SIZEOF_LONG}")
+endif()
 
 include (${PROJECT_SOURCE_DIR}/cmake/PlatformDetect.cmake)
 include (${PROJECT_SOURCE_DIR}/cmake/VisibilityDetect.cmake)
@@ -354,9 +366,6 @@ elseif (PLIBSYS_HAVE_VALUES_H)
         set (PLIBSYS_LONG_MAX MAXLONG)
         set (PLIBSYS_ULONG_MAX "(((pulong) P_MAXLONG) * 2 + 1)")
 endif()
-
-check_type_size ("size_t" PLIBSYS_SIZEOF_SIZE_T)
-check_type_size ("long" PLIBSYS_SIZEOF_LONG)
 
 if (PLIBSYS_NATIVE_WINDOWS)
         set (PLIBSYS_NEED_WINDOWS_H true)
