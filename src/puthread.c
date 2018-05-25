@@ -525,7 +525,8 @@ p_uthread_sleep (puint32 msec)
 
 	result = -1;
 	while (result != 0) {
-#  ifdef PLIBSYS_HAS_CLOCKNANOSLEEP
+		/* Syllable has unimplemented clock_nanocleep() call */
+#  if defined (PLIBSYS_HAS_CLOCKNANOSLEEP) && !defined (P_OS_SYLLABLE)
 		if (P_UNLIKELY ((result = clock_nanosleep (CLOCK_MONOTONIC,
 							   0,
 							   &time_req,
