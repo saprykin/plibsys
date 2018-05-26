@@ -1,10 +1,10 @@
 Changes in plibsys 0.0.4
 ========================
 
-* Switch to MIT license from LGPLv2+
-* Replace Boost test framework with own one
+* Switch to MIT license from LGPLv2+ (#71)
+* Replace Boost test framework with own one (#56)
 * Add visibility support for APIs
-* Add Debian package (in separate branch)
+* Add Debian package (in separate branch) (#54)
 * Add gear package (ALT Linux)
 * Add Conan packages
 * Add option to generate Doxygen documentation
@@ -12,20 +12,20 @@ Changes in plibsys 0.0.4
 * New supported platforms and compilers:
   BlackBerry 10 (AArch32, x86)
   Cray Linux Environment
-  AmigaOS 4.1 (PPC)
-  Android (x86, x64, AArch32, AArch64)
-  iOS, tvOS, watchOS (x86, x64, AArch32, AArch64)
+  AmigaOS 4.1 (PPC) (#59)
+  Android (x86, x64, AArch32, AArch64) (#69)
+  iOS, tvOS, watchOS (x86, x64, AArch32, AArch64) (#70)
   PGI (x64) compiler on macOS
 
 * New API
   Macros for variable arguments
 
 * AppVeyor
-  Add Visual Studio 2017 builds
-  Build tests for Watcom compiler
+  Add Visual Studio 2017 builds (#53)
+  Build tests for Watcom compiler (#57)
 
 * Travis
-  Add GCC 7.x builds
+  Add GCC 7.x builds (#48)
   Add Clang 4.0 and 5.0 builds
   Add MinGW 7.1.x (x64) builds
   Update MinGW builds to 6.3.x (x64)
