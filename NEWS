@@ -35,6 +35,7 @@ Changes in plibsys 0.0.4
   Do not use deprecated readdir_r() with glibc >= 2.24
   Use CryptoPro S-box instead of testing in GOST hashing
   Initialize POSIX semaphore with given value in create mode
+  Setup proper SONAME value (not the same as API version)
 
 Changes in plibsys 0.0.3
 ========================
