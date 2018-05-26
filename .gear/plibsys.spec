@@ -37,6 +37,7 @@ Files and directories
 Shared library loading
 Useful routines for linked lists, strings, hash tables
 Macros for CPU architecture, OS and compiler detection
+Macros for variable arguments
 
 %package -n lib%name%soname
 Summary: %summary
