@@ -818,14 +818,14 @@ set_target_properties (plibsys PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${OUTPUT_DIR}
 set_target_properties (plibsys PROPERTIES ARCHIVE_OUTPUT_DIRECTORY ${OUTPUT_DIR})
 
 if (NOT PLIBSYS_TARGET_OS STREQUAL os2 AND NOT PLIBSYS_TARGET_OS STREQUAL amigaos)
-        set_target_properties (plibsys PROPERTIES SOVERSION ${PLIBSYS_VERSION})
+        set_target_properties (plibsys PROPERTIES SOVERSION ${PLIBSYS_SOVERSION})
 endif()
 
 if (PLIBSYS_BUILD_STATIC)
         set_target_properties (plibsysstatic PROPERTIES ARCHIVE_OUTPUT_DIRECTORY ${OUTPUT_DIR})
 
         if (NOT PLIBSYS_TARGET_OS STREQUAL os2)
-                set_target_properties (plibsysstatic PROPERTIES SOVERSION ${PLIBSYS_VERSION})
+                set_target_properties (plibsysstatic PROPERTIES SOVERSION ${PLIBSYS_SOVERSION})
         endif()
 endif()
 
