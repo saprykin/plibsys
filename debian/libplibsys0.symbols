@@ -1,4 +1,4 @@
-libplibsys.so.0.0.3 libplibsys0 #MINVER#
+libplibsys.so.0 libplibsys0 #MINVER#
  p_atomic_int_add@Base 0.0.3~git20170912.7069e03
  p_atomic_int_and@Base 0.0.3~git20170912.7069e03
  p_atomic_int_compare_and_exchange@Base 0.0.3~git20170912.7069e03
