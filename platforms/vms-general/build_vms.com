@@ -1,7 +1,7 @@
 $!
 $! Copyright 2011, Richard Levitte <richard@levitte.org>
 $! Copyright 2014, John Malmberg <wb8tyw@qsl.net>
-$! Copyright 2016, Alexander Saprykin <saprykin.spb@gmail.com>
+$! Copyright 2016-2018, Alexander Saprykin <saprykin.spb@gmail.com>
 $!
 $! Permission to use, copy, modify, and/or distribute this software for any
 $! purpose with or without fee is hereby granted, provided that the above
@@ -38,6 +38,7 @@ $! at exit.
 $!---------------------------------------------------------------------
 $ orig_def = f$environment("DEFAULT")
 $ on error then goto common_exit
+$ on severe_error then goto common_exit
 $ on control_y then goto common_exit
 $!
 $ ctrl_y       = 1556
@@ -575,6 +576,10 @@ $         define/user/nolog sys$output NL:
 $         define/user/nolog plibsys 'objdir'PLIBSYS.EXE
 $         define/user/nolog test_imgdir 'objdir'
 $!
+$!        Disable error cheking for the test binary
+$!
+$         set noon
+$!
 $         xrun := $test_imgdir:'next_test'_test.exe
 $         if next_test .eqs. "plibraryloader"
 $         then
@@ -590,6 +595,8 @@ $             tests_passed = tests_passed + 1
 $         else
 $             'vo_c' "[FAIL] *** Test failed: ''next_test'"
 $         endif
+$!
+$         set on
 $!
 $ run_loop_next:
 $         test_counter = test_counter + 1

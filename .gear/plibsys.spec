@@ -1,11 +1,11 @@
 %define soname 0
 
 Name: plibsys
-Version: 0.0.3
+Version: 0.0.4
 Release: alt1
 
 Summary: Highly portable C system library
-License: LGPLv2+
+License: MIT
 Group: Development/C
 
 Url: https://github.com/saprykin/plibsys
@@ -37,6 +37,7 @@ Files and directories
 Shared library loading
 Useful routines for linked lists, strings, hash tables
 Macros for CPU architecture, OS and compiler detection
+Macros for variable arguments
 
 %package -n lib%name%soname
 Summary: %summary
@@ -96,6 +97,8 @@ rm -rf %buildroot%_defaultdocdir/*
 %doc doc/html/*
 
 %changelog
+* Sat May 26 2018 Alexander Saprykin <saprykin.spb@gmail.com> 0.0.4-alt1
+- Update to version 0.0.4
 * Tue Sep 19 2017 Michael Shigorin <mike@altlinux.org> 0.0.3-alt1
 - Initial build
 

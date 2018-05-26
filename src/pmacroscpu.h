@@ -421,7 +421,7 @@
 #elif defined(__i386__) || defined(__i386) || defined(_M_IX86)
 #  define P_CPU_X86_32
 #  if defined(_M_IX86)
-#    if (_M_IX86 <= 600)
+#    if (_M_IX86 >= 300 &&_M_IX86 <= 600)
 #      define P_CPU_X86 (_M_IX86 / 100)
 #    else
 #      define P_CPU_X86 6

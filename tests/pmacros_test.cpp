@@ -599,7 +599,7 @@ P_TEST_CASE_BEGIN (pmacros_general_test)
 #endif
 
 	/* Test other macros */
-	pint unused = 8;
+	pint unused;
 	P_UNUSED (unused);
 
 	pint result = unused_result_test_func ();
