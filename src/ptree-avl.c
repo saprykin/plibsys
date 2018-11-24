@@ -35,7 +35,7 @@ typedef struct PTreeAVLNode_ {
 static void pp_tree_avl_rotate_left (PTreeAVLNode *node, PTreeBaseNode **root);
 static void pp_tree_avl_rotate_right (PTreeAVLNode *node, PTreeBaseNode **root);
 static void pp_tree_avl_rotate_left_right (PTreeAVLNode *node, PTreeBaseNode **root);
-static void pp_tree_avl_rotate_left_right (PTreeAVLNode *node, PTreeBaseNode **root);
+static void pp_tree_avl_rotate_right_left (PTreeAVLNode *node, PTreeBaseNode **root);
 static void pp_tree_avl_balance_insert (PTreeAVLNode *node, PTreeBaseNode **root);
 static void pp_tree_avl_balance_remove (PTreeAVLNode *node, PTreeBaseNode **root);
 
