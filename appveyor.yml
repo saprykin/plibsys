@@ -106,6 +106,7 @@ install:
                         If ($env:USE_MINGW64 -eq "1") {
                                 $env:PATH   = "c:\msys64\mingw64\bin;$env:PATH";
                         } Else {
+                                & mkdir -p /var/cache/pacman/pkg
                                 & pacman --sync --noconfirm cmake;
                         }
                 } ElseIf ($env:USE_MINGW -eq "1") {
