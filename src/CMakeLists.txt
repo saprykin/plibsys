@@ -21,6 +21,10 @@
 # TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 # SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+if (POLICY CMP0075)
+    cmake_policy (SET CMP0075 NEW)
+endif()
+
 include (CheckCSourceCompiles)
 include (CheckTypeSize)
 include (CheckIncludeFile)
