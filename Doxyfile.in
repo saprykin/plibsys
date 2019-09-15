@@ -158,7 +158,6 @@ SKIP_FUNCTION_MACROS   = YES
 TAGFILES               = 
 GENERATE_TAGFILE       = 
 ALLEXTERNALS           = NO
-PERL_PATH              = 
 #---------------------------------------------------------------------------
 # Configuration options related to the dot tool   
 #---------------------------------------------------------------------------
