@@ -71,7 +71,7 @@ function (plibsys_detect_thread_name has_pthread_np_h result)
                      ${PTHREAD_HEADERS}
 
                      int main () {
-                        pthread_setname_np ((pthread_t) 0, \"thread_name\");
+                        pthread_setname_np ((pthread_t) 0, \"thread_name\", 0);
                         return 0;
                      }"
                     PLIBSYS_HAS_POSIX_SETNAME_NP_3
