@@ -376,8 +376,6 @@ if (PLIBSYS_NATIVE_WINDOWS)
         set (PLIBSYS_NEED_WINDOWS_H TRUE)
 endif()
 
-configure_file (${CMAKE_CURRENT_SOURCE_DIR}/plibsysconfig.h.in ${CMAKE_BINARY_DIR}/plibsysconfig.h)
-
 if (NOT PLIBSYS_NATIVE_WINDOWS)
         # Check for anonymous mmap()
         message (STATUS "Checking whether mmap has anonymous mapping")
@@ -793,6 +791,8 @@ if (NOT PLIBSYS_HAVE_STDARG_H)
 endif()
 
 plibsys_detect_va_copy (PLIBSYS_VA_COPY)
+
+configure_file (${CMAKE_CURRENT_SOURCE_DIR}/plibsysconfig.h.in ${CMAKE_BINARY_DIR}/plibsysconfig.h)
 
 # Restore compiler flags
 set (CMAKE_REQUIRED_DEFINITIONS ${SAVED_CMAKE_REQUIRED_DEFINITIONS})
