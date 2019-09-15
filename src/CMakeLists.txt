@@ -851,6 +851,11 @@ set_target_properties (plibsys PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${OUTPUT_DIR}
 set_target_properties (plibsys PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${OUTPUT_DIR})
 set_target_properties (plibsys PROPERTIES ARCHIVE_OUTPUT_DIRECTORY ${OUTPUT_DIR})
 
+# OpenBSD uses a bit different library versioning
+if (PLIBSYS_TARGET_OS STREQUAL openbsd)
+        set (PLIBSYS_SOVERSION ${PLIBSYS_VERSION_MAJOR}.${PLIBSYS_VERSION_MINOR})
+endif()
+
 if (NOT PLIBSYS_TARGET_OS STREQUAL os2 AND NOT PLIBSYS_TARGET_OS STREQUAL amigaos)
         set_target_properties (plibsys PROPERTIES SOVERSION ${PLIBSYS_SOVERSION})
 endif()
