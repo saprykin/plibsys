@@ -85,6 +85,8 @@
 #  define PUTHREAD_MAX_NAME		16
 #elif defined(P_OS_NETBSD)
 #  define PUTHREAD_MAX_NAME		PTHREAD_MAX_NAMELEN_NP
+#elif defined(P_OS_DRAGONFLY)
+#  define PUTHREAD_MAX_NAME		16
 #elif defined(P_OS_SOLARIS)
 #  define PUTHREAD_MAX_NAME		32
 #elif defined(P_OS_TRU64)
