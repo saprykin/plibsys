@@ -45,10 +45,6 @@
 #  include <values.h>
 #endif
 
-#ifdef PLIBSYS_NEED_PTHREAD_NP_H
-#  include <pthread_np.h>
-#endif
-
 P_BEGIN_DECLS
 
 #define P_MINFLOAT    @PLIBSYS_FLOAT_MIN@

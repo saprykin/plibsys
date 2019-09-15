@@ -39,6 +39,11 @@
 #include <pthread.h>
 #include <time.h>
 
+/* On some OS like OpenBSD it must follow <pthread.h> */
+#ifdef PLIBSYS_NEED_PTHREAD_NP_H
+#  include <pthread_np.h>
+#endif
+
 #ifdef PLIBSYS_HAS_POSIX_SCHEDULING
 #  ifndef P_OS_VMS
 #    include <sched.h>
