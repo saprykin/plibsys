@@ -21,17 +21,10 @@
 # TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 # SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-include(CheckIncludeFile)
-
-function (plibsys_detect_thread_name result)
-        check_include_file (pthread_np.h PLIBSYS_HAS_PTHREAD_NP)
-
-        set (SAVED_CMAKE_REQUIRED_DEFINITIONS ${CMAKE_REQUIRED_DEFINITIONS})
-        list (APPEND CMAKE_REQUIRED_DEFINITIONS ${PLIBSYS_PLATFORM_DEFINES})
-
+function (plibsys_detect_thread_name has_pthread_np_h result)
         set (PTHREAD_HEADERS "#include <pthread.h>")
 
-        if (PLIBSYS_HAS_PTHREAD_NP)
+        if (${has_pthread_np_h})
                 set (PTHREAD_HEADERS "${PTHREAD_HEADERS}\n#include<pthread_np.h>")
         endif()
 

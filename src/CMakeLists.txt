@@ -65,7 +65,7 @@ endif()
 
 if ((PLIBSYS_TARGET_OS STREQUAL windows) AND NOT (PLIBSYS_TARGET_OS STREQUAL cygwin)
                                          AND NOT (PLIBSYS_TARGET_OS STREQUAL msys))
-        set (PLIBSYS_NATIVE_WINDOWS true)
+        set (PLIBSYS_NATIVE_WINDOWS TRUE)
 endif()
 
 if (PLIBSYS_COVERAGE)
@@ -250,7 +250,7 @@ list (APPEND CMAKE_REQUIRED_DEFINITIONS ${PLIBSYS_PLATFORM_DEFINES})
 list (APPEND CMAKE_REQUIRED_LIBRARIES ${PLIBSYS_PLATFORM_LINK_LIBRARIES})
 list (APPEND CMAKE_REQUIRED_FLAGS ${PLIBSYS_PLATFORM_LDFLAGS})
 
-set (PLIBSYS_ATOMIC_LOCK_FREE no)
+set (PLIBSYS_ATOMIC_LOCK_FREE FALSE)
 
 if (NOT PLIBSYS_ATOMIC_MODEL)
         message (STATUS "Checking for lock-free atomic intrinsics")
@@ -304,10 +304,10 @@ if (NOT PLIBSYS_ATOMIC_MODEL)
                                                             PLIBSYS_C_COMPILER STREQUAL watcom  OR
                                                             PLIBSYS_C_COMPILER STREQUAL icc     OR
                                                             PLIBSYS_C_COMPILER STREQUAL msvc))
-                        set (PLIBSYS_ATOMIC_LOCK_FREE true)
+                        set (PLIBSYS_ATOMIC_LOCK_FREE TRUE)
                         set (PLIBSYS_ATOMIC_MODEL "win")
                 else()
-                        set (PLIBSYS_ATOMIC_LOCK_FREE no)
+                        set (PLIBSYS_ATOMIC_LOCK_FREE FALSE)
                         set (PLIBSYS_ATOMIC_MODEL "sim")
                 endif()
         endif()
@@ -373,7 +373,7 @@ elseif (PLIBSYS_HAVE_VALUES_H)
 endif()
 
 if (PLIBSYS_NATIVE_WINDOWS)
-        set (PLIBSYS_NEED_WINDOWS_H true)
+        set (PLIBSYS_NEED_WINDOWS_H TRUE)
 endif()
 
 configure_file (${CMAKE_CURRENT_SOURCE_DIR}/plibsysconfig.h.in ${CMAKE_BINARY_DIR}/plibsysconfig.h)
@@ -584,18 +584,26 @@ endif()
 list (APPEND PLIBSYS_PLATFORM_SRCS prwlock-${PLIBSYS_RWLOCK_MODEL}.c)
 
 # POSIX thread naming functions
-message (STATUS "Checking for POSIX thread naming functions")
+check_include_file (pthread_np.h PLIBSYS_HAS_PTHREAD_NP)
 
-plibsys_detect_thread_name (PLIBSYS_THREADNAME_DEF)
+if(PLIBSYS_HAS_PTHREAD_NP)
+        set (PLIBSYS_NEED_PTHREAD_NP_H TRUE)
+else()
+        set (PLIBSYS_NEED_PTHREAD_NP_H FALSE)
+endif()
+
+message (STATUS "Checking whether POSIX thread names are supported")
+
+plibsys_detect_thread_name (PLIBSYS_NEED_PTHREAD_NP_H PLIBSYS_THREADNAME_DEF)
 
 if (NOT PLIBSYS_THREADNAME_DEF STREQUAL "")
         list (APPEND PLIBSYS_COMPILE_DEFS -D${PLIBSYS_THREADNAME_DEF})
 endif()
 
 if (PLIBSYS_THREADNAME_DEF STREQUAL "")
-        message (STATUS "Checking for POSIX thread naming functions - no")
+        message (STATUS "Checking whether POSIX thread names are supported - no")
 else()
-        message (STATUS "Checking for POSIX thread naming functions - yes")
+        message (STATUS "Checking whether POSIX thread names are supported - yes")
 endif()
 
 # Windows sockets

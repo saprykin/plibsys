@@ -45,10 +45,6 @@
 #  endif
 #endif
 
-#if defined(P_OS_FREEBSD) || defined(P_OS_OPENBSD)
-#  include <pthread_np.h>
-#endif
-
 #ifdef PLIBSYS_HAS_PTHREAD_PRCTL
 #  include <sys/prctl.h>
 #  include <linux/prctl.h>

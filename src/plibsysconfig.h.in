@@ -11,6 +11,7 @@
 #cmakedefine PLIBSYS_NEED_FLOAT_H
 #cmakedefine PLIBSYS_NEED_LIMITS_H
 #cmakedefine PLIBSYS_NEED_VALUES_H
+#cmakedefine PLIBSYS_NEED_PTHREAD_NP_H
 #cmakedefine PLIBSYS_IS_BIGENDIAN
 #cmakedefine PLIBSYS_SIZEOF_SAFAMILY_T @PLIBSYS_SIZEOF_SAFAMILY_T@
 #cmakedefine PLIBSYS_VA_COPY @PLIBSYS_VA_COPY@
@@ -42,6 +43,10 @@
 
 #ifdef PLIBSYS_NEED_VALUES_H
 #  include <values.h>
+#endif
+
+#ifdef PLIBSYS_NEED_PTHREAD_NP_H
+#  include <pthread_np.h>
 #endif
 
 P_BEGIN_DECLS
