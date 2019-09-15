@@ -59,6 +59,10 @@
 #  include <sys/neutrino.h>
 #endif
 
+#ifdef P_OS_HAIKU
+#  include <kernel/OS.h>
+#endif
+
 /* Some systems without native pthreads may lack some of the constants,
  * leave them zero as we are not going to use them anyway */
 
@@ -100,6 +104,8 @@
 #  define PUTHREAD_MAX_NAME		32
 #elif defined(P_OS_QNX6)
 #  define PUTHREAD_MAX_NAME		_NTO_THREAD_NAME_MAX
+#elif defined(P_OS_HAIKU)
+#  define PUTHREAD_MAX_NAME		32
 #endif
 
 typedef pthread_t puthread_hdl;
@@ -416,6 +422,8 @@ p_uthread_set_name_internal (PUThread *thread)
 		P_WARNING ("PUThread::p_uthread_set_name_internal: prctl() can be used on calling thread only");
 	else
 		res = prctl (PR_SET_NAME, thr_name, NULL, NULL, NULL);
+#elif defined(P_OS_HAIKU)
+	res = rename_thread (find_thread (NULL), thr_name);
 #endif
 
 	if (is_alloc == TRUE)
