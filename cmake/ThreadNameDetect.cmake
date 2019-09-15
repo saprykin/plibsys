@@ -119,6 +119,10 @@ function (plibsys_detect_thread_name has_pthread_np_h result)
                 endif()
         endif()
 
+        # It seems that CMake (old versions like 2.8.x - 2.10.x) has a bug,
+        # such that when passing empty values to the parent scope, these variable
+        # are not treated as empty, thereby use NONE value instead
+
         if (PLIBSYS_THREAD_SETTER STREQUAL "pthread_setname_np")
                 set (${result} "PLIBSYS_HAS_PTHREAD_SETNAME" PARENT_SCOPE)
         elseif (PLIBSYS_THREAD_SETTER STREQUAL "pthread_set_name_np")
@@ -126,6 +130,6 @@ function (plibsys_detect_thread_name has_pthread_np_h result)
         elseif (PLIBSYS_THREAD_SETTER STREQUAL "prctl")
                 set (${result} "PLIBSYS_HAS_PTHREAD_PRCTL" PARENT_SCOPE)
         else()
-                set (${result} "" PARENT_SCOPE)
+                set (${result} "NONE" PARENT_SCOPE)
         endif()
 endfunction (plibsys_detect_thread_name)

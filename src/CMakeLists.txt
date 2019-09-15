@@ -600,11 +600,11 @@ message (STATUS "Checking whether POSIX thread names are supported")
 
 plibsys_detect_thread_name (PLIBSYS_NEED_PTHREAD_NP_H PLIBSYS_THREADNAME_DEF)
 
-if (NOT PLIBSYS_THREADNAME_DEF STREQUAL "")
+if (NOT PLIBSYS_THREADNAME_DEF STREQUAL "NONE")
         list (APPEND PLIBSYS_COMPILE_DEFS -D${PLIBSYS_THREADNAME_DEF})
 endif()
 
-if (PLIBSYS_THREADNAME_DEF STREQUAL "")
+if (PLIBSYS_THREADNAME_DEF STREQUAL "NONE")
         message (STATUS "Checking whether POSIX thread names are supported - no")
 else()
         message (STATUS "Checking whether POSIX thread names are supported - yes")
