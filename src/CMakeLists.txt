@@ -582,7 +582,13 @@ endif()
 list (APPEND PLIBSYS_PLATFORM_SRCS prwlock-${PLIBSYS_RWLOCK_MODEL}.c)
 
 # POSIX thread naming functions
-check_include_file (pthread_np.h PLIBSYS_HAS_PTHREAD_NP)
+check_c_source_compiles (
+                         "#include <pthread.h>
+                          #include <pthread_np.h>
+
+                         int main () {return 0;}"
+                         PLIBSYS_HAS_PTHREAD_NP
+                        )
 
 if(PLIBSYS_HAS_PTHREAD_NP)
         set (PLIBSYS_NEED_PTHREAD_NP_H TRUE)
