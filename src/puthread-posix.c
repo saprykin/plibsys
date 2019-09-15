@@ -45,7 +45,7 @@
 #  endif
 #endif
 
-#ifdef PLIBSYS_HAS_PTHREAD_NP_H
+#if defined(P_OS_FREEBSD) || defined(P_OS_OPENBSD)
 #  include <pthread_np.h>
 #endif
 
@@ -393,19 +393,18 @@ p_uthread_set_name_internal (PUThread *thread)
 	}
 #endif
 
-#if defined(P_OS_MAC) && defined(PLIBSYS_HAS_PTHREAD_SETNAME_1_ARG)
+#if defined(PLIBSYS_HAS_PTHREAD_SETNAME)
+#  if defined(P_OS_MAC)
 	if (thread->hdl != pthread_self ())
 		P_WARNING ("PUThread::p_uthread_set_name_internal: only calling thread is supported in macOS");
 	else
 		res = pthread_setname_np (thr_name);
-#elif defined(PLIBSYS_HAS_PTHREAD_SETNAME_2_ARG)
-	res = pthread_setname_np (thread->hdl, thr_name);
-#elif defined(PLIBSYS_HAS_PTHREAD_SETNAME_3_ARG)
-#    if defined(P_OS_NETBSD)
+#  elif defined(P_OS_NETBSD)
 	res = pthread_setname_np (thread->hdl, "%s", thr_name);
-#    else
-	res = pthread_setname_np (thread->hdl, thr_name, NULL);
-#    endif
+#  elif defined(P_OS_TRU64) || defined(P_OS_VMS)
+	res = pthread_setname_np (thread->hdl, thr_name, 0);
+#  else
+	res = pthread_setname_np (thread->hdl, thr_name);
 #elif defined(PLIBSYS_HAS_PTHREAD_PRCTL)
 	if (thread->hdl != pthread_self ())
 		P_WARNING ("PUThread::p_uthread_set_name_internal: prctl() can be used on calling thread only");

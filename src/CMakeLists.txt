@@ -1,6 +1,6 @@
 # The MIT License
 #
-# Copyright (C) 2018 Alexander Saprykin <saprykin.spb@gmail.com>
+# Copyright (C) 2018-2019 Alexander Saprykin <saprykin.spb@gmail.com>
 #
 # Permission is hereby granted, free of charge, to any person obtaining
 # a copy of this software and associated documentation files (the
@@ -583,6 +583,22 @@ endif()
 
 list (APPEND PLIBSYS_PLATFORM_SRCS prwlock-${PLIBSYS_RWLOCK_MODEL}.c)
 
+# POSIX thread naming functions
+message (STATUS "Checking for POSIX thread naming functions")
+
+plibsys_detect_thread_name (PLIBSYS_THREADNAME_DEF)
+
+if (NOT PLIBSYS_THREADNAME_DEF STREQUAL "")
+        list (APPEND PLIBSYS_COMPILE_DEFS -D${PLIBSYS_THREADNAME_DEF})
+endif()
+
+if (PLIBSYS_THREADNAME_DEF STREQUAL "")
+        message (STATUS "Checking for POSIX thread naming functions - no")
+else()
+        message (STATUS "Checking for POSIX thread naming functions - yes")
+endif()
+
+# Windows sockets
 if (PLIBSYS_NATIVE_WINDOWS)
         set (PLIBSYS_SOCKET_INCLUDES "#include <winsock2.h>
                                       #include <ws2tcpip.h>
@@ -762,7 +778,6 @@ if (PLIBSYS_VISIBILITY)
 endif()
 
 # Variable arguments
-
 check_include_file ("stdarg.h" PLIBSYS_HAVE_STDARG_H)
 
 if (NOT PLIBSYS_HAVE_STDARG_H)
@@ -770,20 +785,6 @@ if (NOT PLIBSYS_HAVE_STDARG_H)
 endif()
 
 plibsys_detect_va_copy (PLIBSYS_VA_COPY)
-
-# Thread naming functions
-
-plibsys_detect_thread_name (PLIBSYS_THREADNAME_HEADERDEF
-                            PLIBSYS_THREADNAME_DEF
-)
-
-if (PLIBSYS_THREADNAME_HEADERDEF)
-        list (APPEND PLIBSYS_COMPILE_DEFS -D${PLIBSYS_THREADNAME_HEADERDEF})
-endif()
-
-if (NOT PLIBSYS_THREADNAME_DEF STREQUAL "")
-        list (APPEND PLIBSYS_COMPILE_DEFS -D${PLIBSYS_THREADNAME_DEF})
-endif()
 
 # Restore compiler flags
 set (CMAKE_REQUIRED_DEFINITIONS ${SAVED_CMAKE_REQUIRED_DEFINITIONS})
