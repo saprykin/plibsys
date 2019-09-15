@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright (C) 2013-2017 Alexander Saprykin <saprykin.spb@gmail.com>
+ * Copyright (C) 2013-2019 Alexander Saprykin <saprykin.spb@gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -199,14 +199,15 @@ P_TEST_CASE_BEGIN (puthread_nomem_test)
 	thread_wakes_2 = 0;
 
 	P_TEST_CHECK (p_uthread_create ((PUThreadFunc) test_thread_func,
-				       (ppointer) &thread_wakes_1,
-				       TRUE) == NULL);
+					(ppointer) &thread_wakes_1,
+					TRUE) == NULL);
 
 	P_TEST_CHECK (p_uthread_create_full ((PUThreadFunc) test_thread_func,
-					    (ppointer) &thread_wakes_2,
-					    TRUE,
-					    P_UTHREAD_PRIORITY_NORMAL,
-					    0) == NULL);
+					     (ppointer) &thread_wakes_2,
+					     TRUE,
+					     P_UTHREAD_PRIORITY_NORMAL,
+					     0,
+					     NULL) == NULL);
 
 	P_TEST_CHECK (p_uthread_current () == NULL);
 	P_TEST_CHECK (p_uthread_local_new (NULL) == NULL);
@@ -244,7 +245,7 @@ P_TEST_CASE_BEGIN (puthread_bad_input_test)
 	p_libsys_init ();
 
 	P_TEST_CHECK (p_uthread_create (NULL, NULL, false) == NULL);
-	P_TEST_CHECK (p_uthread_create_full (NULL, NULL, false, P_UTHREAD_PRIORITY_NORMAL, 0) == NULL);
+	P_TEST_CHECK (p_uthread_create_full (NULL, NULL, false, P_UTHREAD_PRIORITY_NORMAL, 0, NULL) == NULL);
 	P_TEST_CHECK (p_uthread_join (NULL) == -1);
 	P_TEST_CHECK (p_uthread_set_priority (NULL, P_UTHREAD_PRIORITY_NORMAL) == FALSE);
 	P_TEST_CHECK (p_uthread_get_local (NULL) == NULL);
@@ -280,15 +281,19 @@ P_TEST_CASE_BEGIN (puthread_general_test)
 
 	is_threads_working = TRUE;
 
-	PUThread *thr1 = p_uthread_create ((PUThreadFunc) test_thread_func,
-					   (ppointer) &thread_wakes_1,
-					   TRUE);
+	PUThread *thr1 = p_uthread_create_full ((PUThreadFunc) test_thread_func,
+						(ppointer) &thread_wakes_1,
+						TRUE,
+						P_UTHREAD_PRIORITY_NORMAL,
+						64 * 1024,
+						"thread_name");
 
 	PUThread *thr2 = p_uthread_create_full ((PUThreadFunc) test_thread_func,
 						(ppointer) &thread_wakes_2,
 						TRUE,
 						P_UTHREAD_PRIORITY_NORMAL,
-						64 * 1024);
+						64 * 1024,
+						"very_long_name_for_thread_testing");
 
 	p_uthread_ref (thr1);
 

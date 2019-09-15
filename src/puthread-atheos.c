@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright (C) 2016 Alexander Saprykin <saprykin.spb@gmail.com>
+ * Copyright (C) 2016-2019 Alexander Saprykin <saprykin.spb@gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -174,6 +174,12 @@ void
 p_uthread_wait_internal (PUThread *thread)
 {
 	wait_for_thread (thread->hdl);
+}
+
+void
+p_uthread_set_name_internal (PUThread *thread)
+{
+	P_UNUSED (thread);
 }
 
 void

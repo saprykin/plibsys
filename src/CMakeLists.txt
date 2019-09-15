@@ -50,6 +50,7 @@ endif()
 include (${PROJECT_SOURCE_DIR}/cmake/PlatformDetect.cmake)
 include (${PROJECT_SOURCE_DIR}/cmake/VisibilityDetect.cmake)
 include (${PROJECT_SOURCE_DIR}/cmake/StdargDetect.cmake)
+include (${PROJECT_SOURCE_DIR}/cmake/ThreadNameDetect.cmake)
 set (OUTPUT_DIR ${CMAKE_BINARY_DIR})
 
 # Try to detect target platform
@@ -769,6 +770,20 @@ if (NOT PLIBSYS_HAVE_STDARG_H)
 endif()
 
 plibsys_detect_va_copy (PLIBSYS_VA_COPY)
+
+# Thread naming functions
+
+plibsys_detect_thread_name (PLIBSYS_THREADNAME_HEADERDEF
+                            PLIBSYS_THREADNAME_DEF
+)
+
+if (PLIBSYS_THREADNAME_HEADERDEF)
+        list (APPEND PLIBSYS_COMPILE_DEFS -D${PLIBSYS_THREADNAME_HEADERDEF})
+endif()
+
+if (NOT PLIBSYS_THREADNAME_DEF STREQUAL "")
+        list (APPEND PLIBSYS_COMPILE_DEFS -D${PLIBSYS_THREADNAME_DEF})
+endif()
 
 # Restore compiler flags
 set (CMAKE_REQUIRED_DEFINITIONS ${SAVED_CMAKE_REQUIRED_DEFINITIONS})

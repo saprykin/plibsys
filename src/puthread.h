@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright (C) 2010-2017 Alexander Saprykin <saprykin.spb@gmail.com>
+ * Copyright (C) 2010-2019 Alexander Saprykin <saprykin.spb@gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -124,6 +124,7 @@ typedef enum PUThreadPriority_ {
  * @param prio Thread priority.
  * @param stack_size Thread stack size, in bytes. Leave zero to use a default
  * value.
+ * @param name Thread name, maybe NULL.
  * @return Pointer to #PUThread in case of success, NULL otherwise.
  * @since 0.0.1
  * @note Unreference the returned value after use with p_uthread_unref(). You do
@@ -133,7 +134,8 @@ P_LIB_API PUThread *	p_uthread_create_full	(PUThreadFunc		func,
 						 ppointer		data,
 						 pboolean		joinable,
 						 PUThreadPriority	prio,
-						 psize			stack_size);
+						 psize			stack_size,
+						 const pchar		*name);
 
 /**
  * @brief Creates a #PUThread and starts it. A short version of

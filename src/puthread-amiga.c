@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright (C) 2017 Alexander Saprykin <saprykin.spb@gmail.com>
+ * Copyright (C) 2017-2019 Alexander Saprykin <saprykin.spb@gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -510,6 +510,12 @@ p_uthread_wait_internal (PUThread *thread)
 
 	p_cond_variable_wait (thread->join_cond, pp_uthread_glob_mutex);
 	p_mutex_unlock (pp_uthread_glob_mutex);
+}
+
+void
+p_uthread_set_name_internal (PUThread *thread)
+{
+	P_UNUSED (thread);
 }
 
 P_LIB_API void

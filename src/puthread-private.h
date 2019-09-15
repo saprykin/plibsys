@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright (C) 2016 Alexander Saprykin <saprykin.spb@gmail.com>
+ * Copyright (C) 2016-2019 Alexander Saprykin <saprykin.spb@gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -45,6 +45,7 @@ typedef struct PUThreadBase_ {
 	PUThreadFunc		func;		/**< Thread routine.	*/
 	ppointer		data;		/**< Thread input data.	*/
 	PUThreadPriority	prio;		/**< Thread priority.	*/
+	pchar			*name;		/**< Thread name	*/
 } PUThreadBase;
 
 P_END_DECLS

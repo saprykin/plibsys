@@ -1,0 +1,138 @@
+# The MIT License
+#
+# Copyright (C) 2019 Alexander Saprykin <saprykin.spb@gmail.com>
+#
+# Permission is hereby granted, free of charge, to any person obtaining
+# a copy of this software and associated documentation files (the
+# 'Software'), to deal in the Software without restriction, including
+# without limitation the rights to use, copy, modify, merge, publish,
+# distribute, sublicense, and/or sell copies of the Software, and to
+# permit persons to whom the Software is furnished to do so, subject to
+# the following conditions:
+#
+# The above copyright notice and this permission notice shall be
+# included in all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND,
+# EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+# MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+# IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+# CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+# TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+# SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+include(CheckIncludeFile)
+
+function (plibsys_detect_thread_name header result)
+        check_include_file(pthread_np.h PLIBSYS_HAS_PTHREAD_NP)
+
+        set (PTHREAD_HEADERS "#include <pthread.h>")
+
+        if (PLIBSYS_HAS_PTHREAD_NP)
+                set (PTHREAD_HEADERS "${PTHREAD_HEADERS}\n#include<pthread_np.h>")
+                set (${header} "PLIBSYS_HAS_PTHREAD_NP_H" PARENT_SCOPE)
+        endif()
+
+        # Check pthread_setname_np() with 1 arg
+
+        check_c_source_compiles ("
+             ${PTHREAD_HEADERS}
+
+             int main () {
+                pthread_setname_np (\"thread_name\");
+                return 0;
+             }"
+            PLIBSYS_PTHREAD_SETNAME_NP_1
+        )
+
+        if (PLIBSYS_PTHREAD_SETNAME_NP_1)
+                set (PLIBSYS_THREAD_SETTER "pthread_setname_np_1")
+        endif()
+
+        # Check pthread_setname_np() with 2 args
+
+        if (NOT PLIBSYS_THREAD_SETTER)
+                check_c_source_compiles ("
+                     ${PTHREAD_HEADERS}
+
+                     int main () {
+                        pthread_setname_np ((pthread_t) 0, \"thread_name\");
+                        return 0;
+                     }"
+                    PLIBSYS_PTHREAD_SETNAME_NP_2
+                )
+
+                if (PLIBSYS_PTHREAD_SETNAME_NP_2)
+                        set (PLIBSYS_THREAD_SETTER "pthread_setname_np_2")
+                endif()
+        endif()
+
+        # Check pthread_setname_np() with 3 args
+
+        if (NOT PLIBSYS_THREAD_SETTER)
+                check_c_source_compiles ("
+                     ${PTHREAD_HEADERS}
+
+                     int main () {
+                        pthread_setname_np ((pthread_t) 0, \"thread_name\", NULL);
+                        return 0;
+                     }"
+                    PLIBSYS_PTHREAD_SETNAME_NP_3
+                )
+
+                if (PLIBSYS_PTHREAD_SETNAME_NP_3)
+                        set (PLIBSYS_THREAD_SETTER "pthread_setname_np_3")
+                endif()
+        endif()
+
+        # Check pthread_set_name_np()
+
+        if (NOT PLIBSYS_THREAD_SETTER)
+                check_c_source_compiles ("
+                     ${PTHREAD_HEADERS}
+
+                     int main () {
+                        pthread_set_name_np ((pthread_t) 0, \"thread_name\");
+                        return 0;
+                     }"
+                    PLIBSYS_PTHREAD_SET_NAME_NP
+                )
+
+                if (PLIBSYS_PTHREAD_SET_NAME_NP)
+                        set (PLIBSYS_THREAD_SETTER "pthread_set_name_np")
+                endif()
+        endif()
+
+        # The last try is prctl()
+
+        if (NOT PLIBSYS_THREAD_SETTER)
+                check_c_source_compiles ("
+                     #include <sys/prctl.h>
+                     #include <linux/prctl.h>
+
+                     int main () {
+                        prctl (PR_SET_NAME, \"thread_name\", NULL, NULL, NULL);
+                        return 0;
+                     }"
+                    PLIBSYS_PRCTL
+                )
+
+                if (PLIBSYS_PRCTL)
+                        set (PLIBSYS_THREAD_SETTER "prctl")
+                endif()
+        endif()
+
+        if (PLIBSYS_THREAD_SETTER STREQUAL "pthread_setname_np_1")
+                set (${result} "PLIBSYS_HAS_PTHREAD_SETNAME_1_ARG" PARENT_SCOPE)
+        elseif (PLIBSYS_THREAD_SETTER STREQUAL "pthread_setname_np_2")
+                set (${result} "PLIBSYS_HAS_PTHREAD_SETNAME_2_ARG" PARENT_SCOPE)
+        elseif (PLIBSYS_THREAD_SETTER STREQUAL "pthread_setname_np_3")
+                set (${result} "PLIBSYS_HAS_PTHREAD_SETNAME_3_ARG" PARENT_SCOPE)
+        elseif (PLIBSYS_THREAD_SETTER STREQUAL "pthread_set_name_np")
+                set (${result} "PLIBSYS_HAS_PTHREAD_SET_NAME" PARENT_SCOPE)
+        elseif (PLIBSYS_THREAD_SETTER STREQUAL "prctl")
+                set (${result} "PLIBSYS_HAS_PTHREAD_PRCTL" PARENT_SCOPE)
+        else()
+                set (${result} "" PARENT_SCOPE)
+        endif()
+endfunction (plibsys_detect_thread_name)
