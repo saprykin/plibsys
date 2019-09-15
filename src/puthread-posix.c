@@ -405,6 +405,7 @@ p_uthread_set_name_internal (PUThread *thread)
 	res = pthread_setname_np (thread->hdl, thr_name, 0);
 #  else
 	res = pthread_setname_np (thread->hdl, thr_name);
+#  endif
 #elif defined(PLIBSYS_HAS_PTHREAD_PRCTL)
 	if (thread->hdl != pthread_self ())
 		P_WARNING ("PUThread::p_uthread_set_name_internal: prctl() can be used on calling thread only");
