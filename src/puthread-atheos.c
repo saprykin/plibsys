@@ -208,7 +208,7 @@ p_uthread_set_name_internal (PUThread *thread)
 		P_WARNING ("PUThread::p_uthread_set_name_internal: failed to set thread system name");
 
 	if (is_alloc == TRUE)
-		p_free (thr_name);		
+		p_free (thr_name);
 }
 
 void
