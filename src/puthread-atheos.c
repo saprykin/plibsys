@@ -179,7 +179,36 @@ p_uthread_wait_internal (PUThread *thread)
 void
 p_uthread_set_name_internal (PUThread *thread)
 {
-	P_UNUSED (thread);
+	pchar		empty_str[] = "\0";
+	pchar		*thr_name   = NULL;
+	pint		namelen     = 0;
+	pint		res         = 0;
+	pboolean	is_alloc    = FALSE;
+
+	thr_name = thread->base.name;
+
+	if (thr_name == NULL) {
+		thr_name = empty_str;
+		namelen  = 0;
+	} else
+		namelen  = strlen (thr_name);
+
+	if (namelen > OS_NAME_LENGTH - 1) {
+		if (P_UNLIKELY ((thr_name = p_malloc0 (namelen + 1)) == NULL)) {
+			P_ERROR ("PUThread::p_uthread_set_name_internal: failed to allocate memory");
+			return;
+		}
+
+		memcpy (thr_name, thread->base.name, OS_NAME_LENGTH - 1);
+
+		is_alloc = TRUE;
+	}
+
+	if (rename_thread (thread->hdl, thr_name) != 0)
+		P_WARNING ("PUThread::p_uthread_set_name_internal: failed to set thread system name");
+
+	if (is_alloc == TRUE)
+		p_free (thr_name);		
 }
 
 void
