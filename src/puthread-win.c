@@ -35,6 +35,7 @@
 
 #include <process.h>
 
+typedef HRESULT (WINAPI * PWin32SetThreadDescription) (HANDLE hThread, PCWSTR lpThreadDescription);
 typedef HANDLE puthread_hdl;
 
 struct PUThread_ {
@@ -56,8 +57,42 @@ struct PUThreadDestructor_ {
 	PUThreadDestructor	*next;
 };
 
-static PUThreadDestructor * volatile pp_uthread_tls_destructors = NULL;
-static PMutex *pp_uthread_tls_mutex = NULL;
+/*
+ * For thread names:
+ * https://docs.microsoft.com/en-us/visualstudio/debugger/how-to-set-a-thread-name-in-native-code
+ */
+
+const DWORD MS_VC_THREAD_NAME_EXCEPTION = 0x406D1388;
+
+#pragma pack(push, 8)
+typedef struct tagTHREADNAME_INFO
+{
+	DWORD  dwType;     /* Must be 0x1000.                        */
+	LPCSTR szName;     /* Pointer to name (in user addr space).  */
+	DWORD  dwThreadID; /* Thread ID (-1 = caller thread).        */
+	DWORD  dwFlags;    /* Reserved for future use, must be zero. */
+} THREADNAME_INFO;
+#pragma pack(pop)
+
+#ifndef P_CC_MSVC
+static void *pp_uthread_name_veh_handle = NULL;
+
+static LONG __stdcall
+pp_uthread_set_thread_name_veh (PEXCEPTION_POINTERS except_info)
+{
+	if (except_info->ExceptionRecord != NULL &&
+	    except_info->ExceptionRecord->ExceptionCode == MS_VC_THREAD_NAME_EXCEPTION)
+		return EXCEPTION_CONTINUE_EXECUTION;
+
+	return EXCEPTION_CONTINUE_SEARCH;
+}
+#endif
+
+/* Rest of definitions */
+
+static PWin32SetThreadDescription     pp_uthread_set_descr_func  = NULL;
+static PUThreadDestructor * volatile  pp_uthread_tls_destructors = NULL;
+static PMutex                        *pp_uthread_tls_mutex       = NULL;
 
 static DWORD pp_uthread_get_tls_key (PUThreadKey *key);
 static puint __stdcall pp_uthread_win32_proxy (ppointer data);
@@ -168,8 +203,23 @@ p_uthread_win32_thread_detach (void)
 void
 p_uthread_init_internal (void)
 {
+	HMODULE hmodule;
+
 	if (P_LIKELY (pp_uthread_tls_mutex == NULL))
 		pp_uthread_tls_mutex = p_mutex_new ();
+
+	hmodule = GetModuleHandleA ("kernel32.dll");
+
+	if (P_UNLIKELY (hmodule == NULL)) {
+		P_ERROR ("PUThread::p_uthread_init_internal: failed to load kernel32.dll module");
+		return;
+	}
+
+	pp_uthread_set_descr_func = (PWin32SetThreadDescription) GetProcAddress (hmodule, "SetThreadDescription");
+
+#ifndef P_CC_MSVC
+	pp_uthread_name_veh_handle = AddVectoredExceptionHandler (1, &pp_uthread_set_thread_name_veh);
+#endif
 }
 
 void
@@ -196,6 +246,15 @@ p_uthread_shutdown_internal (void)
 		p_mutex_free (pp_uthread_tls_mutex);
 		pp_uthread_tls_mutex = NULL;
 	}
+
+	pp_uthread_set_descr_func = NULL;
+
+#ifndef P_CC_MSVC
+	if (pp_uthread_name_veh_handle != NULL) {
+		RemoveVectoredExceptionHandler (pp_uthread_name_veh_handle);
+		pp_uthread_name_veh_handle = NULL;
+	}
+#endif
 }
 
 PUThread *
@@ -253,7 +312,70 @@ p_uthread_wait_internal (PUThread *thread)
 void
 p_uthread_set_name_internal (PUThread *thread)
 {
-	P_UNUSED (thread);
+	pchar		empty_str[]   = "\0";
+	wchar_t		empty_wsrtr[] = L"\0";
+	pchar		*thr_name     = NULL;
+	wchar_t		*thr_wname    = NULL;
+	pint		namelen       = 0;
+	HRESULT		hres;
+	THREADNAME_INFO	thr_info;
+
+	thr_name = thread->base.name;
+
+	if (thr_name == NULL)
+		thr_name = empty_str;
+
+	if (pp_uthread_set_descr_func != NULL) {
+		namelen = strlen (thr_name);
+
+		if (namelen == 0)
+			thr_wname = empty_wsrtr;
+		else {
+			if (P_UNLIKELY ((thr_wname = p_malloc0 (sizeof (wchar_t) * (namelen + 1))) == NULL)) {
+				P_ERROR ("PUThread::p_uthread_set_name_internal: failed to allocate memory");
+				return;
+			}
+
+			mbstowcs (thr_wname, thr_name, namelen + 1);
+		}
+
+		hres = pp_uthread_set_descr_func (thread->hdl, thr_wname);
+
+		if (namelen > 0)
+			p_free (thr_wname);
+
+		if (P_UNLIKELY (FAILED (hres))) {
+			P_ERROR ("PUThread::p_uthread_set_name_internal: failed to set thread description");
+			return;
+		}
+	}
+
+	if (!IsDebuggerPresent ())
+		return;
+
+	thr_info.dwType     = 0x1000;
+	thr_info.szName     = thr_name;
+	thr_info.dwThreadID = -1;
+	thr_info.dwFlags    = 0;
+
+#ifdef P_CC_MSVC
+#  pragma warning(push)
+#  pragma warning(disable: 6320 6322)
+	__try {
+		RaiseException (MS_VC_THREAD_NAME_EXCEPTION,
+				0,
+				sizeof (thr_info) / sizeof (ULONG_PTR),
+				(ULONG_PTR *) &thr_info);
+	}
+	__except (EXCEPTION_EXECUTE_HANDLER) {}
+#  pragma warning(pop)
+#else
+	if (pp_uthread_name_veh_handle != NULL)
+		RaiseException (MS_VC_THREAD_NAME_EXCEPTION,
+				0,
+				sizeof (thr_info) / sizeof (ULONG_PTR),
+				(ULONG_PTR *) &thr_info);
+#endif
 }
 
 void
