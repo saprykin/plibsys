@@ -150,7 +150,7 @@ pp_uthread_get_tls_key (PUThreadKey *key)
 	return key_idx;
 }
 
-/* Must used only inside a protected critical region */
+/* Must be used only inside a protected critical region */
 
 static pint
 pp_uthread_find_next_id (void)
@@ -190,7 +190,7 @@ pp_uthread_find_next_id (void)
 	return cur_id;
 }
 
-/* Must used only inside a protected critical region */
+/* Must be used only inside a protected critical region */
 
 static PUThreadInfo *
 pp_uthread_find_thread_info (struct Task *task)
@@ -208,7 +208,7 @@ pp_uthread_find_thread_info (struct Task *task)
 	return NULL;
 }
 
-/* Must used only inside a protected critical region */
+/* Must be used only inside a protected critical region */
 
 static PUThreadInfo *
 pp_uthread_find_or_create_thread_info (struct Task *task)
