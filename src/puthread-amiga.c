@@ -515,7 +515,9 @@ p_uthread_wait_internal (PUThread *thread)
 void
 p_uthread_set_name_internal (PUThread *thread)
 {
-	P_UNUSED (thread);
+	struct Task *task = thread->task;
+
+	task->tc_Node.ln_Name = thread->base.name;
 }
 
 P_LIB_API void
