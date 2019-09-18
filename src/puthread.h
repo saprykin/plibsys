@@ -81,6 +81,10 @@
  * There are two calls to set a TLS key's value: p_uthread_set_local() and
  * p_uthread_replace_local(). The only difference is that the former one calls
  * the provided destroy notification function before replacing the old value.
+ *
+ * Thread names are used on most of operating systems for debugging puposes,
+ * thereby some limitations for long name can be applied and too long names
+ * will be truncated automatically.
  */
 
 #if !defined (PLIBSYS_H_INSIDE) && !defined (PLIBSYS_COMPILATION)
