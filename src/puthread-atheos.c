@@ -179,19 +179,13 @@ p_uthread_wait_internal (PUThread *thread)
 void
 p_uthread_set_name_internal (PUThread *thread)
 {
-	pchar		empty_str[] = "\0";
-	pchar		*thr_name   = NULL;
-	pint		namelen     = 0;
-	pint		res         = 0;
-	pboolean	is_alloc    = FALSE;
+	pchar    *thr_name   = NULL;
+	pint     namelen     = 0;
+	pint     res         = 0;
+	pboolean is_alloc    = FALSE;
 
 	thr_name = thread->base.name;
-
-	if (thr_name == NULL) {
-		thr_name = empty_str;
-		namelen  = 0;
-	} else
-		namelen  = strlen (thr_name);
+	namelen  = strlen (thr_name);
 
 	if (namelen > OS_NAME_LENGTH - 1) {
 		if (P_UNLIKELY ((thr_name = p_malloc0 (namelen + 1)) == NULL)) {

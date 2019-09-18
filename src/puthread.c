@@ -136,7 +136,8 @@ pp_uthread_proxy (ppointer data)
 	p_spinlock_lock (pp_uthread_new_spin);
 	p_spinlock_unlock (pp_uthread_new_spin);
 
-	p_uthread_set_name_internal ((PUThread *) base_thread);
+	if (base_thread->name != NULL)
+		p_uthread_set_name_internal ((PUThread *) base_thread);
 
 	base_thread->func (base_thread->data);
 

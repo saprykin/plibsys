@@ -375,19 +375,13 @@ p_uthread_wait_internal (PUThread *thread)
 void
 p_uthread_set_name_internal (PUThread *thread)
 {
-	pchar		empty_str[] = "\0";
-	pchar		*thr_name   = NULL;
-	pint		namelen     = 0;
-	pint		res         = 0;
-	pboolean	is_alloc    = FALSE;
+	pchar    *thr_name   = NULL;
+	pint     namelen     = 0;
+	pint     res         = 0;
+	pboolean is_alloc    = FALSE;
 
 	thr_name = thread->base.name;
-
-	if (thr_name == NULL) {
-		thr_name = empty_str;
-		namelen  = 0;
-	} else
-		namelen  = strlen (thr_name);
+	namelen  = strlen (thr_name);
 
 #ifdef PUTHREAD_MAX_NAME
 	if (namelen > PUTHREAD_MAX_NAME - 1) {

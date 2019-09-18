@@ -312,37 +312,24 @@ p_uthread_wait_internal (PUThread *thread)
 void
 p_uthread_set_name_internal (PUThread *thread)
 {
-	pchar		empty_str[]   = "\0";
-	wchar_t		empty_wsrtr[] = L"\0";
-	pchar		*thr_name     = NULL;
-	wchar_t		*thr_wname    = NULL;
-	pint		namelen       = 0;
+	wchar_t		*thr_wname = NULL;
+	pint		namelen    = 0;
 	HRESULT		hres;
 	THREADNAME_INFO	thr_info;
 
-	thr_name = thread->base.name;
-
-	if (thr_name == NULL)
-		thr_name = empty_str;
-
 	if (pp_uthread_set_descr_func != NULL) {
-		namelen = strlen (thr_name);
+		namelen = strlen (thread->base.name);
 
-		if (namelen == 0)
-			thr_wname = empty_wsrtr;
-		else {
-			if (P_UNLIKELY ((thr_wname = p_malloc0 (sizeof (wchar_t) * (namelen + 1))) == NULL)) {
-				P_ERROR ("PUThread::p_uthread_set_name_internal: failed to allocate memory");
-				return;
-			}
-
-			mbstowcs (thr_wname, thr_name, namelen + 1);
+		if (P_UNLIKELY ((thr_wname = p_malloc0 (sizeof (wchar_t) * (namelen + 1))) == NULL)) {
+			P_ERROR ("PUThread::p_uthread_set_name_internal: failed to allocate memory");
+			return;
 		}
+
+		mbstowcs (thr_wname, thread->base.name, namelen + 1);
 
 		hres = pp_uthread_set_descr_func (thread->hdl, thr_wname);
 
-		if (namelen > 0)
-			p_free (thr_wname);
+		p_free (thr_wname);
 
 		if (P_UNLIKELY (FAILED (hres))) {
 			P_ERROR ("PUThread::p_uthread_set_name_internal: failed to set thread description");
@@ -354,7 +341,7 @@ p_uthread_set_name_internal (PUThread *thread)
 		return;
 
 	thr_info.dwType     = 0x1000;
-	thr_info.szName     = thr_name;
+	thr_info.szName     = thread->base.name;
 	thr_info.dwThreadID = -1;
 	thr_info.dwFlags    = 0;
 
