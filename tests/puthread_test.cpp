@@ -200,7 +200,8 @@ P_TEST_CASE_BEGIN (puthread_nomem_test)
 
 	P_TEST_CHECK (p_uthread_create ((PUThreadFunc) test_thread_func,
 					(ppointer) &thread_wakes_1,
-					TRUE) == NULL);
+					TRUE,
+					NULL) == NULL);
 
 	P_TEST_CHECK (p_uthread_create_full ((PUThreadFunc) test_thread_func,
 					     (ppointer) &thread_wakes_2,
@@ -244,8 +245,8 @@ P_TEST_CASE_BEGIN (puthread_bad_input_test)
 {
 	p_libsys_init ();
 
-	P_TEST_CHECK (p_uthread_create (NULL, NULL, false) == NULL);
-	P_TEST_CHECK (p_uthread_create_full (NULL, NULL, false, P_UTHREAD_PRIORITY_NORMAL, 0, NULL) == NULL);
+	P_TEST_CHECK (p_uthread_create (NULL, NULL, FALSE, NULL) == NULL);
+	P_TEST_CHECK (p_uthread_create_full (NULL, NULL, FALSE, P_UTHREAD_PRIORITY_NORMAL, 0, NULL) == NULL);
 	P_TEST_CHECK (p_uthread_join (NULL) == -1);
 	P_TEST_CHECK (p_uthread_set_priority (NULL, P_UTHREAD_PRIORITY_NORMAL) == FALSE);
 	P_TEST_CHECK (p_uthread_get_local (NULL) == NULL);
@@ -340,7 +341,8 @@ P_TEST_CASE_BEGIN (puthread_nonjoinable_test)
 
 	PUThread *thr1 = p_uthread_create ((PUThreadFunc) test_thread_nonjoinable_func,
 					   (ppointer) &thread_wakes_1,
-					   FALSE);
+					   FALSE,
+					   NULL);
 
 	P_TEST_REQUIRE (thr1 != NULL);
 
@@ -373,11 +375,13 @@ P_TEST_CASE_BEGIN (puthread_tls_test)
 
 	PUThread *thr1 = p_uthread_create ((PUThreadFunc) test_thread_tls_func,
 					   (ppointer) &self_thread_free,
-					   TRUE);
+					   TRUE,
+					   NULL);
 
 	PUThread *thr2 = p_uthread_create ((PUThreadFunc) test_thread_tls_func,
 					   (ppointer) &self_thread_free,
-					   TRUE);
+					   TRUE,
+					   NULL);
 
 	P_TEST_REQUIRE (thr1 != NULL);
 	P_TEST_REQUIRE (thr2 != NULL);
@@ -406,11 +410,13 @@ P_TEST_CASE_BEGIN (puthread_tls_test)
 
 	thr1 = p_uthread_create ((PUThreadFunc) test_thread_tls_func,
 				 (ppointer) &self_thread_free,
-				 TRUE);
+				 TRUE,
+				 NULL);
 
 	thr2 = p_uthread_create ((PUThreadFunc) test_thread_tls_func,
 				 (ppointer) &self_thread_free,
-				 TRUE);
+				 TRUE,
+				 NULL);
 
 	P_TEST_REQUIRE (thr1 != NULL);
 	P_TEST_REQUIRE (thr2 != NULL);
@@ -439,10 +445,13 @@ P_TEST_CASE_BEGIN (puthread_tls_test)
 
 	thr1 = p_uthread_create ((PUThreadFunc) test_thread_tls_create_func,
 				 NULL,
-				 TRUE);
+				 TRUE,
+				 NULL);
+
 	thr2 = p_uthread_create ((PUThreadFunc) test_thread_tls_create_func,
 				 NULL,
-				 TRUE);
+				 TRUE,
+				 NULL);
 
 	P_TEST_REQUIRE (thr1 != NULL);
 	P_TEST_REQUIRE (thr2 != NULL);

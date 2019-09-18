@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright (C) 2013-2017 Alexander Saprykin <saprykin.spb@gmail.com>
+ * Copyright (C) 2013-2019 Alexander Saprykin <saprykin.spb@gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -995,8 +995,15 @@ P_TEST_CASE_BEGIN (psocket_udp_test)
 	data.sender_port      = 0;
 	data.shutdown_channel = FALSE;
 
-	PUThread *receiver_thr = p_uthread_create ((PUThreadFunc) udp_socket_receiver_thread, (ppointer) &data, TRUE);
-	PUThread *sender_thr = p_uthread_create ((PUThreadFunc) udp_socket_sender_thread, (ppointer) &data, TRUE);
+	PUThread *receiver_thr = p_uthread_create ((PUThreadFunc) udp_socket_receiver_thread,
+						   (ppointer) &data,
+						   TRUE,
+						   NULL);
+
+	PUThread *sender_thr = p_uthread_create ((PUThreadFunc) udp_socket_sender_thread,
+						 (ppointer) &data,
+						 TRUE,
+						 NULL);
 
 	P_TEST_CHECK (sender_thr != NULL);
 	P_TEST_CHECK (receiver_thr != NULL);
@@ -1033,8 +1040,15 @@ P_TEST_CASE_BEGIN (psocket_tcp_test)
 	data.sender_port      = 0;
 	data.shutdown_channel = FALSE;
 
-	PUThread *receiver_thr = p_uthread_create ((PUThreadFunc) tcp_socket_receiver_thread, (ppointer) &data, TRUE);
-	PUThread *sender_thr = p_uthread_create ((PUThreadFunc) tcp_socket_sender_thread, (ppointer) &data, TRUE);
+	PUThread *receiver_thr = p_uthread_create ((PUThreadFunc) tcp_socket_receiver_thread,
+						   (ppointer) &data,
+						   TRUE,
+						   NULL);
+
+	PUThread *sender_thr = p_uthread_create ((PUThreadFunc) tcp_socket_sender_thread,
+						 (ppointer) &data,
+						 TRUE,
+						 NULL);
 
 	P_TEST_CHECK (receiver_thr != NULL);
 	P_TEST_CHECK (sender_thr != NULL);
@@ -1071,8 +1085,15 @@ P_TEST_CASE_BEGIN (psocket_shutdown_test)
 	data.sender_port      = 0;
 	data.shutdown_channel = TRUE;
 
-	PUThread *receiver_thr = p_uthread_create ((PUThreadFunc) tcp_socket_receiver_thread, (ppointer) &data, TRUE);
-	PUThread *sender_thr = p_uthread_create ((PUThreadFunc) tcp_socket_sender_thread, (ppointer) &data, TRUE);
+	PUThread *receiver_thr = p_uthread_create ((PUThreadFunc) tcp_socket_receiver_thread,
+						   (ppointer) &data,
+						   TRUE,
+						   NULL);
+
+	PUThread *sender_thr = p_uthread_create ((PUThreadFunc) tcp_socket_sender_thread,
+						 (ppointer) &data,
+						 TRUE,
+						 NULL);
 
 	P_TEST_CHECK (receiver_thr != NULL);
 	P_TEST_CHECK (sender_thr != NULL);

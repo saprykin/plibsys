@@ -218,10 +218,11 @@ p_uthread_create_full (PUThreadFunc	func,
 P_LIB_API PUThread *
 p_uthread_create (PUThreadFunc	func,
 		  ppointer	data,
-		  pboolean	joinable)
+		  pboolean	joinable,
+		  const pchar	*name)
 {
 	/* All checks will be inside */
-	return p_uthread_create_full (func, data, joinable, P_UTHREAD_PRIORITY_INHERIT, 0, NULL);
+	return p_uthread_create_full (func, data, joinable, P_UTHREAD_PRIORITY_INHERIT, 0, name);
 }
 
 P_LIB_API void

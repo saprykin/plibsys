@@ -143,6 +143,7 @@ P_LIB_API PUThread *	p_uthread_create_full	(PUThreadFunc		func,
  * @param func Main thread function to run.
  * @param data Pointer to pass into the thread main function, may be NULL.
  * @param joinable Whether to create a joinable thread or not.
+ * @param name Thread name, maybe NULL.
  * @return Pointer to #PUThread in case of success, NULL otherwise.
  * @since 0.0.1
  * @note Unreference the returned value after use with p_uthread_unref(). You do
@@ -150,7 +151,8 @@ P_LIB_API PUThread *	p_uthread_create_full	(PUThreadFunc		func,
  */
 P_LIB_API PUThread *	p_uthread_create	(PUThreadFunc		func,
 						 ppointer		data,
-						 pboolean		joinable);
+						 pboolean		joinable,
+						 const pchar		*name);
 
 /**
  * @brief Exits from the currently running (caller) thread.

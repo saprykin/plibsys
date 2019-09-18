@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright (C) 2013-2017 Alexander Saprykin <saprykin.spb@gmail.com>
+ * Copyright (C) 2013-2019 Alexander Saprykin <saprykin.spb@gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -118,10 +118,10 @@ P_TEST_CASE_BEGIN (pmutex_general_test)
 
 	mutex_test_val = 10;
 
-	thr1 = p_uthread_create ((PUThreadFunc) mutex_test_thread, NULL, true);
+	thr1 = p_uthread_create ((PUThreadFunc) mutex_test_thread, NULL, TRUE, NULL);
 	P_TEST_REQUIRE (thr1 != NULL);
 
-	thr2 = p_uthread_create ((PUThreadFunc) mutex_test_thread, NULL, true);
+	thr2 = p_uthread_create ((PUThreadFunc) mutex_test_thread, NULL, TRUE, NULL);
 	P_TEST_REQUIRE (thr2 != NULL);
 
 	P_TEST_CHECK (p_uthread_join (thr1) == 0);
