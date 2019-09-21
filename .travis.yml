@@ -31,6 +31,12 @@ matrix:
                 - os: linux
                   addons: { apt: { sources: ubuntu-toolchain-r-test, packages: [gcc-7, g++-7] } }
                   env: CC=gcc-7 CXX=g++-7 ARCH=64
+                - os: linux
+                  addons: { apt: { sources: ubuntu-toolchain-r-test, packages: [gcc-8, g++-8] } }
+                  env: CC=gcc-8 CXX=g++-8 ARCH=64
+                - os: linux
+                  addons: { apt: { sources: ubuntu-toolchain-r-test, packages: [gcc-9, g++-9] } }
+                  env: CC=gcc-9 CXX=g++-9 ARCH=64
                 # Linux x86 builds (GCC)
                 - os: linux
                   addons: { apt: { sources: ubuntu-toolchain-r-test, packages: [gcc-4.9, g++-4.9, gcc-multilib, g++-multilib, gcc-4.9-multilib, g++-4.9-multilib, linux-libc-dev] } }
@@ -44,6 +50,12 @@ matrix:
                 - os: linux
                   addons: { apt: { sources: ubuntu-toolchain-r-test, packages: [gcc-7, g++-7, gcc-multilib, g++-multilib, gcc-7-multilib, g++-7-multilib, linux-libc-dev] } }
                   env: CC=gcc-7 CXX=g++-7 ARCH=32
+                - os: linux
+                  addons: { apt: { sources: ubuntu-toolchain-r-test, packages: [gcc-8, g++-8, gcc-multilib, g++-multilib, gcc-8-multilib, g++-8-multilib, linux-libc-dev] } }
+                  env: CC=gcc-8 CXX=g++-8 ARCH=32
+                - os: linux
+                  addons: { apt: { sources: ubuntu-toolchain-r-test, packages: [gcc-9, g++-9, gcc-multilib, g++-multilib, gcc-9-multilib, g++-9-multilib, linux-libc-dev] } }
+                  env: CC=gcc-9 CXX=g++-9 ARCH=32
                 # Linux x64 builds (Clang)
                 - os: linux
                   addons: { apt: { sources: [ubuntu-toolchain-r-test, llvm-toolchain-precise-3.6], packages: [clang-3.6, libc++-dev] } }
