@@ -40,6 +40,7 @@ function (plibsys_detect_va_copy result)
     foreach (KEYWORD "va_copy" "_va_copy" "__va_copy")
         check_c_source_compiles ("
                      #include <stdio.h>
+                     #include <stdlib.h>
                      #include <stdarg.h>
 
                      void f (int i, ...) {

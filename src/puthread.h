@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright (C) 2010-2017 Alexander Saprykin <saprykin.spb@gmail.com>
+ * Copyright (C) 2010-2019 Alexander Saprykin <saprykin.spb@gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -81,6 +81,10 @@
  * There are two calls to set a TLS key's value: p_uthread_set_local() and
  * p_uthread_replace_local(). The only difference is that the former one calls
  * the provided destroy notification function before replacing the old value.
+ *
+ * Thread names are used on most of operating systems for debugging puposes,
+ * thereby some limitations for long name can be applied and too long names
+ * will be truncated automatically.
  */
 
 #if !defined (PLIBSYS_H_INSIDE) && !defined (PLIBSYS_COMPILATION)
@@ -124,6 +128,7 @@ typedef enum PUThreadPriority_ {
  * @param prio Thread priority.
  * @param stack_size Thread stack size, in bytes. Leave zero to use a default
  * value.
+ * @param name Thread name, maybe NULL.
  * @return Pointer to #PUThread in case of success, NULL otherwise.
  * @since 0.0.1
  * @note Unreference the returned value after use with p_uthread_unref(). You do
@@ -133,7 +138,8 @@ P_LIB_API PUThread *	p_uthread_create_full	(PUThreadFunc		func,
 						 ppointer		data,
 						 pboolean		joinable,
 						 PUThreadPriority	prio,
-						 psize			stack_size);
+						 psize			stack_size,
+						 const pchar		*name);
 
 /**
  * @brief Creates a #PUThread and starts it. A short version of
@@ -141,6 +147,7 @@ P_LIB_API PUThread *	p_uthread_create_full	(PUThreadFunc		func,
  * @param func Main thread function to run.
  * @param data Pointer to pass into the thread main function, may be NULL.
  * @param joinable Whether to create a joinable thread or not.
+ * @param name Thread name, maybe NULL.
  * @return Pointer to #PUThread in case of success, NULL otherwise.
  * @since 0.0.1
  * @note Unreference the returned value after use with p_uthread_unref(). You do
@@ -148,7 +155,8 @@ P_LIB_API PUThread *	p_uthread_create_full	(PUThreadFunc		func,
  */
 P_LIB_API PUThread *	p_uthread_create	(PUThreadFunc		func,
 						 ppointer		data,
-						 pboolean		joinable);
+						 pboolean		joinable,
+						 const pchar		*name);
 
 /**
  * @brief Exits from the currently running (caller) thread.

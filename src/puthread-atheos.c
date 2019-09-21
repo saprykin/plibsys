@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright (C) 2016 Alexander Saprykin <saprykin.spb@gmail.com>
+ * Copyright (C) 2016-2019 Alexander Saprykin <saprykin.spb@gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -174,6 +174,35 @@ void
 p_uthread_wait_internal (PUThread *thread)
 {
 	wait_for_thread (thread->hdl);
+}
+
+void
+p_uthread_set_name_internal (PUThread *thread)
+{
+	pchar    *thr_name   = NULL;
+	pint     namelen     = 0;
+	pint     res         = 0;
+	pboolean is_alloc    = FALSE;
+
+	thr_name = thread->base.name;
+	namelen  = strlen (thr_name);
+
+	if (namelen > OS_NAME_LENGTH - 1) {
+		if (P_UNLIKELY ((thr_name = p_malloc0 (namelen + 1)) == NULL)) {
+			P_ERROR ("PUThread::p_uthread_set_name_internal: failed to allocate memory");
+			return;
+		}
+
+		memcpy (thr_name, thread->base.name, OS_NAME_LENGTH - 1);
+
+		is_alloc = TRUE;
+	}
+
+	if (rename_thread (thread->hdl, thr_name) != 0)
+		P_WARNING ("PUThread::p_uthread_set_name_internal: failed to set thread system name");
+
+	if (is_alloc == TRUE)
+		p_free (thr_name);
 }
 
 void

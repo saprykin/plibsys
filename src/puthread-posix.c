@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright (C) 2010-2017 Alexander Saprykin <saprykin.spb@gmail.com>
+ * Copyright (C) 2010-2019 Alexander Saprykin <saprykin.spb@gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -39,10 +39,28 @@
 #include <pthread.h>
 #include <time.h>
 
+/* On some OS like OpenBSD it must follow <pthread.h> */
+#ifdef PLIBSYS_NEED_PTHREAD_NP_H
+#  include <pthread_np.h>
+#endif
+
 #ifdef PLIBSYS_HAS_POSIX_SCHEDULING
 #  ifndef P_OS_VMS
 #    include <sched.h>
 #  endif
+#endif
+
+#ifdef PLIBSYS_HAS_PTHREAD_PRCTL
+#  include <sys/prctl.h>
+#  include <linux/prctl.h>
+#endif
+
+#ifdef P_OS_QNX6
+#  include <sys/neutrino.h>
+#endif
+
+#ifdef P_OS_HAIKU
+#  include <kernel/OS.h>
 #endif
 
 /* Some systems without native pthreads may lack some of the constants,
@@ -69,6 +87,25 @@
 #  if defined (P_OS_LINUX) && !defined (SCHED_IDLE)
 #    define SCHED_IDLE 5
 #  endif
+#endif
+
+/* Max length of a thead name */
+#if defined(P_OS_LINUX)
+#  define PUTHREAD_MAX_NAME		16
+#elif defined(P_OS_NETBSD)
+#  define PUTHREAD_MAX_NAME		PTHREAD_MAX_NAMELEN_NP
+#elif defined(P_OS_DRAGONFLY)
+#  define PUTHREAD_MAX_NAME		16
+#elif defined(P_OS_SOLARIS)
+#  define PUTHREAD_MAX_NAME		32
+#elif defined(P_OS_TRU64)
+#  define PUTHREAD_MAX_NAME		32
+#elif defined(P_OS_VMS)
+#  define PUTHREAD_MAX_NAME		32
+#elif defined(P_OS_QNX6)
+#  define PUTHREAD_MAX_NAME		_NTO_THREAD_NAME_MAX
+#elif defined(P_OS_HAIKU)
+#  define PUTHREAD_MAX_NAME		32
 #endif
 
 typedef pthread_t puthread_hdl;
@@ -333,6 +370,61 @@ p_uthread_wait_internal (PUThread *thread)
 {
 	if (P_UNLIKELY (pthread_join (thread->hdl, NULL) != 0))
 		P_ERROR ("PUThread::p_uthread_wait_internal: pthread_join() failed");
+}
+
+void
+p_uthread_set_name_internal (PUThread *thread)
+{
+	pchar    *thr_name   = NULL;
+	pint     namelen     = 0;
+	pint     res         = 0;
+	pboolean is_alloc    = FALSE;
+
+	thr_name = thread->base.name;
+	namelen  = strlen (thr_name);
+
+#ifdef PUTHREAD_MAX_NAME
+	if (namelen > PUTHREAD_MAX_NAME - 1) {
+		if (P_UNLIKELY ((thr_name = p_malloc0 (namelen + 1)) == NULL)) {
+			P_ERROR ("PUThread::p_uthread_set_name_internal: failed to allocate memory");
+			return;
+		}
+
+		memcpy (thr_name, thread->base.name, PUTHREAD_MAX_NAME - 1);
+
+		is_alloc = TRUE;
+	}
+#endif
+
+#if defined(PLIBSYS_HAS_PTHREAD_SETNAME)
+#  if defined(P_OS_MAC)
+	if (thread->hdl != pthread_self ())
+		P_WARNING ("PUThread::p_uthread_set_name_internal: only calling thread is supported in macOS");
+	else
+		res = pthread_setname_np (thr_name);
+#  elif defined(P_OS_NETBSD)
+	res = pthread_setname_np (thread->hdl, "%s", thr_name);
+#  elif defined(P_OS_TRU64) || defined(P_OS_VMS)
+	res = pthread_setname_np (thread->hdl, thr_name, 0);
+#  else
+	res = pthread_setname_np (thread->hdl, thr_name);
+#  endif
+#elif defined(PLIBSYS_HAS_PTHREAD_SET_NAME)
+	pthread_set_name_np (thread->hdl, thr_name);
+#elif defined(PLIBSYS_HAS_PTHREAD_PRCTL)
+	if (thread->hdl != pthread_self ())
+		P_WARNING ("PUThread::p_uthread_set_name_internal: prctl() can be used on calling thread only");
+	else
+		res = prctl (PR_SET_NAME, thr_name, NULL, NULL, NULL);
+#elif defined(P_OS_HAIKU)
+	res = rename_thread (find_thread (NULL), thr_name);
+#endif
+
+	if (is_alloc == TRUE)
+		p_free (thr_name);
+
+	if (res != 0)
+		P_WARNING ("PUThread::p_uthread_set_name_internal: failed to set thread system name");
 }
 
 void

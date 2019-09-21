@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright (C) 2017 Alexander Saprykin <saprykin.spb@gmail.com>
+ * Copyright (C) 2017-2019 Alexander Saprykin <saprykin.spb@gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -150,7 +150,7 @@ pp_uthread_get_tls_key (PUThreadKey *key)
 	return key_idx;
 }
 
-/* Must used only inside a protected critical region */
+/* Must be used only inside a protected critical region */
 
 static pint
 pp_uthread_find_next_id (void)
@@ -190,7 +190,7 @@ pp_uthread_find_next_id (void)
 	return cur_id;
 }
 
-/* Must used only inside a protected critical region */
+/* Must be used only inside a protected critical region */
 
 static PUThreadInfo *
 pp_uthread_find_thread_info (struct Task *task)
@@ -208,7 +208,7 @@ pp_uthread_find_thread_info (struct Task *task)
 	return NULL;
 }
 
-/* Must used only inside a protected critical region */
+/* Must be used only inside a protected critical region */
 
 static PUThreadInfo *
 pp_uthread_find_or_create_thread_info (struct Task *task)
@@ -510,6 +510,14 @@ p_uthread_wait_internal (PUThread *thread)
 
 	p_cond_variable_wait (thread->join_cond, pp_uthread_glob_mutex);
 	p_mutex_unlock (pp_uthread_glob_mutex);
+}
+
+void
+p_uthread_set_name_internal (PUThread *thread)
+{
+	struct Task *task = thread->task;
+
+	task->tc_Node.ln_Name = thread->base.name;
 }
 
 P_LIB_API void

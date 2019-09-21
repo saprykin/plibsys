@@ -1,6 +1,6 @@
 # The MIT License
 #
-# Copyright (C) 2018 Alexander Saprykin <saprykin.spb@gmail.com>
+# Copyright (C) 2018-2019 Alexander Saprykin <saprykin.spb@gmail.com>
 #
 # Permission is hereby granted, free of charge, to any person obtaining
 # a copy of this software and associated documentation files (the
@@ -50,6 +50,7 @@ endif()
 include (${PROJECT_SOURCE_DIR}/cmake/PlatformDetect.cmake)
 include (${PROJECT_SOURCE_DIR}/cmake/VisibilityDetect.cmake)
 include (${PROJECT_SOURCE_DIR}/cmake/StdargDetect.cmake)
+include (${PROJECT_SOURCE_DIR}/cmake/ThreadNameDetect.cmake)
 set (OUTPUT_DIR ${CMAKE_BINARY_DIR})
 
 # Try to detect target platform
@@ -64,7 +65,7 @@ endif()
 
 if ((PLIBSYS_TARGET_OS STREQUAL windows) AND NOT (PLIBSYS_TARGET_OS STREQUAL cygwin)
                                          AND NOT (PLIBSYS_TARGET_OS STREQUAL msys))
-        set (PLIBSYS_NATIVE_WINDOWS true)
+        set (PLIBSYS_NATIVE_WINDOWS TRUE)
 endif()
 
 if (PLIBSYS_COVERAGE)
@@ -249,7 +250,7 @@ list (APPEND CMAKE_REQUIRED_DEFINITIONS ${PLIBSYS_PLATFORM_DEFINES})
 list (APPEND CMAKE_REQUIRED_LIBRARIES ${PLIBSYS_PLATFORM_LINK_LIBRARIES})
 list (APPEND CMAKE_REQUIRED_FLAGS ${PLIBSYS_PLATFORM_LDFLAGS})
 
-set (PLIBSYS_ATOMIC_LOCK_FREE no)
+set (PLIBSYS_ATOMIC_LOCK_FREE FALSE)
 
 if (NOT PLIBSYS_ATOMIC_MODEL)
         message (STATUS "Checking for lock-free atomic intrinsics")
@@ -303,10 +304,10 @@ if (NOT PLIBSYS_ATOMIC_MODEL)
                                                             PLIBSYS_C_COMPILER STREQUAL watcom  OR
                                                             PLIBSYS_C_COMPILER STREQUAL icc     OR
                                                             PLIBSYS_C_COMPILER STREQUAL msvc))
-                        set (PLIBSYS_ATOMIC_LOCK_FREE true)
+                        set (PLIBSYS_ATOMIC_LOCK_FREE TRUE)
                         set (PLIBSYS_ATOMIC_MODEL "win")
                 else()
-                        set (PLIBSYS_ATOMIC_LOCK_FREE no)
+                        set (PLIBSYS_ATOMIC_LOCK_FREE FALSE)
                         set (PLIBSYS_ATOMIC_MODEL "sim")
                 endif()
         endif()
@@ -372,10 +373,8 @@ elseif (PLIBSYS_HAVE_VALUES_H)
 endif()
 
 if (PLIBSYS_NATIVE_WINDOWS)
-        set (PLIBSYS_NEED_WINDOWS_H true)
+        set (PLIBSYS_NEED_WINDOWS_H TRUE)
 endif()
-
-configure_file (${CMAKE_CURRENT_SOURCE_DIR}/plibsysconfig.h.in ${CMAKE_BINARY_DIR}/plibsysconfig.h)
 
 if (NOT PLIBSYS_NATIVE_WINDOWS)
         # Check for anonymous mmap()
@@ -582,6 +581,36 @@ endif()
 
 list (APPEND PLIBSYS_PLATFORM_SRCS prwlock-${PLIBSYS_RWLOCK_MODEL}.c)
 
+# POSIX thread naming functions
+check_c_source_compiles (
+                         "#include <pthread.h>
+                          #include <pthread_np.h>
+
+                         int main () {return 0;}"
+                         PLIBSYS_HAS_PTHREAD_NP
+                        )
+
+if(PLIBSYS_HAS_PTHREAD_NP)
+        set (PLIBSYS_NEED_PTHREAD_NP_H TRUE)
+else()
+        set (PLIBSYS_NEED_PTHREAD_NP_H FALSE)
+endif()
+
+message (STATUS "Checking whether POSIX thread names are supported")
+
+plibsys_detect_thread_name (PLIBSYS_NEED_PTHREAD_NP_H PLIBSYS_THREADNAME_DEF)
+
+if (NOT PLIBSYS_THREADNAME_DEF STREQUAL "NONE")
+        list (APPEND PLIBSYS_COMPILE_DEFS -D${PLIBSYS_THREADNAME_DEF})
+endif()
+
+if (PLIBSYS_THREADNAME_DEF STREQUAL "NONE")
+        message (STATUS "Checking whether POSIX thread names are supported - no")
+else()
+        message (STATUS "Checking whether POSIX thread names are supported - yes")
+endif()
+
+# Windows sockets
 if (PLIBSYS_NATIVE_WINDOWS)
         set (PLIBSYS_SOCKET_INCLUDES "#include <winsock2.h>
                                       #include <ws2tcpip.h>
@@ -761,7 +790,6 @@ if (PLIBSYS_VISIBILITY)
 endif()
 
 # Variable arguments
-
 check_include_file ("stdarg.h" PLIBSYS_HAVE_STDARG_H)
 
 if (NOT PLIBSYS_HAVE_STDARG_H)
@@ -769,6 +797,8 @@ if (NOT PLIBSYS_HAVE_STDARG_H)
 endif()
 
 plibsys_detect_va_copy (PLIBSYS_VA_COPY)
+
+configure_file (${CMAKE_CURRENT_SOURCE_DIR}/plibsysconfig.h.in ${CMAKE_BINARY_DIR}/plibsysconfig.h)
 
 # Restore compiler flags
 set (CMAKE_REQUIRED_DEFINITIONS ${SAVED_CMAKE_REQUIRED_DEFINITIONS})
@@ -820,6 +850,11 @@ endif()
 set_target_properties (plibsys PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${OUTPUT_DIR})
 set_target_properties (plibsys PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${OUTPUT_DIR})
 set_target_properties (plibsys PROPERTIES ARCHIVE_OUTPUT_DIRECTORY ${OUTPUT_DIR})
+
+# OpenBSD uses a bit different library versioning
+if (PLIBSYS_TARGET_OS STREQUAL openbsd)
+        set (PLIBSYS_SOVERSION ${PLIBSYS_VERSION_MAJOR}.${PLIBSYS_VERSION_MINOR})
+endif()
 
 if (NOT PLIBSYS_TARGET_OS STREQUAL os2 AND NOT PLIBSYS_TARGET_OS STREQUAL amigaos)
         set_target_properties (plibsys PROPERTIES SOVERSION ${PLIBSYS_SOVERSION})

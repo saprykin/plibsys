@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright (C) 2010-2018 Alexander Saprykin <saprykin.spb@gmail.com>
+ * Copyright (C) 2010-2019 Alexander Saprykin <saprykin.spb@gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -29,6 +29,7 @@
 #endif
 #include "pmem.h"
 #include "pspinlock.h"
+#include "pstring.h"
 #include "puthread.h"
 #include "puthread-private.h"
 
@@ -91,7 +92,7 @@ typedef void (WINAPI * SystemInfoFunc) (LPSYSTEM_INFO);
 #endif
 
 #ifdef P_OS_AMIGA
-#  include <clib/alib_protos.h> 
+#  include <clib/alib_protos.h>
 #  include <proto/dos.h>
 #  include <proto/exec.h>
 #endif
@@ -101,6 +102,7 @@ extern void p_uthread_shutdown_internal (void);
 extern void p_uthread_exit_internal (void);
 extern void p_uthread_wait_internal (PUThread *thread);
 extern void p_uthread_free_internal (PUThread *thread);
+extern void p_uthread_set_name_internal (PUThread *thread);
 extern PUThread * p_uthread_create_internal (PUThreadFunc	func,
 					     pboolean		joinable,
 					     PUThreadPriority	prio,
@@ -133,6 +135,9 @@ pp_uthread_proxy (ppointer data)
 
 	p_spinlock_lock (pp_uthread_new_spin);
 	p_spinlock_unlock (pp_uthread_new_spin);
+
+	if (base_thread->name != NULL)
+		p_uthread_set_name_internal ((PUThread *) base_thread);
 
 	base_thread->func (base_thread->data);
 
@@ -181,7 +186,8 @@ p_uthread_create_full (PUThreadFunc	func,
 		       ppointer		data,
 		       pboolean		joinable,
 		       PUThreadPriority	prio,
-		       psize		stack_size)
+		       psize		stack_size,
+		       const pchar	*name)
 {
 	PUThreadBase *base_thread;
 
@@ -201,6 +207,7 @@ p_uthread_create_full (PUThreadFunc	func,
 		base_thread->joinable  = joinable;
 		base_thread->func      = func;
 		base_thread->data      = data;
+		base_thread->name      = p_strdup (name);
 	}
 
 	p_spinlock_unlock (pp_uthread_new_spin);
@@ -211,10 +218,11 @@ p_uthread_create_full (PUThreadFunc	func,
 P_LIB_API PUThread *
 p_uthread_create (PUThreadFunc	func,
 		  ppointer	data,
-		  pboolean	joinable)
+		  pboolean	joinable,
+		  const pchar	*name)
 {
 	/* All checks will be inside */
-	return p_uthread_create_full (func, data, joinable, P_UTHREAD_PRIORITY_INHERIT, 0);
+	return p_uthread_create_full (func, data, joinable, P_UTHREAD_PRIORITY_INHERIT, 0, name);
 }
 
 P_LIB_API void
@@ -456,6 +464,8 @@ p_uthread_unref (PUThread *thread)
 	base_thread = (PUThreadBase *) thread;
 
 	if (p_atomic_int_dec_and_test (&base_thread->ref_count) == TRUE) {
+		p_free (base_thread->name);
+
 		if (base_thread->ours == TRUE)
 			p_uthread_free_internal (thread);
 		else
