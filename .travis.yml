@@ -98,10 +98,10 @@ matrix:
                   osx_image: xcode8.3
                   env: FORMULA=gcc@7 CC=gcc-7 CXX=g++-7
                 - os: osx
-                  osx_image: xcode9.4
+                  osx_image: xcode8.3
                   env: FORMULA=gcc@8 CC=gcc-8 CXX=g++-8
                 - os: osx
-                  osx_image: xcode9.4
+                  osx_image: xcode8.3
                   env: FORMULA=gcc@9 CC=gcc-9 CXX=g++-9
                 # macOS builds (Clang)
                 - os: osx
