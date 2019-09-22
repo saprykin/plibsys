@@ -72,7 +72,7 @@ environment:
                   APPVEYOR_BUILD_WORKER_IMAGE: "Visual Studio 2017"
                 - CMAKE_GENERATOR:             "Visual Studio 16 2019"
                   APPVEYOR_BUILD_WORKER_IMAGE: "Visual Studio 2019"
-                - CMAKE_GENERATOR:             "Visual Studio 16 2019 Win64"
+                - CMAKE_GENERATOR:             "Visual Studio 16 2019 x64"
                   APPVEYOR_BUILD_WORKER_IMAGE: "Visual Studio 2019"
                 - CMAKE_GENERATOR:             "NMake Makefiles"
                   USE_LLVM:                    "1"
