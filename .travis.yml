@@ -79,11 +79,11 @@ matrix:
                   addons: { apt: { sources: [ubuntu-toolchain-r-test, llvm-toolchain-trusty-6.0], packages: [clang-6.0, libc++-dev] } }
                   env: CC=clang-6.0 CXX=clang++-6.0
                 - os: linux
-                  addons: { apt: { sources: [ubuntu-toolchain-r-test, llvm-toolchain-trusty-7.0], packages: [clang-7.0, libc++-dev] } }
-                  env: CC=clang-7.0 CXX=clang++-7.0
+                  addons: { apt: { sources: [ubuntu-toolchain-r-test, llvm-toolchain-trusty-7], packages: [clang-7, libc++-dev] } }
+                  env: CC=clang-7 CXX=clang++-7
                 - os: linux
-                  addons: { apt: { sources: [ubuntu-toolchain-r-test, llvm-toolchain-trusty-8.0], packages: [clang-8.0, libc++-dev] } }
-                  env: CC=clang-8.0 CXX=clang++-8.0
+                  addons: { apt: { sources: [ubuntu-toolchain-r-test, llvm-toolchain-trusty-8], packages: [clang-8, libc++-dev] } }
+                  env: CC=clang-8 CXX=clang++-8
                 # macOS builds (GCC)
                 - os: osx
                   osx_image: xcode8.3
