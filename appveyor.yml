@@ -72,7 +72,8 @@ environment:
                   APPVEYOR_BUILD_WORKER_IMAGE: "Visual Studio 2017"
                 - CMAKE_GENERATOR:             "Visual Studio 16 2019"
                   APPVEYOR_BUILD_WORKER_IMAGE: "Visual Studio 2019"
-                - CMAKE_GENERATOR:             "Visual Studio 16 2019 x64"
+                - CMAKE_GENERATOR:             "Visual Studio 16 2019"
+                  CMAKE_GENERATOR_ARCH:        "x64"
                   APPVEYOR_BUILD_WORKER_IMAGE: "Visual Studio 2019"
                 - CMAKE_GENERATOR:             "NMake Makefiles"
                   USE_LLVM:                    "1"
@@ -258,13 +259,19 @@ build_script:
                         $BUILD_PARAMS  = @("/verbosity:normal", "$BUILD_DIR\plibsys.sln", "/p:Configuration=$env:configuration", "/m");
                 }
 
-                If ($env:USE_COVERITY -eq "1" -And $env:APPVEYOR_REPO_BRANCH -eq "appveyor_test") {
+                $CMAKE_GENERATOR_ARGS = "-G`"$env:CMAKE_GENERATOR`"";
+
+                If (Test-Path variable:global:CMAKE_GENERATOR_ARGS) {
+                        $CMAKE_GENERATOR_ARGS = "$CMAKE_GENERATOR_ARGS -A $CMAKE_GENERATOR_ARGS";
+                }
+
+                If($env:USE_COVERITY -eq "1" -And $env:APPVEYOR_REPO_BRANCH -eq "appveyor_test") {
                         & nuget install PublishCoverity -o $BUILD_DIR -excludeversion;
 
                         $COVERITY_EXE = "$BUILD_DIR\PublishCoverity\tools\PublishCoverity.exe";
 
                         # Do not build tests for Coverity
-                        & cmake -G"$env:CMAKE_GENERATOR" $CMAKE_C_COMPILER $CMAKE_CXX_COMPILER ../plibsys;
+                        & cmake $CMAKE_GENERATOR_ARGS $CMAKE_C_COMPILER $CMAKE_CXX_COMPILER ../plibsys;
 
                         & cov-build --dir "$BUILD_DIR\cov-int" $BUILD_COMMAND $BUILD_PARAMS;
 
@@ -274,7 +281,7 @@ build_script:
                         Get-ChildItem -Path ./ -Recurse | Remove-Item -Force -Recurse;
                 }
 
-                & cmake -G"$env:CMAKE_GENERATOR" $BUILD_TYPE $CMAKE_C_COMPILER $CMAKE_CXX_COMPILER ../plibsys;
+                & cmake $CMAKE_GENERATOR_ARGS $BUILD_TYPE $CMAKE_C_COMPILER $CMAKE_CXX_COMPILER ../plibsys;
                 & $BUILD_COMMAND $BUILD_PARAMS;
 
                 If ($env:APPVEYOR_REPO_BRANCH -eq "appveyor_test") {
