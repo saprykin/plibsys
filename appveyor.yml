@@ -281,7 +281,7 @@ build_script:
                         Get-ChildItem -Path ./ -Recurse | Remove-Item -Force -Recurse;
                 }
 
-                & cmake $CMAKE_GENERATOR_ARGS $BUILD_TYPE $CMAKE_C_COMPILER $CMAKE_CXX_COMPILER ../plibsys;
+                & cmake '$CMAKE_GENERATOR_ARGS' $BUILD_TYPE $CMAKE_C_COMPILER $CMAKE_CXX_COMPILER ../plibsys;
                 & $BUILD_COMMAND $BUILD_PARAMS;
 
                 If ($env:APPVEYOR_REPO_BRANCH -eq "appveyor_test") {
