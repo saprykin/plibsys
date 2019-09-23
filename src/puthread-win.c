@@ -313,7 +313,7 @@ void
 p_uthread_set_name_internal (PUThread *thread)
 {
 	wchar_t		*thr_wname = NULL;
-	pint		namelen    = 0;
+	psize		namelen    = 0;
 	HRESULT		hres;
 	THREADNAME_INFO	thr_info;
 

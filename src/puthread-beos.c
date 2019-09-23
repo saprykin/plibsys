@@ -291,7 +291,7 @@ void
 p_uthread_set_name_internal (PUThread *thread)
 {
 	pchar    *thr_name   = NULL;
-	pint     namelen     = 0;
+	psize    namelen     = 0;
 	pint     res         = 0;
 	pboolean is_alloc    = FALSE;
 
