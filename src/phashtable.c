@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright (C) 2010-2016 Alexander Saprykin <saprykin.spb@gmail.com>
+ * Copyright (C) 2010-2019 Alexander Saprykin <saprykin.spb@gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -48,7 +48,7 @@ struct PHashTable_ {
 #define P_HASH_TABLE_SIZE 101
 
 static puint pp_hash_table_calc_hash (pconstpointer pointer, psize modulo);
-static PHashTableNode * pp_hash_table_find_node (const PHashTable *table, pconstpointer key);
+static PHashTableNode * pp_hash_table_find_node (const PHashTable *table, pconstpointer key, puint hash);
 
 static puint
 pp_hash_table_calc_hash (pconstpointer pointer, psize modulo)
@@ -58,12 +58,9 @@ pp_hash_table_calc_hash (pconstpointer pointer, psize modulo)
 }
 
 static PHashTableNode *
-pp_hash_table_find_node (const PHashTable *table, pconstpointer key)
+pp_hash_table_find_node (const PHashTable *table, pconstpointer key, puint hash)
 {
-	puint		hash;
-	PHashTableNode	*ret;
-
-	hash = pp_hash_table_calc_hash (key, table->size);
+	PHashTableNode *ret;
 
 	for (ret = table->table[hash]; ret != NULL; ret = ret->next)
 		if (ret->key == key)
@@ -102,13 +99,13 @@ p_hash_table_insert (PHashTable *table, ppointer key, ppointer value)
 	if (P_UNLIKELY (table == NULL))
 		return;
 
-	if ((node = pp_hash_table_find_node (table, key)) == NULL) {
+	hash = pp_hash_table_calc_hash (key, table->size);
+
+	if ((node = pp_hash_table_find_node (table, key, hash)) == NULL) {
 		if (P_UNLIKELY ((node = p_malloc0 (sizeof (PHashTableNode))) == NULL)) {
 			P_ERROR ("PHashTable::p_hash_table_insert: failed to allocate memory");
 			return;
 		}
-
-		hash = pp_hash_table_calc_hash (key, table->size);
 
 		/* Insert a new node in front of others */
 		node->key   = key;
@@ -123,12 +120,15 @@ p_hash_table_insert (PHashTable *table, ppointer key, ppointer value)
 P_LIB_API ppointer
 p_hash_table_lookup (const PHashTable *table, pconstpointer key)
 {
-	PHashTableNode *node;
+	PHashTableNode	*node;
+	puint		hash;
 
 	if (P_UNLIKELY (table == NULL))
 		return NULL;
 
-	return ((node = pp_hash_table_find_node (table, key)) == NULL) ? (ppointer) (-1) : node->value;
+	hash = pp_hash_table_calc_hash (key, table->size);
+
+	return ((node = pp_hash_table_find_node (table, key, hash)) == NULL) ? (ppointer) (-1) : node->value;
 }
 
 P_LIB_API PList *
@@ -194,8 +194,9 @@ p_hash_table_remove (PHashTable *table, pconstpointer key)
 	if (P_UNLIKELY (table == NULL))
 		return;
 
-	if (pp_hash_table_find_node (table, key) != NULL) {
-		hash = pp_hash_table_calc_hash (key, table->size);
+	hash = pp_hash_table_calc_hash (key, table->size);
+
+	if (pp_hash_table_find_node (table, key, hash) != NULL) {
 		node = table->table[hash];
 		prev_node = NULL;
 
