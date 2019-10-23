@@ -9,7 +9,7 @@ env:
                 - COVERITY_SCAN_BUILD_COMMAND="make"
 
 language: generic
-dist: trusty
+dist: xenial
 sudo: false
 
 matrix:
@@ -58,31 +58,31 @@ matrix:
                   env: CC=gcc-9 CXX=g++-9 ARCH=32
                 # Linux x64 builds (Clang)
                 - os: linux
-                  addons: { apt: { sources: [ubuntu-toolchain-r-test, llvm-toolchain-precise-3.6], packages: [clang-3.6, libc++-dev] } }
+                  addons: { apt: { sources: [ubuntu-toolchain-r-test, llvm-toolchain-trusty-3.6], packages: [clang-3.6, libc++-dev] } }
                   env: CC=clang-3.6 CXX=clang++-3.6
                 - os: linux
-                  addons: { apt: { sources: [ubuntu-toolchain-r-test, llvm-toolchain-precise-3.7], packages: [clang-3.7, libc++-dev] } }
+                  addons: { apt: { sources: [ubuntu-toolchain-r-test, llvm-toolchain-trusty-3.7], packages: [clang-3.7, libc++-dev] } }
                   env: CC=clang-3.7 CXX=clang++-3.7
                 - os: linux
-                  addons: { apt: { sources: [ubuntu-toolchain-r-test, llvm-toolchain-precise-3.8], packages: [clang-3.8, libc++-dev] } }
+                  addons: { apt: { sources: [ubuntu-toolchain-r-test, llvm-toolchain-xenial-3.8], packages: [clang-3.8, libc++-dev] } }
                   env: CC=clang-3.8 CXX=clang++-3.8
                 - os: linux
-                  addons: { apt: { sources: [ubuntu-toolchain-r-test, llvm-toolchain-trusty-3.9], packages: [clang-3.9, libc++-dev] } }
+                  addons: { apt: { sources: [ubuntu-toolchain-r-test, llvm-toolchain-xenial-3.9], packages: [clang-3.9, libc++-dev] } }
                   env: CC=clang-3.9 CXX=clang++-3.9
                 - os: linux
-                  addons: { apt: { sources: [ubuntu-toolchain-r-test, llvm-toolchain-trusty-4.0], packages: [clang-4.0, libc++-dev] } }
+                  addons: { apt: { sources: [ubuntu-toolchain-r-test, llvm-toolchain-xenial-4.0], packages: [clang-4.0, libc++-dev] } }
                   env: CC=clang-4.0 CXX=clang++-4.0
                 - os: linux
-                  addons: { apt: { sources: [ubuntu-toolchain-r-test, llvm-toolchain-trusty-5.0], packages: [clang-5.0, libc++-dev] } }
+                  addons: { apt: { sources: [ubuntu-toolchain-r-test, llvm-toolchain-xenial-5.0], packages: [clang-5.0, libc++-dev] } }
                   env: CC=clang-5.0 CXX=clang++-5.0
                 - os: linux
-                  addons: { apt: { sources: [ubuntu-toolchain-r-test, llvm-toolchain-trusty-6.0], packages: [clang-6.0, libc++-dev] } }
+                  addons: { apt: { sources: [ubuntu-toolchain-r-test, llvm-toolchain-xenial-6.0], packages: [clang-6.0, libc++-dev] } }
                   env: CC=clang-6.0 CXX=clang++-6.0
                 - os: linux
-                  addons: { apt: { sources: [ubuntu-toolchain-r-test, llvm-toolchain-trusty-7], packages: [clang-7, libc++-dev] } }
+                  addons: { apt: { sources: [ubuntu-toolchain-r-test, llvm-toolchain-xenial-7], packages: [clang-7, libc++-dev] } }
                   env: CC=clang-7 CXX=clang++-7
                 - os: linux
-                  addons: { apt: { sources: [ubuntu-toolchain-r-test, llvm-toolchain-trusty-8], packages: [clang-8, libc++-dev] } }
+                  addons: { apt: { sources: [ubuntu-toolchain-r-test, llvm-toolchain-xenial-8], packages: [clang-8, libc++-dev] } }
                   env: CC=clang-8 CXX=clang++-8
                 # macOS builds (GCC)
                 - os: osx
