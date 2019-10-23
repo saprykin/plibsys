@@ -84,9 +84,6 @@ matrix:
                 - os: linux
                   addons: { apt: { sources: [ubuntu-toolchain-r-test, llvm-toolchain-xenial-8], packages: [clang-8, libc++-dev] } }
                   env: CC=clang-8 CXX=clang++-8
-                - os: linux
-                  addons: { apt: { sources: [ubuntu-toolchain-r-test, llvm-toolchain-xenial], packages: [clang-9, libc++-dev] } }
-                  env: CC=clang-9 CXX=clang++-9
                 # macOS builds (GCC)
                 - os: osx
                   osx_image: xcode8.3
