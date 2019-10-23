@@ -375,15 +375,18 @@ p_uthread_wait_internal (PUThread *thread)
 void
 p_uthread_set_name_internal (PUThread *thread)
 {
-	pchar    *thr_name   = NULL;
-	psize    namelen     = 0;
-	pint     res         = 0;
-	pboolean is_alloc    = FALSE;
+	pchar    *thr_name = NULL;
+	pint     res       = 0;
+	pboolean is_alloc  = FALSE;
+#ifdef PUTHREAD_MAX_NAME
+	psize    namelen   = 0;
+#endif
 
 	thr_name = thread->base.name;
-	namelen  = strlen (thr_name);
 
 #ifdef PUTHREAD_MAX_NAME
+	namelen  = strlen (thr_name);
+
 	if (namelen > PUTHREAD_MAX_NAME - 1) {
 		if (P_UNLIKELY ((thr_name = p_malloc0 (namelen + 1)) == NULL)) {
 			P_ERROR ("PUThread::p_uthread_set_name_internal: failed to allocate memory");
