@@ -10,7 +10,6 @@ env:
 
 language: generic
 dist: xenial
-sudo: false
 
 matrix:
         include:
