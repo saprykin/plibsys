@@ -37,6 +37,12 @@ matrix:
                 - os: linux
                   addons: { apt: { sources: ubuntu-toolchain-r-test, packages: [gcc-9, g++-9] } }
                   env: CC=gcc-9 CXX=g++-9 ARCH=64
+                # IBM Power builds (GCC)
+                - os: linux
+                  arch: ppc64le
+                # IBM Z builds (GCC)
+                - os: linux
+                  arch: s390x
                 # Linux x86 builds (GCC)
                 - os: linux
                   addons: { apt: { sources: ubuntu-toolchain-r-test, packages: [gcc-4.9, g++-4.9, gcc-multilib, g++-multilib, gcc-4.9-multilib, g++-4.9-multilib, linux-libc-dev] } }
