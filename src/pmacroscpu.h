@@ -364,8 +364,9 @@
 #if defined(__alpha__) || defined(__alpha) || defined(_M_ALPHA)
 #  define P_CPU_ALPHA
 #elif defined(__arm__) || defined(__TARGET_ARCH_ARM) || defined(_ARM) || \
-      defined(_M_ARM_) || defined(__arm) || defined(__aarch64__)
-#  if defined(__aarch64__)
+      defined(_M_ARM)  || defined(_M_ARM_64) || defined(__arm) || defined(__aarch64__) || \
+      defined(__ARM64__)
+#  if defined(__aarch64__) || defined(_M_ARM64) || defined(__ARM64__)
 #    define P_CPU_ARM_64
 #  else
 #    define P_CPU_ARM_32
@@ -377,10 +378,14 @@
 #  elif defined(_M_ARM) && _M_ARM > 1
 #    define P_CPU_ARM _M_ARM
 #  elif defined(__ARM64_ARCH_8__)  || \
+	defined(__ARM_ARCH_8__)    || \
+	defined(__ARM_ARCH_8A__)   || \
 	defined(__aarch64__)       || \
+	defined(__ARMv8__)         || \
+	defined(__ARMv8_A__)       || \
+	defined(_M_ARM_64)         || \\
 	defined(__CORE_CORTEXAV8__)
 #    define P_CPU_ARM 8
-#    define P_CPU_ARM_V8
 #  elif defined(__ARM_ARCH_7__)    || \
 	defined(__ARM_ARCH_7A__)   || \
 	defined(__ARM_ARCH_7R__)   || \
@@ -389,7 +394,6 @@
 	defined(_ARM_ARCH_7)       || \
 	defined(__CORE_CORTEXA__)
 #    define P_CPU_ARM 7
-#    define P_CPU_ARM_V7
 #  elif defined(__ARM_ARCH_6__)    || \
 	defined(__ARM_ARCH_6J__)   || \
 	defined(__ARM_ARCH_6T2__)  || \
@@ -398,25 +402,39 @@
 	defined(__ARM_ARCH_6ZK__)  || \
 	defined(__ARM_ARCH_6M__)
 #    define P_CPU_ARM 6
-#    define P_CPU_ARM_V6
 #  elif defined(__ARM_ARCH_5__)    || \
 	defined(__ARM_ARCH_5E__)   || \
 	defined(__ARM_ARCH_5T__)   || \
 	defined(__ARM_ARCH_5TE__)  || \
 	defined(__ARM_ARCH_5TEJ__)
 #    define P_CPU_ARM 5
-#    define P_CPU_ARM_V5
 #  elif defined(__ARM_ARCH_4__)    || \
 	defined(__ARM_ARCH_4T__)
 #    define P_CPU_ARM 4
-#    define P_CPU_ARM_V4
 #  elif defined(__ARM_ARCH_3__)    || \
 	defined(__ARM_ARCH_3M__)
 #    define P_CPU_ARM 3
-#    define P_CPU_ARM_V3
 #  elif defined(__ARM_ARCH_2__)
 #    define P_CPU_ARM 2
+#  else
+#    define P_CPU_ARM 0
+#  endif
+#  if P_CPU_ARM == 8
+#    define P_CPU_ARM_V8
+#  elif P_CPU_ARM == 7
+#    define P_CPU_ARM_V7
+#  elif P_CPU_ARM == 6
+#    define P_CPU_ARM_V6
+#  elif P_CPU_ARM == 5
+#    define P_CPU_ARM_V5
+#  elif P_CPU_ARM == 4
+#    define P_CPU_ARM_V4
+#  elif P_CPU_ARM == 3
+#    define P_CPU_ARM_V3
+#  elif P_CPU_ARM == 2
 #    define P_CPU_ARM_V2
+#  else
+#    error "ARM architecture is uknown or too old"
 #  endif
 #elif defined(__i386__) || defined(__i386) || defined(_M_IX86)
 #  define P_CPU_X86_32
