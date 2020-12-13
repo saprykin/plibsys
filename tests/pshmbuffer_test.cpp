@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright (C) 2013-2019 Alexander Saprykin <saprykin.spb@gmail.com>
+ * Copyright (C) 2013-2020 Alexander Saprykin <saprykin.spb@gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -31,6 +31,7 @@
 P_TEST_MODULE_INIT ();
 
 static pchar test_str[]    = "This is a test string!";
+static pchar test_str_sm[] = "Small";
 static pint is_thread_exit = 0;
 static pint read_count     = 0;
 static pint write_count    = 0;
@@ -254,6 +255,37 @@ P_TEST_CASE_BEGIN (pshmbuffer_general_test)
 	P_TEST_CHECK (p_shm_buffer_write (buffer, (ppointer) large_buf, 2048, NULL) == 0);
 
 	p_free (large_buf);
+	p_shm_buffer_free (buffer);
+
+	/* Test read-write positions */
+
+	buffer = p_shm_buffer_new ("pshm_test_buffer_small", 10, NULL);
+	P_TEST_REQUIRE (buffer != NULL);
+	p_shm_buffer_take_ownership (buffer);
+	p_shm_buffer_free (buffer);
+	buffer = p_shm_buffer_new ("pshm_test_buffer_small", 10, NULL);
+	P_TEST_REQUIRE (buffer != NULL);
+
+	P_TEST_CHECK (p_shm_buffer_get_free_space (buffer, NULL) == 10);
+	P_TEST_CHECK (p_shm_buffer_get_used_space (buffer, NULL) == 0);
+
+	/* Case 1: write position > read position */
+	P_TEST_CHECK (p_shm_buffer_write (buffer, (ppointer) test_str_sm, sizeof (test_str_sm), NULL) == sizeof (test_str_sm));
+	P_TEST_CHECK (p_shm_buffer_get_free_space (buffer, NULL) == (10 - sizeof (test_str_sm)));
+	P_TEST_CHECK (p_shm_buffer_get_used_space (buffer, NULL) == sizeof (test_str_sm));
+
+	/* Case 2: write position == read position */
+	memset (test_buf, 0, sizeof (test_buf));
+	P_TEST_CHECK (p_shm_buffer_read (buffer, (ppointer) test_buf, sizeof (test_buf), NULL) == sizeof (test_str_sm));
+	P_TEST_CHECK (strncmp (test_buf, test_str_sm, sizeof (test_str_sm)) == 0);
+	P_TEST_CHECK (p_shm_buffer_get_free_space (buffer, NULL) == 10);
+	P_TEST_CHECK (p_shm_buffer_get_used_space (buffer, NULL) == 0);
+
+	/* Case 3: write position < read position */
+	P_TEST_CHECK (p_shm_buffer_write (buffer, (ppointer) test_str_sm, sizeof (test_str_sm), NULL) == sizeof (test_str_sm));
+	P_TEST_CHECK (p_shm_buffer_get_free_space (buffer, NULL) == (10 - sizeof (test_str_sm)));
+	P_TEST_CHECK (p_shm_buffer_get_used_space (buffer, NULL) == sizeof (test_str_sm));
+
 	p_shm_buffer_free (buffer);
 
 	p_libsys_shutdown ();
