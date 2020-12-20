@@ -97,9 +97,6 @@ matrix:
                   env: CC=clang-8 CXX=clang++-8
                 # macOS builds (GCC)
                 - os: osx
-                  osx_image: xcode10.1
-                  env: FORMULA=gcc@5 CC=gcc-5 CXX=g++-5
-                - os: osx
                   osx_image: xcode10.2
                   env: FORMULA=gcc@6 CC=gcc-6 CXX=g++-6
                 - os: osx
