@@ -118,7 +118,7 @@ install:
                                 $env:PATH   = "c:\msys64\mingw64\bin;$env:PATH";
                         } Else {
                                 & C:\msys64\usr\bin\mkdir -p /var/cache/pacman/pkg;
-                                & pacman --sync --noconfirm cmake;
+                                & pacman --sync --noconfirm cmake doxygen;
                         }
                 } ElseIf ($env:USE_MINGW -eq "1") {
                         If ($env:USE_MINGW_493 -eq "1") {
