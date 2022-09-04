@@ -32,7 +32,7 @@
 #include <string.h>
 
 #include <exec/types.h>
-#include <proto/exec.h>
+#include "proto/exec.h"
 
 #define P_SHM_NAMESPACE	"pshm"
 #define P_SHM_SUFFIX	"_p_shm_object"

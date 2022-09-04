@@ -36,15 +36,15 @@
  */
 
 #if !defined (PLIBSYS_H_INSIDE) && !defined (PLIBSYS_COMPILATION)
-#  error "Header files shouldn't be included directly, consider using <plibsys.h> instead."
+#  error "Header files shouldn't be included directly, consider using "plibsys.h" instead."
 #endif
 
 #ifndef PLIBSYS_HEADER_PFILE_H
 #define PLIBSYS_HEADER_PFILE_H
 
-#include <pmacros.h>
-#include <ptypes.h>
-#include <perror.h>
+#include "pmacros.h"
+#include "ptypes.h"
+#include "perror.h"
 
 /**
  * @def P_DIR_SEPARATOR

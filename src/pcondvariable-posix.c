@@ -29,7 +29,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
-#include <pthread.h>
+#include "pthread.h"
 
 struct PCondVariable_ {
 	pthread_cond_t hdl;

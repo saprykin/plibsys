@@ -60,8 +60,8 @@
 
 #include <string.h>
 
-#include <proto/dos.h>
-#include <proto/elf.h>
+#include "proto/dos.h"
+#include "proto/elf.h"
 
 #if defined (__CLIB2__)
 #  include <dos.h>

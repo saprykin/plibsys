@@ -35,8 +35,8 @@
 #include <string.h>
 #include <setjmp.h>
 
-#include <proto/exec.h>
-#include <proto/dos.h>
+#include "proto/exec.h"
+#include "proto/dos.h"
 
 #define PUTHREAD_AMIGA_MAX_TLS_KEYS 128
 #define PUTHREAD_AMIGA_MIN_STACK    524288

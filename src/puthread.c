@@ -93,8 +93,8 @@ typedef void (WINAPI * SystemInfoFunc) (LPSYSTEM_INFO);
 
 #ifdef P_OS_AMIGA
 #  include <clib/alib_protos.h>
-#  include <proto/dos.h>
-#  include <proto/exec.h>
+#  include "proto/dos.h"
+#  include "proto/exec.h"
 #endif
 
 extern void p_uthread_init_internal (void);

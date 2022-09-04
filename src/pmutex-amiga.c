@@ -29,7 +29,7 @@
 #include <stdlib.h>
 
 #include <exec/exectags.h>
-#include <proto/exec.h>
+#include "proto/exec.h"
 
 typedef APTR mutex_hdl;
 

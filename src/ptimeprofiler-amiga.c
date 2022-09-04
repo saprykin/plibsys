@@ -26,7 +26,7 @@
 #include "ptimeprofiler.h"
 #include "ptimeprofiler-private.h"
 
-#include <proto/timer.h>
+#include "proto/timer.h"
 
 static puint64 pp_time_profiler_freq = 1;
 

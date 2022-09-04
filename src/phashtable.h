@@ -55,15 +55,15 @@
  */
 
 #if !defined (PLIBSYS_H_INSIDE) && !defined (PLIBSYS_COMPILATION)
-#  error "Header files shouldn't be included directly, consider using <plibsys.h> instead."
+#  error "Header files shouldn't be included directly, consider using "plibsys.h" instead."
 #endif
 
 #ifndef PLIBSYS_HEADER_PHASHTABLE_H
 #define PLIBSYS_HEADER_PHASHTABLE_H
 
-#include <pmacros.h>
-#include <ptypes.h>
-#include <plist.h>
+#include "pmacros.h"
+#include "ptypes.h"
+#include "plist.h"
 
 P_BEGIN_DECLS
 

@@ -33,7 +33,7 @@
 #include <time.h>
 #include <string.h>
 
-#include <process.h>
+#include "process.h"
 
 typedef HRESULT (WINAPI * PWin32SetThreadDescription) (HANDLE hThread, PCWSTR lpThreadDescription);
 typedef HANDLE puthread_hdl;

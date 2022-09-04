@@ -33,7 +33,7 @@
 
 #include <exec/types.h>
 #include <exec/semaphores.h>
-#include <proto/exec.h>
+#include "proto/exec.h"
 
 #define P_SEM_SUFFIX	"_p_sem_object"
 #define P_SEM_PRIV_SIZE	(sizeof (psize))

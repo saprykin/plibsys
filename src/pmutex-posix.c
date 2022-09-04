@@ -27,7 +27,7 @@
 #include "pmutex.h"
 
 #include <stdlib.h>
-#include <pthread.h>
+#include "pthread.h"
 
 typedef pthread_mutex_t mutex_hdl;
 

@@ -30,7 +30,7 @@
 
 #include <stdlib.h>
 
-#include <proto/exec.h>
+#include "proto/exec.h"
 
 typedef struct _PCondThread {
 	struct Task		*thread;

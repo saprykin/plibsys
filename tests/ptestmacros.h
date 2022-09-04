@@ -34,7 +34,7 @@
 
 #include <stdlib.h>
 
-#include <plibsys.h>
+#include "plibsys.h"
 
 #if defined (P_CC_MSVC)
 #  pragma warning (push)

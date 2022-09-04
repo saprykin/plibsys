@@ -27,7 +27,7 @@
 #include "prwlock.h"
 
 #include <stdlib.h>
-#include <pthread.h>
+#include "pthread.h"
 
 typedef pthread_rwlock_t rwlock_hdl;
 

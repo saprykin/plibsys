@@ -36,12 +36,12 @@
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
-#include <pthread.h>
+#include "pthread.h"
 #include <time.h>
 
-/* On some OS like OpenBSD it must follow <pthread.h> */
+/* On some OS like OpenBSD it must follow "pthread.h" */
 #ifdef PLIBSYS_NEED_PTHREAD_NP_H
-#  include <pthread_np.h>
+#  include "pthread_np.h"
 #endif
 
 #ifdef PLIBSYS_HAS_POSIX_SCHEDULING
