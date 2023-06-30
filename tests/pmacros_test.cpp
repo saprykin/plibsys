@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright (C) 2014-2018 Alexander Saprykin <saprykin.spb@gmail.com>
+ * Copyright (C) 2014-2023 Alexander Saprykin <saprykin.spb@gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -322,7 +322,7 @@ P_TEST_CASE_BEGIN (pmacros_general_test)
 #endif
 
 #if defined (P_OS_MAC)
-#  if !defined (P_CPU_X86) && !defined (P_CPU_POWER)
+#  if !defined (P_CPU_X86) && !defined (P_CPU_POWER) && !defined (P_CPU_ARM_64)
 	P_TEST_CHECK (false);
 #  endif
 #endif
