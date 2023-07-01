@@ -51,7 +51,7 @@ include (${PROJECT_SOURCE_DIR}/cmake/PlatformDetect.cmake)
 include (${PROJECT_SOURCE_DIR}/cmake/VisibilityDetect.cmake)
 include (${PROJECT_SOURCE_DIR}/cmake/StdargDetect.cmake)
 include (${PROJECT_SOURCE_DIR}/cmake/ThreadNameDetect.cmake)
-set (OUTPUT_DIR ${CMAKE_BINARY_DIR})
+set (OUTPUT_DIR ${CMAKE_CURRENT_BINARY_DIR})
 
 # Try to detect target platform
 plibsys_detect_target_platform (PLIBSYS_TARGET_PLATFORM)
@@ -109,7 +109,7 @@ include (${PROJECT_SOURCE_DIR}/platforms/${PLIBSYS_TARGET_PLATFORM}/platform.cma
 
 set (PLIBSYS_INCLUDE_DIRS
         ${PROJECT_SOURCE_DIR}/src
-        ${CMAKE_BINARY_DIR}
+        ${CMAKE_CURRENT_BINARY_DIR}
 )
 
 set (PLIBSYS_PUBLIC_HDRS
@@ -164,7 +164,7 @@ set (PLIBSYS_PRIVATE_HDRS
         ptree-rb.h
         ptree-private.h
         puthread-private.h
-        ${CMAKE_BINARY_DIR}/plibsysconfig.h
+        ${CMAKE_CURRENT_BINARY_DIR}/plibsysconfig.h
 )
 
 set (PLIBSYS_SRCS
@@ -798,7 +798,7 @@ endif()
 
 plibsys_detect_va_copy (PLIBSYS_VA_COPY)
 
-configure_file (${CMAKE_CURRENT_SOURCE_DIR}/plibsysconfig.h.in ${CMAKE_BINARY_DIR}/plibsysconfig.h)
+configure_file (${CMAKE_CURRENT_SOURCE_DIR}/plibsysconfig.h.in ${CMAKE_CURRENT_BINARY_DIR}/plibsysconfig.h)
 
 # Restore compiler flags
 set (CMAKE_REQUIRED_DEFINITIONS ${SAVED_CMAKE_REQUIRED_DEFINITIONS})
@@ -945,7 +945,7 @@ install (TARGETS ${PLIBSYS_INSTALL_TARGETS}
 )
 install (FILES
         ${PLIBSYS_PUBLIC_HDRS}
-        ${CMAKE_BINARY_DIR}/plibsysconfig.h
+        ${CMAKE_CURRENT_BINARY_DIR}/plibsysconfig.h
         DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/plibsys
         COMPONENT Core
 )
