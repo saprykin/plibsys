@@ -1,6 +1,6 @@
 # The MIT License
 #
-# Copyright (C) 2018 Alexander Saprykin <saprykin.spb@gmail.com>
+# Copyright (C) 2018-2023 Alexander Saprykin <saprykin.spb@gmail.com>
 #
 # Permission is hereby granted, free of charge, to any person obtaining
 # a copy of this software and associated documentation files (the
@@ -52,6 +52,11 @@ function (plibsys_detect_c_compiler result)
         # Rename xl -> xlc
         if (PLIBSYS_C_COMPILER STREQUAL xl)
                 set (PLIBSYS_C_COMPILER xlc)
+        endif()
+
+        # Rename appleclang -> clang
+        if (PLIBSYS_C_COMPILER STREQUAL appleclang)
+                set (PLIBSYS_C_COMPILER clang)
         endif()
 
         # Assign result
