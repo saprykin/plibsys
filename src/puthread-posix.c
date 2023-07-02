@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright (C) 2010-2019 Alexander Saprykin <saprykin.spb@gmail.com>
+ * Copyright (C) 2010-2023 Alexander Saprykin <saprykin.spb@gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -61,6 +61,7 @@
 
 #ifdef P_OS_HAIKU
 #  include <kernel/OS.h>
+int pthread_setname_np (pthread_t thread, const char * name);
 #endif
 
 /* Some systems without native pthreads may lack some of the constants,
