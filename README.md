@@ -1,6 +1,6 @@
 
 [![](https://api.travis-ci.org/saprykin/plibsys.svg?branch=master)](https://travis-ci.org/saprykin/plibsys)
-[![](https://ci.appveyor.com/api/projects/status/github/saprykin/plibsys?branch=appveyor_test&svg=true)](https://ci.appveyor.com/project/saprykin/plibsys)
+[![](https://ci.appveyor.com/api/projects/status/yvu21lawtkkfpn4b/branch/appveyor_test?svg=true)](https://ci.appveyor.com/project/saprykin/plibsys/branch/appveyor_test)
 [![](https://scan.coverity.com/projects/8333/badge.svg)](https://scan.coverity.com/projects/saprykin-plibsys)
 [![](https://codecov.io/gh/saprykin/plibsys/branch/master/graph/badge.svg)](https://codecov.io/gh/saprykin/plibsys)
 [![](https://codedocs.xyz/saprykin/plibsys.svg)](https://codedocs.xyz/saprykin/plibsys/)
