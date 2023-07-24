@@ -88,7 +88,6 @@ REFERENCES_RELATION    = YES
 # configuration options related to the alphabetical class index
 #---------------------------------------------------------------------------
 ALPHABETICAL_INDEX     = NO
-COLS_IN_ALPHA_INDEX    = 5
 IGNORE_PREFIX          = 
 #---------------------------------------------------------------------------
 # configuration options related to the HTML output
@@ -161,7 +160,6 @@ ALLEXTERNALS           = NO
 #---------------------------------------------------------------------------
 # Configuration options related to the dot tool   
 #---------------------------------------------------------------------------
-CLASS_DIAGRAMS         = YES
 HAVE_DOT               = NO
 CLASS_GRAPH            = YES
 COLLABORATION_GRAPH    = YES
