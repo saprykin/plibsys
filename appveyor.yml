@@ -40,12 +40,8 @@ environment:
                   USE_MINGW64:                 "1"
                   APPVEYOR_BUILD_WORKER_IMAGE: "Visual Studio 2022"
                 - CMAKE_GENERATOR:             "Unix Makefiles"
-                  USE_CYGWIN:                  "1"
                   USE_CYGWIN64:                "1"
                   APPVEYOR_BUILD_WORKER_IMAGE: "Visual Studio 2019"
-                - CMAKE_GENERATOR:             "Unix Makefiles"
-                  USE_CYGWIN:                  "1"
-                  APPVEYOR_BUILD_WORKER_IMAGE: "Visual Studio 2017"
                 - CMAKE_GENERATOR:             "Visual Studio 9 2008"
                   USE_OLD_MSBUILD:             "1"
                   APPVEYOR_BUILD_WORKER_IMAGE: "Visual Studio 2015"
@@ -100,15 +96,9 @@ cache:
         - c:\cygwin-setup-cache
 
 install:
-        - If "%USE_CYGWIN%" == "1" (
           If "%USE_CYGWIN64%" == "1" (
                 c:\cygwin64\setup-x86_64.exe -gqnNdO -R c:\cygwin64 -s http://cygwin.mirror.constant.com -l "c:\cygwin-setup-cache" -P cmake -P cygrunsrv
-          ))
-
-        - If "%USE_CYGWIN%" == "1" (
-          If NOT "%USE_CYGWIN64%" == "1" (
-                c:\cygwin\setup-x86.exe -gqnNdO -R c:\cygwin -s http://cygwin.mirror.constant.com -l "c:\cygwin-setup-cache" -P cmake -P cygrunsrv
-          ))
+          )
 
         - ps: >-
                 If ($env:USE_MSYS64 -eq "1") {
@@ -218,12 +208,8 @@ build_script:
 
                         $BUILD_COMMAND = "mingw32-make";
                         $BUILD_PARAMS  = @("-j", "2");
-                } ElseIf ($env:USE_CYGWIN -eq "1") {
-                        If ($env:USE_CYGWIN64 -eq "1") {
-                                $env:PATH     = "c:\cygwin64\bin";
-                        } Else {
-                                $env:PATH     = "c:\cygwin\bin";
-                        }
+                } ElseIf ($env:USE_CYGWIN64 -eq "1") {
+                        $env:PATH     = "c:\cygwin64\bin";
 
                         $BUILD_COMMAND = "make";
                         $BUILD_PARAMS  = @("-j", "2");
