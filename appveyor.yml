@@ -96,7 +96,7 @@ cache:
         - c:\cygwin-setup-cache
 
 install:
-          If "%USE_CYGWIN64%" == "1" (
+        - If "%USE_CYGWIN64%" == "1" (
                 c:\cygwin64\setup-x86_64.exe -gqnNdO -R c:\cygwin64 -s http://cygwin.mirror.constant.com -l "c:\cygwin-setup-cache" -P cmake -P cygrunsrv
           )
 
