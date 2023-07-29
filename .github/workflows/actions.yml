@@ -6,8 +6,11 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: config
-        run: cd .. && mkdir ./plibsys-build && cd ./plibsys-build
-        run: cmake -DCMAKE_BUILD_TYPE_RELEASE ../plibsys-build
+        run: |
+          cd ..
+          mkdir ./plibsys-build
+          cd ./plibsys-build
+          cmake -DCMAKE_BUILD_TYPE_RELEASE ../plibsys-build
       - name: build
         run: make -j
       - name: test
