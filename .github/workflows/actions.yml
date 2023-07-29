@@ -10,7 +10,7 @@ jobs:
           cd ..
           mkdir ./plibsys-build
           cd ./plibsys-build
-          cmake -DCMAKE_BUILD_TYPE_RELEASE ../plibsys-build
+          cmake -DCMAKE_BUILD_TYPE_RELEASE ../plibsys
       - name: build
         run: make -j
       - name: test
