@@ -2,7 +2,22 @@ name: plibsys-ci
 on: [push]
 jobs:
   main:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            CC: gcc
+            CXX: g++
+          - os: ubuntu-latest
+            CC: clang
+            CXX: clang++
+          - os: macos-latest
+            CC: clang
+            CXX: clang++
+          - os: macos-latest
+            CC: gcc-12
+            CXX: g++-12
     steps:
       - uses: actions/checkout@v3
       - name: config
@@ -11,7 +26,7 @@ jobs:
           cd ..
           mkdir ./plibsys-build
           cd ./plibsys-build
-          cmake -DCMAKE_BUILD_TYPE=Release ../plibsys
+          cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPIELR=${{ CC }} -DCMAKE_CXX_COMPILER=${{ CXX }} ../plibsys
       - name: build
         run: |
           pwd
