@@ -1,0 +1,14 @@
+name: plibsys-ci
+on: [push]
+jobs:
+  main:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: config
+        run: cd .. && mkdir ./plibsys-build && cd ./plibsys-build
+        run: cmake -DCMAKE_BUILD_TYPE_RELEASE ../plibsys-build
+      - name: build
+        run: make -j
+      - name: test
+        run: ctest
