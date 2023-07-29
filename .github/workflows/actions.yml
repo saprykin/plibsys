@@ -19,6 +19,6 @@ jobs:
           make -j
       - name: test
         run: |
-        pwd
-        cd ../plibsys-build
-        ctest
+          pwd
+          cd ../plibsys-build
+          ctest
