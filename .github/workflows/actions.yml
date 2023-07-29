@@ -26,7 +26,7 @@ jobs:
           cd ..
           mkdir ./plibsys-build
           cd ./plibsys-build
-          cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPIELR=${{ CC }} -DCMAKE_CXX_COMPILER=${{ CXX }} ../plibsys
+          cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPIELR=${{ matrix.CC }} -DCMAKE_CXX_COMPILER=${{ matrix.CXX }} ../plibsys
       - name: build
         run: |
           pwd
