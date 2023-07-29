@@ -7,6 +7,7 @@ jobs:
       - uses: actions/checkout@v3
       - name: config
         run: |
+          pwd
           cd ..
           mkdir ./plibsys-build
           cd ./plibsys-build
