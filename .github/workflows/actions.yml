@@ -13,6 +13,12 @@ jobs:
           cd ./plibsys-build
           cmake -DCMAKE_BUILD_TYPE=Release ../plibsys
       - name: build
-        run: make -j
+        run: |
+          pwd
+          cd ../plibsys-build
+          make -j
       - name: test
-        run: ctest
+        run: |
+        pwd
+        cd ../plibsys-build
+        ctest
