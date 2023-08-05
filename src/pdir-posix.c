@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright (C) 2015-2017 Alexander Saprykin <saprykin.spb@gmail.com>
+ * Copyright (C) 2015-2023 Alexander Saprykin <saprykin.spb@gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -53,6 +53,10 @@
 #  if defined (P_OS_BEOS) || defined (P_OS_AMIGA)
 #    define P_DIR_NON_REENTRANT 1
 #  endif
+#endif
+
+#ifdef P_OS_ANDROID
+#  define P_DIR_NON_REENTRANT 1
 #endif
 
 struct PDir_ {
