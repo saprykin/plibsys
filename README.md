@@ -1,4 +1,5 @@
-[![](https://ci.appveyor.com/api/projects/status/yvu21lawtkkfpn4b/branch/appveyor_test?svg=true)](https://ci.appveyor.com/project/saprykin/plibsys/branch/appveyor_test)
+[![](https://github.com/saprykin/plibsys/actions/workflows/actions.yml/badge.svg)](https://github.com/saprykin/plibsys/actions)
+[![](https://ci.appveyor.com/api/projects/status/yvu21lawtkkfpn4b/branch/master?svg=true)](https://ci.appveyor.com/project/saprykin/plibsys/branch/master)
 [![](https://scan.coverity.com/projects/8333/badge.svg)](https://scan.coverity.com/projects/saprykin-plibsys)
 [![](https://codecov.io/gh/saprykin/plibsys/branch/master/graph/badge.svg)](https://codecov.io/gh/saprykin/plibsys)
 [![](https://codedocs.xyz/saprykin/plibsys.svg)](https://codedocs.xyz/saprykin/plibsys/)
