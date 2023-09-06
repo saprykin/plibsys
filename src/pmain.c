@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright (C) 2010-2016 Alexander Saprykin <saprykin.spb@gmail.com>
+ * Copyright (C) 2010-2023 Alexander Saprykin <saprykin.spb@gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -81,7 +81,7 @@ p_libsys_shutdown (void)
 
 	pp_plibsys_inited = FALSE;
 
-	p_library_loader_init ();
+	p_library_loader_shutdown ();
 	p_time_profiler_shutdown ();
 	p_rwlock_shutdown ();
 	p_cond_variable_shutdown ();
