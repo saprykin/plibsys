@@ -3,7 +3,7 @@
 #
 # The MIT License
 #
-# Copyright 2017-2018, Alexander Saprykin <saprykin.spb@gmail.com>
+# Copyright 2017-2023, Alexander Saprykin <saprykin.spb@gmail.com>
 #
 # Permission is hereby granted, free of charge, to any person obtaining
 # a copy of this software and associated documentation files (the
@@ -36,7 +36,12 @@ fi
 total_counter=0
 pass_counter=0
 
-IFS=$'\n'
+host_system=`uname`
+
+if ! (echo "${host_system}" | grep AmigaOS >/dev/null 2>&1); then
+    IFS=$'\n'
+fi
+
 files=$(ls $1)
 
 export LD_LIBRARY_PATH=$1:$LD_LIBRARY_PATH
