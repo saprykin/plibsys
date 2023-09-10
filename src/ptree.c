@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright (C) 2015-2017 Alexander Saprykin <saprykin.spb@gmail.com>
+ * Copyright (C) 2015-2023 Alexander Saprykin <saprykin.spb@gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -83,7 +83,8 @@ p_tree_new_full (PTreeType		type,
 {
 	PTree *ret;
 
-	if (P_UNLIKELY (!(type >= P_TREE_TYPE_BINARY && type <= P_TREE_TYPE_AVL)))
+	if (P_UNLIKELY (!((int) type >= (int) P_TREE_TYPE_BINARY &&
+			  (int) type <= (int) P_TREE_TYPE_AVL)))
 		return NULL;
 
 	if (P_UNLIKELY (func == NULL))

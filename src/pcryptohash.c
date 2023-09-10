@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright (C) 2010-2017 Alexander Saprykin <saprykin.spb@gmail.com>
+ * Copyright (C) 2010-2023 Alexander Saprykin <saprykin.spb@gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -76,7 +76,8 @@ p_crypto_hash_new (PCryptoHashType type)
 {
 	PCryptoHash *ret;
 
-	if (P_UNLIKELY (!(type >= P_CRYPTO_HASH_TYPE_MD5 && type <= P_CRYPTO_HASH_TYPE_GOST)))
+	if (P_UNLIKELY (!((int) type >= (int) P_CRYPTO_HASH_TYPE_MD5 &&
+			  (int) type <= (int) P_CRYPTO_HASH_TYPE_GOST)))
 		return NULL;
 
 	if (P_UNLIKELY ((ret = p_malloc0 (sizeof (PCryptoHash))) == NULL)) {
