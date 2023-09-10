@@ -44,6 +44,11 @@ function (plibsys_detect_c_compiler result)
                 set (PLIBSYS_C_COMPILER icc)
         endif()
 
+        # Rename intelllvm -> icx
+        if (PLIBSYS_C_COMPILER STREQUAL intelllvm)
+                set (PLIBSYS_C_COMPILER icx)
+        endif()
+
         # Rename openwatcom -> watcom
         if (PLIBSYS_C_COMPILER STREQUAL openwatcom)
                 set (PLIBSYS_C_COMPILER watcom)
