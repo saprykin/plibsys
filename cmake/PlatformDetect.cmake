@@ -64,6 +64,11 @@ function (plibsys_detect_c_compiler result)
                 set (PLIBSYS_C_COMPILER clang)
         endif()
 
+        # Rename nvhpc -> pgi
+        if (PLIBSYS_C_COMPILER STREQUAL nvhpc)
+                set (PLIBSYS_C_COMPILER pgi)
+        endif()
+
         # Assign result
         set (${result} ${PLIBSYS_C_COMPILER} PARENT_SCOPE)
 endfunction (plibsys_detect_c_compiler)
