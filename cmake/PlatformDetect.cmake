@@ -64,6 +64,11 @@ function (plibsys_detect_c_compiler result)
                 set (PLIBSYS_C_COMPILER xlc)
         endif()
 
+        # Rename ibmclang -> clang
+        if (PLIBSYS_C_COMPILER STREQUAL ibmclang)
+                set (PLIBSYS_C_COMPILER clang)
+        endif()
+
         # Rename appleclang -> clang
         if (PLIBSYS_C_COMPILER STREQUAL appleclang)
                 set (PLIBSYS_C_COMPILER clang)
