@@ -48,7 +48,7 @@
  *
  * ALPHA           - Alpha
  * ARM             - ARM architecture revision:
- *                   v2, v3, v4, v5, v6, v7, v8
+ *                   v2, v3, v4, v5, v6, v7, v8, v9
  * ARM_32          - ARM 32-bit
  * ARM_64          - ARM 64-bit
  * ARM_V2          - ARMv2 instruction set
@@ -58,6 +58,7 @@
  * ARM_V6          - ARMv6 instruction set
  * ARM_V7          - ARMv7 instruction set
  * ARM_V8          - ARMv8 instruction set
+ * ARM_V9          - ARMv9 instruction set
  * X86             - x86 architecture revision:
  *                   3, 4, 5, 6 (Intel P6 or better)
  * X86_32          - x86 32-bit
@@ -176,6 +177,15 @@
  *
  * This macro is defined for ARMv8 target. #P_CPU_ARM_32 or #P_CPU_ARM_64 macro
  * is defined, as well as #P_CPU_ARM.
+ */
+
+/**
+ * @def P_CPU_ARM_V9
+ * @brief ARMv9 architecture revision.
+ * @since 0.0.5
+ *
+ * This macro is defined for ARMv9 target. #P_CPU_ARM_64 and #P_CPU_ARM macros
+ * are defined, as well.
  */
 
 /**
@@ -378,6 +388,8 @@
 #    define P_CPU_ARM __TARGET_ARCH_ARM
 #  elif defined(_M_ARM) && _M_ARM > 1
 #    define P_CPU_ARM _M_ARM
+#  elif defined(__ARM_ARCH_9__)
+#    define P_CPU_ARM 9
 #  elif defined(__ARM64_ARCH_8__)  || \
 	defined(__ARM_ARCH_8__)    || \
 	defined(__ARM_ARCH_8A__)   || \
