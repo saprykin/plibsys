@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright (C) 2017 Alexander Saprykin <saprykin.spb@gmail.com>
+ * Copyright (C) 2017-2023 Alexander Saprykin <saprykin.spb@gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -364,9 +364,10 @@
 #if defined(__alpha__) || defined(__alpha) || defined(_M_ALPHA)
 #  define P_CPU_ALPHA
 #elif defined(__arm__) || defined(__TARGET_ARCH_ARM) || defined(_ARM) || \
-      defined(_M_ARM)  || defined(_M_ARM_64) || defined(__arm) || defined(__aarch64__) || \
-      defined(__ARM64__)
-#  if defined(__aarch64__) || defined(_M_ARM64) || defined(__ARM64__)
+      defined(_M_ARM)  || defined(_M_ARM64) || defined(__arm) || defined(__aarch64__) || \
+      defined(__ARM64__) || defined(__arm64__) || defined(__arm64)
+#  if defined(__aarch64__) || defined(_M_ARM64) || defined(__ARM64__) || \
+      defined(__arm64__) || defined(__arm64)
 #    define P_CPU_ARM_64
 #  else
 #    define P_CPU_ARM_32
@@ -383,7 +384,7 @@
 	defined(__aarch64__)       || \
 	defined(__ARMv8__)         || \
 	defined(__ARMv8_A__)       || \
-	defined(_M_ARM_64)         || \\
+	defined(_M_ARM64)          || \
 	defined(__CORE_CORTEXAV8__)
 #    define P_CPU_ARM 8
 #  elif defined(__ARM_ARCH_7__)    || \
