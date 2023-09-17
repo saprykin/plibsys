@@ -493,10 +493,10 @@
 #      define P_CPU_MIPS_III
 #    endif
 #  endif
-#  if defined(_MIPS_ARCH_MIPS64) || (defined(__mips) && __mips - 0 >= 64) || \
+#  if defined(_MIPS_ARCH_MIPS64) || defined(__mips64) || (defined(__mips) && __mips - 0 >= 64) || \
      (defined(_MIPS_ISA) && defined(_MIPS_ISA_MIPS64) && __MIPS_ISA - 0 >= _MIPS_ISA_MIPS64)
 #    define P_CPU_MIPS_64
-#  elif defined(_MIPS_ARCH_MIPS32) || (defined(__mips) && __mips - 0 >= 32) || \
+#  elif defined(_MIPS_ARCH_MIPS32) || defined(__mips32) || (defined(__mips) && __mips - 0 >= 32) || \
        (defined(_MIPS_ISA) && defined(_MIPS_ISA_MIPS32) && __MIPS_ISA - 0 >= _MIPS_ISA_MIPS32)
 #    define P_CPU_MIPS_32
 #  elif defined(_MIPS_ARCH_MIPS5) || (defined(__mips) && __mips - 0 >= 5) || \
@@ -515,7 +515,10 @@
      (defined(_MIPS_ISA) && defined(_MIPS_ISA_MIPS1) && __MIPS_ISA - 0 >= _MIPS_ISA_MIPS1)
 #    define P_CPU_MIPS_I
 #  endif
-#  if defined(P_CPU_MIPS_64 || defined(P_CPU_MIPS_V))
+#  if defined(P_CPU_MIPS_64)
+#    define P_CPU_MIPS_V
+#  endif
+#  if defined(P_CPU_MIPS_V)
 #    define P_CPU_MIPS_IV
 #  endif
 #  if defined(P_CPU_MIPS_IV)
