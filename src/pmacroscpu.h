@@ -69,6 +69,7 @@
  * MIPS_II         - MIPS II
  * MIPS_III        - MIPS III
  * MIPS_IV         - MIPS IV
+ * MIPS_V          - MIPS V
  * MIPS_32         - MIPS32
  * MIPS_64         - MIPS64
  * POWER           - PowerPC
@@ -270,6 +271,16 @@
  * This macro is defined for MIPS IV target. #P_CPU_MIPS, #P_CPU_MIPS_I,
  * #P_CPU_MIPS_II and #P_CPU_MIPS_III are also defined, as well as probably some
  * other ISA macros (P_CPU_MIPS_xx).
+ */
+
+/**
+ * @def P_CPU_MIPS_V
+ * @brief MIPS V ISA.
+ * @since 0.0.5
+ *
+ * This macro is defined for MIPS V target. #P_CPU_MIPS, #P_CPU_MIPS_I,
+ * #P_CPU_MIPS_II, #P_CPU_MIPS_III and #P_CPU_MIPS_IV are also defined, as well
+ * as probably some other ISA macros (P_CPU_MIPS_xx).
  */
 
 /**
@@ -488,6 +499,9 @@
 #  elif defined(_MIPS_ARCH_MIPS32) || (defined(__mips) && __mips - 0 >= 32) || \
        (defined(_MIPS_ISA) && defined(_MIPS_ISA_MIPS32) && __MIPS_ISA - 0 >= _MIPS_ISA_MIPS32)
 #    define P_CPU_MIPS_32
+#  elif defined(_MIPS_ARCH_MIPS5) || (defined(__mips) && __mips - 0 >= 5) || \
+       (defined(_MIPS_ISA) && defined(_MIPS_ISA_MIPS5) && __MIPS_ISA - 0 >= _MIPS_ISA_MIPS5)
+#    define P_CPU_MIPS_V
 #  elif defined(_MIPS_ARCH_MIPS4) || (defined(__mips) && __mips - 0 >= 4) || \
        (defined(_MIPS_ISA) && defined(_MIPS_ISA_MIPS4) && __MIPS_ISA - 0 >= _MIPS_ISA_MIPS4)
 #    define P_CPU_MIPS_IV
@@ -501,7 +515,7 @@
      (defined(_MIPS_ISA) && defined(_MIPS_ISA_MIPS1) && __MIPS_ISA - 0 >= _MIPS_ISA_MIPS1)
 #    define P_CPU_MIPS_I
 #  endif
-#  if defined(P_CPU_MIPS_64)
+#  if defined(P_CPU_MIPS_64 || defined(P_CPU_MIPS_V))
 #    define P_CPU_MIPS_IV
 #  endif
 #  if defined(P_CPU_MIPS_IV)
@@ -601,6 +615,9 @@
 #  endif
 #  ifndef P_CPU_MIPS_IV
 #    define P_CPU_MIPS_IV
+#  endif
+#  ifndef P_CPU_MIPS_V
+#    define P_CPU_MIPS_V
 #  endif
 #  ifndef P_CPU_MIPS_32
 #    define P_CPU_MIPS_32
