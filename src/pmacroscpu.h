@@ -443,7 +443,9 @@
 #  else
 #    define P_CPU_ARM 0
 #  endif
-#  if P_CPU_ARM == 8
+#  if P_CPU_ARM == 9
+#    define P_CPU_ARM_V9
+#  elif P_CPU_ARM == 8
 #    define P_CPU_ARM_V8
 #  elif P_CPU_ARM == 7
 #    define P_CPU_ARM_V7
