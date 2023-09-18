@@ -594,6 +594,9 @@
 #  ifndef P_CPU_ARM_V8
 #    define P_CPU_ARM_V8
 #  endif
+#  ifndef P_CPU_ARM_V9
+#    define P_CPU_ARM_V9
+#  endif
 #  ifndef P_CPU_X86
 #    define P_CPU_X86
 #  endif
