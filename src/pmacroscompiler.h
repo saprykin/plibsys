@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright (C) 2017 Alexander Saprykin <saprykin.spb@gmail.com>
+ * Copyright (C) 2017-2023 Alexander Saprykin <saprykin.spb@gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -53,6 +53,8 @@
  * CLANG           - LLVM Clang C/C++
  * SUN             - Sun WorkShop/Studio C/C++
  * XLC             - IBM XL C/C++
+ * IXLC            - IBM XL C/C++ (Clang-based)
+ * OXLC            - IBM Open XL C/C++
  * HP              - HP C/aC++
  * DEC             - DEC C/C++
  * MIPS            - MIPSpro C/C++
@@ -103,6 +105,18 @@
  * @def P_CC_XLC
  * @brief IBM XL C/C++ compiler.
  * @since 0.0.1
+ */
+
+/**
+ * @def P_CC_IXLC
+ * @brief IBM XL C/C++ compiler (Clang-based).
+ * @since 0.0.5
+ */
+
+/**
+ * @def P_CC_OXLC
+ * @brief IBM Open XL C/C++ compiler.
+ * @since 0.0.5
  */
 
 /**
@@ -179,6 +193,13 @@
 #  define P_CC_SUN
 #elif defined(__xlc__) || defined(__xlC__)
 #  define P_CC_XLC
+#  if defined(__ibmxl__)
+#    define P_CC_IXLC
+#    define P_CC_CLANG
+#  endif
+#elif defined(__open_xl__)
+#  define P_CC_OXLC
+#  define P_CC_CLANG
 #elif defined(__HP_cc) || defined(__HP_aCC)
 #  define P_CC_HP
 #elif defined (__DECC) || defined(__DECCXX)
@@ -223,6 +244,12 @@
 #  endif
 #  ifndef P_CC_XLC
 #    define P_CC_XLC
+#  endif
+#  ifndef P_CC_IXLC
+#    define P_CC_IXLC
+#  endif
+#  ifndef P_CC_OXLC
+#    define P_CC_OXLC
 #  endif
 #  ifndef P_CC_HP
 #    define P_CC_HP
