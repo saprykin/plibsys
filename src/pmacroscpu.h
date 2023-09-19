@@ -83,6 +83,9 @@
  * HPPA_64         - HPPA-RISC 64-bit
  * S390            - IBM S/390
  * S390X           - IBM S/390x
+ * RISCV           - RISC-V
+ * RISCV_32        - RISC-V 32-bit
+ * RISCV_64        - RISC-V 64-bit
  */
 
 /**
@@ -401,6 +404,33 @@
  * also defined.
  */
 
+/**
+ * @def P_CPU_RISCV
+ * @brief RISC-V architecture.
+ * @since 0.0.5
+ *
+ * This macro is defined for any RISC-V target. One of the architecture
+ * specific macros (P_CPU_RISCV_xx) is also defined.
+ */
+
+/**
+ * @def P_CPU_RISCV_32
+ * @brief RISC-V 32-bit architecture.
+ * @since 0.0.5
+ *
+ * This macro is defined for RISC-V 32-bit target. #P_CPU_RISCV macro is also
+ * defined.
+ */
+
+/**
+ * @def P_CPU_RISCV_64
+ * @brief RISC-V 64-bit architecture.
+ * @since 0.0.5
+ *
+ * This macro is defined for RISC-V 64-bit target. #P_CPU_RISCV macro is also
+ * defined.
+ */
+
 #if defined(__alpha__) || defined(__alpha) || defined(_M_ALPHA)
 #  define P_CPU_ALPHA
 #elif defined(__arm__) || defined(__TARGET_ARCH_ARM) || defined(_ARM) || \
@@ -580,6 +610,13 @@
 #  if defined(__s390x__)
 #    define P_CPU_S390X
 #  endif
+#elif defined(__riscv) || defined(__riscv__)
+#  define P_CPU_RISCV
+#  if defined(__riscv64) || (defined(__riscv_xlen) && (__riscv_xlen == 64))
+#    define P_CPU_RISCV_64
+#  else
+#    define P_CPU_RISCV_32
+#  endif
 #endif
 
 /* We need this to generate full Doxygen documentation */
@@ -689,6 +726,15 @@
 #  endif
 #  ifndef P_CPU_S390X
 #    define P_CPU_S390X
+#  endif
+#  ifndef P_CPU_RISCV
+#    define P_CPU_RISCV
+#  endif
+#  ifndef P_CPU_RISCV_32
+#    define P_CPU_RISCV_32
+#  endif
+#  ifndef P_CPU_RISCV_64
+#    define P_CPU_RISCV_64
 #  endif
 #endif
 
