@@ -81,6 +81,8 @@
  * HPPA            - HPPA-RISC
  * HPPA_32         - HPPA-RISC 32-bit
  * HPPA_64         - HPPA-RISC 64-bit
+ * S390            - IBM S/390
+ * S390X           - IBM S/390x
  */
 
 /**
@@ -382,6 +384,23 @@
  * defined.
  */
 
+/**
+ * @def P_CPU_S390
+ * @brief IBM S/390 architecture.
+ * @since 0.0.5
+ *
+ * This macro is defined for IBM S/390 32-bit target.
+ */
+
+/**
+ * @def P_CPU_S390X
+ * @brief IBM S/390x architecture.
+ * @since 0.0.5
+ *
+ * This macro is defined for IBM S/390x 64-bit target. #P_CPU_S390 macro is
+ * also defined.
+ */
+
 #if defined(__alpha__) || defined(__alpha) || defined(_M_ALPHA)
 #  define P_CPU_ALPHA
 #elif defined(__arm__) || defined(__TARGET_ARCH_ARM) || defined(_ARM) || \
@@ -556,6 +575,11 @@
 #  else
 #    define P_CPU_HPPA_32
 #  endif
+#elif defined(__s390__)
+#  define P_CPU_S390
+#  if defined(__s390x__)
+#    define P_CPU_S390X
+#  endif
 #endif
 
 /* We need this to generate full Doxygen documentation */
@@ -659,6 +683,12 @@
 #  endif
 #  ifndef P_CPU_HPPA_64
 #    define P_CPU_HPPA_64
+#  endif
+#  ifndef P_CPU_S390
+#    define P_CPU_S390
+#  endif
+#  ifndef P_CPU_S390X
+#    define P_CPU_S390X
 #  endif
 #endif
 
