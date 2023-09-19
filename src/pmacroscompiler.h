@@ -49,7 +49,8 @@
  * MSVC            - Microsoft Visual C/C++
  * GNU             - GNU C/C++
  * MINGW           - MinGW C/C++
- * INTEL           - Intel C/C++
+ * INTEL           - Intel C/C++ (Classic)
+ * INTELX          - Intel DPC++/C++
  * CLANG           - LLVM Clang C/C++
  * SUN             - Sun WorkShop/Studio C/C++
  * XLC             - IBM XL C/C++
@@ -87,6 +88,12 @@
  * @def P_CC_INTEL
  * @brief Intel C/C++ compiler.
  * @since 0.0.1
+ */
+
+/**
+ * @def P_CC_INTELX
+ * @brief Intel DPC++/C++ compiler.
+ * @since 0.0.5
  */
 
 /**
@@ -175,6 +182,9 @@
 #  if defined(__clang__)
 #    define P_CC_CLANG
 #  endif
+#  if defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER)
+#    define P_CC_INTELX
+#  endif
 #elif defined(__GNUC__)
 #  define P_CC_GNU
 #  if defined(__MINGW32__)
@@ -182,6 +192,9 @@
 #  endif
 #  if defined(__INTEL_COMPILER)
 #    define P_CC_INTEL
+#  endif
+#  if defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER)
+#    define P_CC_INTELX
 #  endif
 #  if defined(__clang__)
 #    define P_CC_CLANG
@@ -215,6 +228,8 @@
 #  define P_CC_BORLAND
 #elif defined(__INTEL_COMPILER)
 #  define P_CC_INTEL
+#elif defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER)
+#  define P_CC_INTELX
 #elif defined(__PGI)
 #  define P_CC_PGI
 #elif defined(_CRAYC)
@@ -235,6 +250,9 @@
 #  endif
 #  ifndef P_CC_INTEL
 #    define P_CC_INTEL
+#  endif
+#  ifndef P_CC_INTELX
+#    define P_CC_INTELX
 #  endif
 #  ifndef P_CC_CLANG
 #    define P_CC_CLANG
