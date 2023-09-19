@@ -199,6 +199,9 @@
 #  if defined(__clang__)
 #    define P_CC_CLANG
 #  endif
+#  if defined(__PGI)
+#    define P_CC_PGI
+#  endif
 #  if defined(_CRAYC)
 #    define P_CC_CRAY
 #  endif
