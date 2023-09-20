@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright (C) 2015-2017 Alexander Saprykin <saprykin.spb@gmail.com>
+ * Copyright (C) 2015-2023 Alexander Saprykin <saprykin.spb@gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -101,7 +101,7 @@ P_TEST_CASE_BEGIN (plibraryloader_general_test)
 {
 	PLibraryLoader	*loader;
 	pchar		*err_msg;
-	void		(*shutdown_func) (void);
+	void		(*mfree_func) (void *);
 
 	p_libsys_init ();
 
@@ -142,29 +142,25 @@ P_TEST_CASE_BEGIN (plibraryloader_general_test)
 	P_TEST_CHECK (err_msg != NULL);
 	p_free (err_msg);
 
-	shutdown_func = (void (*) (void)) p_library_loader_get_symbol (loader, "p_libsys_shutdown");
+	mfree_func = (void (*) (void *)) p_library_loader_get_symbol (loader, "p_free");
 
-	if (shutdown_func == NULL)
-		shutdown_func = (void (*) (void)) p_library_loader_get_symbol (loader, "_p_libsys_shutdown");
+	if (mfree_func == NULL)
+		mfree_func = (void (*) (void *)) p_library_loader_get_symbol (loader, "_p_free");
 
 	/* For Watcom C */
 
-	if (shutdown_func == NULL)
-		shutdown_func = (void (*) (void)) p_library_loader_get_symbol (loader, "p_libsys_shutdown_");
+	if (mfree_func == NULL)
+		mfree_func = (void (*) (void *)) p_library_loader_get_symbol (loader, "p_free_");
 
-	P_TEST_REQUIRE (shutdown_func != NULL);
+	P_TEST_REQUIRE (mfree_func != NULL);
 
 	err_msg = p_library_loader_get_last_error (loader);
 	p_free (err_msg);
 
-	p_library_loader_free (loader);
+	mfree_func (NULL);
 
-#ifdef P_OS_BEOS
+	p_library_loader_free (loader);
 	p_libsys_shutdown ();
-#else
-	/* We have already loaded reference to ourself library, it's OK */
-	shutdown_func ();
-#endif
 }
 P_TEST_CASE_END ()
 
