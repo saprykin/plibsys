@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright (C) 2015-2017 Alexander Saprykin <saprykin.spb@gmail.com>
+ * Copyright (C) 2015-2023 Alexander Saprykin <saprykin.spb@gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -60,6 +60,7 @@ p_library_loader_new (const pchar *path)
 {
 	PLibraryLoader	*loader = NULL;
 	plibrary_handle	handle;
+	pint		flags;
 #if defined (P_OS_FREEBSD) || defined (P_OS_DRAGONFLY)
 	struct stat	stat_buf;
 #endif
@@ -79,7 +80,13 @@ p_library_loader_new (const pchar *path)
 	}
 #endif
 
-	if (P_UNLIKELY ((handle = dlopen (path, RTLD_NOW)) == NULL)) {
+	flags = RTLD_NOW;
+
+#if defined (P_OS_AIX)
+	flags |= RTLD_MEMBER;
+#endif
+
+	if (P_UNLIKELY ((handle = dlopen (path, flags)) == NULL)) {
 		P_ERROR ("PLibraryLoader::p_library_loader_new: dlopen() failed");
 		return NULL;
 	}
