@@ -27,6 +27,9 @@
 #include "ptestmacros.h"
 
 #include <stdio.h>
+#if defined (P_OS_AIX)
+#  include <cstring>
+#endif
 
 P_TEST_MODULE_INIT ();
 
@@ -102,6 +105,10 @@ P_TEST_CASE_BEGIN (plibraryloader_general_test)
 	PLibraryLoader	*loader;
 	pchar		*err_msg;
 	void		(*mfree_func) (void *);
+#if defined (P_OS_AIX)
+	pchar		*real_path;
+	psize		path_size;
+#endif
 
 	p_libsys_init ();
 
@@ -134,6 +141,25 @@ P_TEST_CASE_BEGIN (plibraryloader_general_test)
 	}
 
 	loader = p_library_loader_new (g_argv[g_argc - 1]);
+
+#if defined (P_OS_AIX)
+	if (loader == NULL) {
+		path_size = (psize) (strlen (g_argv[g_argc - 1]) + strlen ("(libplibsys.so.xyz)") + 1);
+		real_path = (pchar *) p_malloc0 (path_size);
+
+		P_TEST_REQUIRE (real_path != NULL);
+		P_TEST_REQUIRE (snprintf (real_path,
+					  path_size,
+					  "%s(libplibsys.so.%d)",
+					  g_argv[g_argc - 1],
+					  PLIBSYS_VERSION_MAJOR) > 0);
+
+		loader = p_library_loader_new (real_path);
+
+		p_free (real_path);
+	}
+#endif
+
 	P_TEST_REQUIRE (loader != NULL);
 
 	P_TEST_CHECK (p_library_loader_get_symbol (loader, "there_is_no_such_a_symbol") == (PFuncAddr) NULL);
