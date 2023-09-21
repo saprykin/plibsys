@@ -75,9 +75,9 @@ P_TEST_CASE_BEGIN (plibraryloader_nomem_test)
 
 	PMemVTable vtable;
 
-	vtable.free    = pmem_free;
-	vtable.malloc  = pmem_alloc;
-	vtable.realloc = pmem_realloc;
+	vtable.f_free    = pmem_free;
+	vtable.f_malloc  = pmem_alloc;
+	vtable.f_realloc = pmem_realloc;
 
 	P_TEST_CHECK (p_mem_set_vtable (&vtable) == TRUE);
 

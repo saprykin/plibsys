@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright (C) 2010-2017 Alexander Saprykin <saprykin.spb@gmail.com>
+ * Copyright (C) 2010-2023 Alexander Saprykin <saprykin.spb@gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -65,9 +65,9 @@ p_mem_shutdown (void)
 	if (P_UNLIKELY (!p_mem_table_inited))
 		return;
 
-	p_mem_table.malloc  = NULL;
-	p_mem_table.realloc = NULL;
-	p_mem_table.free    = NULL;
+	p_mem_table.f_malloc  = NULL;
+	p_mem_table.f_realloc = NULL;
+	p_mem_table.f_free    = NULL;
 
 	p_mem_table_inited = FALSE;
 }
@@ -76,7 +76,7 @@ P_LIB_API ppointer
 p_malloc (psize n_bytes)
 {
 	if (P_LIKELY (n_bytes > 0))
-		return p_mem_table.malloc (n_bytes);
+		return p_mem_table.f_malloc (n_bytes);
 	else
 		return NULL;
 }
@@ -87,7 +87,7 @@ p_malloc0 (psize n_bytes)
 	ppointer ret;
 
 	if (P_LIKELY (n_bytes > 0)) {
-		if (P_UNLIKELY ((ret = p_mem_table.malloc (n_bytes)) == NULL))
+		if (P_UNLIKELY ((ret = p_mem_table.f_malloc (n_bytes)) == NULL))
 			return NULL;
 
 		memset (ret, 0, n_bytes);
@@ -103,16 +103,16 @@ p_realloc (ppointer mem, psize n_bytes)
 		return NULL;
 
 	if (P_UNLIKELY (mem == NULL))
-		return p_mem_table.malloc (n_bytes);
+		return p_mem_table.f_malloc (n_bytes);
 	else
-		return p_mem_table.realloc (mem, n_bytes);
+		return p_mem_table.f_realloc (mem, n_bytes);
 }
 
 P_LIB_API void
 p_free (ppointer mem)
 {
 	if (P_LIKELY (mem != NULL))
-		p_mem_table.free (mem);
+		p_mem_table.f_free (mem);
 }
 
 P_LIB_API pboolean
@@ -121,12 +121,12 @@ p_mem_set_vtable (const PMemVTable *table)
 	if (P_UNLIKELY (table == NULL))
 		return FALSE;
 
-	if (P_UNLIKELY (table->free == NULL || table->malloc == NULL || table->realloc == NULL))
+	if (P_UNLIKELY (table->f_free == NULL || table->f_malloc == NULL || table->f_realloc == NULL))
 		return FALSE;
 
-	p_mem_table.malloc  = table->malloc;
-	p_mem_table.realloc = table->realloc;
-	p_mem_table.free    = table->free;
+	p_mem_table.f_malloc  = table->f_malloc;
+	p_mem_table.f_realloc = table->f_realloc;
+	p_mem_table.f_free    = table->f_free;
 
 	p_mem_table_inited = TRUE;
 
@@ -136,9 +136,9 @@ p_mem_set_vtable (const PMemVTable *table)
 P_LIB_API void
 p_mem_restore_vtable (void)
 {
-	p_mem_table.malloc  = (ppointer (*)(psize)) malloc;
-	p_mem_table.realloc = (ppointer (*)(ppointer, psize)) realloc;
-	p_mem_table.free    = (void (*)(ppointer)) free;
+	p_mem_table.f_malloc  = (ppointer (*)(psize)) malloc;
+	p_mem_table.f_realloc = (ppointer (*)(ppointer, psize)) realloc;
+	p_mem_table.f_free    = (void (*)(ppointer)) free;
 
 	p_mem_table_inited = TRUE;
 }
