@@ -65,8 +65,17 @@ p_library_loader_new (const pchar *path)
 	struct stat	stat_buf;
 #endif
 
-	if (!p_file_is_exists (path))
+	if (!p_file_is_exists (path)) {
+		/* AIX can accept libraries with member shared objects:
+		 * path(obj.so), hence, we need to give it a try even if
+		 * specified file does not exist */
+#if defined(P_OS_AIX)
+		if (P_UNLIKELY (path == NULL))
+			return NULL;
+#else
 		return NULL;
+#endif
+	}
 
 #if defined (P_OS_FREEBSD) || defined (P_OS_DRAGONFLY)
 	if (P_UNLIKELY (stat (path, &stat_buf) != 0)) {
