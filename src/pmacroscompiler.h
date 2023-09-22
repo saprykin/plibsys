@@ -213,6 +213,9 @@
 #    define P_CC_IXLC
 #    define P_CC_CLANG
 #  endif
+#elif defined(__ibmxl__)
+#  define P_CC_IXLC
+#  define P_CC_CLANG
 #elif defined(__open_xl__)
 #  define P_CC_OXLC
 #  define P_CC_CLANG
