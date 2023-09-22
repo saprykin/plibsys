@@ -138,7 +138,8 @@ P_TEST_CASE_BEGIN (pmacros_general_test)
     !defined (P_CC_INTEL)   && !defined (P_CC_CLANG) && !defined (P_CC_SUN)    && \
     !defined (P_CC_XLC)     && !defined (P_CC_HP)    && !defined (P_CC_WATCOM) && \
     !defined (P_CC_BORLAND) && !defined (P_CC_MIPS)  && !defined (P_CC_USLC)   && \
-    !defined (P_CC_DEC)     && !defined (P_CC_PGI)   && !defined (P_CC_CRAY)
+    !defined (P_CC_DEC)     && !defined (P_CC_PGI)   && !defined (P_CC_CRAY)   && \
+    !defined (P_CC_INTELX)  && !defined (P_CC_IXLC)  && !defined (P_CC_OXLC)
 	P_TEST_CHECK (false);
 #endif
 
@@ -156,14 +157,32 @@ P_TEST_CASE_BEGIN (pmacros_general_test)
 #  endif
 #endif
 
+#if defined (P_CC_INTELX)
+#  if !defined (P_OS_WIN) && !defined (P_OS_MAC) && !defined (P_OS_LINUX) 
+	P_TEST_CHECK (false);
+#  endif
+#endif
+
+#if defined (P_CC_INTELX)
+#  if !defined (P_CC_CLANG)
+	P_TEST_CHECK (false);
+#  endif
+#endif
+
 #if defined (P_CC_SUN)
 #  if !defined (P_OS_SOLARIS) && !defined (P_OS_LINUX)
 	P_TEST_CHECK (false);
 #  endif
 #endif
 
-#if defined (P_CC_XLC)
+#if defined (P_CC_XLC) || defined (P_CC_IXLC) || defined (P_CC_OXLC)
 #  if !defined (P_OS_AIX) && !defined (P_OS_LINUX)
+	P_TEST_CHECK (false);
+#  endif
+#endif
+
+#if defined (P_CC_IXLC) || defined (P_CC_OXLC)
+#  if !defined (P_CC_CLANG)
 	P_TEST_CHECK (false);
 #  endif
 #endif
