@@ -404,7 +404,7 @@ P_TEST_CASE_BEGIN (pmacros_general_test)
 #if defined (P_CPU_ARM)
 #  if !defined (P_CPU_ARM_V2) && !defined (P_CPU_ARM_V3) && !defined (P_CPU_ARM_V4) && \
       !defined (P_CPU_ARM_V5) && !defined (P_CPU_ARM_V6) && !defined (P_CPU_ARM_V7) && \
-      !defined (P_CPU_ARM_V8)
+      !defined (P_CPU_ARM_V8) && !defined (P_CPU_ARM_V9)
 	P_TEST_CHECK (false);
 #  endif
 #endif
@@ -447,6 +447,12 @@ P_TEST_CASE_BEGIN (pmacros_general_test)
 
 #if defined (P_CPU_ARM_V8)
 #  if !defined (P_CPU_ARM) || !(P_CPU_ARM - 0 == 8)
+	P_TEST_CHECK (false);
+#  endif
+#endif
+
+#if defined (P_CPU_ARM_V9)
+#  if !defined (P_CPU_ARM) || !(P_CPU_ARM - 0 == 9)
 	P_TEST_CHECK (false);
 #  endif
 #endif
