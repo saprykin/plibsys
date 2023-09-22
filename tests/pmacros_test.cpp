@@ -604,6 +604,22 @@ P_TEST_CASE_BEGIN (pmacros_general_test)
 	P_TEST_CHECK (false);
 #endif
 
+#if defined (P_CPU_RISCV)
+#  if !defined (P_CPU_RISCV_32) && !defined (P_CPU_RISCV_64)
+	P_TEST_CHECK (false);
+#  endif
+#endif
+
+#if defined (P_CPU_RISCV_32) || defined (P_CPU_RISCV_64)
+#  if !defined (P_CPU_RISCV)
+	P_TEST_CHECK (false);
+#  endif
+#endif
+
+#if defined (P_CPU_RISCV_32) && defined (P_CPU_RISCV_64)
+	P_TEST_CHECK (false);
+#endif
+
 #if defined (P_CPU_LOONGARCH)
 #  if !defined (P_CPU_LOONGARCH_32) && !defined (P_CPU_LOONGARCH_64)
 	P_TEST_CHECK (false);
