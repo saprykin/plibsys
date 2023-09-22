@@ -86,6 +86,9 @@
  * RISCV           - RISC-V
  * RISCV_32        - RISC-V 32-bit
  * RISCV_64        - RISC-V 64-bit
+ * LOONGARCH       - LoongArch
+ * LOONGARCH_32    - LoongArch 32-bit
+ * LOONGARCH_64    - LoongArch 64-bit
  */
 
 /**
@@ -431,6 +434,33 @@
  * defined.
  */
 
+/**
+ * @def P_CPU_LOONGARCH
+ * @brief LoongArch architecture.
+ * @since 0.0.5
+ *
+ * This macro is defined for any LoongArch target. One of the architecture
+ * specific macros (P_CPU_LOONGARCH_xx) is also defined.
+ */
+
+/**
+ * @def P_CPU_LOONGARCH_32
+ * @brief LoongArch 32-bit architecture.
+ * @since 0.0.5
+ *
+ * This macro is defined for LoongArch 32-bit target. #P_CPU_LOONGARCH macro is
+ * also defined.
+ */
+
+/**
+ * @def P_CPU_LOONGARCH_64
+ * @brief LoongArch 64-bit architecture.
+ * @since 0.0.5
+ *
+ * This macro is defined for LoongArch 64-bit target. #P_CPU_LOONGARCH macro is
+ * also defined.
+ */
+
 #if defined(__alpha__) || defined(__alpha) || defined(_M_ALPHA)
 #  define P_CPU_ALPHA
 #elif defined(__arm__) || defined(__TARGET_ARCH_ARM) || defined(_ARM) || \
@@ -617,6 +647,13 @@
 #  else
 #    define P_CPU_RISCV_32
 #  endif
+#elif defined(__loongarch__)
+#  define P_CPU_LOONGARCH
+#  if defined(__loongarch64) || (__loongarch_grlen == 64)
+#    define P_CPU_LOONGARCH_64
+#  else
+#    define P_CPU_LOONGARCH_32
+#  endif
 #endif
 
 /* We need this to generate full Doxygen documentation */
@@ -735,6 +772,15 @@
 #  endif
 #  ifndef P_CPU_RISCV_64
 #    define P_CPU_RISCV_64
+#  endif
+#  ifndef P_CPU_LOONGARCH
+#    define P_CPU_LOONGARCH
+#  endif
+#  ifndef P_CPU_LOONGARCH_32
+#    define P_CPU_LOONGARCH_32
+#  endif
+#  ifndef P_CPU_LOONGARCH_64
+#    define P_CPU_LOONGARCH_64
 #  endif
 #endif
 
