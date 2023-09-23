@@ -1,3 +1,42 @@
+Changes in plibsys 0.0.4
+========================
+
+* Switch to MIT license from LGPLv2+ (#71)
+* Replace Boost test framework with own one (#56)
+* Add visibility support for APIs
+* Add Debian package (in separate branch) (#54)
+* Add gear package (ALT Linux)
+* Add Conan packages
+* Add option to generate Doxygen documentation
+
+* New supported platforms and compilers:
+  BlackBerry 10 (AArch32, x86)
+  Cray Linux Environment
+  AmigaOS 4.1 (PPC) (#59)
+  Android (x86, x64, AArch32, AArch64) (#69)
+  iOS, tvOS, watchOS (x86, x64, AArch32, AArch64) (#70)
+  PGI (x64) compiler on macOS
+
+* New API
+  Macros for variable arguments
+
+* AppVeyor
+  Add Visual Studio 2017 builds (#53)
+  Build tests for Watcom compiler (#57)
+
+* Travis
+  Add GCC 7.x builds (#48)
+  Add Clang 4.0 and 5.0 builds
+  Add MinGW 7.1.x (x64) builds
+  Update MinGW builds to 6.3.x (x64)
+  Add Xcode 8.3 and 9.1 builds
+
+* Fixes
+  Do not use deprecated readdir_r() with glibc >= 2.24
+  Use CryptoPro S-box instead of testing in GOST hashing
+  Initialize POSIX semaphore with given value in create mode
+  Setup proper SONAME value (not the same as API version)
+
 Changes in plibsys 0.0.3
 ========================
 

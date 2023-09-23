@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright (C) 2013-2017 Alexander Saprykin <saprykin.spb@gmail.com>
+ * Copyright (C) 2013-2023 Alexander Saprykin <saprykin.spb@gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -59,9 +59,9 @@ P_TEST_CASE_BEGIN (pmem_bad_input_test)
 
 	p_libsys_init ();
 
-	vtable.free    = NULL;
-	vtable.malloc  = NULL;
-	vtable.realloc = NULL;
+	vtable.f_free    = NULL;
+	vtable.f_malloc  = NULL;
+	vtable.f_realloc = NULL;
 
 	P_TEST_CHECK (p_malloc (0) == NULL);
 	P_TEST_CHECK (p_malloc0 (0) == NULL);
@@ -86,9 +86,9 @@ P_TEST_CASE_BEGIN (pmem_general_test)
 	realloc_counter = 0;
 	free_counter    = 0;
 
-	vtable.free    = pmem_free;
-	vtable.malloc  = pmem_alloc;
-	vtable.realloc = pmem_realloc;
+	vtable.f_free    = pmem_free;
+	vtable.f_malloc  = pmem_alloc;
+	vtable.f_realloc = pmem_realloc;
 
 	P_TEST_CHECK (p_mem_set_vtable (&vtable) == TRUE);
 

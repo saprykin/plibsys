@@ -25,22 +25,23 @@ environment:
                 - CMAKE_GENERATOR:             "MinGW Makefiles"
                   USE_MINGW:                   "1"
                   USE_MINGW64:                 "1"
-                  USE_MINGW_710:               "1"
+                  USE_MINGW_730:               "1"
+                  APPVEYOR_BUILD_WORKER_IMAGE: "Visual Studio 2015"
+                - CMAKE_GENERATOR:             "MinGW Makefiles"
+                  USE_MINGW:                   "1"
+                  USE_MINGW64:                 "1"
+                  USE_MINGW_810:               "1"
                   APPVEYOR_BUILD_WORKER_IMAGE: "Visual Studio 2015"
                 - CMAKE_GENERATOR:             "Unix Makefiles"
                   USE_MSYS64:                  "1"
-                  APPVEYOR_BUILD_WORKER_IMAGE: "Visual Studio 2015"
+                  APPVEYOR_BUILD_WORKER_IMAGE: "Visual Studio 2022"
                 - CMAKE_GENERATOR:             "MSYS Makefiles"
                   USE_MSYS64:                  "1"
                   USE_MINGW64:                 "1"
-                  APPVEYOR_BUILD_WORKER_IMAGE: "Visual Studio 2015"
+                  APPVEYOR_BUILD_WORKER_IMAGE: "Visual Studio 2022"
                 - CMAKE_GENERATOR:             "Unix Makefiles"
-                  USE_CYGWIN:                  "1"
                   USE_CYGWIN64:                "1"
-                  APPVEYOR_BUILD_WORKER_IMAGE: "Visual Studio 2015"
-                - CMAKE_GENERATOR:             "Unix Makefiles"
-                  USE_CYGWIN:                  "1"
-                  APPVEYOR_BUILD_WORKER_IMAGE: "Visual Studio 2015"
+                  APPVEYOR_BUILD_WORKER_IMAGE: "Visual Studio 2019"
                 - CMAKE_GENERATOR:             "Visual Studio 9 2008"
                   USE_OLD_MSBUILD:             "1"
                   APPVEYOR_BUILD_WORKER_IMAGE: "Visual Studio 2015"
@@ -65,6 +66,11 @@ environment:
                   APPVEYOR_BUILD_WORKER_IMAGE: "Visual Studio 2017"
                 - CMAKE_GENERATOR:             "Visual Studio 15 2017 Win64"
                   APPVEYOR_BUILD_WORKER_IMAGE: "Visual Studio 2017"
+                - CMAKE_GENERATOR:             "Visual Studio 16 2019"
+                  APPVEYOR_BUILD_WORKER_IMAGE: "Visual Studio 2019"
+                - CMAKE_GENERATOR:             "Visual Studio 16 2019"
+                  CMAKE_GENERATOR_ARCH:        "x64"
+                  APPVEYOR_BUILD_WORKER_IMAGE: "Visual Studio 2019"
                 - CMAKE_GENERATOR:             "NMake Makefiles"
                   USE_LLVM:                    "1"
                   APPVEYOR_BUILD_WORKER_IMAGE: "Visual Studio 2015"
@@ -84,20 +90,15 @@ cache:
         - c:\projects\i686-4.9.3-release-win32-dwarf-rt_v4-rev1.7z
         - c:\projects\x86_64-5.4.0-release-win32-seh-rt_v5-rev0.7z
         - c:\projects\x86_64-6.3.0-release-win32-seh-rt_v5-rev1.7z
-        - c:\projects\x86_64-7.1.0-release-win32-seh-rt_v5-rev0.7z
+        - c:\projects\x86_64-7.3.0-release-win32-seh-rt_v5-rev0.7z
+        - c:\projects\x86_64-8.1.0-release-win32-seh-rt_v6-rev0.7z
         - c:\projects\open-watcom-c-win32-1.9.exe
         - c:\cygwin-setup-cache
 
 install:
-        - If "%USE_CYGWIN%" == "1" (
-          If "%USE_CYGWIN64%" == "1" (
+        - If "%USE_CYGWIN64%" == "1" (
                 c:\cygwin64\setup-x86_64.exe -gqnNdO -R c:\cygwin64 -s http://cygwin.mirror.constant.com -l "c:\cygwin-setup-cache" -P cmake -P cygrunsrv
-          ))
-
-        - If "%USE_CYGWIN%" == "1" (
-          If NOT "%USE_CYGWIN64%" == "1" (
-                c:\cygwin\setup-x86.exe -gqnNdO -R c:\cygwin -s http://cygwin.mirror.constant.com -l "c:\cygwin-setup-cache" -P cmake -P cygrunsrv
-          ))
+          )
 
         - ps: >-
                 If ($env:USE_MSYS64 -eq "1") {
@@ -106,7 +107,8 @@ install:
                         If ($env:USE_MINGW64 -eq "1") {
                                 $env:PATH   = "c:\msys64\mingw64\bin;$env:PATH";
                         } Else {
-                                & pacman --sync --noconfirm cmake;
+                                & C:\msys64\usr\bin\mkdir -p /var/cache/pacman/pkg;
+                                & pacman --sync --noconfirm cmake doxygen;
                         }
                 } ElseIf ($env:USE_MINGW -eq "1") {
                         If ($env:USE_MINGW_493 -eq "1") {
@@ -118,9 +120,12 @@ install:
                         } ElseIf ($env:USE_MINGW_630 -eq "1") {
                                 $MINGW_BASE    = "x86_64-6.3.0-release-win32-seh-rt_v5-rev1";
                                 $MINGW_VERSION = "6.3.0";
-                        } ElseIf ($env:USE_MINGW_710 -eq "1") {
-                                $MINGW_BASE    = "x86_64-7.1.0-release-win32-seh-rt_v5-rev0";
-                                $MINGW_VERSION = "7.1.0";
+                        } ElseIf ($env:USE_MINGW_730 -eq "1") {
+                                $MINGW_BASE    = "x86_64-7.3.0-release-win32-seh-rt_v5-rev0";
+                                $MINGW_VERSION = "7.3.0";
+                        } ElseIf ($env:USE_MINGW_810 -eq "1") {
+                                $MINGW_BASE    = "x86_64-8.1.0-release-win32-seh-rt_v6-rev0";
+                                $MINGW_VERSION = "8.1.0";
                         }
 
                         $MINGW_ARCHIVE = "$MINGW_BASE.7z";
@@ -203,12 +208,8 @@ build_script:
 
                         $BUILD_COMMAND = "mingw32-make";
                         $BUILD_PARAMS  = @("-j", "2");
-                } ElseIf ($env:USE_CYGWIN -eq "1") {
-                        If ($env:USE_CYGWIN64 -eq "1") {
-                                $env:PATH     = "c:\cygwin64\bin";
-                        } Else {
-                                $env:PATH     = "c:\cygwin\bin";
-                        }
+                } ElseIf ($env:USE_CYGWIN64 -eq "1") {
+                        $env:PATH     = "c:\cygwin64\bin";
 
                         $BUILD_COMMAND = "make";
                         $BUILD_PARAMS  = @("-j", "2");
@@ -244,13 +245,19 @@ build_script:
                         $BUILD_PARAMS  = @("/verbosity:normal", "$BUILD_DIR\plibsys.sln", "/p:Configuration=$env:configuration", "/m");
                 }
 
-                If ($env:USE_COVERITY -eq "1" -And $env:APPVEYOR_REPO_BRANCH -eq "appveyor_test") {
+                $CMAKE_GENERATOR_ARGS = "-G`"$env:CMAKE_GENERATOR`"";
+
+                If (Test-Path variable:global:CMAKE_GENERATOR_ARGS) {
+                        $CMAKE_GENERATOR_ARGS = "$CMAKE_GENERATOR_ARGS -A $CMAKE_GENERATOR_ARGS";
+                }
+
+                If($env:USE_COVERITY -eq "1" -And $env:APPVEYOR_REPO_BRANCH -eq "appveyor_test") {
                         & nuget install PublishCoverity -o $BUILD_DIR -excludeversion;
 
                         $COVERITY_EXE = "$BUILD_DIR\PublishCoverity\tools\PublishCoverity.exe";
 
                         # Do not build tests for Coverity
-                        & cmake -G"$env:CMAKE_GENERATOR" $CMAKE_C_COMPILER $CMAKE_CXX_COMPILER ../plibsys;
+                        & cmake $CMAKE_GENERATOR_ARGS $CMAKE_C_COMPILER $CMAKE_CXX_COMPILER ../plibsys;
 
                         & cov-build --dir "$BUILD_DIR\cov-int" $BUILD_COMMAND $BUILD_PARAMS;
 
@@ -260,7 +267,7 @@ build_script:
                         Get-ChildItem -Path ./ -Recurse | Remove-Item -Force -Recurse;
                 }
 
-                & cmake -G"$env:CMAKE_GENERATOR" $BUILD_TYPE $CMAKE_C_COMPILER $CMAKE_CXX_COMPILER ../plibsys;
+                & cmake '$CMAKE_GENERATOR_ARGS' $BUILD_TYPE $CMAKE_C_COMPILER $CMAKE_CXX_COMPILER ../plibsys;
                 & $BUILD_COMMAND $BUILD_PARAMS;
 
                 If ($env:APPVEYOR_REPO_BRANCH -eq "appveyor_test") {

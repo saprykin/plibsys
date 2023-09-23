@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright (C) 2016-2017 Alexander Saprykin <saprykin.spb@gmail.com>
+ * Copyright (C) 2016-2023 Alexander Saprykin <saprykin.spb@gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -129,9 +129,9 @@ P_TEST_CASE_BEGIN (prwlock_nomem_test)
 
 	PMemVTable vtable;
 
-	vtable.free    = pmem_free;
-	vtable.malloc  = pmem_alloc;
-	vtable.realloc = pmem_realloc;
+	vtable.f_free    = pmem_free;
+	vtable.f_malloc  = pmem_alloc;
+	vtable.f_realloc = pmem_realloc;
 
 	P_TEST_CHECK (p_mem_set_vtable (&vtable) == TRUE);
 
@@ -172,19 +172,23 @@ P_TEST_CASE_BEGIN (prwlock_general_test)
 
 	PUThread *reader_thr1 = p_uthread_create ((PUThreadFunc) reader_thread_func,
 						  NULL,
-						  TRUE);
+						  TRUE,
+						  NULL);
 
 	PUThread *reader_thr2 = p_uthread_create ((PUThreadFunc) reader_thread_func,
 						  NULL,
-						  TRUE);
+						  TRUE,
+						  NULL);
 
 	PUThread *writer_thr1 = p_uthread_create ((PUThreadFunc) writer_thread_func,
 						  NULL,
-						  TRUE);
+						  TRUE,
+						  NULL);
 
 	PUThread *writer_thr2 = p_uthread_create ((PUThreadFunc) writer_thread_func,
 						  NULL,
-						  TRUE);
+						  TRUE,
+						  NULL);
 
 	P_TEST_REQUIRE (reader_thr1 != NULL);
 	P_TEST_REQUIRE (reader_thr2 != NULL);

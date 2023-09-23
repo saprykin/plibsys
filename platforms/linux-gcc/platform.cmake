@@ -8,4 +8,5 @@ set (PLIBSYS_PLATFORM_LINK_LIBRARIES -pthread rt dl)
 
 set (PLIBSYS_PLATFORM_DEFINES
         -D_REENTRANT
+        -D_GNU_SOURCE
 )

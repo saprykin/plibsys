@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright (C) 2017-2018 Alexander Saprykin <saprykin.spb@gmail.com>
+ * Copyright (C) 2017-2023 Alexander Saprykin <saprykin.spb@gmail.com>
  * Copyright (C) 2002-2015 by Olaf Barthel <obarthel (at) gmx.net>
  *
  * Permission is hereby granted, free of charge, to any person obtaining
@@ -61,6 +61,7 @@
 #include <string.h>
 
 #include <proto/dos.h>
+#include <proto/exec.h>
 #include <proto/elf.h>
 
 #if defined (__CLIB2__)
@@ -76,7 +77,9 @@ struct PLibraryLoader_ {
 	Elf32_Error	last_error;
 };
 
-static Elf32_Handle pp_library_loader_elf_root = NULL;
+static struct Library   *pp_lib                    = NULL;
+static struct ElfIFace  *pp_IElf                   = NULL;
+static Elf32_Handle     pp_library_loader_elf_root = NULL;
 
 static void pp_library_loader_clean_handle (plibrary_handle handle);
 static pint pp_library_loader_translate_path (const pchar *in, pchar *out, psize out_len);
@@ -413,7 +416,10 @@ pp_library_loader_translate_path (const pchar *in, pchar *out, psize out_len)
 static void
 pp_library_loader_clean_handle (plibrary_handle handle)
 {
-	IElf->DLClose (pp_library_loader_elf_root, handle);
+	if (P_LIKELY (pp_IElf != NULL))
+		pp_IElf->DLClose (pp_library_loader_elf_root, handle);
+	else
+		P_ERROR ("PLibraryLoader::pp_library_loader_clean_handle: shared library subsystem is not initialized");
 }
 
 P_LIB_API PLibraryLoader *
@@ -426,7 +432,7 @@ p_library_loader_new (const pchar *path)
 	if (!p_file_is_exists (path))
 		return NULL;
 
-	if (pp_library_loader_elf_root == NULL) {
+	if (pp_library_loader_elf_root == NULL || pp_IElf == NULL) {
 		P_ERROR ("PLibraryLoader::p_library_loader_new: shared library subsystem is not initialized");
 		return NULL;
 	}
@@ -443,7 +449,7 @@ p_library_loader_new (const pchar *path)
 
 	path = path_buffer;
 
-	handle = IElf->DLOpen (pp_library_loader_elf_root, (CONST_STRPTR) path, ELF32_RTLD_LOCAL);
+	handle = pp_IElf->DLOpen (pp_library_loader_elf_root, (CONST_STRPTR) path, ELF32_RTLD_LOCAL);
 
 	if (P_UNLIKELY (handle == NULL)) {
 		P_ERROR ("PLibraryLoader::p_library_loader_new: DLOpen() failed");
@@ -470,15 +476,15 @@ p_library_loader_get_symbol (PLibraryLoader *loader, const pchar *sym)
 	if (P_UNLIKELY (loader == NULL || sym == NULL || loader->handle == NULL))
 		return NULL;
 
-	if (pp_library_loader_elf_root == NULL) {
+	if (pp_library_loader_elf_root == NULL || pp_IElf == NULL) {
 		P_ERROR ("PLibraryLoader::p_library_loader_new: shared library subsystem is not initialized");
 		return NULL;
 	}
 
-	loader->last_error = IElf->DLSym (pp_library_loader_elf_root,
-					  loader->handle,
-					  (CONST_STRPTR) sym,
-					  &func_addr);
+	loader->last_error = pp_IElf->DLSym (pp_library_loader_elf_root,
+					     loader->handle,
+					     (CONST_STRPTR) sym,
+					     &func_addr);
 
 	return (PFuncAddr) func_addr;
 }
@@ -559,14 +565,34 @@ p_library_loader_init (void)
 	}
 
 	if (P_UNLIKELY (elf_handle == NULL)) {
-		P_ERROR ("PLibraryLoader::p_library_loader_init: failed to finf proper GSLI_ElfHandle");
+		P_ERROR ("PLibraryLoader::p_library_loader_init: failed to find proper GSLI_ElfHandle");
 		return;
 	}
 
-	pp_library_loader_elf_root = IElf->OpenElfTags (OET_ElfHandle, elf_handle, TAG_DONE);
+	pp_lib = IExec->OpenLibrary ("elf.library", 0);
+
+	if (P_UNLIKELY (pp_lib == NULL)) {
+		P_ERROR ("PLibraryLoader::p_library_loader_init: failed to open elf.library");
+		return;
+	}
+
+	pp_IElf = (struct ElfIFace *) IExec->GetInterface (pp_lib, "main", 1, NULL);
+
+	if (P_UNLIKELY (pp_IElf == NULL)) {
+		P_ERROR ("PLibraryLoader::p_library_loader_init: failed to get ELF interface");
+		IExec->CloseLibrary (pp_lib);
+		pp_lib = NULL;
+		return;
+	}
+
+	pp_library_loader_elf_root = pp_IElf->OpenElfTags (OET_ElfHandle, elf_handle, TAG_DONE);
 
 	if (P_UNLIKELY (pp_library_loader_elf_root == NULL)) {
 		P_ERROR ("PLibraryLoader::p_library_loader_init: OpenElfTags() failed");
+		IExec->DropInterface ((struct Interface *) pp_IElf);
+		IExec->CloseLibrary (pp_lib);
+		pp_IElf = NULL;
+		pp_lib = NULL;
 		return;
 	}
 }
@@ -577,7 +603,11 @@ p_library_loader_shutdown (void)
 	if (pp_library_loader_elf_root == NULL)
 		return;
 
-	IElf->CloseElfTags (pp_library_loader_elf_root, CET_ReClose, TRUE, TAG_DONE);
+	pp_IElf->CloseElfTags (pp_library_loader_elf_root, CET_ReClose, TRUE, TAG_DONE);
+	IExec->DropInterface ((struct Interface *) pp_IElf);
+	IExec->CloseLibrary (pp_lib);
 
+	pp_IElf                    = NULL;
+	pp_lib                     = NULL;
 	pp_library_loader_elf_root = NULL;
 }

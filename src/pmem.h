@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright (C) 2010-2017 Alexander Saprykin <saprykin.spb@gmail.com>
+ * Copyright (C) 2010-2023 Alexander Saprykin <saprykin.spb@gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -79,10 +79,10 @@ P_BEGIN_DECLS
 
 /** Memory management table. */
 typedef struct PMemVTable_ {
-	ppointer	(*malloc)	(psize		n_bytes);	/**< malloc() implementation.	*/
-	ppointer	(*realloc)	(ppointer	mem,
+	ppointer	(*f_malloc)	(psize		n_bytes);	/**< malloc() implementation.	*/
+	ppointer	(*f_realloc)	(ppointer	mem,
 					 psize		n_bytes);	/**< realloc() implementation.	*/
-	void		(*free)		(ppointer	mem);		/**< free() implementation.	*/
+	void		(*f_free)	(ppointer	mem);		/**< free() implementation.	*/
 } PMemVTable;
 
 /**

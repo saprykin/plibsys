@@ -1,6 +1,6 @@
 # The MIT License
 #
-# Copyright (C) 2018 Alexander Saprykin <saprykin.spb@gmail.com>
+# Copyright (C) 2018-2023 Alexander Saprykin <saprykin.spb@gmail.com>
 #
 # Permission is hereby granted, free of charge, to any person obtaining
 # a copy of this software and associated documentation files (the
@@ -44,6 +44,11 @@ function (plibsys_detect_c_compiler result)
                 set (PLIBSYS_C_COMPILER icc)
         endif()
 
+        # Rename intelllvm -> icc
+        if (PLIBSYS_C_COMPILER STREQUAL intelllvm)
+                set (PLIBSYS_C_COMPILER icc)
+        endif()
+
         # Rename openwatcom -> watcom
         if (PLIBSYS_C_COMPILER STREQUAL openwatcom)
                 set (PLIBSYS_C_COMPILER watcom)
@@ -52,6 +57,26 @@ function (plibsys_detect_c_compiler result)
         # Rename xl -> xlc
         if (PLIBSYS_C_COMPILER STREQUAL xl)
                 set (PLIBSYS_C_COMPILER xlc)
+        endif()
+
+        # Rename xlclang -> xlc
+        if (PLIBSYS_C_COMPILER STREQUAL xlclang)
+                set (PLIBSYS_C_COMPILER xlc)
+        endif()
+
+        # Rename ibmclang -> clang
+        if (PLIBSYS_C_COMPILER STREQUAL ibmclang)
+                set (PLIBSYS_C_COMPILER clang)
+        endif()
+
+        # Rename appleclang -> clang
+        if (PLIBSYS_C_COMPILER STREQUAL appleclang)
+                set (PLIBSYS_C_COMPILER clang)
+        endif()
+
+        # Rename nvhpc -> pgi
+        if (PLIBSYS_C_COMPILER STREQUAL nvhpc)
+                set (PLIBSYS_C_COMPILER pgi)
         endif()
 
         # Assign result

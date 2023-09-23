@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright (C) 2017 Alexander Saprykin <saprykin.spb@gmail.com>
+ * Copyright (C) 2017-2019 Alexander Saprykin <saprykin.spb@gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -324,6 +324,12 @@ p_uthread_wait_internal (PUThread *thread)
 
 	if (P_UNLIKELY (ulrc != NO_ERROR && ulrc != ERROR_INVALID_THREADID))
 		P_ERROR ("PUThread::p_uthread_wait_internal: DosWaitThread() failed");
+}
+
+void
+p_uthread_set_name_internal (PUThread *thread)
+{
+	P_UNUSED (thread);
 }
 
 void

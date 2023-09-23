@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright (C) 2015-2017 Alexander Saprykin <saprykin.spb@gmail.com>
+ * Copyright (C) 2015-2023 Alexander Saprykin <saprykin.spb@gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -489,9 +489,9 @@ P_TEST_CASE_BEGIN (ptree_nomem_test)
 		PTree *tree = p_tree_new ((PTreeType) i, (PCompareFunc) compare_keys);
 		P_TEST_CHECK (tree != NULL);
 
-		vtable.free    = pmem_free;
-		vtable.malloc  = pmem_alloc;
-		vtable.realloc = pmem_realloc;
+		vtable.f_free    = pmem_free;
+		vtable.f_malloc  = pmem_alloc;
+		vtable.f_realloc = pmem_realloc;
 
 		P_TEST_CHECK (p_mem_set_vtable (&vtable) == TRUE);
 

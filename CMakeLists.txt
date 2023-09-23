@@ -1,6 +1,6 @@
 # The MIT License
 #
-# Copyright (C) 2018 Alexander Saprykin <saprykin.spb@gmail.com>
+# Copyright (C) 2018-2023 Alexander Saprykin <saprykin.spb@gmail.com>
 #
 # Permission is hereby granted, free of charge, to any person obtaining
 # a copy of this software and associated documentation files (the
@@ -24,14 +24,15 @@
 
 set (CMAKE_LEGACY_CYGWIN_WIN32 0)
 
-cmake_minimum_required (VERSION 2.8.0)
+cmake_minimum_required (VERSION 2.8.0...3.25.1)
 project (plibsys C)
 
 set (PLIBSYS_VERSION_MAJOR 0)
 set (PLIBSYS_VERSION_MINOR 0)
-set (PLIBSYS_VERSION_PATCH 3)
-set (PLIBSYS_VERSION_NUM 0x000003)
+set (PLIBSYS_VERSION_PATCH 4)
+set (PLIBSYS_VERSION_NUM 0x000004)
 set (PLIBSYS_VERSION ${PLIBSYS_VERSION_MAJOR}.${PLIBSYS_VERSION_MINOR}.${PLIBSYS_VERSION_PATCH})
+set (PLIBSYS_SOVERSION ${PLIBSYS_VERSION_MAJOR})
 set (VERSION ${PLIBSYS_VERSION})
 
 set (top_srcdir ${PROJECT_SOURCE_DIR})

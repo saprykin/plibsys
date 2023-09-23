@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright (C) 2010-2016 Alexander Saprykin <saprykin.spb@gmail.com>
+ * Copyright (C) 2010-2020 Alexander Saprykin <saprykin.spb@gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -55,7 +55,7 @@ pp_shm_buffer_get_free_space (PShmBuffer *buf)
 	memcpy (&write_pos, (pchar *) addr + P_SHM_BUFFER_WRITE_OFFSET, sizeof (write_pos));
 
 	if (write_pos < read_pos)
-		return read_pos - write_pos;
+		return read_pos - write_pos - 1;
 	else if (write_pos > read_pos)
 		return buf->size - (write_pos - read_pos) - 1;
 	else

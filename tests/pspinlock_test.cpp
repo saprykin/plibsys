@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright (C) 2016-2017 Alexander Saprykin <saprykin.spb@gmail.com>
+ * Copyright (C) 2016-2023 Alexander Saprykin <saprykin.spb@gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -83,9 +83,9 @@ P_TEST_CASE_BEGIN (pspinlock_nomem_test)
 
 	PMemVTable vtable;
 
-	vtable.free    = pmem_free;
-	vtable.malloc  = pmem_alloc;
-	vtable.realloc = pmem_realloc;
+	vtable.f_free    = pmem_free;
+	vtable.f_malloc  = pmem_alloc;
+	vtable.f_realloc = pmem_realloc;
 
 	P_TEST_CHECK (p_mem_set_vtable (&vtable) == TRUE);
 	P_TEST_CHECK (p_spinlock_new () == NULL);
@@ -120,10 +120,10 @@ P_TEST_CASE_BEGIN (pspinlock_general_test)
 
 	P_TEST_REQUIRE (global_spinlock != NULL);
 
-	thr1 = p_uthread_create ((PUThreadFunc) spinlock_test_thread, NULL, true);
+	thr1 = p_uthread_create ((PUThreadFunc) spinlock_test_thread, NULL, TRUE, NULL);
 	P_TEST_REQUIRE (thr1 != NULL);
 
-	thr2 = p_uthread_create ((PUThreadFunc) spinlock_test_thread, NULL, true);
+	thr2 = p_uthread_create ((PUThreadFunc) spinlock_test_thread, NULL, TRUE, NULL);
 	P_TEST_REQUIRE (thr2 != NULL);
 
 	P_TEST_CHECK (p_uthread_join (thr1) == 0);

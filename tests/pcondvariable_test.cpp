@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright (C) 2013-2017 Alexander Saprykin <saprykin.spb@gmail.com>
+ * Copyright (C) 2013-2023 Alexander Saprykin <saprykin.spb@gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -145,9 +145,9 @@ P_TEST_CASE_BEGIN (pcondvariable_nomem_test)
 
 	PMemVTable vtable;
 
-	vtable.free    = pmem_free;
-	vtable.malloc  = pmem_alloc;
-	vtable.realloc = pmem_realloc;
+	vtable.f_free    = pmem_free;
+	vtable.f_malloc  = pmem_alloc;
+	vtable.f_realloc = pmem_realloc;
 
 	P_TEST_CHECK (p_mem_set_vtable (&vtable) == TRUE);
 	P_TEST_CHECK (p_cond_variable_new () == NULL);
@@ -188,13 +188,13 @@ P_TEST_CASE_BEGIN (pcondvariable_general_test)
 	thread_wakeups = 0;
 	thread_queue   = 0;
 
-	thr1 = p_uthread_create ((PUThreadFunc) producer_test_thread, NULL, TRUE);
+	thr1 = p_uthread_create ((PUThreadFunc) producer_test_thread, NULL, TRUE, NULL);
 	P_TEST_REQUIRE (thr1 != NULL);
 
-	thr2 = p_uthread_create ((PUThreadFunc) consumer_test_thread, NULL, TRUE);
+	thr2 = p_uthread_create ((PUThreadFunc) consumer_test_thread, NULL, TRUE, NULL);
 	P_TEST_REQUIRE (thr2 != NULL);
 
-	thr3 = p_uthread_create ((PUThreadFunc) consumer_test_thread, NULL, TRUE);
+	thr3 = p_uthread_create ((PUThreadFunc) consumer_test_thread, NULL, TRUE, NULL);
 	P_TEST_REQUIRE (thr3 != NULL);
 
 	P_TEST_REQUIRE (p_cond_variable_broadcast (queue_empty_cond) == TRUE);

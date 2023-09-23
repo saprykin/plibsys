@@ -28,7 +28,7 @@
  * @brief Time profiler
  * @author Alexander Saprykin
  *
- * #PTimeProfiler acts like a time cronometer: in any moment of time you can
+ * #PTimeProfiler acts like a time chronometer: in any moment of time you can
  * make a time slice to see how much time elapsed since the last slice or timer
  * start.
  *

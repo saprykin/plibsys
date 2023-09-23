@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright (C) 2014-2018 Alexander Saprykin <saprykin.spb@gmail.com>
+ * Copyright (C) 2014-2023 Alexander Saprykin <saprykin.spb@gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -138,7 +138,8 @@ P_TEST_CASE_BEGIN (pmacros_general_test)
     !defined (P_CC_INTEL)   && !defined (P_CC_CLANG) && !defined (P_CC_SUN)    && \
     !defined (P_CC_XLC)     && !defined (P_CC_HP)    && !defined (P_CC_WATCOM) && \
     !defined (P_CC_BORLAND) && !defined (P_CC_MIPS)  && !defined (P_CC_USLC)   && \
-    !defined (P_CC_DEC)     && !defined (P_CC_PGI)   && !defined (P_CC_CRAY)
+    !defined (P_CC_DEC)     && !defined (P_CC_PGI)   && !defined (P_CC_CRAY)   && \
+    !defined (P_CC_INTELX)  && !defined (P_CC_IXLC)  && !defined (P_CC_OXLC)
 	P_TEST_CHECK (false);
 #endif
 
@@ -156,14 +157,32 @@ P_TEST_CASE_BEGIN (pmacros_general_test)
 #  endif
 #endif
 
+#if defined (P_CC_INTELX)
+#  if !defined (P_OS_WIN) && !defined (P_OS_MAC) && !defined (P_OS_LINUX) 
+	P_TEST_CHECK (false);
+#  endif
+#endif
+
+#if defined (P_CC_INTELX)
+#  if !defined (P_CC_CLANG)
+	P_TEST_CHECK (false);
+#  endif
+#endif
+
 #if defined (P_CC_SUN)
 #  if !defined (P_OS_SOLARIS) && !defined (P_OS_LINUX)
 	P_TEST_CHECK (false);
 #  endif
 #endif
 
-#if defined (P_CC_XLC)
+#if defined (P_CC_XLC) || defined (P_CC_IXLC) || defined (P_CC_OXLC)
 #  if !defined (P_OS_AIX) && !defined (P_OS_LINUX)
+	P_TEST_CHECK (false);
+#  endif
+#endif
+
+#if defined (P_CC_IXLC) || defined (P_CC_OXLC)
+#  if !defined (P_CC_CLANG)
 	P_TEST_CHECK (false);
 #  endif
 #endif
@@ -322,7 +341,7 @@ P_TEST_CASE_BEGIN (pmacros_general_test)
 #endif
 
 #if defined (P_OS_MAC)
-#  if !defined (P_CPU_X86) && !defined (P_CPU_POWER)
+#  if !defined (P_CPU_X86) && !defined (P_CPU_POWER) && !defined (P_CPU_ARM_64)
 	P_TEST_CHECK (false);
 #  endif
 #endif
@@ -404,7 +423,7 @@ P_TEST_CASE_BEGIN (pmacros_general_test)
 #if defined (P_CPU_ARM)
 #  if !defined (P_CPU_ARM_V2) && !defined (P_CPU_ARM_V3) && !defined (P_CPU_ARM_V4) && \
       !defined (P_CPU_ARM_V5) && !defined (P_CPU_ARM_V6) && !defined (P_CPU_ARM_V7) && \
-      !defined (P_CPU_ARM_V8)
+      !defined (P_CPU_ARM_V8) && !defined (P_CPU_ARM_V9)
 	P_TEST_CHECK (false);
 #  endif
 #endif
@@ -447,6 +466,12 @@ P_TEST_CASE_BEGIN (pmacros_general_test)
 
 #if defined (P_CPU_ARM_V8)
 #  if !defined (P_CPU_ARM) || !(P_CPU_ARM - 0 == 8)
+	P_TEST_CHECK (false);
+#  endif
+#endif
+
+#if defined (P_CPU_ARM_V9)
+#  if !defined (P_CPU_ARM) || !(P_CPU_ARM - 0 == 9)
 	P_TEST_CHECK (false);
 #  endif
 #endif
@@ -595,6 +620,38 @@ P_TEST_CASE_BEGIN (pmacros_general_test)
 #endif
 
 #if defined (P_CPU_HPPA_32) && defined (P_CPU_HPPA_64)
+	P_TEST_CHECK (false);
+#endif
+
+#if defined (P_CPU_RISCV)
+#  if !defined (P_CPU_RISCV_32) && !defined (P_CPU_RISCV_64)
+	P_TEST_CHECK (false);
+#  endif
+#endif
+
+#if defined (P_CPU_RISCV_32) || defined (P_CPU_RISCV_64)
+#  if !defined (P_CPU_RISCV)
+	P_TEST_CHECK (false);
+#  endif
+#endif
+
+#if defined (P_CPU_RISCV_32) && defined (P_CPU_RISCV_64)
+	P_TEST_CHECK (false);
+#endif
+
+#if defined (P_CPU_LOONGARCH)
+#  if !defined (P_CPU_LOONGARCH_32) && !defined (P_CPU_LOONGARCH_64)
+	P_TEST_CHECK (false);
+#  endif
+#endif
+
+#if defined (P_CPU_LOONGARCH_32) || defined (P_CPU_LOONGARCH_64)
+#  if !defined (P_CPU_LOONGARCH)
+	P_TEST_CHECK (false);
+#  endif
+#endif
+
+#if defined (P_CPU_LOONGARCH_32) && defined (P_CPU_LOONGARCH_64)
 	P_TEST_CHECK (false);
 #endif
 

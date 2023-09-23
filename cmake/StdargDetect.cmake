@@ -1,6 +1,7 @@
 # The MIT License
 #
 # Copyright (C) 2017 Jean-Damien Durand <jeandamiendurand@gmail.com>
+# Copyright (C) 2019 Alexander Saprykin <saprykin.spb@gmail.com>
 #
 # Permission is hereby granted, free of charge, to any person obtaining
 # a copy of this software and associated documentation files (the
@@ -39,6 +40,7 @@ function (plibsys_detect_va_copy result)
     foreach (KEYWORD "va_copy" "_va_copy" "__va_copy")
         check_c_source_compiles ("
                      #include <stdio.h>
+                     #include <stdlib.h>
                      #include <stdarg.h>
 
                      void f (int i, ...) {
@@ -53,9 +55,9 @@ function (plibsys_detect_va_copy result)
                         va_end (args2);
                      }
 
-                     int main() {
+                     int main () {
                         f (0, 42);
-                        exit(0);
+                        exit (0);
                      }"
                     PLIBSYS_${KEYWORD}
         )
