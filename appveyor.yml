@@ -105,7 +105,7 @@ install:
                         $env:PATH = "c:\msys64\usr\bin;$env:PATH";
 
                         If ($env:USE_MINGW64 -eq "1") {
-                                $env:PATH   = "c:\msys64\mingw64\bin;$env:PATH";
+                                $env:PATH = "c:\msys64\mingw64\bin;$env:PATH";
                         } Else {
                                 & C:\msys64\usr\bin\mkdir -p /var/cache/pacman/pkg;
                                 & pacman --sync --noconfirm cmake doxygen;
@@ -209,7 +209,7 @@ build_script:
                         $BUILD_COMMAND = "mingw32-make";
                         $BUILD_PARAMS  = @("-j", "2");
                 } ElseIf ($env:USE_CYGWIN64 -eq "1") {
-                        $env:PATH     = "c:\cygwin64\bin";
+                        $env:PATH = "c:\cygwin64\bin";
 
                         $BUILD_COMMAND = "make";
                         $BUILD_PARAMS  = @("-j", "2");
@@ -271,5 +271,6 @@ build_script:
                 & $BUILD_COMMAND $BUILD_PARAMS;
 
                 If ($env:APPVEYOR_REPO_BRANCH -eq "appveyor_test") {
+                        $env:PATH = "c:\projects\plibsys-build\src;c:\projects\plibsys-build\src\Release;$env:PATH";
                         & ctest $CTEST_PARAMS --output-on-failure -V -C Release;
                 }
