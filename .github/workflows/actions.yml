@@ -26,7 +26,7 @@ jobs:
           cd ..
           mkdir ./plibsys-build
           cd ./plibsys-build
-          cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=${{ matrix.CC }} -DCMAKE_CXX_COMPILER=${{ matrix.CXX }} ../plibsys
+          cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=${{ matrix.CC }} -DCMAKE_CXX_COMPILER=${{ matrix.CXX }} -DPLIBSYS_COVERAGE=ON ../plibsys
       - name: build
         run: |
           pwd
@@ -37,3 +37,7 @@ jobs:
           pwd
           cd ../plibsys-build
           ctest
+      - name: coverage
+        uses: codecov/codecov-action@v4-beta
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
