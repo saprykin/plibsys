@@ -1,6 +1,6 @@
 # The MIT License
 #
-# Copyright (C) 2018-2019 Alexander Saprykin <saprykin.spb@gmail.com>
+# Copyright (C) 2018-2023 Alexander Saprykin <saprykin.spb@gmail.com>
 #
 # Permission is hereby granted, free of charge, to any person obtaining
 # a copy of this software and associated documentation files (the
@@ -806,7 +806,7 @@ set (CMAKE_REQUIRED_LIBRARIES ${SAVED_CMAKE_REQUIRED_LIBRARIES})
 set (SAVED_CMAKE_REQUIRED_FLAGS ${SAVED_CMAKE_REQUIRED_FLAGS})
 
 # Disable useless warnings
-if (MSVC)
+if (MSVC OR ${CMAKE_CXX_SIMULATE_ID} STREQUAL "MSVC")
         list (APPEND PLIBSYS_COMPILE_DEFS -D_CRT_SECURE_NO_WARNINGS)
         list (APPEND PLIBSYS_COMPILE_DEFS -D_WINSOCK_DEPRECATED_NO_WARNINGS)
 endif()
