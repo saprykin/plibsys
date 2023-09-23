@@ -39,5 +39,7 @@ jobs:
           ctest
       - name: coverage
         uses: codecov/codecov-action@v4-beta
-        env:
-          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+        with:
+          gcov: true
+          token: ${{ secrets.CODECOV_TOKEN }}
+          working-directory: ../plibsys-build
