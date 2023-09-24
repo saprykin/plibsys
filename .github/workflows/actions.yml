@@ -1,5 +1,5 @@
 name: plibsys-ci
-on: [push]
+on: [push, pull_request]
 jobs:
   main:
     runs-on: ${{ matrix.os }}
@@ -9,24 +9,31 @@ jobs:
           - os: ubuntu-latest
             CC: gcc
             CXX: g++
+            USE_COV: '1'
           - os: ubuntu-latest
             CC: clang
             CXX: clang++
+            USE_COV: '0'
           - os: macos-latest
             CC: clang
             CXX: clang++
+            USE_COV: '1'
           - os: macos-latest
             CC: gcc-12
             CXX: g++-12
+            USE_COV: '0'
     steps:
       - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
       - name: config
         run: |
           pwd
           cd ..
           mkdir ./plibsys-build
           cd ./plibsys-build
-          cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=${{ matrix.CC }} -DCMAKE_CXX_COMPILER=${{ matrix.CXX }} ../plibsys
+          cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=${{ matrix.CC }} -DCMAKE_CXX_COMPILER=${{ matrix.CXX }} -DPLIBSYS_COVERAGE=ON ../plibsys
       - name: build
         run: |
           pwd
@@ -37,3 +44,28 @@ jobs:
           pwd
           cd ../plibsys-build
           ctest
+      - name: coverage-install
+        if: ${{ success() && matrix.USE_COV == '1' }}
+        run: |
+          pwd
+          if [ "$RUNNER_OS" == "Linux" ]; then
+              sudo apt-get update
+              sudo apt-get install lcov
+              echo "CODECOV_OS=linux" >> ${GITHUB_ENV}
+          elif [ "$RUNNER_OS" == "macOS" ]; then
+              brew update
+              brew install lcov
+              echo "CODECOV_OS=macos" >> ${GITHUB_ENV}
+          else
+              echo "Unknown operating system of runner"
+              exit 1
+          fi
+          pip install codecov-cli
+      - name: coverage-run
+        if: ${{ success() && matrix.USE_COV == '1' }}
+        run: |
+          pwd
+          codecovcli create-commit -t ${{ secrets.CODECOV_TOKEN }}
+          lcov -c --directory ../plibsys-build --no-external --base-directory . --output-file ../plibsys-build/coverage.info
+          codecovcli -v create-report -t ${{ secrets.CODECOV_TOKEN }}
+          codecovcli -v do-upload --dir ../plibsys-build --name github-${{ env.CODECOV_OS }} -t ${{ secrets.CODECOV_TOKEN }}
