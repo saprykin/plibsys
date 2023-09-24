@@ -38,21 +38,15 @@ jobs:
           cd ../plibsys-build
           ctest
       - name: lcov
+        if: ${{ success() && matrix.os == 'ubuntu-latest' && matrix.CC == 'gcc' }}
         run: |
           pwd
-          if [ "$RUNNER_OS" == "Linux" ]; then
-              sudo apt-get update
-              sudo apt-get install lcov
-          elif [ "$RUNNER_OS" == "macOS" ]; then
-              brew update
-              brew install lcov
-          else
-              echo "Unknown operating system of runner"
-              exit 1
-          fi
+          sudo apt-get update
+          sudo apt-get install lcov
           cd ../plibsys-build
           lcov -c --directory . --no-external --base-directory ../plibsys --output-file ./coverage.info
       - name: coverage
+        if: ${{ success() && matrix.os == 'ubuntu-latest' && matrix.CC == 'gcc' }}
         uses: codecov/codecov-action@v4-beta
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
