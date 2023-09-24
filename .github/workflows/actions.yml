@@ -47,15 +47,16 @@ jobs:
           if [ "$RUNNER_OS" == "Linux" ]; then
               sudo apt-get update
               sudo apt-get install lcov
+              echo "CODECOV_OS=linux" >> ${GITHUB_ENV}
           elif [ "$RUNNER_OS" == "macOS" ]; then
               brew update
               brew install lcov
+              echo "CODECOV_OS=macos" >> ${GITHUB_ENV}
           else
               echo "Unknown operating system of runner"
               exit 1
           fi
           pip install codecov-cli
-          echo "CODECOV_OS=${RUNNER_OS,,}" >> ${GITHUB_ENV}
       - name: coverage-run
         if: ${{ success() && startsWith(matrix.CC, 'gcc') }}
         run: |
