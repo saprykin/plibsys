@@ -38,7 +38,7 @@ jobs:
           cd ../plibsys-build
           ctest
       - name: coverage-install
-        if: ${{ success() && startsWith(env.matrix.CC, 'gcc') }}
+        if: ${{ success() && startsWith(matrix.CC, 'gcc') }}
         run: |
           pwd
           if [ "$RUNNER_OS" == "Linux" ]; then
@@ -54,7 +54,7 @@ jobs:
           pip install codecov-cli
           echo "CODECOV_OS=${RUNNER_OS,,}" >> ${GITHUB_ENV}
       - name: coverage-run
-        if: ${{ success() && startsWith(env.matrix.CC, 'gcc') }}
+        if: ${{ success() && startsWith(matrix.CC, 'gcc') }}
         run: |
           pwd
           codecovcli create-commit -t ${{ secrets.CODECOV_TOKEN }}
