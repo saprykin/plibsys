@@ -38,17 +38,26 @@ jobs:
           cd ../plibsys-build
           ctest
       - name: coverage-install
-        if: ${{ success() && matrix.os == 'ubuntu-latest' && matrix.CC == 'gcc' }}
+        if: ${{ success() && startsWith(${{ matrix.CC }}, 'gcc' }}
         run: |
           pwd
-          sudo apt-get update
-          sudo apt-get install lcov
+          if [ "$RUNNER_OS" == "Linux" ]; then
+              sudo apt-get update
+              sudo apt-get install lcov
+          elif [ "$RUNNER_OS" == "macOS" ]; then
+              brew update
+              brew install lcov
+          else
+              echo "Unknown operating system of runner"
+              exit 1
+          fi
           pip install codecov-cli
+          echo "CODECOV_OS=${RUNNER_OS,,}" >> ${GITHUB_ENV}
       - name: coverage-run
-        if: ${{ success() && matrix.os == 'ubuntu-latest' && matrix.CC == 'gcc' }}
+        if: ${{ success() && startsWith(${{ matrix.CC }}, 'gcc' }}
         run: |
           pwd
           codecovcli create-commit -t ${{ secrets.CODECOV_TOKEN }}
           lcov -c --directory ../plibsys-build --no-external --base-directory . --output-file ../plibsys-build/coverage.info
           codecovcli -v create-report -t ${{ secrets.CODECOV_TOKEN }}
-          codecovcli -v do-upload --dir ../plibsys-build -t ${{ secrets.CODECOV_TOKEN }}
+          codecovcli -v do-upload --dir ../plibsys-build --name github-${{ env.CODECOV_OS }} -t ${{ secrets.CODECOV_TOKEN }}
