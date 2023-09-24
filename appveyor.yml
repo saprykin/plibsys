@@ -247,8 +247,8 @@ build_script:
 
                 $CMAKE_GENERATOR_ARGS = "-G`"$env:CMAKE_GENERATOR`"";
 
-                If (Test-Path variable:global:CMAKE_GENERATOR_ARGS) {
-                        $CMAKE_GENERATOR_ARGS = "$CMAKE_GENERATOR_ARGS -A $CMAKE_GENERATOR_ARGS";
+                If (Test-Path env:CMAKE_GENERATOR_ARCH) {
+                        $CMAKE_GENERATOR_ARGS = "$CMAKE_GENERATOR_ARGS -A $CMAKE_GENERATOR_ARCH";
                 }
 
                 If($env:USE_COVERITY -eq "1" -And $env:APPVEYOR_REPO_BRANCH -eq "appveyor_test") {
