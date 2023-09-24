@@ -9,15 +9,19 @@ jobs:
           - os: ubuntu-latest
             CC: gcc
             CXX: g++
+            USE_COV: '1'
           - os: ubuntu-latest
             CC: clang
             CXX: clang++
+            USE_COV: '0'
           - os: macos-latest
             CC: clang
             CXX: clang++
+            USE_COV: '1'
           - os: macos-latest
             CC: gcc-12
             CXX: g++-12
+            USE_COV: '0'
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-python@v4
@@ -41,7 +45,7 @@ jobs:
           cd ../plibsys-build
           ctest
       - name: coverage-install
-        if: ${{ success() && startsWith(matrix.CC, 'gcc') }}
+        if: ${{ success() && matrix.USE_COV == '1' }}
         run: |
           pwd
           if [ "$RUNNER_OS" == "Linux" ]; then
@@ -58,7 +62,7 @@ jobs:
           fi
           pip install codecov-cli
       - name: coverage-run
-        if: ${{ success() && startsWith(matrix.CC, 'gcc') }}
+        if: ${{ success() && matrix.USE_COV == '1' }}
         run: |
           pwd
           codecovcli create-commit -t ${{ secrets.CODECOV_TOKEN }}
