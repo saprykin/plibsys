@@ -51,5 +51,5 @@ jobs:
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           working-directory: ../plibsys-build
-          root_dir: ../plibsys
+          root_dir: .
           gcov: false
