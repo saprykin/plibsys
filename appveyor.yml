@@ -1,6 +1,8 @@
 environment:
         COVERITY_SCAN_PROJECT_NAME:       "saprykin/plibsys"
         COVERITY_SCAN_NOTIFICATION_EMAIL: "saprykin.spb@gmail.com"
+        COVERITY_DESCRIPTION:             "Appveyor CI build"
+        COVERITY_UPLOAD_URL:              "https://scan.coverity.com/builds?project=saprykin%2Fplibsys"
         COVERITY_SCAN_TOKEN:
                 secure: 6WFXzLxAMuUovtYc+u8OoruE/V6zhK2M4mZlrszRBIA=
 
@@ -252,18 +254,14 @@ build_script:
                 }
 
                 If($env:USE_COVERITY -eq "1" -And $env:APPVEYOR_REPO_BRANCH -eq "appveyor_test") {
-                        & nuget install PublishCoverity -o $BUILD_DIR -excludeversion;
-
-                        $COVERITY_EXE = "$BUILD_DIR\PublishCoverity\tools\PublishCoverity.exe";
-
-                        # Do not build tests for Coverity
                         & cmake '$CMAKE_GENERATOR_ARGS' $CMAKE_C_COMPILER $CMAKE_CXX_COMPILER ../plibsys;
 
                         & cov-configure --msvc;
                         & cov-build --dir "$BUILD_DIR\cov-int" $BUILD_COMMAND $BUILD_PARAMS;
 
-                        & $COVERITY_EXE compress -o "$BUILD_DIR\coverity.zip" -i "$BUILD_DIR\cov-int";
-                        & $COVERITY_EXE publish -z "$BUILD_DIR\coverity.zip" -r $env:COVERITY_SCAN_PROJECT_NAME -t $env:COVERITY_SCAN_TOKEN -e $env:COVERITY_SCAN_NOTIFICATION_EMAIL --codeVersion $env:APPVEYOR_BUILD_VERSION;
+                        Compress-Archive -Path "$BUILD_DIR\cov-int" -DestinationPath "$BUILD_DIR\plibsys.zip"
+
+                        & curl --form token=$env:COVERITY_SCAN_TOKEN --form email=$end:COVERITY_SCAN_NOTIFICATION_EMAIL --form file=@"$env:$BUILD_DIR\plibsys.zip" --form version="$env:APPVEYOR_REPO_COMMIT" --form description="$env:COVERITY_DESCRIPTION"
 
                         Get-ChildItem -Path ./ -Recurse | Remove-Item -Force -Recurse;
                 }
