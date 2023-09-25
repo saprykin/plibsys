@@ -261,7 +261,7 @@ build_script:
 
                         Compress-Archive -Path "$BUILD_DIR\cov-int" -DestinationPath "$BUILD_DIR\plibsys.zip"
 
-                        & curl --form token=$env:COVERITY_SCAN_TOKEN --form email=$end:COVERITY_SCAN_NOTIFICATION_EMAIL --form file=@"$env:$BUILD_DIR\plibsys.zip" --form version="$env:APPVEYOR_REPO_COMMIT" --form description="$env:COVERITY_DESCRIPTION"
+                        & curl --form token=$env:COVERITY_SCAN_TOKEN --form email=$end:COVERITY_SCAN_NOTIFICATION_EMAIL --form file="`@$env:$BUILD_DIR\plibsys.zip" --form version="$env:APPVEYOR_REPO_COMMIT" --form description="$env:COVERITY_DESCRIPTION"
 
                         Get-ChildItem -Path ./ -Recurse | Remove-Item -Force -Recurse;
                 }
