@@ -7,6 +7,10 @@ environment:
                 secure: 6WFXzLxAMuUovtYc+u8OoruE/V6zhK2M4mZlrszRBIA=
 
         matrix:
+                - CMAKE_GENERATOR:             "Visual Studio 16 2019"
+                  CMAKE_GENERATOR_ARCH:        "x64"
+                  USE_COVERITY:                "1"
+                  APPVEYOR_BUILD_WORKER_IMAGE: "Visual Studio 2019"
                 - CMAKE_GENERATOR:             "Watcom WMake"
                   USE_WATCOM:                  "1"
                   APPVEYOR_BUILD_WORKER_IMAGE: "Visual Studio 2015"
@@ -68,10 +72,6 @@ environment:
                 - CMAKE_GENERATOR:             "Visual Studio 15 2017 Win64"
                   APPVEYOR_BUILD_WORKER_IMAGE: "Visual Studio 2017"
                 - CMAKE_GENERATOR:             "Visual Studio 16 2019"
-                  APPVEYOR_BUILD_WORKER_IMAGE: "Visual Studio 2019"
-                - CMAKE_GENERATOR:             "Visual Studio 16 2019"
-                  CMAKE_GENERATOR_ARCH:        "x64"
-                  USE_COVERITY:                "1"
                   APPVEYOR_BUILD_WORKER_IMAGE: "Visual Studio 2019"
                 - CMAKE_GENERATOR:             "NMake Makefiles"
                   USE_LLVM:                    "1"
@@ -262,7 +262,7 @@ build_script:
                         Compress-Archive -Path "$BUILD_DIR\cov-int" -DestinationPath "$BUILD_DIR\plibsys.zip";
 
                         Remove-Item alias:curl;
-                        & curl --form token="$env:COVERITY_SCAN_TOKEN" --form email="$env:COVERITY_SCAN_NOTIFICATION_EMAIL" --form file="`@$BUILD_DIR\plibsys.zip" --form version="$env:APPVEYOR_REPO_COMMIT" --form description="$env:COVERITY_DESCRIPTION";
+                        & curl --form token="$env:COVERITY_SCAN_TOKEN" --form email="$env:COVERITY_SCAN_NOTIFICATION_EMAIL" --form file="`@$BUILD_DIR\plibsys.zip" --form version="$env:APPVEYOR_REPO_COMMIT" --form description="$env:COVERITY_DESCRIPTION" "env:COVERITY_UPLOAD_URL";
 
                         Get-ChildItem -Path ./ -Recurse | Remove-Item -Force -Recurse;
                 }
