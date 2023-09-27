@@ -261,7 +261,7 @@ build_script:
                         & 7z a -tzip "$BUILD_DIR\cov-int.zip" "$BUILD_DIR\cov-int";
 
                         Remove-Item alias:curl;
-                        & curl --form token="$env:COVERITY_SCAN_TOKEN" --form email="$env:COVERITY_SCAN_NOTIFICATION_EMAIL" --form file="`@$BUILD_DIR\plibsys.zip" --form version="$env:APPVEYOR_BUILD_ID" --form description="$env:COVERITY_DESCRIPTION" "$env:COVERITY_UPLOAD_URL";
+                        & curl --form token="$env:COVERITY_SCAN_TOKEN" --form email="$env:COVERITY_SCAN_NOTIFICATION_EMAIL" --form file="`@$BUILD_DIR\cov-int.zip" --form version="$env:APPVEYOR_BUILD_ID" --form description="$env:COVERITY_DESCRIPTION" "$env:COVERITY_UPLOAD_URL";
 
                         Get-ChildItem -Path ./ -Recurse | Remove-Item -Force -Recurse;
                 }
