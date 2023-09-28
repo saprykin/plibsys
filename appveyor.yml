@@ -99,7 +99,8 @@ cache:
 
 install:
         - If "%USE_CYGWIN64%" == "1" (
-                c:\cygwin64\setup-x86_64.exe -gqnNdO -R c:\cygwin64 -s http://cygwin.mirror.constant.com -l "c:\cygwin-setup-cache" -P cmake -P cygrunsrv
+                c:\cygwin64\setup-x86_64.exe -gqnNdO -R c:\cygwin64 -s https://cygwin.mirror.constant.com `
+                -l "c:\cygwin-setup-cache" -P cmake -P cygrunsrv
           )
 
         - ps: >-
@@ -133,9 +134,11 @@ install:
                         $MINGW_ARCHIVE = "$MINGW_BASE.7z";
 
                         If ($env:USE_MINGW64 -eq "1") {
-                                $MINGW_URL = "https://sourceforge.net/projects/mingw-w64/files/Toolchains%20targetting%20Win64/Personal%20Builds/mingw-builds/$MINGW_VERSION/threads-win32/seh/$MINGW_ARCHIVE/download";
+                                $MINGW_URL = ("https://sourceforge.net/projects/mingw-w64/files/Toolchains%20targetting%20Win64/" +
+                                              "Personal%20Builds/mingw-builds/$MINGW_VERSION/threads-win32/seh/$MINGW_ARCHIVE/download");
                         } Else {
-                                $MINGW_URL = "https://sourceforge.net/projects/mingw-w64/files/Toolchains%20targetting%20Win32/Personal%20Builds/mingw-builds/$MINGW_VERSION/threads-win32/dwarf/$MINGW_ARCHIVE/download";
+                                $MINGW_URL = ("https://sourceforge.net/projects/mingw-w64/files/Toolchains%20targetting%20Win32/" +
+                                              "Personal%20Builds/mingw-builds/$MINGW_VERSION/threads-win32/dwarf/$MINGW_ARCHIVE/download");
                         }
 
                         Set-Location c:\projects | Out-Null;
@@ -261,7 +264,9 @@ build_script:
                         & 7z a -tzip "$BUILD_DIR\cov-int.zip" "$BUILD_DIR\cov-int";
 
                         Remove-Item alias:curl;
-                        & curl --form token="$env:COVERITY_SCAN_TOKEN" --form email="$env:COVERITY_SCAN_NOTIFICATION_EMAIL" --form file="`@$BUILD_DIR\cov-int.zip" --form version="$env:APPVEYOR_BUILD_VERSION" --form description="$env:COVERITY_DESCRIPTION" "$env:COVERITY_UPLOAD_URL";
+                        & curl --form token="$env:COVERITY_SCAN_TOKEN" --form email="$env:COVERITY_SCAN_NOTIFICATION_EMAIL" `
+                        --form file="`@$BUILD_DIR\cov-int.zip" --form version="$env:APPVEYOR_BUILD_VERSION" `
+                        --form description="$env:COVERITY_DESCRIPTION" "$env:COVERITY_UPLOAD_URL";
 
                         Get-ChildItem -Path ./ -Recurse | Remove-Item -Force -Recurse;
                 }
