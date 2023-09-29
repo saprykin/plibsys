@@ -108,7 +108,7 @@ static void * writer_thread_func (void *data)
 		if (string_num == 1)
 			strcpy (string_buf, PRWLOCK_TEST_STRING_1);
 		else
-			strcpy (string_buf, PRWLOCK_TEST_STRING_1);
+			strcpy (string_buf, PRWLOCK_TEST_STRING_2);
 
 		if (p_rwlock_writer_unlock (test_rwlock) == FALSE)
 			p_uthread_exit (-1);
