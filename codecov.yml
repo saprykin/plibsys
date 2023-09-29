@@ -4,4 +4,8 @@ coverage:
     precision: 0
     round:     down
     status:
+        project:
+            default:
+                target: auto
+                threshold: 1%
         patch: false
