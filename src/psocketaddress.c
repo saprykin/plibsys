@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright (C) 2010-2016 Alexander Saprykin <saprykin.spb@gmail.com>
+ * Copyright (C) 2010-2023 Alexander Saprykin <saprykin.spb@gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -461,13 +461,11 @@ p_socket_address_get_port (const PSocketAddress *addr)
 P_LIB_API puint32
 p_socket_address_get_flow_info (const PSocketAddress *addr)
 {
-	if (P_UNLIKELY (addr == NULL))
-		return 0;
-
 #if !defined (AF_INET6) || !defined (PLIBSYS_SOCKADDR_IN6_HAS_FLOWINFO)
+	P_UNUSED (addr);
 	return 0;
 #else
-	if (P_UNLIKELY (addr->family != P_SOCKET_FAMILY_INET6))
+	if (P_UNLIKELY (addr == NULL || addr->family != P_SOCKET_FAMILY_INET6))
 		return 0;
 
 	return addr->flowinfo;
@@ -477,13 +475,11 @@ p_socket_address_get_flow_info (const PSocketAddress *addr)
 P_LIB_API puint32
 p_socket_address_get_scope_id (const PSocketAddress *addr)
 {
-	if (P_UNLIKELY (addr == NULL))
-		return 0;
-
 #if !defined (AF_INET6) || !defined (PLIBSYS_SOCKADDR_IN6_HAS_SCOPEID)
+	P_UNUSED (addr);
 	return 0;
 #else
-	if (P_UNLIKELY (addr->family != P_SOCKET_FAMILY_INET6))
+	if (P_UNLIKELY (addr == NULL || addr->family != P_SOCKET_FAMILY_INET6))
 		return 0;
 
 	return addr->scope_id;
@@ -494,14 +490,12 @@ P_LIB_API void
 p_socket_address_set_flow_info (PSocketAddress	*addr,
 				puint32		flowinfo)
 {
-	if (P_UNLIKELY (addr == NULL))
-		return;
-
 #if !defined (AF_INET6) || !defined (PLIBSYS_SOCKADDR_IN6_HAS_FLOWINFO)
+	P_UNUSED (addr);
 	P_UNUSED (flowinfo);
 	return;
 #else
-	if (P_UNLIKELY (addr->family != P_SOCKET_FAMILY_INET6))
+	if (P_UNLIKELY (addr == NULL || addr->family != P_SOCKET_FAMILY_INET6))
 		return;
 
 	addr->flowinfo = flowinfo;
@@ -512,14 +506,12 @@ P_LIB_API void
 p_socket_address_set_scope_id (PSocketAddress	*addr,
 			       puint32		scope_id)
 {
-	if (P_UNLIKELY (addr == NULL))
-		return;
-
 #if !defined (AF_INET6) || !defined (PLIBSYS_SOCKADDR_IN6_HAS_SCOPEID)
+	P_UNUSED (addr);
 	P_UNUSED (scope_id);
 	return;
 #else
-	if (P_UNLIKELY (addr->family != P_SOCKET_FAMILY_INET6))
+	if (P_UNLIKELY (addr == NULL || addr->family != P_SOCKET_FAMILY_INET6))
 		return;
 
 	addr->scope_id = scope_id;
