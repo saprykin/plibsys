@@ -264,9 +264,11 @@ p_atomic_is_lock_free (void)
 void
 p_atomic_thread_init (void)
 {
+	/* Not required */
 }
 
 void
 p_atomic_thread_shutdown (void)
 {
+	/* Not required */
 }

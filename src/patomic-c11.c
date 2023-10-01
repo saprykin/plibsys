@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright (C) 2016 Alexander Saprykin <saprykin.spb@gmail.com>
+ * Copyright (C) 2016-2023 Alexander Saprykin <saprykin.spb@gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -174,9 +174,11 @@ p_atomic_is_lock_free (void)
 void
 p_atomic_thread_init (void)
 {
+	/* Not required */
 }
 
 void
 p_atomic_thread_shutdown (void)
 {
+	/* Not required */
 }
