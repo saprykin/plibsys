@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright (C) 2010-2016 Alexander Saprykin <saprykin.spb@gmail.com>
+ * Copyright (C) 2010-2023 Alexander Saprykin <saprykin.spb@gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -67,7 +67,8 @@ static LONG
 ppInterlockedAnd (LONG volatile	*atomic,
 		  LONG		val)
 {
-	LONG i, j;
+	LONG i;
+	LONG j;
 
 	j = *atomic;
 	do {
@@ -81,10 +82,11 @@ ppInterlockedAnd (LONG volatile	*atomic,
 #  define InterlockedAnd(a,b) ppInterlockedAnd(a,b)
 
 static LONG
-ppInterlockedOr (LONG volatile 	*atomic,
+ppInterlockedOr (LONG volatile	*atomic,
 		 LONG		val)
 {
-	LONG i, j;
+	LONG i;
+	LONG j;
 
 	j = *atomic;
 	do {
@@ -101,7 +103,8 @@ static LONG
 ppInterlockedXor (LONG volatile	*atomic,
 		  LONG		val)
 {
-	LONG i, j;
+	LONG i;
+	LONG j;
 
 	j = *atomic;
 	do {
