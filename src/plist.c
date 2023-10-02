@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright (C) 2010-2016 Alexander Saprykin <saprykin.spb@gmail.com>
+ * Copyright (C) 2010-2023 Alexander Saprykin <saprykin.spb@gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -29,7 +29,8 @@
 #include <stdlib.h>
 
 P_LIB_API PList *
-p_list_append (PList *list, ppointer data)
+p_list_append (PList	*list,
+	       ppointer	data)
 {
 	PList *item, *cur;
 
@@ -52,7 +53,8 @@ p_list_append (PList *list, ppointer data)
 }
 
 P_LIB_API PList *
-p_list_remove (PList *list, ppointer data)
+p_list_remove (PList		*list,
+	       pconstpointer	data)
 {
 	PList *cur, *prev, *head;
 
@@ -76,7 +78,9 @@ p_list_remove (PList *list, ppointer data)
 }
 
 P_LIB_API void
-p_list_foreach (PList *list, PFunc func, ppointer user_data)
+p_list_foreach (PList		*list,
+		PFunc		func,
+		ppointer	user_data)
 {
 	PList *cur;
 
@@ -131,7 +135,8 @@ p_list_length (const PList *list)
 }
 
 P_LIB_API PList *
-p_list_prepend	(PList *list, ppointer data)
+p_list_prepend (PList		*list,
+		ppointer	data)
 {
 	PList *item;
 
@@ -152,7 +157,7 @@ p_list_prepend	(PList *list, ppointer data)
 }
 
 P_LIB_API PList *
-p_list_reverse	(PList *list)
+p_list_reverse (PList *list)
 {
 	PList *prev, *cur, *tmp;
 

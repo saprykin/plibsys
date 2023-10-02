@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright (C) 2010-2016 Alexander Saprykin <saprykin.spb@gmail.com>
+ * Copyright (C) 2010-2023 Alexander Saprykin <saprykin.spb@gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -123,7 +123,7 @@ P_LIB_API PList *	p_list_append	(PList		*list,
  * data it pointers to, so you need to free the data manually.
  */
 P_LIB_API PList *	p_list_remove	(PList		*list,
-					 ppointer	data) P_GNUC_WARN_UNUSED_RESULT;
+					 pconstpointer	data) P_GNUC_WARN_UNUSED_RESULT;
 
 /**
  * @brief Calls a specified function for each list node.
