@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright (C) 2016-2018 Alexander Saprykin <saprykin.spb@gmail.com>
+ * Copyright (C) 2016-2023 Alexander Saprykin <saprykin.spb@gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -680,7 +680,7 @@ p_error_new_literal (pint		code,
 }
 
 P_LIB_API const pchar *
-p_error_get_message (PError *error)
+p_error_get_message (const PError *error)
 {
 	if (P_UNLIKELY (error == NULL))
 		return NULL;
@@ -689,7 +689,7 @@ p_error_get_message (PError *error)
 }
 
 P_LIB_API pint
-p_error_get_code (PError *error)
+p_error_get_code (const PError *error)
 {
 	if (P_UNLIKELY (error == NULL))
 		return 0;
@@ -698,7 +698,7 @@ p_error_get_code (PError *error)
 }
 
 P_LIB_API pint
-p_error_get_native_code	(PError	*error)
+p_error_get_native_code	(const PError *error)
 {
 	if (P_UNLIKELY (error == NULL))
 		return 0;
@@ -707,7 +707,7 @@ p_error_get_native_code	(PError	*error)
 }
 
 P_LIB_API PErrorDomain
-p_error_get_domain (PError *error)
+p_error_get_domain (const PError *error)
 {
 	if (P_UNLIKELY (error == NULL))
 		return P_ERROR_DOMAIN_NONE;
@@ -721,7 +721,7 @@ p_error_get_domain (PError *error)
 }
 
 P_LIB_API PError *
-p_error_copy (PError *error)
+p_error_copy (const PError *error)
 {
 	PError *ret;
 
