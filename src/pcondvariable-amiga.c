@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright (C) 2017 Alexander Saprykin <saprykin.spb@gmail.com>
+ * Copyright (C) 2017-2023 Alexander Saprykin <saprykin.spb@gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -222,9 +222,11 @@ p_cond_variable_broadcast (PCondVariable *cond)
 void
 p_cond_variable_init (void)
 {
+	/* Not required */
 }
 
 void
 p_cond_variable_shutdown (void)
 {
+	/* Not required */
 }

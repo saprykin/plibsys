@@ -155,9 +155,11 @@ p_cond_variable_broadcast (PCondVariable *cond)
 void
 p_cond_variable_init (void)
 {
+	/* Not required */
 }
 
 void
 p_cond_variable_shutdown (void)
 {
+	/* Not required */
 }
