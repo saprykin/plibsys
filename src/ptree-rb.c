@@ -83,7 +83,7 @@ pp_tree_rb_get_uncle (const PTreeRBNode *node)
 static PTreeRBNode *
 pp_tree_rb_get_sibling (const PTreeRBNode *node)
 {
-	if (node->parent->base.left == (PTreeBaseNode *) node)
+	if (node->parent->base.left == (const PTreeBaseNode *) node)
 		return (PTreeRBNode *) node->parent->base.right;
 	else
 		return (PTreeRBNode *) node->parent->base.left;
