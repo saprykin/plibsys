@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright (C) 2015-2016 Alexander Saprykin <saprykin.spb@gmail.com>
+ * Copyright (C) 2015-2023 Alexander Saprykin <saprykin.spb@gmail.com>
  * Illustrations have been taken from the Linux kernel rbtree.c
  *
  * Permission is hereby granted, free of charge, to any person obtaining
@@ -38,18 +38,18 @@ typedef struct PTreeRBNode_ {
 	PTreeRBColor		color;
 } PTreeRBNode;
 
-static pboolean pp_tree_rb_is_black (PTreeRBNode *node);
-static pboolean pp_tree_rb_is_red (PTreeRBNode *node);
-static PTreeRBNode * pp_tree_rb_get_gparent (PTreeRBNode *node);
-static PTreeRBNode * pp_tree_rb_get_uncle (PTreeRBNode *node);
-static PTreeRBNode * pp_tree_rb_get_sibling (PTreeRBNode *node);
+static pboolean pp_tree_rb_is_black (const PTreeRBNode *node);
+static pboolean pp_tree_rb_is_red (const PTreeRBNode *node);
+static PTreeRBNode * pp_tree_rb_get_gparent (const PTreeRBNode *node);
+static PTreeRBNode * pp_tree_rb_get_uncle (const PTreeRBNode *node);
+static PTreeRBNode * pp_tree_rb_get_sibling (const PTreeRBNode *node);
 static void pp_tree_rb_rotate_left (PTreeRBNode *node, PTreeBaseNode **root);
 static void pp_tree_rb_rotate_right (PTreeRBNode *node, PTreeBaseNode **root);
 static void pp_tree_rb_balance_insert (PTreeRBNode *node, PTreeBaseNode **root);
 static void pp_tree_rb_balance_remove (PTreeRBNode *node, PTreeBaseNode **root);
 
 static pboolean
-pp_tree_rb_is_black (PTreeRBNode *node)
+pp_tree_rb_is_black (const PTreeRBNode *node)
 {
 	if (node == NULL)
 		return TRUE;
@@ -58,19 +58,19 @@ pp_tree_rb_is_black (PTreeRBNode *node)
 }
 
 static pboolean
-pp_tree_rb_is_red (PTreeRBNode *node)
+pp_tree_rb_is_red (const PTreeRBNode *node)
 {
 	return ((node->color) & P_TREE_RB_COLOR_RED) > 0 ? TRUE : FALSE;
 }
 
 static PTreeRBNode *
-pp_tree_rb_get_gparent (PTreeRBNode *node)
+pp_tree_rb_get_gparent (const PTreeRBNode *node)
 {
 	return node->parent->parent;
 }
 
 static PTreeRBNode *
-pp_tree_rb_get_uncle (PTreeRBNode *node)
+pp_tree_rb_get_uncle (const PTreeRBNode *node)
 {
 	PTreeRBNode *gparent = pp_tree_rb_get_gparent (node);
 
@@ -81,7 +81,7 @@ pp_tree_rb_get_uncle (PTreeRBNode *node)
 }
 
 static PTreeRBNode *
-pp_tree_rb_get_sibling (PTreeRBNode *node)
+pp_tree_rb_get_sibling (const PTreeRBNode *node)
 {
 	if (node->parent->base.left == (PTreeBaseNode *) node)
 		return (PTreeRBNode *) node->parent->base.right;

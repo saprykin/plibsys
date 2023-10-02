@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright (C) 2010-2020 Alexander Saprykin <saprykin.spb@gmail.com>
+ * Copyright (C) 2010-2023 Alexander Saprykin <saprykin.spb@gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -39,12 +39,12 @@ struct PShmBuffer_ {
 	psize size;
 };
 
-static psize pp_shm_buffer_get_free_space (PShmBuffer *buf);
-static psize pp_shm_buffer_get_used_space (PShmBuffer *buf);
+static psize pp_shm_buffer_get_free_space (const PShmBuffer *buf);
+static psize pp_shm_buffer_get_used_space (const PShmBuffer *buf);
 
 /* Warning: this function is not thread-safe, only for internal usage */
 static psize
-pp_shm_buffer_get_free_space (PShmBuffer *buf)
+pp_shm_buffer_get_free_space (const PShmBuffer *buf)
 {
 	psize		read_pos, write_pos;
 	ppointer	addr;
@@ -63,7 +63,7 @@ pp_shm_buffer_get_free_space (PShmBuffer *buf)
 }
 
 static psize
-pp_shm_buffer_get_used_space (PShmBuffer *buf)
+pp_shm_buffer_get_used_space (const PShmBuffer *buf)
 {
 	psize		read_pos, write_pos;
 	ppointer	addr;

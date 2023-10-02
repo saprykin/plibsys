@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright (C) 2017-2019 Alexander Saprykin <saprykin.spb@gmail.com>
+ * Copyright (C) 2017-2023 Alexander Saprykin <saprykin.spb@gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -77,7 +77,7 @@ static PUThreadTLSKey pp_uthread_tls_keys[PUTHREAD_AMIGA_MAX_TLS_KEYS];
 static pint pp_uthread_get_amiga_priority (PUThreadPriority prio);
 static puthread_key_t pp_uthread_get_tls_key (PUThreadKey *key);
 static pint pp_uthread_find_next_id (void);
-static PUThreadInfo * pp_uthread_find_thread_info (struct Task *task);
+static PUThreadInfo * pp_uthread_find_thread_info (const struct Task *task);
 static PUThreadInfo * pp_uthread_find_or_create_thread_info (struct Task *task);
 static pint pp_uthread_amiga_proxy (void);
 
@@ -193,7 +193,7 @@ pp_uthread_find_next_id (void)
 /* Must be used only inside a protected critical region */
 
 static PUThreadInfo *
-pp_uthread_find_thread_info (struct Task *task)
+pp_uthread_find_thread_info (const struct Task *task)
 {
 	PList		*cur_list;
 	PUThreadInfo	*thread_info;
