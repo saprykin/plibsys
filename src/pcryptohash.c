@@ -87,47 +87,47 @@ p_crypto_hash_new (PCryptoHashType type)
 
 	switch (type) {
 	case P_CRYPTO_HASH_TYPE_MD5:
-		P_HASH_FUNCS (ret, md5);
+		P_HASH_FUNCS (ret, md5)
 		ret->hash_len = 16;
 		break;
 	case P_CRYPTO_HASH_TYPE_SHA1:
-		P_HASH_FUNCS (ret, sha1);
+		P_HASH_FUNCS (ret, sha1)
 		ret->hash_len = 20;
 		break;
 	case P_CRYPTO_HASH_TYPE_SHA2_224:
-		P_HASH_FUNCS (ret, sha2_224);
+		P_HASH_FUNCS (ret, sha2_224)
 		ret->hash_len = 28;
 		break;
 	case P_CRYPTO_HASH_TYPE_SHA2_256:
-		P_HASH_FUNCS (ret, sha2_256);
+		P_HASH_FUNCS (ret, sha2_256)
 		ret->hash_len = 32;
 		break;
 	case P_CRYPTO_HASH_TYPE_SHA2_384:
-		P_HASH_FUNCS (ret, sha2_384);
+		P_HASH_FUNCS (ret, sha2_384)
 		ret->hash_len = 48;
 		break;
 	case P_CRYPTO_HASH_TYPE_SHA2_512:
-		P_HASH_FUNCS (ret, sha2_512);
+		P_HASH_FUNCS (ret, sha2_512)
 		ret->hash_len = 64;
 		break;
 	case P_CRYPTO_HASH_TYPE_SHA3_224:
-		P_HASH_FUNCS (ret, sha3_224);
+		P_HASH_FUNCS (ret, sha3_224)
 		ret->hash_len = 28;
 		break;
 	case P_CRYPTO_HASH_TYPE_SHA3_256:
-		P_HASH_FUNCS (ret, sha3_256);
+		P_HASH_FUNCS (ret, sha3_256)
 		ret->hash_len = 32;
 		break;
 	case P_CRYPTO_HASH_TYPE_SHA3_384:
-		P_HASH_FUNCS (ret, sha3_384);
+		P_HASH_FUNCS (ret, sha3_384)
 		ret->hash_len = 48;
 		break;
 	case P_CRYPTO_HASH_TYPE_SHA3_512:
-		P_HASH_FUNCS (ret, sha3_512);
+		P_HASH_FUNCS (ret, sha3_512)
 		ret->hash_len = 64;
 		break;
 	case P_CRYPTO_HASH_TYPE_GOST:
-		P_HASH_FUNCS (ret, gost3411);
+		P_HASH_FUNCS (ret, gost3411)
 		ret->hash_len = 32;
 		break;
 	}

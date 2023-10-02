@@ -153,14 +153,14 @@ pp_crypto_hash_sha2_512_process (PHashSHA2_512	*ctx,
 		W[i] = P_SHA2_512_S1 (W[i -  2]) + W[i -  7] + P_SHA2_512_S0 (W[i - 15]) + W[i - 16];
 
 	for (i = 0; i < 80; i += 8) {
-		P_SHA2_512_P (A[0], A[1], A[2], A[3], A[4], A[5], A[6], A[7], W[i + 0], pp_crypto_hash_sha2_512_K[i + 0]);
-		P_SHA2_512_P (A[7], A[0], A[1], A[2], A[3], A[4], A[5], A[6], W[i + 1], pp_crypto_hash_sha2_512_K[i + 1]);
-		P_SHA2_512_P (A[6], A[7], A[0], A[1], A[2], A[3], A[4], A[5], W[i + 2], pp_crypto_hash_sha2_512_K[i + 2]);
-		P_SHA2_512_P (A[5], A[6], A[7], A[0], A[1], A[2], A[3], A[4], W[i + 3], pp_crypto_hash_sha2_512_K[i + 3]);
-		P_SHA2_512_P (A[4], A[5], A[6], A[7], A[0], A[1], A[2], A[3], W[i + 4], pp_crypto_hash_sha2_512_K[i + 4]);
-		P_SHA2_512_P (A[3], A[4], A[5], A[6], A[7], A[0], A[1], A[2], W[i + 5], pp_crypto_hash_sha2_512_K[i + 5]);
-		P_SHA2_512_P (A[2], A[3], A[4], A[5], A[6], A[7], A[0], A[1], W[i + 6], pp_crypto_hash_sha2_512_K[i + 6]);
-		P_SHA2_512_P (A[1], A[2], A[3], A[4], A[5], A[6], A[7], A[0], W[i + 7], pp_crypto_hash_sha2_512_K[i + 7]);
+		P_SHA2_512_P (A[0], A[1], A[2], A[3], A[4], A[5], A[6], A[7], W[i + 0], pp_crypto_hash_sha2_512_K[i + 0])
+		P_SHA2_512_P (A[7], A[0], A[1], A[2], A[3], A[4], A[5], A[6], W[i + 1], pp_crypto_hash_sha2_512_K[i + 1])
+		P_SHA2_512_P (A[6], A[7], A[0], A[1], A[2], A[3], A[4], A[5], W[i + 2], pp_crypto_hash_sha2_512_K[i + 2])
+		P_SHA2_512_P (A[5], A[6], A[7], A[0], A[1], A[2], A[3], A[4], W[i + 3], pp_crypto_hash_sha2_512_K[i + 3])
+		P_SHA2_512_P (A[4], A[5], A[6], A[7], A[0], A[1], A[2], A[3], W[i + 4], pp_crypto_hash_sha2_512_K[i + 4])
+		P_SHA2_512_P (A[3], A[4], A[5], A[6], A[7], A[0], A[1], A[2], W[i + 5], pp_crypto_hash_sha2_512_K[i + 5])
+		P_SHA2_512_P (A[2], A[3], A[4], A[5], A[6], A[7], A[0], A[1], W[i + 6], pp_crypto_hash_sha2_512_K[i + 6])
+		P_SHA2_512_P (A[1], A[2], A[3], A[4], A[5], A[6], A[7], A[0], W[i + 7], pp_crypto_hash_sha2_512_K[i + 7])
 	}
 
 	for (i = 0; i < 8; ++i)

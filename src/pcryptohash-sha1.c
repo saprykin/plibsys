@@ -131,89 +131,89 @@ pp_crypto_hash_sha1_process (PHashSHA1		*ctx,
 	D = ctx->hash[3];
 	E = ctx->hash[4];
 
-	P_SHA1_ROUND_0 (A, B, C, D, E, W[0]);
-	P_SHA1_ROUND_0 (E, A, B, C, D, W[1]);
-	P_SHA1_ROUND_0 (D, E, A, B, C, W[2]);
-	P_SHA1_ROUND_0 (C, D, E, A, B, W[3]);
-	P_SHA1_ROUND_0 (B, C, D, E, A, W[4]);
-	P_SHA1_ROUND_0 (A, B, C, D, E, W[5]);
-	P_SHA1_ROUND_0 (E, A, B, C, D, W[6]);
-	P_SHA1_ROUND_0 (D, E, A, B, C, W[7]);
-	P_SHA1_ROUND_0 (C, D, E, A, B, W[8]);
-	P_SHA1_ROUND_0 (B, C, D, E, A, W[9]);
-	P_SHA1_ROUND_0 (A, B, C, D, E, W[10]);
-	P_SHA1_ROUND_0 (E, A, B, C, D, W[11]);
-	P_SHA1_ROUND_0 (D, E, A, B, C, W[12]);
-	P_SHA1_ROUND_0 (C, D, E, A, B, W[13]);
-	P_SHA1_ROUND_0 (B, C, D, E, A, W[14]);
-	P_SHA1_ROUND_0 (A, B, C, D, E, W[15]);
-	P_SHA1_ROUND_0 (E, A, B, C, D, P_SHA1_W (W, 16));
-	P_SHA1_ROUND_0 (D, E, A, B, C, P_SHA1_W (W, 17));
-	P_SHA1_ROUND_0 (C, D, E, A, B, P_SHA1_W (W, 18));
-	P_SHA1_ROUND_0 (B, C, D, E, A, P_SHA1_W (W, 19));
+	P_SHA1_ROUND_0 (A, B, C, D, E, W[0])
+	P_SHA1_ROUND_0 (E, A, B, C, D, W[1])
+	P_SHA1_ROUND_0 (D, E, A, B, C, W[2])
+	P_SHA1_ROUND_0 (C, D, E, A, B, W[3])
+	P_SHA1_ROUND_0 (B, C, D, E, A, W[4])
+	P_SHA1_ROUND_0 (A, B, C, D, E, W[5])
+	P_SHA1_ROUND_0 (E, A, B, C, D, W[6])
+	P_SHA1_ROUND_0 (D, E, A, B, C, W[7])
+	P_SHA1_ROUND_0 (C, D, E, A, B, W[8])
+	P_SHA1_ROUND_0 (B, C, D, E, A, W[9])
+	P_SHA1_ROUND_0 (A, B, C, D, E, W[10])
+	P_SHA1_ROUND_0 (E, A, B, C, D, W[11])
+	P_SHA1_ROUND_0 (D, E, A, B, C, W[12])
+	P_SHA1_ROUND_0 (C, D, E, A, B, W[13])
+	P_SHA1_ROUND_0 (B, C, D, E, A, W[14])
+	P_SHA1_ROUND_0 (A, B, C, D, E, W[15])
+	P_SHA1_ROUND_0 (E, A, B, C, D, P_SHA1_W (W, 16))
+	P_SHA1_ROUND_0 (D, E, A, B, C, P_SHA1_W (W, 17))
+	P_SHA1_ROUND_0 (C, D, E, A, B, P_SHA1_W (W, 18))
+	P_SHA1_ROUND_0 (B, C, D, E, A, P_SHA1_W (W, 19))
 
-	P_SHA1_ROUND_1 (A, B, C, D, E, P_SHA1_W (W, 20));
-	P_SHA1_ROUND_1 (E, A, B, C, D, P_SHA1_W (W, 21));
-	P_SHA1_ROUND_1 (D, E, A, B, C, P_SHA1_W (W, 22));
-	P_SHA1_ROUND_1 (C, D, E, A, B, P_SHA1_W (W, 23));
-	P_SHA1_ROUND_1 (B, C, D, E, A, P_SHA1_W (W, 24));
-	P_SHA1_ROUND_1 (A, B, C, D, E, P_SHA1_W (W, 25));
-	P_SHA1_ROUND_1 (E, A, B, C, D, P_SHA1_W (W, 26));
-	P_SHA1_ROUND_1 (D, E, A, B, C, P_SHA1_W (W, 27));
-	P_SHA1_ROUND_1 (C, D, E, A, B, P_SHA1_W (W, 28));
-	P_SHA1_ROUND_1 (B, C, D, E, A, P_SHA1_W (W, 29));
-	P_SHA1_ROUND_1 (A, B, C, D, E, P_SHA1_W (W, 30));
-	P_SHA1_ROUND_1 (E, A, B, C, D, P_SHA1_W (W, 31));
-	P_SHA1_ROUND_1 (D, E, A, B, C, P_SHA1_W (W, 32));
-	P_SHA1_ROUND_1 (C, D, E, A, B, P_SHA1_W (W, 33));
-	P_SHA1_ROUND_1 (B, C, D, E, A, P_SHA1_W (W, 34));
-	P_SHA1_ROUND_1 (A, B, C, D, E, P_SHA1_W (W, 35));
-	P_SHA1_ROUND_1 (E, A, B, C, D, P_SHA1_W (W, 36));
-	P_SHA1_ROUND_1 (D, E, A, B, C, P_SHA1_W (W, 37));
-	P_SHA1_ROUND_1 (C, D, E, A, B, P_SHA1_W (W, 38));
-	P_SHA1_ROUND_1 (B, C, D, E, A, P_SHA1_W (W, 39));
+	P_SHA1_ROUND_1 (A, B, C, D, E, P_SHA1_W (W, 20))
+	P_SHA1_ROUND_1 (E, A, B, C, D, P_SHA1_W (W, 21))
+	P_SHA1_ROUND_1 (D, E, A, B, C, P_SHA1_W (W, 22))
+	P_SHA1_ROUND_1 (C, D, E, A, B, P_SHA1_W (W, 23))
+	P_SHA1_ROUND_1 (B, C, D, E, A, P_SHA1_W (W, 24))
+	P_SHA1_ROUND_1 (A, B, C, D, E, P_SHA1_W (W, 25))
+	P_SHA1_ROUND_1 (E, A, B, C, D, P_SHA1_W (W, 26))
+	P_SHA1_ROUND_1 (D, E, A, B, C, P_SHA1_W (W, 27))
+	P_SHA1_ROUND_1 (C, D, E, A, B, P_SHA1_W (W, 28))
+	P_SHA1_ROUND_1 (B, C, D, E, A, P_SHA1_W (W, 29))
+	P_SHA1_ROUND_1 (A, B, C, D, E, P_SHA1_W (W, 30))
+	P_SHA1_ROUND_1 (E, A, B, C, D, P_SHA1_W (W, 31))
+	P_SHA1_ROUND_1 (D, E, A, B, C, P_SHA1_W (W, 32))
+	P_SHA1_ROUND_1 (C, D, E, A, B, P_SHA1_W (W, 33))
+	P_SHA1_ROUND_1 (B, C, D, E, A, P_SHA1_W (W, 34))
+	P_SHA1_ROUND_1 (A, B, C, D, E, P_SHA1_W (W, 35))
+	P_SHA1_ROUND_1 (E, A, B, C, D, P_SHA1_W (W, 36))
+	P_SHA1_ROUND_1 (D, E, A, B, C, P_SHA1_W (W, 37))
+	P_SHA1_ROUND_1 (C, D, E, A, B, P_SHA1_W (W, 38))
+	P_SHA1_ROUND_1 (B, C, D, E, A, P_SHA1_W (W, 39))
 
-	P_SHA1_ROUND_2 (A, B, C, D, E, P_SHA1_W (W, 40));
-	P_SHA1_ROUND_2 (E, A, B, C, D, P_SHA1_W (W, 41));
-	P_SHA1_ROUND_2 (D, E, A, B, C, P_SHA1_W (W, 42));
-	P_SHA1_ROUND_2 (C, D, E, A, B, P_SHA1_W (W, 43));
-	P_SHA1_ROUND_2 (B, C, D, E, A, P_SHA1_W (W, 44));
-	P_SHA1_ROUND_2 (A, B, C, D, E, P_SHA1_W (W, 45));
-	P_SHA1_ROUND_2 (E, A, B, C, D, P_SHA1_W (W, 46));
-	P_SHA1_ROUND_2 (D, E, A, B, C, P_SHA1_W (W, 47));
-	P_SHA1_ROUND_2 (C, D, E, A, B, P_SHA1_W (W, 48));
-	P_SHA1_ROUND_2 (B, C, D, E, A, P_SHA1_W (W, 49));
-	P_SHA1_ROUND_2 (A, B, C, D, E, P_SHA1_W (W, 50));
-	P_SHA1_ROUND_2 (E, A, B, C, D, P_SHA1_W (W, 51));
-	P_SHA1_ROUND_2 (D, E, A, B, C, P_SHA1_W (W, 52));
-	P_SHA1_ROUND_2 (C, D, E, A, B, P_SHA1_W (W, 53));
-	P_SHA1_ROUND_2 (B, C, D, E, A, P_SHA1_W (W, 54));
-	P_SHA1_ROUND_2 (A, B, C, D, E, P_SHA1_W (W, 55));
-	P_SHA1_ROUND_2 (E, A, B, C, D, P_SHA1_W (W, 56));
-	P_SHA1_ROUND_2 (D, E, A, B, C, P_SHA1_W (W, 57));
-	P_SHA1_ROUND_2 (C, D, E, A, B, P_SHA1_W (W, 58));
-	P_SHA1_ROUND_2 (B, C, D, E, A, P_SHA1_W (W, 59));
+	P_SHA1_ROUND_2 (A, B, C, D, E, P_SHA1_W (W, 40))
+	P_SHA1_ROUND_2 (E, A, B, C, D, P_SHA1_W (W, 41))
+	P_SHA1_ROUND_2 (D, E, A, B, C, P_SHA1_W (W, 42))
+	P_SHA1_ROUND_2 (C, D, E, A, B, P_SHA1_W (W, 43))
+	P_SHA1_ROUND_2 (B, C, D, E, A, P_SHA1_W (W, 44))
+	P_SHA1_ROUND_2 (A, B, C, D, E, P_SHA1_W (W, 45))
+	P_SHA1_ROUND_2 (E, A, B, C, D, P_SHA1_W (W, 46))
+	P_SHA1_ROUND_2 (D, E, A, B, C, P_SHA1_W (W, 47))
+	P_SHA1_ROUND_2 (C, D, E, A, B, P_SHA1_W (W, 48))
+	P_SHA1_ROUND_2 (B, C, D, E, A, P_SHA1_W (W, 49))
+	P_SHA1_ROUND_2 (A, B, C, D, E, P_SHA1_W (W, 50))
+	P_SHA1_ROUND_2 (E, A, B, C, D, P_SHA1_W (W, 51))
+	P_SHA1_ROUND_2 (D, E, A, B, C, P_SHA1_W (W, 52))
+	P_SHA1_ROUND_2 (C, D, E, A, B, P_SHA1_W (W, 53))
+	P_SHA1_ROUND_2 (B, C, D, E, A, P_SHA1_W (W, 54))
+	P_SHA1_ROUND_2 (A, B, C, D, E, P_SHA1_W (W, 55))
+	P_SHA1_ROUND_2 (E, A, B, C, D, P_SHA1_W (W, 56))
+	P_SHA1_ROUND_2 (D, E, A, B, C, P_SHA1_W (W, 57))
+	P_SHA1_ROUND_2 (C, D, E, A, B, P_SHA1_W (W, 58))
+	P_SHA1_ROUND_2 (B, C, D, E, A, P_SHA1_W (W, 59))
 
-	P_SHA1_ROUND_3 (A, B, C, D, E, P_SHA1_W (W, 60));
-	P_SHA1_ROUND_3 (E, A, B, C, D, P_SHA1_W (W, 61));
-	P_SHA1_ROUND_3 (D, E, A, B, C, P_SHA1_W (W, 62));
-	P_SHA1_ROUND_3 (C, D, E, A, B, P_SHA1_W (W, 63));
-	P_SHA1_ROUND_3 (B, C, D, E, A, P_SHA1_W (W, 64));
-	P_SHA1_ROUND_3 (A, B, C, D, E, P_SHA1_W (W, 65));
-	P_SHA1_ROUND_3 (E, A, B, C, D, P_SHA1_W (W, 66));
-	P_SHA1_ROUND_3 (D, E, A, B, C, P_SHA1_W (W, 67));
-	P_SHA1_ROUND_3 (C, D, E, A, B, P_SHA1_W (W, 68));
-	P_SHA1_ROUND_3 (B, C, D, E, A, P_SHA1_W (W, 69));
-	P_SHA1_ROUND_3 (A, B, C, D, E, P_SHA1_W (W, 70));
-	P_SHA1_ROUND_3 (E, A, B, C, D, P_SHA1_W (W, 71));
-	P_SHA1_ROUND_3 (D, E, A, B, C, P_SHA1_W (W, 72));
-	P_SHA1_ROUND_3 (C, D, E, A, B, P_SHA1_W (W, 73));
-	P_SHA1_ROUND_3 (B, C, D, E, A, P_SHA1_W (W, 74));
-	P_SHA1_ROUND_3 (A, B, C, D, E, P_SHA1_W (W, 75));
-	P_SHA1_ROUND_3 (E, A, B, C, D, P_SHA1_W (W, 76));
-	P_SHA1_ROUND_3 (D, E, A, B, C, P_SHA1_W (W, 77));
-	P_SHA1_ROUND_3 (C, D, E, A, B, P_SHA1_W (W, 78));
-	P_SHA1_ROUND_3 (B, C, D, E, A, P_SHA1_W (W, 79));
+	P_SHA1_ROUND_3 (A, B, C, D, E, P_SHA1_W (W, 60))
+	P_SHA1_ROUND_3 (E, A, B, C, D, P_SHA1_W (W, 61))
+	P_SHA1_ROUND_3 (D, E, A, B, C, P_SHA1_W (W, 62))
+	P_SHA1_ROUND_3 (C, D, E, A, B, P_SHA1_W (W, 63))
+	P_SHA1_ROUND_3 (B, C, D, E, A, P_SHA1_W (W, 64))
+	P_SHA1_ROUND_3 (A, B, C, D, E, P_SHA1_W (W, 65))
+	P_SHA1_ROUND_3 (E, A, B, C, D, P_SHA1_W (W, 66))
+	P_SHA1_ROUND_3 (D, E, A, B, C, P_SHA1_W (W, 67))
+	P_SHA1_ROUND_3 (C, D, E, A, B, P_SHA1_W (W, 68))
+	P_SHA1_ROUND_3 (B, C, D, E, A, P_SHA1_W (W, 69))
+	P_SHA1_ROUND_3 (A, B, C, D, E, P_SHA1_W (W, 70))
+	P_SHA1_ROUND_3 (E, A, B, C, D, P_SHA1_W (W, 71))
+	P_SHA1_ROUND_3 (D, E, A, B, C, P_SHA1_W (W, 72))
+	P_SHA1_ROUND_3 (C, D, E, A, B, P_SHA1_W (W, 73))
+	P_SHA1_ROUND_3 (B, C, D, E, A, P_SHA1_W (W, 74))
+	P_SHA1_ROUND_3 (A, B, C, D, E, P_SHA1_W (W, 75))
+	P_SHA1_ROUND_3 (E, A, B, C, D, P_SHA1_W (W, 76))
+	P_SHA1_ROUND_3 (D, E, A, B, C, P_SHA1_W (W, 77))
+	P_SHA1_ROUND_3 (C, D, E, A, B, P_SHA1_W (W, 78))
+	P_SHA1_ROUND_3 (B, C, D, E, A, P_SHA1_W (W, 79))
 
 	ctx->hash[0] += A;
 	ctx->hash[1] += B;

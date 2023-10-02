@@ -104,41 +104,41 @@ static void pp_crypto_hash_gost3411_process (PHashGOST3411 *ctx, const puint32 d
 									\
 	memcpy (N, data, 8);						\
 									\
-	P_GOST_28147_ROUND (N, (key)[0]);				\
-	P_GOST_28147_ROUND (N, (key)[1]);				\
-	P_GOST_28147_ROUND (N, (key)[2]);				\
-	P_GOST_28147_ROUND (N, (key)[3]);				\
-	P_GOST_28147_ROUND (N, (key)[4]);				\
-	P_GOST_28147_ROUND (N, (key)[5]);				\
-	P_GOST_28147_ROUND (N, (key)[6]);				\
-	P_GOST_28147_ROUND (N, (key)[7]);				\
+	P_GOST_28147_ROUND (N, (key)[0])				\
+	P_GOST_28147_ROUND (N, (key)[1])				\
+	P_GOST_28147_ROUND (N, (key)[2])				\
+	P_GOST_28147_ROUND (N, (key)[3])				\
+	P_GOST_28147_ROUND (N, (key)[4])				\
+	P_GOST_28147_ROUND (N, (key)[5])				\
+	P_GOST_28147_ROUND (N, (key)[6])				\
+	P_GOST_28147_ROUND (N, (key)[7])				\
 									\
-	P_GOST_28147_ROUND (N, (key)[0]);				\
-	P_GOST_28147_ROUND (N, (key)[1]);				\
-	P_GOST_28147_ROUND (N, (key)[2]);				\
-	P_GOST_28147_ROUND (N, (key)[3]);				\
-	P_GOST_28147_ROUND (N, (key)[4]);				\
-	P_GOST_28147_ROUND (N, (key)[5]);				\
-	P_GOST_28147_ROUND (N, (key)[6]);				\
-	P_GOST_28147_ROUND (N, (key)[7]);				\
+	P_GOST_28147_ROUND (N, (key)[0])				\
+	P_GOST_28147_ROUND (N, (key)[1])				\
+	P_GOST_28147_ROUND (N, (key)[2])				\
+	P_GOST_28147_ROUND (N, (key)[3])				\
+	P_GOST_28147_ROUND (N, (key)[4])				\
+	P_GOST_28147_ROUND (N, (key)[5])				\
+	P_GOST_28147_ROUND (N, (key)[6])				\
+	P_GOST_28147_ROUND (N, (key)[7])				\
 									\
-	P_GOST_28147_ROUND (N, (key)[0]);				\
-	P_GOST_28147_ROUND (N, (key)[1]);				\
-	P_GOST_28147_ROUND (N, (key)[2]);				\
-	P_GOST_28147_ROUND (N, (key)[3]);				\
-	P_GOST_28147_ROUND (N, (key)[4]);				\
-	P_GOST_28147_ROUND (N, (key)[5]);				\
-	P_GOST_28147_ROUND (N, (key)[6]);				\
-	P_GOST_28147_ROUND (N, (key)[7]);				\
+	P_GOST_28147_ROUND (N, (key)[0])				\
+	P_GOST_28147_ROUND (N, (key)[1])				\
+	P_GOST_28147_ROUND (N, (key)[2])				\
+	P_GOST_28147_ROUND (N, (key)[3])				\
+	P_GOST_28147_ROUND (N, (key)[4])				\
+	P_GOST_28147_ROUND (N, (key)[5])				\
+	P_GOST_28147_ROUND (N, (key)[6])				\
+	P_GOST_28147_ROUND (N, (key)[7])				\
 									\
-	P_GOST_28147_ROUND (N, (key)[7]);				\
-	P_GOST_28147_ROUND (N, (key)[6]);				\
-	P_GOST_28147_ROUND (N, (key)[5]);				\
-	P_GOST_28147_ROUND (N, (key)[4]);				\
-	P_GOST_28147_ROUND (N, (key)[3]);				\
-	P_GOST_28147_ROUND (N, (key)[2]);				\
-	P_GOST_28147_ROUND (N, (key)[1]);				\
-	P_GOST_28147_ROUND (N, (key)[0]);				\
+	P_GOST_28147_ROUND (N, (key)[7])				\
+	P_GOST_28147_ROUND (N, (key)[6])				\
+	P_GOST_28147_ROUND (N, (key)[5])				\
+	P_GOST_28147_ROUND (N, (key)[4])				\
+	P_GOST_28147_ROUND (N, (key)[3])				\
+	P_GOST_28147_ROUND (N, (key)[2])				\
+	P_GOST_28147_ROUND (N, (key)[1])				\
+	P_GOST_28147_ROUND (N, (key)[0])				\
 									\
 	(out)[0] = N[1];						\
 	(out)[1] = N[0];						\
@@ -236,7 +236,7 @@ static void pp_crypto_hash_gost3411_process (PHashGOST3411	*ctx,
 	W[6] = U[6] ^ V[6];
 	W[7] = U[7] ^ V[7];
 
-	P_GOST_3411_P (W, K[0]);
+	P_GOST_3411_P (W, K[0])
 
 	/* Generate second key: P (A (U) xor A^2 (V)) */
 	W[0] = U[2] ^ V[4];
@@ -248,7 +248,7 @@ static void pp_crypto_hash_gost3411_process (PHashGOST3411	*ctx,
 	W[6] = (U[0] ^= U[2]) ^ (V[2] ^= V[4]);
 	W[7] = (U[1] ^= U[3]) ^ (V[3] ^= V[5]);
 
-	P_GOST_3411_P (W, K[1]);
+	P_GOST_3411_P (W, K[1])
 
 	/* Generate third key: P ((A^2 (U) + C3) xor A^4 (V)) */
 	/* C3 = FF00FFFF 000000FF FF0000FF 00FFFF00 00FF00FF 00FF00FF FF00FF00 FF00FF00 */
@@ -270,7 +270,7 @@ static void pp_crypto_hash_gost3411_process (PHashGOST3411	*ctx,
 	W[5] = U[1] ^ (V[5] ^= V[7]);
 	W[7] = U[3] ^ (V[7] ^= V[1]);
 
-	P_GOST_3411_P (W, K[2]);
+	P_GOST_3411_P (W, K[2])
 
 	/* Generate forth key: P (A (A^2 (U) xor C3) xor A^6 (V)) */
 	W[0] = U[6] ^ V[4];
@@ -282,13 +282,13 @@ static void pp_crypto_hash_gost3411_process (PHashGOST3411	*ctx,
 	W[6] = (U[4] ^= U[6]) ^ (V[2] ^= V[4]);
 	W[7] = (U[5] ^= U[7]) ^ (V[3] ^= V[5]);
 
-	P_GOST_3411_P (W, K[3]);
+	P_GOST_3411_P (W, K[3])
 
 	/* Perform GOST 28147-89 encryption */
-	P_GOST_28147_E (ctx->hash,      K[0], S);
-	P_GOST_28147_E (ctx->hash + 2,  K[1], S + 2);
-	P_GOST_28147_E (ctx->hash + 4,  K[2], S + 4);
-	P_GOST_28147_E (ctx->hash + 6,  K[3], S + 6);
+	P_GOST_28147_E (ctx->hash,      K[0], S)
+	P_GOST_28147_E (ctx->hash + 2,  K[1], S + 2)
+	P_GOST_28147_E (ctx->hash + 4,  K[2], S + 4)
+	P_GOST_28147_E (ctx->hash + 6,  K[3], S + 6)
 
 	/* Step hash function: H (M, Hprev) = PSI^61 (Hprev xor PSI (M xor PSI^12 (S))) */
 
