@@ -71,7 +71,7 @@ extern "C" void pmem_free (ppointer block)
 }
 
 static pint
-tree_complexity (PTree *tree)
+tree_complexity (const PTree *tree)
 {
 	if (tree == NULL || p_tree_get_nnodes (tree) == 0)
 		return 0;

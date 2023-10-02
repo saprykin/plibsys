@@ -85,7 +85,7 @@ static pboolean test_socket_address_directly (const PSocketAddress *addr, puint1
 	return ret;
 }
 
-static pboolean test_socket_address (PSocket *socket, puint16 port)
+static pboolean test_socket_address (const PSocket *socket, puint16 port)
 {
 	/* Test remote address */
 	PSocketAddress *remote_addr = p_socket_get_remote_address (socket, NULL);
