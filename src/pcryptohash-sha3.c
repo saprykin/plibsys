@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright (C) 2016 Alexander Saprykin <saprykin.spb@gmail.com>
+ * Copyright (C) 2016-2023 Alexander Saprykin <saprykin.spb@gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -86,7 +86,8 @@ static void
 pp_crypto_hash_sha3_keccak_theta (PHashSHA3 *ctx)
 {
 	puint	i;
-	puint64	C[5], D[5];
+	puint64	C[5];
+	puint64	D[5];
 
 	/* Compute the parity of the columns */
 	for (i = 0; i < 5; ++i)
@@ -148,7 +149,8 @@ static void
 pp_crypto_hash_sha3_keccak_chi (PHashSHA3 *ctx)
 {
 	puint i;
-	puint64	tmp_A1, tmp_A2;
+	puint64	tmp_A1;
+	puint64	tmp_A2;
 
 	for (i = 0; i < 25; i += 5) {
 		tmp_A1 = ctx->hash[i + 0];

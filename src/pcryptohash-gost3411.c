@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright (C) 2010-2017 Alexander Saprykin <saprykin.spb@gmail.com>
+ * Copyright (C) 2010-2023 Alexander Saprykin <saprykin.spb@gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -217,7 +217,11 @@ pp_crypto_hash_gost3411_sum_256 (puint32	a[8],
 static void pp_crypto_hash_gost3411_process (PHashGOST3411	*ctx,
 					     const puint32	data[8])
 {
-	puint32 U[8], V[8], W[8], S[8], K[4][8];
+	puint32	U[8];
+	puint32	V[8];
+	puint32	W[8];
+	puint32	S[8];
+	puint32	K[4][8];
 
 	memcpy (U, ctx->hash, 32);
 	memcpy (V, data, 32);
@@ -405,7 +409,9 @@ p_crypto_hash_gost3411_update (PHashGOST3411	*ctx,
 			       const puchar	*data,
 			       psize		len)
 {
-	puint32	left, to_fill, len256[8];
+	puint32	left;
+	puint32	to_fill;
+	puint32	len256[8];
 
 	left = (ctx->len[0] & 0xFF) >> 3;
 	to_fill = 32 - left;
@@ -444,7 +450,8 @@ p_crypto_hash_gost3411_update (PHashGOST3411	*ctx,
 void
 p_crypto_hash_gost3411_finish (PHashGOST3411 *ctx)
 {
-	puint32 left, last;
+	puint32	left;
+	puint32	last;
 
 	left = ctx->len[0] & 0xFF;
 	last = 32 - (left >> 3);

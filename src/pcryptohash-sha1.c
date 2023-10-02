@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright (C) 2010-2016 Alexander Saprykin <saprykin.spb@gmail.com>
+ * Copyright (C) 2010-2023 Alexander Saprykin <saprykin.spb@gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -113,7 +113,12 @@ static void
 pp_crypto_hash_sha1_process (PHashSHA1		*ctx,
 			     const puint32	data[16])
 {
-	puint32	W[16], A, B, C, D, E;
+	puint32	W[16];
+	puint32	A;
+	puint32	B;
+	puint32	C;
+	puint32	D;
+	puint32	E;
 
 	if (P_UNLIKELY (ctx == NULL))
 		return;
@@ -250,7 +255,8 @@ p_crypto_hash_sha1_update (PHashSHA1	*ctx,
 			   const puchar	*data,
 			   psize	len)
 {
-	puint32	left, to_fill;
+	puint32	left;
+	puint32	to_fill;
 
 	left = ctx->len_low & 0x3F;
 	to_fill = 64 - left;
@@ -286,8 +292,10 @@ p_crypto_hash_sha1_update (PHashSHA1	*ctx,
 void
 p_crypto_hash_sha1_finish (PHashSHA1 *ctx)
 {
-	puint32	high, low;
-	pint	left, last;
+	puint32	high;
+	puint32	low;
+	pint	left;
+	pint	last;
 
 	left = ctx->len_low & 0x3F;
 	last = (left < 56) ? (56 - left) : (120 - left);

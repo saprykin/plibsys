@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright (C) 2016 Alexander Saprykin <saprykin.spb@gmail.com>
+ * Copyright (C) 2016-2023 Alexander Saprykin <saprykin.spb@gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -138,7 +138,8 @@ static void
 pp_crypto_hash_sha2_512_process (PHashSHA2_512	*ctx,
 				 const puint64	data[16])
 {
-	puint64	tmp_sum1, tmp_sum2;
+	puint64	tmp_sum1;
+	puint64	tmp_sum2;
 	puint64 W[80];
 	puint64	A[8];
 	puint	i;
@@ -229,7 +230,8 @@ p_crypto_hash_sha2_512_update (PHashSHA2_512	*ctx,
 			       const puchar	*data,
 			       psize		len)
 {
-	puint32	left, to_fill;
+	puint32	left;
+	puint32	to_fill;
 
 	left = (puint32) (ctx->len_low & 0x7F);
 	to_fill = 128 - left;
@@ -265,8 +267,10 @@ p_crypto_hash_sha2_512_update (PHashSHA2_512	*ctx,
 void
 p_crypto_hash_sha2_512_finish (PHashSHA2_512 *ctx)
 {
-	puint64	high, low;
-	pint	left, last;
+	puint64	high;
+	puint64	low;
+	pint	left;
+	pint	last;
 
 	left = (pint) (ctx->len_low & 0x7F);
 	last = (left < 112) ? (112 - left) : (240 - left);
