@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright (C) 2016-2019 Alexander Saprykin <saprykin.spb@gmail.com>
+ * Copyright (C) 2016-2023 Alexander Saprykin <saprykin.spb@gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -117,16 +117,19 @@ pp_uthread_get_tls_key (PUThreadKey *key)
 void
 p_uthread_init_internal (void)
 {
+	/* Not required */
 }
 
 void
 p_uthread_shutdown_internal (void)
 {
+	/* Not required */
 }
 
 void
 p_uthread_win32_thread_detach (void)
 {
+	/* Not required */
 }
 
 PUThread *

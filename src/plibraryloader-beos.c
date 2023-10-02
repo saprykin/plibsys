@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright (C) 2016-2017 Alexander Saprykin <saprykin.spb@gmail.com>
+ * Copyright (C) 2016-2023 Alexander Saprykin <saprykin.spb@gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -134,9 +134,11 @@ p_library_loader_is_ref_counted (void)
 void
 p_library_loader_init (void)
 {
+	/* Not required */
 }
 
 void
 p_library_loader_shutdown (void)
 {
+	/* Not required */
 }

@@ -156,9 +156,11 @@ p_library_loader_is_ref_counted (void)
 void
 p_library_loader_init (void)
 {
+	/* Not required */
 }
 
 void
 p_library_loader_shutdown (void)
 {
+	/* Not required */
 }

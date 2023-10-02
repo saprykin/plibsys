@@ -391,6 +391,7 @@ p_uthread_shutdown_internal (void)
 void
 p_uthread_win32_thread_detach (void)
 {
+	/* Not required */
 }
 
 void

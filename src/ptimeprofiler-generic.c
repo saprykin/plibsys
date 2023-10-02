@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright (C) 2013-2016 Alexander Saprykin <saprykin.spb@gmail.com>
+ * Copyright (C) 2013-2023 Alexander Saprykin <saprykin.spb@gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -50,9 +50,11 @@ p_time_profiler_elapsed_usecs_internal (const PTimeProfiler *profiler)
 void
 p_time_profiler_init (void)
 {
+	/* Not required */
 }
 
 void
 p_time_profiler_shutdown (void)
 {
+	/* Not required */
 }

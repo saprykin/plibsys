@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright (C) 2010-2019 Alexander Saprykin <saprykin.spb@gmail.com>
+ * Copyright (C) 2010-2023 Alexander Saprykin <saprykin.spb@gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -36,16 +36,19 @@ struct PUThread_ {
 void
 p_uthread_init_internal (void)
 {
+	/* Not required */
 }
 
 void
 p_uthread_shutdown_internal (void)
 {
+	/* Not required */
 }
 
 void
 p_uthread_win32_thread_detach (void)
 {
+	/* Not required */
 }
 
 PUThread *
@@ -65,6 +68,7 @@ p_uthread_create_internal (PUThreadFunc		func,
 void
 p_uthread_exit_internal (void)
 {
+	/* Not required */
 }
 
 void
