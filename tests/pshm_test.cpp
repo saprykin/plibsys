@@ -130,7 +130,8 @@ P_TEST_CASE_BEGIN (pshm_general_test)
 #ifndef P_OS_HPUX
 	PShm		*shm2 = NULL;
 #endif
-	ppointer	addr, addr2;
+	ppointer	addr;
+	ppointer	addr2;
 	pint		i;
 
 	p_libsys_init ();
@@ -242,9 +243,12 @@ P_TEST_CASE_END ()
 P_TEST_CASE_BEGIN (pshm_thread_test)
 {
 	PShm		*shm;
-	PUThread	*thr1, *thr2, *thr3;
+	PUThread	*thr1;
+	PUThread	*thr2,
+	PUThread	*thr3;
 	ppointer	addr;
-	pint		i, val;
+	pint		i;
+	pint		val;
 	pboolean	test_ok;
 
 	p_libsys_init ();

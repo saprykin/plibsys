@@ -81,7 +81,8 @@ P_TEST_CASE_END ()
 P_TEST_CASE_BEGIN (ptimeprofiler_general_test)
 {
 	PTimeProfiler	*profiler = NULL;
-	puint64		prev_val, val;
+	puint64		prev_val;
+	puint64		val;
 
 	p_libsys_init ();
 

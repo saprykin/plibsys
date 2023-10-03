@@ -53,7 +53,7 @@ extern "C" void pmem_free (ppointer block)
 
 static void * spinlock_test_thread (void *)
 {
-	pint	i;
+	pint i;
 
 	for (i = 0; i < 1000; ++i) {
 		if (!p_spinlock_trylock (global_spinlock)) {
@@ -111,7 +111,8 @@ P_TEST_CASE_END ()
 
 P_TEST_CASE_BEGIN (pspinlock_general_test)
 {
-	PUThread *thr1, *thr2;
+	PUThread *thr1;
+	PUThread *thr2;
 
 	p_libsys_init ();
 

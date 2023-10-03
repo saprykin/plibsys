@@ -298,7 +298,8 @@ P_TEST_CASE_BEGIN (pshmbuffer_thread_test)
 	p_libsys_init ();
 
 	PShmBuffer	*buffer = NULL;
-	PUThread	*thr1, *thr2;
+	PUThread	*thr1;
+	PUThread	*thr2;
 
 	/* Buffer may be from the previous test on UNIX systems */
 	buffer = p_shm_buffer_new ("pshm_test_buffer", 1024, NULL);

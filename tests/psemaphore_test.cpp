@@ -175,7 +175,8 @@ P_TEST_CASE_END ()
 
 P_TEST_CASE_BEGIN (psemaphore_thread_test)
 {
-	PUThread	*thr1, *thr2;
+	PUThread	*thr1;
+	PUThread	*thr2;
 	PSemaphore	*sem = NULL;
 
 	p_libsys_init ();

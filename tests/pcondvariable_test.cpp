@@ -173,7 +173,9 @@ P_TEST_CASE_END ()
 
 P_TEST_CASE_BEGIN (pcondvariable_general_test)
 {
-	PUThread *thr1, *thr2, *thr3;
+	PUThread *thr1;
+	PUThread *thr2;
+	PUThread *thr3;
 
 	p_libsys_init ();
 
