@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright (C) 2010-2018 Alexander Saprykin <saprykin.spb@gmail.com>
+ * Copyright (C) 2010-2023 Alexander Saprykin <saprykin.spb@gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -91,7 +91,7 @@ pp_semaphore_create_handle (PSemaphore	*sem,
 					 0660,
 					 init_val)) == P_SEM_INVALID_HDL &&
 		p_error_get_last_system () == EINTR)
-	;
+		;
 
 	if (sem->sem_hdl == P_SEM_INVALID_HDL) {
 		if (p_error_get_last_system () == EEXIST) {
@@ -105,7 +105,7 @@ pp_semaphore_create_handle (PSemaphore	*sem,
 							 0,
 							 init_val)) == P_SEM_INVALID_HDL &&
 				p_error_get_last_system () == EINTR)
-			;
+				;
 		}
 	} else
 		sem->sem_created = TRUE;

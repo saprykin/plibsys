@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright (C) 2016 Alexander Saprykin <saprykin.spb@gmail.com>
+ * Copyright (C) 2016-2023 Alexander Saprykin <saprykin.spb@gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -291,7 +291,7 @@ pp_tree_avl_balance_remove (PTreeAVLNode *node, PTreeBaseNode **root)
 				if (sibling->balance_factor == 1)
 					/* Case 1 */
 					pp_tree_avl_rotate_right_left (sibling, root);
-				 else
+				else
 					/* Case 2 */
 					pp_tree_avl_rotate_left (sibling, root);
 

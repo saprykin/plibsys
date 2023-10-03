@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright (C) 2010-2018 Alexander Saprykin <saprykin.spb@gmail.com>
+ * Copyright (C) 2010-2023 Alexander Saprykin <saprykin.spb@gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -76,7 +76,7 @@ pp_shm_create_handle (PShm	*shm,
 			       O_CREAT | O_EXCL | O_RDWR,
 			       0660)) == P_SHM_INVALID_HDL &&
 	       p_error_get_last_system () == EINTR)
-	;
+		;
 
 	if (fd == P_SHM_INVALID_HDL) {
 		if (p_error_get_last_system () == EEXIST) {
@@ -86,7 +86,7 @@ pp_shm_create_handle (PShm	*shm,
 					       O_RDWR,
 					       0660)) == P_SHM_INVALID_HDL &&
 			       p_error_get_last_system () == EINTR)
-			;
+				;
 		}
 	} else
 		shm->shm_created = TRUE;
