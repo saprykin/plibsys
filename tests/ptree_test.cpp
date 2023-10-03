@@ -139,7 +139,7 @@ value_destroy_notify (ppointer data)
 static pboolean
 tree_traverse (ppointer key, ppointer value, ppointer data)
 {
-	TreeData* tdata = ((TreeData *) data);
+	TreeData *tdata = ((TreeData *) data);
 
 	tdata->key_sum	 += PPOINTER_TO_INT (key);
 	tdata->value_sum += PPOINTER_TO_INT (value);
@@ -156,7 +156,7 @@ tree_traverse (ppointer key, ppointer value, ppointer data)
 static pboolean
 tree_traverse_thres (ppointer key, ppointer value, ppointer data)
 {
-	TreeData* tdata = ((TreeData *) data);
+	const TreeData *tdata = ((const TreeData *) data);
 
 	tree_traverse (key, value, data);
 

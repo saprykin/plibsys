@@ -165,9 +165,9 @@ P_TEST_CASE_BEGIN (pstring_strtok_test)
 	P_TEST_CHECK (p_strtok (NULL, NULL, NULL) == NULL);
 
 	/* First string */
-	pchar test_string[] = "1,2,3";
-	pchar *token;
-	pchar *next_token;
+	pchar		test_string[] = "1,2,3";
+	pchar		*next_token;
+	const pchar	*token;
 
 	/* Check third parameter for possible NULL */
 	token = p_strtok (test_string, ",", NULL);
