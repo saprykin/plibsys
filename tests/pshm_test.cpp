@@ -244,7 +244,7 @@ P_TEST_CASE_BEGIN (pshm_thread_test)
 {
 	PShm		*shm;
 	PUThread	*thr1;
-	PUThread	*thr2,
+	PUThread	*thr2;
 	PUThread	*thr3;
 	ppointer	addr;
 	pint		i;
