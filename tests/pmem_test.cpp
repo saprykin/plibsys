@@ -78,7 +78,6 @@ P_TEST_CASE_BEGIN (pmem_general_test)
 {
 	PMemVTable	vtable;
 	ppointer	ptr = NULL;
-	pint		i;
 
 	p_libsys_init ();
 
@@ -150,10 +149,10 @@ P_TEST_CASE_BEGIN (pmem_general_test)
 	ptr = p_mem_mmap (1024, NULL);
 	P_TEST_REQUIRE (ptr != NULL);
 
-	for (i = 0; i < 1024; ++i)
+	for (int i = 0; i < 1024; ++i)
 		*(((pchar *) ptr) + i) = i % 127;
 
-	for (i = 0; i < 1024; ++i)
+	for (int i = 0; i < 1024; ++i)
 		P_TEST_CHECK (*(((pchar *) ptr) + i) == i % 127);
 
 	P_TEST_CHECK (p_mem_munmap (NULL, 1024, NULL) == FALSE);

@@ -299,7 +299,7 @@ static void * udp_socket_receiver_thread (void *arg)
 	}
 
 	while (is_receiver_working == TRUE) {
-		PSocketAddress *remote_addr = NULL;
+		remote_addr = NULL;
 
 		pssize received = p_socket_receive_from (skt_receiver,
 							 &remote_addr,
