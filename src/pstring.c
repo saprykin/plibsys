@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright (C) 2011-2016 Alexander Saprykin <saprykin.spb@gmail.com>
+ * Copyright (C) 2011-2023 Alexander Saprykin <saprykin.spb@gmail.com>
  * Copyright (C) 2009 Tom Van Baak (tvb) www.LeapSecond.com
  *
  * Permission is hereby granted, free of charge, to any person obtaining
@@ -177,7 +177,7 @@ p_strtod (const pchar *str)
 
 		/* Get digits of exponent, if any */
 		for (expon = 0; isdigit ((pint) *strp); strp += 1)
-			expon = expon * 10 + (puint) ((*strp - '0'));
+			expon = expon * 10 + (puint) (*strp - '0');
 
 		if (P_UNLIKELY (expon > P_STR_MAX_EXPON))
 			expon = P_STR_MAX_EXPON;

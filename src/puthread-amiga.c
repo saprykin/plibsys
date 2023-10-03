@@ -290,7 +290,7 @@ pp_uthread_amiga_proxy (void)
 					thread_info->tls_values[i] = NULL;
 
 					p_mutex_unlock (pp_uthread_glob_mutex);
-					(dest_func) (dest_data);
+					dest_func (dest_data);
 					p_mutex_lock (pp_uthread_glob_mutex);
 
 					need_pass = TRUE;
@@ -364,7 +364,7 @@ p_uthread_shutdown_internal (void)
 					thread_info->tls_values[i] = NULL;
 
 					p_mutex_unlock (pp_uthread_glob_mutex);
-					(dest_func) (dest_data);
+					dest_func (dest_data);
 					p_mutex_lock (pp_uthread_glob_mutex);
 
 					need_pass = TRUE;
