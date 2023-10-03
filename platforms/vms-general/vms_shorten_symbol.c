@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2010 Craig A. Berry
- * Copyright (c) 2016 Alexander Saprykin
+ * Copyright (c) 2016-2023 Alexander Saprykin
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,10 +23,10 @@
 /* vms_shorten_symbol
  *
  * This program provides shortening of long symbols (> 31 characters) using the
- * same mechanism as the OpenVMS C compiler.  The basic procedure is to compute
+ * same mechanism as the OpenVMS C compiler. The basic procedure is to compute
  * an AUTODIN II checksum of the entire symbol, encode the checksum in base32,
  * and glue together a shortened symbol from the first 23 characters of the
- * original symbol plus the encoded checksum appended.  The output format is
+ * original symbol plus the encoded checksum appended. The output format is
  * the same as that of the name mangler database, stored by default in
  * [.CXX_REPOSITORY]CXX$DEMANGLER_DB.
  *
@@ -124,9 +124,9 @@ crc32 (const char *input_string)
         };
 
         UINT32  crc = ~0UL;
-        char *  c;
+        const char *  c;
 
-        for (c = (char *) input_string; *c; ++c)
+        for (c = (const char *) input_string; *c; ++c)
                 crc = (crc >> 8) ^ autodin_ii_table[(crc ^ *c) & 0xff];
 
         return ~crc;

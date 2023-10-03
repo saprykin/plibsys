@@ -134,8 +134,8 @@ p_library_loader_free (PLibraryLoader *loader)
 P_LIB_API pchar *
 p_library_loader_get_last_error (PLibraryLoader *loader)
 {
-	pchar *res = NULL;
-	pchar *msg;
+	pchar		*res = NULL;
+	const pchar	*msg;
 
 	P_UNUSED (loader);
 

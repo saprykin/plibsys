@@ -155,12 +155,12 @@ pp_uthread_get_tls_key (PUThreadKey *key)
 static pint
 pp_uthread_find_next_id (void)
 {
-	PList		*cur_list;
-	PUThreadInfo	*thread_info;
-	pboolean	have_dup;
-	pboolean	was_found  = FALSE;
-	pint		cur_id     = pp_uthread_last_id;
-	pint		of_counter = 0;
+	PList			*cur_list;
+	const PUThreadInfo	*thread_info;
+	pboolean		have_dup;
+	pboolean		was_found  = FALSE;
+	pint			cur_id     = pp_uthread_last_id;
+	pint			of_counter = 0;
 
 	while (was_found == FALSE && of_counter < 2) {
 		have_dup = FALSE;
@@ -170,7 +170,7 @@ pp_uthread_find_next_id (void)
 			++of_counter;
 
 		for (cur_list = pp_uthread_list; cur_list != NULL; cur_list = cur_list->next) {
-			thread_info = (PUThreadInfo *) cur_list->data;
+			thread_info = (const PUThreadInfo *) cur_list->data;
 
 			if (thread_info->id == cur_id) {
 				have_dup = TRUE;
@@ -498,7 +498,7 @@ p_uthread_exit_internal (void)
 void
 p_uthread_wait_internal (PUThread *thread)
 {
-	PUThreadInfo *thread_info;
+	const PUThreadInfo *thread_info;
 
 	p_mutex_lock (pp_uthread_glob_mutex);
 
