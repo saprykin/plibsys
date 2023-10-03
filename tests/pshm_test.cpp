@@ -132,7 +132,6 @@ P_TEST_CASE_BEGIN (pshm_general_test)
 #endif
 	ppointer	addr;
 	ppointer	addr2;
-	pint		i;
 
 	p_libsys_init ();
 
@@ -163,52 +162,52 @@ P_TEST_CASE_BEGIN (pshm_general_test)
 	P_TEST_REQUIRE (addr2 != NULL);
 #endif
 
-	for (i = 0; i < 512; ++i) {
+	for (pint i = 0; i < 512; ++i) {
 		P_TEST_CHECK (p_shm_lock (shm, NULL));
 		*(((pchar *) addr) + i) = 'a';
 		P_TEST_CHECK (p_shm_unlock (shm, NULL));
 	}
 
 #ifndef P_OS_HPUX
-	for (i = 0; i < 512; ++i) {
+	for (pint i = 0; i < 512; ++i) {
 		P_TEST_CHECK (p_shm_lock (shm2, NULL));
 		P_TEST_CHECK (*(((pchar *) addr) + i) == 'a');
 		P_TEST_CHECK (p_shm_unlock (shm2, NULL));
 	}
 #else
-	for (i = 0; i < 512; ++i) {
+	for (pint i = 0; i < 512; ++i) {
 		P_TEST_CHECK (p_shm_lock (shm, NULL));
 		P_TEST_CHECK (*(((pchar *) addr) + i) == 'a');
 		P_TEST_CHECK (p_shm_unlock (shm, NULL));
 	}
 #endif
 
-	for (i = 0; i < 1024; ++i) {
+	for (pint i = 0; i < 1024; ++i) {
 		P_TEST_CHECK (p_shm_lock (shm, NULL));
 		*(((pchar *) addr) + i) = 'b';
 		P_TEST_CHECK (p_shm_unlock (shm, NULL));
 	}
 
 #ifndef P_OS_HPUX
-	for (i = 0; i < 1024; ++i) {
+	for (pint i = 0; i < 1024; ++i) {
 		P_TEST_CHECK (p_shm_lock (shm2, NULL));
 		P_TEST_CHECK (*(((pchar *) addr) + i) != 'c');
 		P_TEST_CHECK (p_shm_unlock (shm2, NULL));
 	}
 
-	for (i = 0; i < 1024; ++i) {
+	for (pint i = 0; i < 1024; ++i) {
 		P_TEST_CHECK (p_shm_lock (shm2, NULL));
 		P_TEST_CHECK (*(((pchar *) addr) + i) == 'b');
 		P_TEST_CHECK (p_shm_unlock (shm2, NULL));
 	}
 #else
-	for (i = 0; i < 1024; ++i) {
+	for (pint i = 0; i < 1024; ++i) {
 		P_TEST_CHECK (p_shm_lock (shm, NULL));
 		P_TEST_CHECK (*(((pchar *) addr) + i) != 'c');
 		P_TEST_CHECK (p_shm_unlock (shm, NULL));
 	}
 
-	for (i = 0; i < 1024; ++i) {
+	for (pint i = 0; i < 1024; ++i) {
 		P_TEST_CHECK (p_shm_lock (shm, NULL));
 		P_TEST_CHECK (*(((pchar *) addr) + i) == 'b');
 		P_TEST_CHECK (p_shm_unlock (shm, NULL));
@@ -224,7 +223,7 @@ P_TEST_CASE_BEGIN (pshm_general_test)
 	addr = p_shm_get_address (shm);
 	P_TEST_REQUIRE (addr != NULL);
 
-	for (i = 0; i < 1024; ++i) {
+	for (pint i = 0; i < 1024; ++i) {
 		P_TEST_CHECK (p_shm_lock (shm, NULL));
 		P_TEST_CHECK (*(((pchar *) addr) + i) != 'b');
 		P_TEST_CHECK (p_shm_unlock (shm, NULL));
@@ -247,7 +246,6 @@ P_TEST_CASE_BEGIN (pshm_thread_test)
 	PUThread	*thr2;
 	PUThread	*thr3;
 	ppointer	addr;
-	pint		i;
 	pint		val;
 	pboolean	test_ok;
 
@@ -290,7 +288,7 @@ P_TEST_CASE_BEGIN (pshm_thread_test)
 	test_ok = TRUE;
 	val = *((pchar *) addr);
 
-	for (i = 1; i < 1024 * 1024; ++i)
+	for (int i = 1; i < 1024 * 1024; ++i)
 		if (*(((pchar *) addr) + i) != val) {
 			test_ok = FALSE;
 			break;

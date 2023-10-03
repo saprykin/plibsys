@@ -53,9 +53,7 @@ extern "C" void pmem_free (ppointer block)
 
 static void * spinlock_test_thread (void *)
 {
-	pint i;
-
-	for (i = 0; i < 1000; ++i) {
+	for (pint i = 0; i < 1000; ++i) {
 		if (!p_spinlock_trylock (global_spinlock)) {
 			if (!p_spinlock_lock (global_spinlock))
 				p_uthread_exit (1);

@@ -51,9 +51,7 @@ extern "C" void pmem_free (ppointer block)
 
 static void * mutex_test_thread (void *)
 {
-	pint i;
-
-	for (i = 0; i < 1000; ++i) {
+	for (pint i = 0; i < 1000; ++i) {
 		if (!p_mutex_trylock (global_mutex)) {
 			if (!p_mutex_lock (global_mutex))
 				p_uthread_exit (1);

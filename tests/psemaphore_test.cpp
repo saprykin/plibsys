@@ -44,15 +44,14 @@ static void clean_error (PError **error)
 
 static void * semaphore_test_thread (void *)
 {
-	PSemaphore	*sem;
-	pint		i;
+	PSemaphore *sem;
 
 	sem = p_semaphore_new ("p_semaphore_test_object", 1, P_SEM_ACCESS_OPEN, NULL);
 
 	if (sem == NULL)
 		p_uthread_exit (1);
 
-	for (i = 0; i < 1000; ++i) {
+	for (pint i = 0; i < 1000; ++i) {
 		if (!p_semaphore_acquire (sem, NULL)) {
 			if (is_thread_exit > 0) {
 				semaphore_test_val = PSEMAPHORE_MAX_VAL;
