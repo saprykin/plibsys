@@ -102,7 +102,7 @@ p_socket_address_new_from_native (pconstpointer	native,
 	if (P_UNLIKELY ((ret = p_malloc0 (sizeof (PSocketAddress))) == NULL))
 		return NULL;
 
-	family = ((struct sockaddr *) native)->sa_family;
+	family = ((const struct sockaddr *) native)->sa_family;
 
 	if (family == AF_INET) {
 		if (len < sizeof (struct sockaddr_in)) {
@@ -111,7 +111,7 @@ p_socket_address_new_from_native (pconstpointer	native,
 			return NULL;
 		}
 
-		memcpy (&ret->addr.sin_addr, &((struct sockaddr_in *) native)->sin_addr, sizeof (struct in_addr));
+		memcpy (&ret->addr.sin_addr, &((const struct sockaddr_in *) native)->sin_addr, sizeof (struct in_addr));
 		ret->family = P_SOCKET_FAMILY_INET;
 		ret->port   = p_ntohs (((struct sockaddr_in *) native)->sin_port);
 		return ret;
