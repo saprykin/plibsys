@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright (C) 2010-2016 Alexander Saprykin <saprykin.spb@gmail.com>
+ * Copyright (C) 2010-2023 Alexander Saprykin <saprykin.spb@gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -40,6 +40,8 @@ p_mutex_new (void)
 P_LIB_API pboolean
 p_mutex_lock (PMutex *mutex)
 {
+	P_UNUSED (mutex);
+
 	return FALSE;
 }
 

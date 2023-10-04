@@ -28,12 +28,15 @@
 P_LIB_API PLibraryLoader *
 p_library_loader_new (const pchar *path)
 {
+	P_UNUSED (path);
+
 	P_ERROR ("PLibraryLoader::p_library_loader_new: not implemented");
 	return NULL;
 }
 
 P_LIB_API PFuncAddr
-p_library_loader_get_symbol (PLibraryLoader *loader, const pchar *sym)
+p_library_loader_get_symbol (PLibraryLoader	*loader,
+			     const pchar	*sym)
 {
 	P_UNUSED (loader);
 	P_UNUSED (sym);
