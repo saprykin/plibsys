@@ -98,7 +98,7 @@ P_LIB_API void
 p_list_free (PList *list)
 {
 	PList *cur;
-	Plist *next;
+	PList *next;
 
 	if (P_UNLIKELY (list == NULL))
 		return;
