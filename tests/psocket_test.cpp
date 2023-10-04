@@ -390,7 +390,6 @@ static void * tcp_socket_sender_thread (void *arg)
 	}
 
 	send_total = 0;
-	send_now = 0;
 
 	while (is_sender_working == TRUE && data->receiver_port == 0) {
 		p_uthread_sleep (1);
@@ -523,7 +522,6 @@ static void * tcp_socket_receiver_thread (void *arg)
 
 	PSocket *conn_socket = NULL;
 	recv_total = 0;
-	recv_now = 0;
 
 	while (is_receiver_working == TRUE) {
 		if (conn_socket == NULL) {
