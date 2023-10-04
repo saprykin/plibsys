@@ -115,7 +115,7 @@ static void * writer_thread_func (void *data)
 
 		++counter;
 
-		p_atomic_int_inc ((&writers_counter));
+		p_atomic_int_inc (&writers_counter);
 	}
 
 	p_uthread_exit (counter);
