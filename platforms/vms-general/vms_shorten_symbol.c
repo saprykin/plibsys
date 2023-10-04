@@ -126,7 +126,7 @@ crc32 (const char *input_string)
         UINT32  crc = ~0UL;
         const char *  c;
 
-        for (c = (const char *) input_string; *c; ++c)
+        for (c = input_string; *c; ++c)
                 crc = (crc >> 8) ^ autodin_ii_table[(crc ^ *c) & 0xff];
 
         return ~crc;
