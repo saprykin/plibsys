@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright (C) 2014-2017 Alexander Saprykin <saprykin.spb@gmail.com>
+ * Copyright (C) 2014-2023 Alexander Saprykin <saprykin.spb@gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -85,7 +85,7 @@ P_TEST_CASE_BEGIN (ptypes_pointers_convert_test)
 
 	psize psize_val = 1024;
 	pointer = PSIZE_TO_POINTER (psize_val);
-	P_TEST_CHECK (PPOINTER_TO_PSIZE (psize_val) == 1024);
+	P_TEST_CHECK (PPOINTER_TO_PSIZE (pointer) == 1024);
 
 	p_libsys_shutdown ();
 }
