@@ -61,7 +61,7 @@ static UINT32 vms_shorten_symbol (const char *symbol, char *shortened, char as_i
 /*
  * This routine implements the AUTODIN II polynomial.
  */
-UINT32
+static UINT32
 crc32 (const char *input_string)
 {
 
