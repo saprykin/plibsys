@@ -123,14 +123,14 @@ p_strtok (pchar *str, const pchar *delim, pchar **buf)
 P_LIB_API double
 p_strtod (const pchar *str)
 {
-	double	sign;
-	double	value;
-	double	scale;
-	double	pow10;
-	puint	expon;
-	pint	frac;
-	pchar	*orig_str;
-	pchar	*strp;
+	double		sign;
+	double		value;
+	double		scale;
+	double		pow10;
+	puint		expon;
+	pint		frac;
+	pchar		*orig_str;
+	const pchar	*strp;
 
 	orig_str = p_strchomp (str);
 

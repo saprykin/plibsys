@@ -457,12 +457,12 @@ p_ini_file_parameter_list (const PIniFile	*file,
 			   const pchar		*section,
 			   const pchar		*key)
 {
-	PList	*ret = NULL;
-	pchar	*val;
-	pchar	*str;
-	pchar	buf[P_INI_FILE_MAX_LINE + 1];
-	psize	len;
-	psize	buf_cnt;
+	PList		*ret = NULL;
+	pchar		*val;
+	const pchar	*str;
+	pchar		buf[P_INI_FILE_MAX_LINE + 1];
+	psize		len;
+	psize		buf_cnt;
 
 	if ((val = pp_ini_file_find_parameter (file, section, key)) == NULL)
 		return NULL;
