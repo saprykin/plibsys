@@ -177,7 +177,8 @@ p_ini_file_parse (PIniFile	*file,
 	PIniSection	*section;
 	PIniParameter	*param;
 	FILE		*in_file;
-	pchar		*dst_line, *tmp_str;
+	pchar		*dst_line;
+	pchar		*tmp_str;
 	pchar		src_line[P_INI_FILE_MAX_LINE + 1];
 	pchar		key[P_INI_FILE_MAX_LINE + 1];
 	pchar		value[P_INI_FILE_MAX_LINE + 1];

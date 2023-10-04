@@ -97,7 +97,8 @@ p_list_foreach (PList		*list,
 P_LIB_API void
 p_list_free (PList *list)
 {
-	PList *cur, *next;
+	PList *cur;
+	Plist *next;
 
 	if (P_UNLIKELY (list == NULL))
 		return;
