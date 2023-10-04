@@ -59,7 +59,8 @@ pp_shm_create_handle (PShm	*shm,
 		      PError	**error)
 {
 	pboolean	is_exists;
-	pint		fd, flags;
+	pint		fd;
+	pint		flags;
 	struct stat	stat_buf;
 
 	if (P_UNLIKELY (shm == NULL || shm->platform_key == NULL)) {

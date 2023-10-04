@@ -117,11 +117,15 @@ static pint pp_library_loader_translate_path (const pchar *in, pchar *out, psize
  */
 
 static pint
-pp_library_loader_translate_path (const pchar *in, pchar *out, psize out_len)
+pp_library_loader_translate_path (const pchar	*in,
+				  pchar		*out,
+				  psize		out_len)
 {
-	pchar volume_name[MAXPATHLEN];
-	psize len, volume_name_len;
-	pint i, j;
+	pchar	volume_name[MAXPATHLEN];
+	psize	len;
+	psize	volume_name_len;
+	pint	i;
+	pint	j;
 
 	len = strlen (in);
 
@@ -469,7 +473,8 @@ p_library_loader_new (const pchar *path)
 }
 
 P_LIB_API PFuncAddr
-p_library_loader_get_symbol (PLibraryLoader *loader, const pchar *sym)
+p_library_loader_get_symbol (PLibraryLoader	*loader,
+			     const pchar	*sym)
 {
 	APTR func_addr = NULL;
 

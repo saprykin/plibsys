@@ -133,11 +133,15 @@ static pthread_key_t * pp_uthread_get_tls_key (PUThreadKey *key);
 
 #ifdef PLIBSYS_HAS_POSIX_SCHEDULING
 static pboolean
-pp_uthread_get_unix_priority (PUThreadPriority prio, int *sched_policy, int *sched_priority)
+pp_uthread_get_unix_priority (PUThreadPriority	prio,
+				  int		*sched_policy,
+				  int		*sched_priority)
 {
-	pint	lowBound, upperBound;
-	pint	prio_min, prio_max;
-	pint	native_prio;
+	pint lowBound;
+	pint upperBound;
+	pint prio_min;
+	pint prio_max;
+	pint native_prio;
 
 #ifdef SCHED_IDLE
 	if (prio == P_UTHREAD_PRIORITY_IDLE) {

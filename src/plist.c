@@ -32,7 +32,8 @@ P_LIB_API PList *
 p_list_append (PList	*list,
 	       ppointer	data)
 {
-	PList *item, *cur;
+	PList *item;
+	PList *cur;
 
 	if (P_UNLIKELY ((item = p_malloc0 (sizeof (PList))) == NULL)) {
 		P_ERROR ("PList::p_list_append: failed to allocate memory");
@@ -56,7 +57,9 @@ P_LIB_API PList *
 p_list_remove (PList		*list,
 	       pconstpointer	data)
 {
-	PList *cur, *prev, *head;
+	PList *cur;
+	PList *prev;
+	PList *head;
 
 	if (P_UNLIKELY (list == NULL))
 		return NULL;
@@ -159,7 +162,9 @@ p_list_prepend (PList		*list,
 P_LIB_API PList *
 p_list_reverse (PList *list)
 {
-	PList *prev, *cur, *tmp;
+	PList *prev;
+	PList *cur;
+	PList *tmp;
 
 	if (P_UNLIKELY (list == NULL))
 		return NULL;

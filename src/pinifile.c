@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright (C) 2012-2016 Alexander Saprykin <saprykin.spb@gmail.com>
+ * Copyright (C) 2012-2023 Alexander Saprykin <saprykin.spb@gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -178,9 +178,9 @@ p_ini_file_parse (PIniFile	*file,
 	PIniParameter	*param;
 	FILE		*in_file;
 	pchar		*dst_line, *tmp_str;
-	pchar		src_line[P_INI_FILE_MAX_LINE + 1],
-			key[P_INI_FILE_MAX_LINE + 1],
-			value[P_INI_FILE_MAX_LINE + 1];
+	pchar		src_line[P_INI_FILE_MAX_LINE + 1];
+	pchar		key[P_INI_FILE_MAX_LINE + 1];
+	pchar		value[P_INI_FILE_MAX_LINE + 1];
 	pint		bom_shift;
 
 	if (P_UNLIKELY (file == NULL)) {
@@ -458,9 +458,11 @@ p_ini_file_parameter_list (const PIniFile	*file,
 			   const pchar		*key)
 {
 	PList	*ret = NULL;
-	pchar	*val, *str;
+	pchar	*val;
+	pchar	*str;
 	pchar	buf[P_INI_FILE_MAX_LINE + 1];
-	psize	len, buf_cnt;
+	psize	len;
+	psize	buf_cnt;
 
 	if ((val = pp_ini_file_find_parameter (file, section, key)) == NULL)
 		return NULL;

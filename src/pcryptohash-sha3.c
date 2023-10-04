@@ -244,7 +244,8 @@ p_crypto_hash_sha3_update (PHashSHA3	*ctx,
 			   const puchar	*data,
 			   psize	len)
 {
-	puint32	left, to_fill;
+	puint32	left;
+	puint32 to_fill;
 
 	left     = ctx->len;
 	to_fill  = ctx->block_size - left;

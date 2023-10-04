@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright (C) 2010-2017 Alexander Saprykin <saprykin.spb@gmail.com>
+ * Copyright (C) 2010-2023 Alexander Saprykin <saprykin.spb@gmail.com>
  * Some workarounds have been used from Glib (comments are kept)
  *
  * Permission is hereby granted, free of charge, to any person obtaining
@@ -173,8 +173,10 @@ pp_socket_set_details_from_fd (PSocket	*socket,
 	PSocketFamily		family;
 #endif
 	struct sockaddr_storage	address;
-	pint			fd, value;
-	socklen_t		addrlen, optlen;
+	pint			fd;
+	pint			value;
+	socklen_t		addrlen;
+	socklen_t		optlen;
 #ifdef P_OS_WIN
 	/* See comment below */
 	BOOL			bool_val = FALSE;
@@ -421,7 +423,8 @@ p_socket_new (PSocketFamily	family,
 	      PError		**error)
 {
 	PSocket	*ret;
-	pint	native_type, fd;
+	pint	native_type;
+	pint	fd;
 #ifndef P_OS_WIN
 	pint	flags;
 #endif

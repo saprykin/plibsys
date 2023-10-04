@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright (C) 2010-2016 Alexander Saprykin <saprykin.spb@gmail.com>
+ * Copyright (C) 2010-2023 Alexander Saprykin <saprykin.spb@gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -63,7 +63,8 @@ pp_shm_create_handle (PShm	*shm,
 		      PError	**error)
 {
 	pboolean	is_exists;
-	pint		flags, built;
+	pint		flags;
+	pint		built;
 	struct shmid_ds	shm_stat;
 
 	if (P_UNLIKELY (shm == NULL || shm->platform_key == NULL)) {

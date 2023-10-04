@@ -46,7 +46,8 @@ static psize pp_shm_buffer_get_used_space (const PShmBuffer *buf);
 static psize
 pp_shm_buffer_get_free_space (const PShmBuffer *buf)
 {
-	psize		read_pos, write_pos;
+	psize		read_pos;
+	psize		write_pos;
 	ppointer	addr;
 
 	addr = p_shm_get_address (buf->shm);
@@ -65,7 +66,8 @@ pp_shm_buffer_get_free_space (const PShmBuffer *buf)
 static psize
 pp_shm_buffer_get_used_space (const PShmBuffer *buf)
 {
-	psize		read_pos, write_pos;
+	psize		read_pos;
+	psize		write_pos;
 	ppointer	addr;
 
 	addr = p_shm_get_address (buf->shm);
@@ -152,8 +154,10 @@ p_shm_buffer_read (PShmBuffer	*buf,
 		   psize	len,
 		   PError	**error)
 {
-	psize		read_pos, write_pos;
-	psize		data_aval, to_copy;
+	psize		read_pos;
+	psize		write_pos;
+	psize		data_aval;
+	psize		to_copy;
 	puint		i;
 	ppointer	addr;
 
@@ -209,7 +213,8 @@ p_shm_buffer_write (PShmBuffer	*buf,
 		    psize	len,
 		    PError	**error)
 {
-	psize		read_pos, write_pos;
+	psize		read_pos;
+	psize		write_pos;
 	puint		i;
 	ppointer	addr;
 

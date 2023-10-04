@@ -54,7 +54,8 @@ p_strdup (const pchar *str)
 P_LIB_API pchar *
 p_strchomp (const pchar *str)
 {
-	pssize		pos_start, pos_end;
+	pssize		pos_start;
+	pssize		pos_end;
 	psize		str_len;
 	pchar		*ret;
 	const pchar	*ptr;
@@ -128,7 +129,8 @@ p_strtod (const pchar *str)
 	double	pow10;
 	puint	expon;
 	pint	frac;
-	pchar	*orig_str, *strp;
+	pchar	*orig_str;
+	pchar	*strp;
 
 	orig_str = p_strchomp (str);
 

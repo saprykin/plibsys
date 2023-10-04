@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright (C) 2010-2019 Alexander Saprykin <saprykin.spb@gmail.com>
+ * Copyright (C) 2010-2023 Alexander Saprykin <saprykin.spb@gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -168,7 +168,8 @@ p_hash_table_values (const PHashTable *table)
 P_LIB_API void
 p_hash_table_free (PHashTable *table)
 {
-	PHashTableNode	*node, *next_node;
+	PHashTableNode	*node;
+	PHashTableNode	*next_node;
 	puint		i;
 
 	if (P_UNLIKELY (table == NULL))
@@ -188,7 +189,8 @@ p_hash_table_free (PHashTable *table)
 P_LIB_API void
 p_hash_table_remove (PHashTable *table, pconstpointer key)
 {
-	PHashTableNode	*node, *prev_node;
+	PHashTableNode	*node;
+	PHashTableNode	*prev_node;
 	puint		hash;
 
 	if (P_UNLIKELY (table == NULL))

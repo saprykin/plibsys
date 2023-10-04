@@ -68,7 +68,8 @@ static thread_key_t * pp_uthread_get_tls_key (PUThreadKey *key);
 static pint
 pp_uthread_get_unix_priority (PUThreadPriority prio)
 {
-	pint lowBound, upperBound;
+	pint lowBound;
+	pint upperBound;
 
 	lowBound   = (pint) P_UTHREAD_PRIORITY_IDLE;
 	upperBound = (pint) P_UTHREAD_PRIORITY_TIMECRITICAL;

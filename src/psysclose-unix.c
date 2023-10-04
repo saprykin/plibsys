@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright (C) 2016 Alexander Saprykin <saprykin.spb@gmail.com>
+ * Copyright (C) 2016-2023 Alexander Saprykin <saprykin.spb@gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -33,7 +33,8 @@ pint
 p_sys_close (pint fd)
 {
 #if defined (EINTR) && defined (P_OS_HPUX)
-	pint res, err_code;
+	pint res;
+	pint err_code;
 
 	for (;;) {
 		res = close (fd);
