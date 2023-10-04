@@ -92,6 +92,7 @@ p_uthread_free_internal (PUThread *thread)
 P_LIB_API void
 p_uthread_yield (void)
 {
+	/* Not required */
 }
 
 P_LIB_API pboolean
