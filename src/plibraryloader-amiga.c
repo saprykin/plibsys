@@ -129,7 +129,7 @@ pp_library_loader_translate_path (const pchar	*in,
 
 	len = strlen (in);
 
-	if (out_len < MAXPATHLEN || len > MAXPATHLEN)
+	if (out_len < MAXPATHLEN || len >= MAXPATHLEN)
 		return -1;
 
 	strcpy (out, in);
