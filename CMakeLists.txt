@@ -27,6 +27,8 @@ set (CMAKE_LEGACY_CYGWIN_WIN32 0)
 cmake_minimum_required (VERSION 2.8.0...3.25.1)
 project (plibsys C)
 
+cmake_policy(SET CMP0063 NEW)
+
 set (PLIBSYS_VERSION_MAJOR 0)
 set (PLIBSYS_VERSION_MINOR 0)
 set (PLIBSYS_VERSION_PATCH 4)
