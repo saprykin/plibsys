@@ -27,6 +27,11 @@ set (CMAKE_LEGACY_CYGWIN_WIN32 0)
 cmake_minimum_required (VERSION 2.8.0...3.25.1)
 project (plibsys C)
 
+# Introduced in CMake 3.3, may produce warnings with CMake < 3.12
+if (POLICY CMP0063)
+    cmake_policy (SET CMP0063 NEW)
+endif()
+
 set (PLIBSYS_VERSION_MAJOR 0)
 set (PLIBSYS_VERSION_MINOR 0)
 set (PLIBSYS_VERSION_PATCH 4)
