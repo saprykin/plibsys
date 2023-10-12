@@ -1,6 +1,6 @@
 # The MIT License
 #
-# Copyright (C) 2018 Alexander Saprykin <saprykin.spb@gmail.com>
+# Copyright (C) 2018-2023 Alexander Saprykin <saprykin.spb@gmail.com>
 #
 # Permission is hereby granted, free of charge, to any person obtaining
 # a copy of this software and associated documentation files (the
@@ -35,8 +35,8 @@ function (plibsys_detect_visibility cflags ldflags)
                                             !defined(__hpux)  && !defined(hpux)   && \\\\
                                             !defined(__sgi)   && !defined(sgi)    && \\\\
                                             !defined(__osf__) && !defined(__osf)  && \\\\
-                                            !defined(__OS2__)                        \\\\
-                                            !defined(_AIX)   && !defined(__CYGWIN__) && !defined(__MSYS__)
+                                            !defined(__OS2__) &&                     \\\\
+                                            !defined(_AIX)    && !defined(__CYGWIN__) && !defined(__MSYS__)
                                         return 0;
                                         #else
                                         stop_compile_here
