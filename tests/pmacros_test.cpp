@@ -238,7 +238,7 @@ P_TEST_CASE_BEGIN (pmacros_general_test)
 
 	/* Test for CPU architecture detection macros */
 #if defined (P_OS_VMS)
-#  if !defined (P_CPU_ALPHA) && !defined (P_CPU_IA64)
+#  if !defined (P_CPU_ALPHA) && !defined (P_CPU_IA64) && !defined (P_CPU_X86_64)
 	P_TEST_CHECK (false);
 #  endif
 #endif
@@ -385,7 +385,7 @@ P_TEST_CASE_BEGIN (pmacros_general_test)
 #endif
 
 #if defined (P_CC_DEC)
-#  if !defined (P_CPU_ALPHA) && !defined (P_CPU_IA64)
+#  if !defined (P_CPU_ALPHA) && !defined (P_CPU_IA64) && !defined (P_CPU_X86_64)
 	P_TEST_CHECK (false);
 #  endif
 #endif

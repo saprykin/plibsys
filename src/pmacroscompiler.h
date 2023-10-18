@@ -221,7 +221,7 @@
 #  define P_CC_CLANG
 #elif defined(__HP_cc) || defined(__HP_aCC)
 #  define P_CC_HP
-#elif defined (__DECC) || defined(__DECCXX)
+#elif defined (__DECC) || defined(__DECCXX) || defined(__cplusplus)
 #  define P_CC_DEC
 #elif (defined(__sgi) || defined(sgi)) && \
       (defined(_COMPILER_VERSION) || defined(_SGI_COMPILER_VERSION))
