@@ -1,2 +1,3 @@
 CMakeLists.txt.user
 .DS_Store
+platforms/vms-general/x86_64/
