@@ -92,28 +92,48 @@ $!
 $! Define the architecture-specific destination directory name
 $! -----------------------------------------------------------
 $!
-$ if (f$getsyi("HW_MODEL") .lt. 1024)
+$  arch_name     = f$edit(f$getsyi("ARCH_NAME"), "UPCASE")
+$  node_swvers   = f$getsyi("node_swvers")
+$  version_patch = f$extract(1, f$length(node_swvers), node_swvers)
+$  maj_ver       = f$element(0, ".", version_patch)
+$  min_ver_patch = f$element(1, ".", version_patch)
+$  min_ver       = f$element(0, "-", min_ver_patch)
+$  patch         = f$element(1, "-", min_ver_patch)
+$!
+$! VAX is not supported.
+$!
+$ if (arch_name .eqs. "VAX")
 $ then
 $      'vo_c' "%PLIBSYS-F-NOTSUP, VAX platform is not supported, sorry :("
 $      goto common_exit
-$ else
-$      arch_name = ""
-$      arch_name = arch_name + f$edit(f$getsyi("ARCH_NAME"), "UPCASE")
+$ endif
 $!
-$      if (arch_name .eqs. "") then arch_name = "UNK"
+$! IA64 and ALPHA require OpenVMS V8.4 or later
 $!
-$      node_swvers   = f$getsyi("node_swvers")
-$      version_patch = f$extract(1, f$length(node_swvers), node_swvers)
-$      maj_ver       = f$element(0, ".", version_patch)
-$      min_ver_patch = f$element(1, ".", version_patch)
-$      min_ver       = f$element(0, "-", min_ver_patch)
-$      patch         = f$element(1, "-", min_ver_patch)
-$!
+$ if (arch_name .eqs. "IA64" .or. arch_name .eqs. "ALPHA")
+$ then
 $      if maj_ver .lts. "8" .or. min_ver .lts. "4"
 $      then
-$          'vo_c' "%PLIBSYS-F-NOTSUP, only OpenVMS 8.4 and above are supported, sorry :("
+$          'vo_c' "%PLIBSYS-F-NOTSUP, only OpenVMS 8.4 and above are supported,♦
 $          goto common_exit
 $      endif
+$ endif
+$!
+$! X86_64 requires OpenVMS 9.2 or later
+$!
+$ if (arch_name .eqs. "X86_64")
+$ then
+$      if maj_ver .lts. "9" .or. min_ver .lts. "2"
+$      then
+$          'vo_c' "%PLIBSYS-F-NOTSUP, only OpenVMS 9.2 and above are supported,♦
+$          goto common_exit
+$      endif
+$ endif
+$
+$ if (arch_name .nes. "IA64" .and. arch_name .nes. "ALPHA" .and. arch_name .nes♦
+$ then
+$     'vo_c' "%PLIBSYS-F-NOTSUP, ''arch_name' is not supported."
+$      goto common_exit
 $ endif
 $!
 $ objdir = proc_dev_dir - delim + ".''arch_name'" + delim
@@ -524,7 +544,7 @@ $         'vo_c' "[CXX    ] ''next_test'.cpp"
 $         cxx [---.tests]'next_test'.cpp 'cxx_params'
 $!
 $         'vo_c' "[CXXLINK] ''next_test'.obj"
-$          cxxlink 'next_test'.obj,'objdir'plibsys_link.opt/OPTION /THREADS_ENABLE
+$          link 'next_test'.obj,'objdir'plibsys_link.opt/OPTION /THREADS_ENABLE
 $!
 $         if f$search("CXX_REPOSITORY.DIR") .nes. ""
 $         then
