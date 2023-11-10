@@ -115,7 +115,7 @@ $ if (arch_name .eqs. "IA64" .or. arch_name .eqs. "ALPHA")
 $ then
 $      if maj_ver .lts. "8" .or. min_ver .lts. "4"
 $      then
-$          'vo_c' "%PLIBSYS-F-NOTSUP, only OpenVMS 8.4 and above are supported, sorry :("
+$          'vo_c' "%PLIBSYS-F-NOTSUP, only OpenVMS 8.4 and above are supported,♦
 $          goto common_exit
 $      endif
 $ endif
