@@ -158,7 +158,7 @@ p_shm_buffer_read (PShmBuffer	*buf,
 	psize		write_pos;
 	psize		data_aval;
 	psize		to_copy;
-    psize       start_pos;
+	psize       start_pos;
 	ppointer	addr;
 
 	if (P_UNLIKELY (buf == NULL || storage == NULL || len == 0)) {
@@ -223,7 +223,7 @@ p_shm_buffer_write (PShmBuffer	*buf,
 {
 	psize		read_pos;
 	psize		write_pos;
-    psize       start_pos;
+	psize		start_pos;
 	ppointer	addr;
 
 	if (P_UNLIKELY (buf == NULL || data == NULL || len == 0)) {
@@ -255,8 +255,8 @@ p_shm_buffer_write (PShmBuffer	*buf,
 		return 0;
 	}
 
-    start_pos = write_pos % buf->size;
-	
+	start_pos = write_pos % buf->size;
+
 	if (start_pos + len <= buf->size)
 	{
 		memcpy((pchar*)addr + P_SHM_BUFFER_DATA_OFFSET + start_pos, (pchar*)data, len);
