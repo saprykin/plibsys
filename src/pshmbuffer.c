@@ -193,10 +193,18 @@ p_shm_buffer_read (PShmBuffer	*buf,
 	data_aval = pp_shm_buffer_get_used_space (buf);
 	to_copy   = (data_aval <= len) ? data_aval : len;
 
-	for (i = 0; i < to_copy; ++i)
-		memcpy ((pchar *) storage + i,
-			(pchar *) addr + P_SHM_BUFFER_DATA_OFFSET + ((read_pos + i) % buf->size),
-			1);
+	int start_pos = P_SHM_BUFFER_DATA_OFFSET + (read_pos % buf->size);
+	
+	if (start_pos + to_copy <= P_SHM_BUFFER_DATA_OFFSET + buf->size)
+	{
+		memcpy((pchar*)storage, (pchar*)addr + start_pos, to_copy);
+	}
+	else
+	{
+		int first_part_size = P_SHM_BUFFER_DATA_OFFSET + buf->size - start_pos;
+		memcpy((pchar*)storage, (pchar*)addr + start_pos, first_part_size);
+		memcpy((pchar*)storage + first_part_size, (pchar*)addr, to_copy - first_part_size);
+	}
 
 	read_pos = (read_pos + to_copy) % buf->size;
 	memcpy ((pchar *) addr + P_SHM_BUFFER_READ_OFFSET, &read_pos, sizeof (read_pos));
@@ -247,10 +255,18 @@ p_shm_buffer_write (PShmBuffer	*buf,
 		return 0;
 	}
 
-	for (i = 0; i < len; ++i)
-		memcpy ((pchar *) addr + P_SHM_BUFFER_DATA_OFFSET + ((write_pos + i) % buf->size),
-			(pchar *) data + i,
-			1);
+	int start_pos = P_SHM_BUFFER_DATA_OFFSET + (write_pos % buf->size);
+	
+	if (start_pos + len <= P_SHM_BUFFER_DATA_OFFSET + buf->size)
+	{
+		memcpy((pchar*)addr + start_pos, (pchar*)data, len);
+	}
+	else
+	{
+		int first_part_size = P_SHM_BUFFER_DATA_OFFSET + buf->size - start_pos;
+		memcpy((pchar*)addr + start_pos, (pchar*)data, first_part_size);
+		memcpy((pchar*)addr, (pchar*)data + first_part_size, len - first_part_size);
+	}
 
 	write_pos = (write_pos + len) % buf->size;
 	memcpy ((pchar *) addr + P_SHM_BUFFER_WRITE_OFFSET, &write_pos, sizeof (write_pos));
