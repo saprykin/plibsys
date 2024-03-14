@@ -158,7 +158,7 @@ p_shm_buffer_read (PShmBuffer	*buf,
 	psize		write_pos;
 	psize		data_aval;
 	psize		to_copy;
-	psize       start_pos;
+	psize		start_pos;
 	ppointer	addr;
 
 	if (P_UNLIKELY (buf == NULL || storage == NULL || len == 0)) {
@@ -194,7 +194,7 @@ p_shm_buffer_read (PShmBuffer	*buf,
 	to_copy   = (data_aval <= len) ? data_aval : len;
 
 	start_pos = read_pos  % buf->size;
-	
+
 	if (start_pos + to_copy <=  buf->size)
 	{
 		memcpy((pchar*)storage, (pchar*)addr + P_SHM_BUFFER_DATA_OFFSET + start_pos, to_copy);
