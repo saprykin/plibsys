@@ -158,7 +158,7 @@ p_shm_buffer_read (PShmBuffer	*buf,
 	psize		write_pos;
 	psize		data_aval;
 	psize		to_copy;
-	puint		i;
+    psize       start_pos;
 	ppointer	addr;
 
 	if (P_UNLIKELY (buf == NULL || storage == NULL || len == 0)) {
@@ -193,7 +193,7 @@ p_shm_buffer_read (PShmBuffer	*buf,
 	data_aval = pp_shm_buffer_get_used_space (buf);
 	to_copy   = (data_aval <= len) ? data_aval : len;
 
-	int start_pos = read_pos  % buf->size;
+	start_pos = read_pos  % buf->size;
 	
 	if (start_pos + to_copy <=  buf->size)
 	{
@@ -223,7 +223,7 @@ p_shm_buffer_write (PShmBuffer	*buf,
 {
 	psize		read_pos;
 	psize		write_pos;
-	puint		i;
+    psize       start_pos;
 	ppointer	addr;
 
 	if (P_UNLIKELY (buf == NULL || data == NULL || len == 0)) {
@@ -255,7 +255,7 @@ p_shm_buffer_write (PShmBuffer	*buf,
 		return 0;
 	}
 
-	int start_pos = write_pos % buf->size;
+    start_pos = write_pos % buf->size;
 	
 	if (start_pos + len <= buf->size)
 	{
