@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright (C) 2010-2023 Alexander Saprykin <saprykin.spb@gmail.com>
+ * Copyright (C) 2010-2024 Alexander Saprykin <saprykin.spb@gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -128,6 +128,7 @@ P_LIB_API ppointer
 p_uthread_get_local (PUThreadKey *key)
 {
 	P_UNUSED (key);
+	return NULL;
 }
 
 P_LIB_API void
