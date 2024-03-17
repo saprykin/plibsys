@@ -193,17 +193,15 @@ p_shm_buffer_read (PShmBuffer	*buf,
 	data_aval = pp_shm_buffer_get_used_space (buf);
 	to_copy   = (data_aval <= len) ? data_aval : len;
 
-	start_pos = read_pos  % buf->size;
+	start_pos = read_pos % buf->size;
 
-	if (start_pos + to_copy <=  buf->size)
-	{
-		memcpy((pchar*)storage, (pchar*)addr + P_SHM_BUFFER_DATA_OFFSET + start_pos, to_copy);
-	}
-	else
-	{
-		int first_part_size = buf->size - start_pos;
-		memcpy((pchar*)storage, (pchar*)addr + P_SHM_BUFFER_DATA_OFFSET + start_pos, first_part_size);
-		memcpy((pchar*)storage + first_part_size, (pchar*)addr + P_SHM_BUFFER_DATA_OFFSET, to_copy - first_part_size);
+	if (start_pos + to_copy <= buf->size) {
+		memcpy ((pchar *) storage, (pchar *) addr + P_SHM_BUFFER_DATA_OFFSET + start_pos, to_copy);
+	} else {
+		psize first_part_size = buf->size - start_pos;
+
+		memcpy ((pchar *) storage, (pchar *) addr + P_SHM_BUFFER_DATA_OFFSET + start_pos, first_part_size);
+		memcpy ((pchar *) storage + first_part_size, (pchar *) addr + P_SHM_BUFFER_DATA_OFFSET, to_copy - first_part_size);
 	}
 
 	read_pos = (read_pos + to_copy) % buf->size;
@@ -257,15 +255,13 @@ p_shm_buffer_write (PShmBuffer	*buf,
 
 	start_pos = write_pos % buf->size;
 
-	if (start_pos + len <= buf->size)
-	{
-		memcpy((pchar*)addr + P_SHM_BUFFER_DATA_OFFSET + start_pos, (pchar*)data, len);
-	}
-	else
-	{
-		int first_part_size = buf->size - start_pos;
-		memcpy((pchar*)addr + P_SHM_BUFFER_DATA_OFFSET + start_pos, (pchar*)data, first_part_size);
-		memcpy((pchar*)addr + P_SHM_BUFFER_DATA_OFFSET, (pchar*)data + first_part_size, len - first_part_size);
+	if (start_pos + len <= buf->size) {
+		memcpy ((pchar *) addr + P_SHM_BUFFER_DATA_OFFSET + start_pos, (pchar *) data, len);
+	} else {
+		psize first_part_size = buf->size - start_pos;
+
+		memcpy ((pchar *) addr + P_SHM_BUFFER_DATA_OFFSET + start_pos, (pchar *) data, first_part_size);
+		memcpy ((pchar *) addr + P_SHM_BUFFER_DATA_OFFSET, (pchar *) data + first_part_size, len - first_part_size);
 	}
 
 	write_pos = (write_pos + len) % buf->size;
