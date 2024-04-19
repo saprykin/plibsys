@@ -37,7 +37,7 @@
 #define P_SHM_SUFFIX		"_p_shm_object"
 
 #define HIDWORD(l) ((DWORD)(((DWORDLONG)(l) >> 32) & 0xFFFFFFFF))
-#define LODWORD(l) ((DWORD)(((DWORDLONG)(l) << 32) >> 32))
+#define LODWORD(l) ((DWORD)((DWORDLONG)(l)))
 
 typedef HANDLE pshm_hdl;
 
