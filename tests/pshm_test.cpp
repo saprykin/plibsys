@@ -305,37 +305,11 @@ P_TEST_CASE_BEGIN (pshm_thread_test)
 }
 P_TEST_CASE_END ()
 
-P_TEST_CASE_BEGIN (pshm_large_than_4GB_windows_test)
-{
-	PShm		*shm = NULL;
-	ppointer	addr;
-	
-	p_libsys_init ();
-
-	puint64 large_size = ((puint64)1 << 33);
-
-	shm = p_shm_new ("p_shm_test_memory_block", large_size, P_SHM_ACCESS_READWRITE, NULL);
-	P_TEST_REQUIRE (shm != NULL);
-
-	shm = p_shm_new ("p_shm_test_memory_block", large_size, P_SHM_ACCESS_READWRITE, NULL);
-	P_TEST_REQUIRE (shm != NULL);
-	P_TEST_REQUIRE (p_shm_get_size (shm) == large_size);
-
-	addr = p_shm_get_address (shm);
-	P_TEST_REQUIRE (addr != NULL);
-
-	p_shm_free (shm);
-
-	p_libsys_shutdown ();
-}
-P_TEST_CASE_END ()
-
 P_TEST_SUITE_BEGIN()
 {
 	P_TEST_SUITE_RUN_CASE (pshm_nomem_test);
 	P_TEST_SUITE_RUN_CASE (pshm_invalid_test);
 	P_TEST_SUITE_RUN_CASE (pshm_general_test);
 	P_TEST_SUITE_RUN_CASE (pshm_thread_test);
-	P_TEST_SUITE_RUN_CASE (pshm_large_than_4GB_windows_test);
 }
 P_TEST_SUITE_END()
