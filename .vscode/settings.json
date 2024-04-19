@@ -1,0 +1,7 @@
+{
+    "files.associations": {
+        "*.out": "yaml",
+        "pmem.h": "c",
+        "psemaphore.h": "c"
+    }
+}
