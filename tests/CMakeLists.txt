@@ -1,6 +1,6 @@
 # The MIT License
 #
-# Copyright (C) 2018-2023 Alexander Saprykin <saprykin.spb@gmail.com>
+# Copyright (C) 2018-2024 Alexander Saprykin <saprykin.spb@gmail.com>
 #
 # Permission is hereby granted, free of charge, to any person obtaining
 # a copy of this software and associated documentation files (the
@@ -30,7 +30,7 @@ plibsys_detect_target_os (PLIBSYS_TESTS_TARGET_OS)
 list (APPEND PLIBSYS_TEST_INCLUDE_DIRS ${PROJECT_SOURCE_DIR}/../src)
 list (APPEND PLIBSYS_TEST_INCLUDE_DIRS ${CMAKE_CURRENT_BINARY_DIR}/../src)
 
-if (MSVC OR CMAKE_CXX_SIMULATE_ID STREQUAL "MSVC")
+if (MSVC OR CMAKE_CXX_SIMULATE_ID STREQUAL MSVC)
         list (APPEND PLIBSYS_TEST_COMPILE_DEFS -D_CRT_SECURE_NO_WARNINGS)
 endif()
 
