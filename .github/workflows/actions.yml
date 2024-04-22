@@ -69,7 +69,7 @@ jobs:
           if [ "$RUNNER_OS" == "Linux" ]; then
               lcov -c --directory ../plibsys-build --no-external --base-directory . --output-file ../plibsys-build/coverage.info
           elif [ "$RUNNER_OS" == "macOS" ]; then
-              lcov -c --directory ../plibsys-build --branch-coverage --base-directory . --exclude "/Applications/Xcode.app/*" --output-file ../plibsys-build/coverage.info
+              lcov -c --directory ../plibsys-build --branch-coverage --base-directory . --output-file ../plibsys-build/coverage.info --verbose
           else
               echo "Unknown operating system of runner"
               exit 1
