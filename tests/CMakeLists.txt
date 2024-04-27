@@ -39,8 +39,8 @@ macro (plibsys_add_test_executable TEST_NAME SRC_FILE)
         target_link_libraries (${TEST_NAME} plibsys)
         set_target_properties (${TEST_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${OUTPUT_DIR})
 
-        # QNX requires libm for sqrt() and friends
-        if (PLIBSYS_TESTS_TARGET_OS STREQUAL qnx)
+        # QNX and Tru64 require libm for sqrt() and friends
+        if ((PLIBSYS_TESTS_TARGET_OS STREQUAL qnx) OR (PLIBSYS_TESTS_TARGET_OS STREQUAL tru64))
                 target_link_libraries (${TEST_NAME} m)
         endif()
 
