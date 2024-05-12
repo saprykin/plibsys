@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright (C) 2015-2023 Alexander Saprykin <saprykin.spb@gmail.com>
+ * Copyright (C) 2015-2024 Alexander Saprykin <saprykin.spb@gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -33,8 +33,7 @@
 
 P_TEST_MODULE_INIT ();
 
-static int g_argc    = 0;
-static char **g_argv = NULL;
+static pchar *g_argv = NULL;
 
 extern "C" ppointer pmem_alloc (psize nbytes)
 {
@@ -63,9 +62,6 @@ P_TEST_CASE_BEGIN (plibraryloader_nomem_test)
 		P_TEST_CASE_RETURN ();
 	}
 
-	/* We assume that 3rd argument is ourself library path */
-	P_TEST_REQUIRE (g_argc > 1);
-
 	/* Cleanup from previous run */
 	p_file_remove ("." P_DIR_SEPARATOR "p_empty_file.txt", NULL);
 
@@ -86,7 +82,7 @@ P_TEST_CASE_BEGIN (plibraryloader_nomem_test)
 #endif
 
 	P_TEST_CHECK (p_library_loader_new ("." P_DIR_SEPARATOR "p_empty_file.txt") == NULL);
-	P_TEST_CHECK (p_library_loader_new (g_argv[g_argc - 1]) == NULL);
+        P_TEST_CHECK (p_library_loader_new (g_argv) == NULL);
 
 #ifdef P_OS_WIN
 	SetErrorMode (0);
@@ -111,9 +107,6 @@ P_TEST_CASE_BEGIN (plibraryloader_general_test)
 #endif
 
 	p_libsys_init ();
-
-	/* We assume that 3rd argument is ourself library path */
-	P_TEST_REQUIRE (g_argc > 1);
 
 	/* Invalid usage */
 	P_TEST_CHECK (p_library_loader_new (NULL) == NULL);
@@ -140,18 +133,18 @@ P_TEST_CASE_BEGIN (plibraryloader_general_test)
 		P_TEST_CASE_RETURN ();
 	}
 
-	loader = p_library_loader_new (g_argv[g_argc - 1]);
+        loader = p_library_loader_new (g_argv);
 
 #if defined (P_OS_AIX)
 	if (loader == NULL) {
-		path_size = (psize) (strlen (g_argv[g_argc - 1]) + strlen ("(libplibsys.so.xyz)") + 1);
+                path_size = (psize) (strlen (g_argv) + strlen ("(libplibsys.so.xyz)") + 1);
 		real_path = (pchar *) p_malloc0 (path_size);
 
 		P_TEST_REQUIRE (real_path != NULL);
 		P_TEST_REQUIRE (snprintf (real_path,
 					  path_size,
 					  "%s(libplibsys.so.%d)",
-					  g_argv[g_argc - 1],
+                                          g_argv,
 					  PLIBSYS_VERSION_MAJOR) > 0);
 
 		loader = p_library_loader_new (real_path);
@@ -192,10 +185,14 @@ P_TEST_CASE_END ()
 
 P_TEST_SUITE_ARGS_BEGIN()
 {
-	g_argc = argc;
-	g_argv = argv;
+        /* We assume that 3rd argument is ourself library path */
+        P_TEST_REQUIRE (argc > 1);
+
+        g_argv = argv[argc - 1];
 
 	P_TEST_SUITE_RUN_CASE (plibraryloader_nomem_test);
-	P_TEST_SUITE_RUN_CASE (plibraryloader_general_test);
+        P_TEST_SUITE_RUN_CASE (plibraryloader_general_test);
+
+        g_argv = NULL;
 }
 P_TEST_SUITE_END()
