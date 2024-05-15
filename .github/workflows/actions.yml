@@ -45,7 +45,7 @@ jobs:
           cd ../plibsys-build
           ctest
       - name: coverage-install
-        if: ${{ success() && matrix.USE_COV == '1' && !github.event.issue.number }}
+        if: ${{ success() && matrix.USE_COV == '1' && !github.event.issue.pull_request }}
         run: |
           pwd
           if [ "$RUNNER_OS" == "Linux" ]; then
@@ -62,10 +62,17 @@ jobs:
           fi
           pip install codecov-cli
       - name: coverage-run
-        if: ${{ success() && matrix.USE_COV == '1' && !github.event.issue.number }}
+        if: ${{ success() && matrix.USE_COV == '1' && !github.event.issue.pull_request }}
         run: |
           pwd
           codecovcli create-commit -t ${{ secrets.CODECOV_TOKEN }}
-          lcov -c --directory ../plibsys-build --no-external --base-directory . --output-file ../plibsys-build/coverage.info
+          if [ "$RUNNER_OS" == "Linux" ]; then
+              lcov -c --directory ../plibsys-build --no-external --base-directory . --output-file ../plibsys-build/coverage.info
+          elif [ "$RUNNER_OS" == "macOS" ]; then
+              lcov -c --directory ../plibsys-build --branch-coverage --base-directory . --output-file ../plibsys-build/coverage.info --exclude "/Applications/Xcode*" --verbose
+          else
+              echo "Unknown operating system of runner"
+              exit 1
+          fi
           codecovcli -v create-report -t ${{ secrets.CODECOV_TOKEN }}
           codecovcli -v do-upload --dir ../plibsys-build --name github-${{ env.CODECOV_OS }} -t ${{ secrets.CODECOV_TOKEN }}

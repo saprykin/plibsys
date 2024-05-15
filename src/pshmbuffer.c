@@ -1,7 +1,8 @@
 /*
  * The MIT License
  *
- * Copyright (C) 2010-2023 Alexander Saprykin <saprykin.spb@gmail.com>
+ * Copyright (C) 2010-2024 Alexander Saprykin <saprykin.spb@gmail.com>
+ * Copyright (C) 2024 Danny Povolotski <dannypovolotski@gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -158,7 +159,7 @@ p_shm_buffer_read (PShmBuffer	*buf,
 	psize		write_pos;
 	psize		data_aval;
 	psize		to_copy;
-	puint		i;
+	psize		start_pos;
 	ppointer	addr;
 
 	if (P_UNLIKELY (buf == NULL || storage == NULL || len == 0)) {
@@ -193,10 +194,16 @@ p_shm_buffer_read (PShmBuffer	*buf,
 	data_aval = pp_shm_buffer_get_used_space (buf);
 	to_copy   = (data_aval <= len) ? data_aval : len;
 
-	for (i = 0; i < to_copy; ++i)
-		memcpy ((pchar *) storage + i,
-			(pchar *) addr + P_SHM_BUFFER_DATA_OFFSET + ((read_pos + i) % buf->size),
-			1);
+	start_pos = read_pos % buf->size;
+
+	if (start_pos + to_copy <= buf->size) {
+		memcpy ((pchar *) storage, (pchar *) addr + P_SHM_BUFFER_DATA_OFFSET + start_pos, to_copy);
+	} else {
+		psize first_part_size = buf->size - start_pos;
+
+		memcpy ((pchar *) storage, (pchar *) addr + P_SHM_BUFFER_DATA_OFFSET + start_pos, first_part_size);
+		memcpy ((pchar *) storage + first_part_size, (pchar *) addr + P_SHM_BUFFER_DATA_OFFSET, to_copy - first_part_size);
+	}
 
 	read_pos = (read_pos + to_copy) % buf->size;
 	memcpy ((pchar *) addr + P_SHM_BUFFER_READ_OFFSET, &read_pos, sizeof (read_pos));
@@ -215,7 +222,7 @@ p_shm_buffer_write (PShmBuffer	*buf,
 {
 	psize		read_pos;
 	psize		write_pos;
-	puint		i;
+	psize		start_pos;
 	ppointer	addr;
 
 	if (P_UNLIKELY (buf == NULL || data == NULL || len == 0)) {
@@ -247,10 +254,16 @@ p_shm_buffer_write (PShmBuffer	*buf,
 		return 0;
 	}
 
-	for (i = 0; i < len; ++i)
-		memcpy ((pchar *) addr + P_SHM_BUFFER_DATA_OFFSET + ((write_pos + i) % buf->size),
-			(pchar *) data + i,
-			1);
+	start_pos = write_pos % buf->size;
+
+	if (start_pos + len <= buf->size) {
+		memcpy ((pchar *) addr + P_SHM_BUFFER_DATA_OFFSET + start_pos, (pchar *) data, len);
+	} else {
+		psize first_part_size = buf->size - start_pos;
+
+		memcpy ((pchar *) addr + P_SHM_BUFFER_DATA_OFFSET + start_pos, (pchar *) data, first_part_size);
+		memcpy ((pchar *) addr + P_SHM_BUFFER_DATA_OFFSET, (pchar *) data + first_part_size, len - first_part_size);
+	}
 
 	write_pos = (write_pos + len) % buf->size;
 	memcpy ((pchar *) addr + P_SHM_BUFFER_WRITE_OFFSET, &write_pos, sizeof (write_pos));

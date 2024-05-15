@@ -169,15 +169,15 @@ P_TEST_CASE_BEGIN (phashtable_general_test)
 	P_TEST_REQUIRE (list != NULL);
 	P_TEST_REQUIRE (p_list_length (list) == 3);
 	P_TEST_REQUIRE (PPOINTER_TO_INT (list->data) +
-		       PPOINTER_TO_INT (list->next->data) +
-		       PPOINTER_TO_INT (list->next->next->data) == 65);
+			PPOINTER_TO_INT (list->next->data) +
+			PPOINTER_TO_INT (list->next->next->data) == 65);
 	p_list_free (list);
 	list = p_hash_table_keys (table);
 	P_TEST_REQUIRE (list != NULL);
 	P_TEST_REQUIRE (p_list_length (list) == 3);
 	P_TEST_REQUIRE (PPOINTER_TO_INT (list->data) +
-		       PPOINTER_TO_INT (list->next->data) +
-		       PPOINTER_TO_INT (list->next->next->data) == 6);
+			PPOINTER_TO_INT (list->next->data) +
+			PPOINTER_TO_INT (list->next->next->data) == 6);
 	p_list_free (list);
 
 	P_TEST_CHECK (PPOINTER_TO_INT (p_hash_table_lookup (table, PINT_TO_POINTER (1))) == 15);
@@ -192,8 +192,8 @@ P_TEST_CASE_BEGIN (phashtable_general_test)
 	P_TEST_REQUIRE (list != NULL);
 	P_TEST_REQUIRE (p_list_length (list) == 3);
 	P_TEST_REQUIRE (PPOINTER_TO_INT (list->data) +
-		       PPOINTER_TO_INT (list->next->data) +
-		       PPOINTER_TO_INT (list->next->next->data) == 27);
+			PPOINTER_TO_INT (list->next->data) +
+			PPOINTER_TO_INT (list->next->next->data) == 27);
 	p_list_free (list);
 
 	list = p_hash_table_lookup_by_value (table,
@@ -202,7 +202,7 @@ P_TEST_CASE_BEGIN (phashtable_general_test)
 	P_TEST_REQUIRE (list != NULL);
 	P_TEST_REQUIRE (p_list_length (list) == 2);
 	P_TEST_REQUIRE (PPOINTER_TO_INT (list->data) +
-		       PPOINTER_TO_INT (list->next->data) == 24);
+			PPOINTER_TO_INT (list->next->data) == 24);
 	p_list_free (list);
 
 	P_TEST_REQUIRE (PPOINTER_TO_INT (p_hash_table_lookup (table, PINT_TO_POINTER (22))) == 20);
@@ -273,7 +273,7 @@ P_TEST_CASE_BEGIN (phashtable_stress_test)
 
 	for (int i = 0; i < PHASHTABLE_STRESS_COUNT; ++i) {
 		P_TEST_CHECK (p_hash_table_lookup (table, PINT_TO_POINTER (keys[i])) ==
-			     PINT_TO_POINTER (values[i]));
+			      PINT_TO_POINTER (values[i]));
 
 		p_hash_table_remove (table, PINT_TO_POINTER (keys[i]));
 		P_TEST_CHECK (p_hash_table_lookup (table, PINT_TO_POINTER (keys[i])) == (ppointer) (-1));

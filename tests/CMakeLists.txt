@@ -1,6 +1,6 @@
 # The MIT License
 #
-# Copyright (C) 2018-2023 Alexander Saprykin <saprykin.spb@gmail.com>
+# Copyright (C) 2018-2024 Alexander Saprykin <saprykin.spb@gmail.com>
 #
 # Permission is hereby granted, free of charge, to any person obtaining
 # a copy of this software and associated documentation files (the
@@ -30,7 +30,7 @@ plibsys_detect_target_os (PLIBSYS_TESTS_TARGET_OS)
 list (APPEND PLIBSYS_TEST_INCLUDE_DIRS ${PROJECT_SOURCE_DIR}/../src)
 list (APPEND PLIBSYS_TEST_INCLUDE_DIRS ${CMAKE_CURRENT_BINARY_DIR}/../src)
 
-if (MSVC OR CMAKE_CXX_SIMULATE_ID STREQUAL "MSVC")
+if (MSVC OR "x${CMAKE_CXX_SIMULATE_ID}" STREQUAL xMSVC)
         list (APPEND PLIBSYS_TEST_COMPILE_DEFS -D_CRT_SECURE_NO_WARNINGS)
 endif()
 
@@ -39,8 +39,8 @@ macro (plibsys_add_test_executable TEST_NAME SRC_FILE)
         target_link_libraries (${TEST_NAME} plibsys)
         set_target_properties (${TEST_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${OUTPUT_DIR})
 
-        # QNX requires libm for sqrt() and friends
-        if (PLIBSYS_TESTS_TARGET_OS STREQUAL qnx)
+        # QNX and Tru64 require libm for sqrt() and friends
+        if ((PLIBSYS_TESTS_TARGET_OS STREQUAL qnx) OR (PLIBSYS_TESTS_TARGET_OS STREQUAL tru64))
                 target_link_libraries (${TEST_NAME} m)
         endif()
 

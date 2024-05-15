@@ -36,6 +36,9 @@
 #define P_SHM_INVALID_HDL	NULL
 #define P_SHM_SUFFIX		"_p_shm_object"
 
+#define HIDWORD(l) ((DWORD)(((DWORDLONG)(l) >> 32) & 0xFFFFFFFF))
+#define LODWORD(l) ((DWORD)((DWORDLONG)(l)))
+
 typedef HANDLE pshm_hdl;
 
 struct PShm_ {
@@ -74,8 +77,8 @@ pp_shm_create_handle (PShm	*shm,
 	if (P_UNLIKELY ((shm->shm_hdl = CreateFileMappingA (INVALID_HANDLE_VALUE,
 							    NULL,
 							    protect,
-							    0,
-							    (DWORD) shm->size,
+							    HIDWORD(shm->size),
+							    LODWORD(shm->size),
 							    shm->platform_key)) == NULL)) {
 		p_error_set_error_p (error,
 				     (pint) p_error_get_last_ipc (),
