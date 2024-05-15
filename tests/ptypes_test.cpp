@@ -120,21 +120,25 @@ P_TEST_CASE_BEGIN (ptypes_min_max_test)
 		P_TEST_CHECK (P_MAXSSIZE == P_MAXINT64);
 		P_TEST_CHECK (P_MAXSIZE == P_MAXUINT64);
 
+#if !defined(P_OS_VMS) || !defined(P_CPU_X86_64)
 		if (PLIBSYS_SIZEOF_LONG == 8) {
 			P_TEST_CHECK (P_MINSSIZE == P_MINLONG);
 			P_TEST_CHECK (P_MAXSSIZE == P_MAXLONG);
 			P_TEST_CHECK (P_MAXSIZE == P_MAXULONG);
 		}
+#endif
 	} else {
 		P_TEST_CHECK (P_MINSSIZE == P_MININT32);
 		P_TEST_CHECK (P_MAXSSIZE == P_MAXINT32);
 		P_TEST_CHECK (P_MAXSIZE == P_MAXUINT32);
 
+#if !defined(P_OS_VMS) || !defined(P_CPU_X86_64)
 		if (PLIBSYS_SIZEOF_LONG == 4) {
 			P_TEST_CHECK (P_MINSSIZE == P_MINLONG);
 			P_TEST_CHECK (P_MAXSSIZE == P_MAXLONG);
 			P_TEST_CHECK (P_MAXSIZE == P_MAXULONG);
 		}
+#endif
 	}
 
 	p_libsys_shutdown ();
