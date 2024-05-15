@@ -4,7 +4,7 @@ This directory contains mainly a build script for OpenVMS.
 
 ## Requirements
 
-* OpenVMS 8.4 or later (Alpha or IA64), VAX is not supported
+* OpenVMS 8.4 or later (Alpha, IA64 or x86-64), VAX is not supported
 * DEC CC 6.5 or later
 * DEC CXX 7.1 or later (for tests only)
 
@@ -23,7 +23,8 @@ all of them.
 Object library (.OLB) and shareable image (.EXE) are built. An object
 library acts like a widely-known static library, and a shareable image
 acts like a shared library. All libraries and tests are placed inside the
-`[.ALPHA]` or `[.IA64]` directory depending on a host architecture.
+`[.ALPHA]`, `[.IA64]` or `[.X86_64]` directory depending on a host
+architecture.
 
 Do not forget to define a logical name for a shareable image of the library
 before running programs which use it:
