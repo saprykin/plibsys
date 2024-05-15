@@ -42,6 +42,14 @@ the tests.
 * `@build_vms.com NOLIB RUN_TESTS` only runs already built tests.
 * `@build_vms.com CLEAN` cleans all the files produced during a build.
 
+## Notes for x86-64
+
+When using the compiled library with the C++ compiler, special care is
+required to handle data types derived from `long` (i.e., `plong` or
+`pulong`). A new, Clang-based, C++ compiler always treats types like
+`long`, `size_t`, `nullptr_t` and `ptrdiff_t` as 64-bits wide; while
+classic DEC C compiler treats `long` as 32-bits wide.
+
 ## More
 
 OpenVMS can mangle long (> 31 characters) symbol names in a compiled object
