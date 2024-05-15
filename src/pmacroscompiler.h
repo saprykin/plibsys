@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright (C) 2017-2023 Alexander Saprykin <saprykin.spb@gmail.com>
+ * Copyright (C) 2017-2024 Alexander Saprykin <saprykin.spb@gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -221,7 +221,7 @@
 #  define P_CC_CLANG
 #elif defined(__HP_cc) || defined(__HP_aCC)
 #  define P_CC_HP
-#elif defined (__DECC) || defined(__DECCXX)
+#elif defined (__DECC) || defined(__DECCXX) || defined(__VMS)
 #  define P_CC_DEC
 #elif (defined(__sgi) || defined(sgi)) && \
       (defined(_COMPILER_VERSION) || defined(_SGI_COMPILER_VERSION))

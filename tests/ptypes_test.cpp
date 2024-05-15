@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright (C) 2014-2023 Alexander Saprykin <saprykin.spb@gmail.com>
+ * Copyright (C) 2014-2024 Alexander Saprykin <saprykin.spb@gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -60,8 +60,15 @@ P_TEST_CASE_BEGIN (ptypes_general_test)
 	P_TEST_CHECK (sizeof (puintptr) == PLIBSYS_SIZEOF_VOID_P);
 	P_TEST_CHECK (sizeof (psize) == PLIBSYS_SIZEOF_SIZE_T);
 	P_TEST_CHECK (sizeof (pssize) == PLIBSYS_SIZEOF_SIZE_T);
+#if !defined(P_OS_VMS) || !defined(P_CPU_X86_64)
 	P_TEST_CHECK (sizeof (plong) == PLIBSYS_SIZEOF_LONG);
 	P_TEST_CHECK (sizeof (pulong) == PLIBSYS_SIZEOF_LONG);
+#else
+	/* OpenVMS on x86 has C++ compiler with size of long different from
+	 * defined in C compiler */
+	P_TEST_CHECK (sizeof (plong) == 8);
+	P_TEST_CHECK (sizeof (pulong) == 8);
+#endif
 	P_TEST_CHECK (sizeof (poffset) == 8);
 
 	p_libsys_shutdown ();
@@ -113,21 +120,25 @@ P_TEST_CASE_BEGIN (ptypes_min_max_test)
 		P_TEST_CHECK (P_MAXSSIZE == P_MAXINT64);
 		P_TEST_CHECK (P_MAXSIZE == P_MAXUINT64);
 
+#if !defined(P_OS_VMS) || !defined(P_CPU_X86_64)
 		if (PLIBSYS_SIZEOF_LONG == 8) {
 			P_TEST_CHECK (P_MINSSIZE == P_MINLONG);
 			P_TEST_CHECK (P_MAXSSIZE == P_MAXLONG);
 			P_TEST_CHECK (P_MAXSIZE == P_MAXULONG);
 		}
+#endif
 	} else {
 		P_TEST_CHECK (P_MINSSIZE == P_MININT32);
 		P_TEST_CHECK (P_MAXSSIZE == P_MAXINT32);
 		P_TEST_CHECK (P_MAXSIZE == P_MAXUINT32);
 
+#if !defined(P_OS_VMS) || !defined(P_CPU_X86_64)
 		if (PLIBSYS_SIZEOF_LONG == 4) {
 			P_TEST_CHECK (P_MINSSIZE == P_MINLONG);
 			P_TEST_CHECK (P_MAXSSIZE == P_MAXLONG);
 			P_TEST_CHECK (P_MAXSIZE == P_MAXULONG);
 		}
+#endif
 	}
 
 	p_libsys_shutdown ();
@@ -259,6 +270,7 @@ P_TEST_CASE_BEGIN (ptypes_host_network_test)
 		P_TEST_CHECK (PUINT_TO_LE (puint_val) == (puint) 0x00040000);
 		P_TEST_CHECK (PUINT_FROM_LE (puint_val) == (puint) 0x00040000);
 
+#if !defined(P_OS_VMS) || !defined(P_CPU_X86_64)
 		if (PLIBSYS_SIZEOF_LONG == 8) {
 			plong plong_val = PLONG_TO_BE (0xFFFFFFFFFFFFF800LL);
 			P_TEST_CHECK (plong_val == (plong) 0x00F8FFFFFFFFFFFFLL);
@@ -284,6 +296,7 @@ P_TEST_CASE_BEGIN (ptypes_host_network_test)
 			P_TEST_CHECK (PULONG_TO_LE (pulong_val) == (pulong) 0x00080000);
 			P_TEST_CHECK (PULONG_FROM_LE (pulong_val) == (pulong) 0x00080000);
 		}
+#endif
 
 		if (PLIBSYS_SIZEOF_SIZE_T == 8) {
 			psize psize_val = PSIZE_TO_BE (0x0000000000001000ULL);
@@ -367,6 +380,7 @@ P_TEST_CASE_BEGIN (ptypes_host_network_test)
 		P_TEST_CHECK (PUINT_TO_BE (puint_val) == (puint) 0x00040000);
 		P_TEST_CHECK (PUINT_FROM_BE (puint_val) == (puint) 0x00040000);
 
+#if !defined(P_OS_VMS) || !defined(P_CPU_X86_64)
 		if (PLIBSYS_SIZEOF_LONG == 8) {
 			plong plong_val = PLONG_TO_LE (0xFFFFFFFFFFFFF800LL);
 			P_TEST_CHECK (plong_val == (plong) 0x00F8FFFFFFFFFFFFLL);
@@ -392,6 +406,7 @@ P_TEST_CASE_BEGIN (ptypes_host_network_test)
 			P_TEST_CHECK (PULONG_TO_BE (pulong_val) == (pulong) 0x00080000);
 			P_TEST_CHECK (PULONG_FROM_BE (pulong_val) == (pulong) 0x00080000);
 		}
+#endif
 
 		if (PLIBSYS_SIZEOF_SIZE_T == 8) {
 			psize psize_val = PSIZE_TO_LE (0x0000000000001000ULL);

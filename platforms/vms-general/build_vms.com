@@ -1,7 +1,8 @@
 $!
 $! Copyright 2011, Richard Levitte <richard@levitte.org>
 $! Copyright 2014, John Malmberg <wb8tyw@qsl.net>
-$! Copyright 2016-2018, Alexander Saprykin <saprykin.spb@gmail.com>
+$! Copyright 2016-2024, Alexander Saprykin <saprykin.spb@gmail.com>
+$! Copyright 2023, William H. Cox <whcox53@gmail.com>
 $!
 $! Permission to use, copy, modify, and/or distribute this software for any
 $! purpose with or without fee is hereby granted, provided that the above
@@ -92,7 +93,7 @@ $!
 $! Define the architecture-specific destination directory name
 $! -----------------------------------------------------------
 $!
-$ if (f$getsyi("HW_MODEL") .lt. 1024)
+$ if (f$getsyi("ARCH_TYPE") .eq. 1)
 $ then
 $      'vo_c' "%PLIBSYS-F-NOTSUP, VAX platform is not supported, sorry :("
 $      goto common_exit
@@ -109,7 +110,7 @@ $      min_ver_patch = f$element(1, ".", version_patch)
 $      min_ver       = f$element(0, "-", min_ver_patch)
 $      patch         = f$element(1, "-", min_ver_patch)
 $!
-$      if maj_ver .lts. "8" .or. min_ver .lts. "4"
+$      if (maj_ver .lts. "8") .or. (maj_ver .eqs. "8" .and. min_ver .lts. "4")
 $      then
 $          'vo_c' "%PLIBSYS-F-NOTSUP, only OpenVMS 8.4 and above are supported, sorry :("
 $          goto common_exit
@@ -189,7 +190,7 @@ $         test_list_val     = f$element(1, "=", arg_val) - "(" - ")"
 $         test_list_val     = f$edit(test_list_val, "COLLAPSE")
 $         test_list_counter = 0
 $
-$ test_list_loop: 
+$ test_list_loop:
 $         next_test_val = f$element (test_list_counter, ",", test_list_val)
 $         if next_test_val .nes. "" .and. next_test_val .nes. ","
 $         then
@@ -515,6 +516,15 @@ $ then
 $     cxx_params = cxx_params + "/DEBUG/NOOPTIMIZE/LIST/SHOW=ALL"
 $ endif
 $!
+$! OpenVMS 9.x on x86 uses LINK command instead of CXXLINK
+$!
+$ if f$getsyi("ARCH_TYPE") .eq. 4
+$ then
+$     link_cmd := "link"
+$ else
+$     link_cmd := "cxxlink"
+$ endif
+$!
 $ test_loop:
 $     next_test = f$element (test_counter, " ", plibsys_tests)
 $     if next_test .nes. "" .and. next_test .nes. " "
@@ -524,7 +534,7 @@ $         'vo_c' "[CXX    ] ''next_test'.cpp"
 $         cxx [---.tests]'next_test'.cpp 'cxx_params'
 $!
 $         'vo_c' "[CXXLINK] ''next_test'.obj"
-$          cxxlink 'next_test'.obj,'objdir'plibsys_link.opt/OPTION /THREADS_ENABLE
+$         'link_cmd' 'next_test'.obj,'objdir'plibsys_link.opt/OPTION /THREADS_ENABLE
 $!
 $         if f$search("CXX_REPOSITORY.DIR") .nes. ""
 $         then

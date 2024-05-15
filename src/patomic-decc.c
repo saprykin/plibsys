@@ -31,7 +31,7 @@
 #  include <machine/builtins.h>
 #endif
 
-#ifdef __ia64
+#if defined(__ia64) || defined(__x86_64)
 #  define PATOMIC_DECC_CAS_LONG(atomic_src, oldval, newval, atomic_dst)	\
 	  __CMP_SWAP_LONG ((volatile void *) (atomic_src),		\
 			   (pint) (oldval),				\
