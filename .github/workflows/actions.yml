@@ -45,7 +45,8 @@ jobs:
           cd ../plibsys-build
           ctest
       - name: coverage-install
-        if: ${{ success() && matrix.USE_COV == '1' && !github.event.issue.pull_request }}
+        runs-on: coverage
+        if: ${{ success() && matrix.USE_COV == '1' }}
         run: |
           pwd
           if [ "$RUNNER_OS" == "Linux" ]; then
@@ -62,7 +63,8 @@ jobs:
           fi
           pip install codecov-cli
       - name: coverage-run
-        if: ${{ success() && matrix.USE_COV == '1' && !github.event.issue.pull_request }}
+        runs-on: coverage
+        if: ${{ success() && matrix.USE_COV == '1' }}
         run: |
           pwd
           codecovcli create-commit -t ${{ secrets.CODECOV_TOKEN }}
