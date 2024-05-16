@@ -221,8 +221,11 @@
 #  define P_CC_CLANG
 #elif defined(__HP_cc) || defined(__HP_aCC)
 #  define P_CC_HP
-#elif defined (__DECC) || defined(__DECCXX) || defined(__VMS)
+#elif defined (__DECC) || defined(__DECCXX)
 #  define P_CC_DEC
+#elif defined(__VMS) && defined(__clang__)
+# define P_CC_DEC
+# define P_CC_CLANG
 #elif (defined(__sgi) || defined(sgi)) && \
       (defined(_COMPILER_VERSION) || defined(_SGI_COMPILER_VERSION))
 #  define P_CC_MIPS
@@ -240,6 +243,8 @@
 #  define P_CC_PGI
 #elif defined(_CRAYC)
 #  define P_CC_CRAY
+#elif defined(__clang__)
+# define P_CC_CLANG
 #endif
 
 /* We need this to generate full Doxygen documentation */
