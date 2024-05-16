@@ -94,7 +94,7 @@ plibsys was tested with the following compilers:
 * Oracle Solaris Studio (x86, x64, SPARCv8/9)
 * MIPSpro (MIPS32)
 * XL C (PPC64le)
-* DEC C (Alpha)
+* DEC C (Alpha, IA-64, x64)
 * PGI (x86, x64)
 * Cray (x64)
 
