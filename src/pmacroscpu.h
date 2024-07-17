@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright (C) 2017-2023 Alexander Saprykin <saprykin.spb@gmail.com>
+ * Copyright (C) 2017-2024 Alexander Saprykin <saprykin.spb@gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -89,6 +89,7 @@
  * LOONGARCH       - LoongArch
  * LOONGARCH_32    - LoongArch 32-bit
  * LOONGARCH_64    - LoongArch 64-bit
+ * E2K             - Elbrus 2000
  */
 
 /**
@@ -461,6 +462,14 @@
  * also defined.
  */
 
+/**
+ * @def P_CPU_E2K
+ * @brief Elbrus 2000 architecture.
+ * @since 0.0.5
+ *
+ * This macro is defined for Elbrus 2000 target.
+ */
+
 #if defined(__alpha__) || defined(__alpha) || defined(_M_ALPHA)
 #  define P_CPU_ALPHA
 #elif defined(__arm__) || defined(__TARGET_ARCH_ARM) || defined(_ARM) || \
@@ -654,6 +663,8 @@
 #  else
 #    define P_CPU_LOONGARCH_32
 #  endif
+#elif defined(__e2k__)
+#  define P_CPU_E2K
 #endif
 
 /* We need this to generate full Doxygen documentation */

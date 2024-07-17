@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright (C) 2014-2023 Alexander Saprykin <saprykin.spb@gmail.com>
+ * Copyright (C) 2014-2024 Alexander Saprykin <saprykin.spb@gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -139,7 +139,8 @@ P_TEST_CASE_BEGIN (pmacros_general_test)
     !defined (P_CC_XLC)     && !defined (P_CC_HP)    && !defined (P_CC_WATCOM) && \
     !defined (P_CC_BORLAND) && !defined (P_CC_MIPS)  && !defined (P_CC_USLC)   && \
     !defined (P_CC_DEC)     && !defined (P_CC_PGI)   && !defined (P_CC_CRAY)   && \
-    !defined (P_CC_INTELX)  && !defined (P_CC_IXLC)  && !defined (P_CC_OXLC)
+    !defined (P_CC_INTELX)  && !defined (P_CC_IXLC)  && !defined (P_CC_OXLC)   && \
+    !defined (P_CC_LCC)
 	P_TEST_CHECK (false);
 #endif
 
@@ -281,7 +282,8 @@ P_TEST_CASE_BEGIN (pmacros_general_test)
 
 #if defined (P_OS_QNX6)
 #  if !defined (P_CPU_X86)  && !defined (P_CPU_ARM) && \
-      !defined (P_CPU_MIPS) && !defined (P_CPU_POWER)
+      !defined (P_CPU_MIPS) && !defined (P_CPU_POWER) && \
+      !defined (P_CPU_E2K)
 	P_TEST_CHECK (false);
 #  endif
 #endif
@@ -416,6 +418,12 @@ P_TEST_CASE_BEGIN (pmacros_general_test)
 
 #if defined (P_CC_PGI)
 #  if !defined (P_CPU_X86) && !defined (P_CPU_POWER)
+	P_TEST_CHECK (false);
+#  endif
+#endif
+
+#if defined (P_CC_LCC)
+#  if !defined (P_CPU_E2K)
 	P_TEST_CHECK (false);
 #  endif
 #endif

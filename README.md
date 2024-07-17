@@ -97,6 +97,7 @@ plibsys was tested with the following compilers:
 * DEC C (Alpha, IA-64, x64)
 * PGI (x86, x64)
 * Cray (x64)
+* LCC (e2k)
 
 ## Building
 

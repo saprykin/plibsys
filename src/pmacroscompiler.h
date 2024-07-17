@@ -64,6 +64,7 @@
  * BORLAND         - Borland C/C++
  * PGI             - Portland Group C/C++
  * CRAY            - CRAY C/C++
+ * LCC             - MCST C/C++
  */
 
 /**
@@ -174,6 +175,12 @@
  * @since 0.0.4
  */
 
+/**
+ * @def P_CC_LCC
+ * @brief MCST C/C++ compiler
+ * @since 0.0.5
+ */
+
 #if defined(_MSC_VER)
 #  define P_CC_MSVC
 #  if defined(__INTEL_COMPILER)
@@ -204,6 +211,9 @@
 #  endif
 #  if defined(_CRAYC)
 #    define P_CC_CRAY
+#  endif
+#  if defined(__LCC__)
+#    define P_CC_LCC
 #  endif
 #elif defined(__SUNPRO_C) || defined(__SUNPRO_CC)
 #  define P_CC_SUN
@@ -243,8 +253,10 @@
 #  define P_CC_PGI
 #elif defined(_CRAYC)
 #  define P_CC_CRAY
+#elif defined(__LCC__)
+#  define P_CC_LCC
 #elif defined(__clang__)
-# define P_CC_CLANG
+#  define P_CC_CLANG
 #endif
 
 /* We need this to generate full Doxygen documentation */
