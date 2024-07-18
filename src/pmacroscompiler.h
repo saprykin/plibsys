@@ -316,6 +316,9 @@
 #  ifndef P_CC_CRAY
 #    define P_CC_CRAY
 #  endif
+#  ifndef P_CC_LCC
+#    define P_CC_LCC
+#  endif
 #endif
 
 #endif /* PLIBSYS_HEADER_PMACROSCOMPILER_H */

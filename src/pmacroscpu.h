@@ -793,6 +793,9 @@
 #  ifndef P_CPU_LOONGARCH_64
 #    define P_CPU_LOONGARCH_64
 #  endif
+#  ifndef P_CPU_E2K
+#    define P_CPU_E2K
+#  endif
 #endif
 
 #endif /* PLIBSYS_HEADER_PMACROSCPU_H */
