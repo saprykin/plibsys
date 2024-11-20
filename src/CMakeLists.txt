@@ -29,6 +29,14 @@ include (CheckCSourceCompiles)
 include (CheckTypeSize)
 include (CheckIncludeFile)
 include (TestBigEndian)
+include (GNUInstallDirs)
+include (CMakePackageConfigHelpers OPTIONAL RESULT_VARIABLE HAVE_PACKAGE_HELPER)
+
+if (HAVE_PACKAGE_HELPER STREQUAL "NOTFOUND")
+        set (PLIBSYS_WRITE_PACKAGE FALSE)
+else()
+        set (PLIBSYS_WRITE_PACKAGE TRUE)
+endif()
 
 # First of all, detect size of the pointer for the target machine.
 # We can't rely on CMAKE_SIZEOF_VOID_P when building universal
@@ -60,7 +68,7 @@ plibsys_detect_target_os (PLIBSYS_TARGET_OS)
 plibsys_detect_os_bits (PLIBSYS_OS_BITS)
 
 if (PLIBSYS_OS_BITS STREQUAL "unknown")
-    message (FATAL_ERROR "Failed to detect bitness of the target system")
+        message (FATAL_ERROR "Failed to detect bitness of the target system")
 endif()
 
 if ((PLIBSYS_TARGET_OS STREQUAL windows) AND NOT (PLIBSYS_TARGET_OS STREQUAL cygwin)
@@ -825,12 +833,20 @@ if (PLIBSYS_BUILD_STATIC)
         add_library (plibsysstatic STATIC ${PLIBSYS_SRCS} ${PLIBSYS_PLATFORM_SRCS} ${PLIBSYS_PUBLIC_HDRS} ${PLIBSYS_PRIVATE_HDRS})
 endif()
 
+set (PLIBSYS_INCL_INSTALL_DIR ${CMAKE_INSTALL_INCLUDEDIR}/plibsys)
+
 # Add include directories
 if (COMMAND target_include_directories)
-        target_include_directories (plibsys PUBLIC ${PLIBSYS_INCLUDE_DIRS})
+        target_include_directories (plibsys PUBLIC
+                "$<BUILD_INTERFACE:${PLIBSYS_INCLUDE_DIRS}>"
+                "$<INSTALL_INTERFACE:${PLIBSYS_INCL_INSTALL_DIR}>"
+        )
 
         if (PLIBSYS_BUILD_STATIC)
-                target_include_directories (plibsysstatic PUBLIC ${PLIBSYS_INCLUDE_DIRS})
+                target_include_directories (plibsysstatic PUBLIC
+                        "$<BUILD_INTERFACE:${PLIBSYS_INCLUDE_DIRS}>"
+                        "$<INSTALL_INTERFACE:${PLIBSYS_INCL_INSTALL_DIR}>"
+                )
         endif()
 else()
         include_directories (${PLIBSYS_INCLUDE_DIRS})
@@ -924,16 +940,31 @@ if (PLIBSYS_NATIVE_WINDOWS)
         )
 endif()
 
-# Prepare installation dirs
-if (NOT CMAKE_INSTALL_LIBDIR)
-        set (CMAKE_INSTALL_LIBDIR "lib")
+set (PLIBSYS_EXPORT_NAME plibsys-targets)
+set (PLIBSYS_CMAKE_INSTALL_DIR ${CMAKE_INSTALL_LIBDIR}/cmake/plibsys)
+
+if (PLIBSYS_WRITE_PACKAGE)
+        configure_package_config_file (
+                ${PROJECT_SOURCE_DIR}/cmake/plibsys-config.cmake.in
+                ${CMAKE_CURRENT_BINARY_DIR}/plibsys-config.cmake
+                INSTALL_DESTINATION ${PLIBSYS_CMAKE_INSTALL_DIR}
+        )
+
+        write_basic_package_version_file (
+                "${CMAKE_CURRENT_BINARY_DIR}/plibsys-config-version.cmake"
+                VERSION ${PLIBSYS_VERSION}
+                COMPATIBILITY AnyNewerVersion
+        )
+
+        install (FILES
+                ${CMAKE_CURRENT_BINARY_DIR}/plibsys-config.cmake
+                ${CMAKE_CURRENT_BINARY_DIR}/plibsys-config-version.cmake
+                DESTINATION ${PLIBSYS_CMAKE_INSTALL_DIR}
+        )
 endif()
 
-if (NOT CMAKE_INSTALL_INCLUDEDIR)
-        set (CMAKE_INSTALL_INCLUDEDIR "include")
-endif()
-
-install (TARGETS ${PLIBSYS_INSTALL_TARGETS} EXPORT plibsys-targets
+install (TARGETS ${PLIBSYS_INSTALL_TARGETS}
+        EXPORT ${PLIBSYS_EXPORT_NAME}
         DESTINATION ${CMAKE_INSTALL_LIBDIR}
         LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
         COMPONENT Core
@@ -946,8 +977,13 @@ install (TARGETS ${PLIBSYS_INSTALL_TARGETS}
 install (FILES
         ${PLIBSYS_PUBLIC_HDRS}
         ${CMAKE_CURRENT_BINARY_DIR}/plibsysconfig.h
-        DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/plibsys
+        DESTINATION ${PLIBSYS_INCL_INSTALL_DIR}
         COMPONENT Core
+)
+install (EXPORT ${PLIBSYS_EXPORT_NAME}
+        FILE ${PLIBSYS_EXPORT_NAME}.cmake
+        NAMESPACE plibsys::
+        DESTINATION ${PLIBSYS_CMAKE_INSTALL_DIR}
 )
 
 if (PLIBSYS_VA_COPY)
