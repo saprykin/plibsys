@@ -1,3 +1,72 @@
+Changes in plibsys 0.0.5
+========================
+
+* Export CMake targets properly together with package files
+* Major performance improvement for shared memory buffer (#105)
+* Improved code quality based on SonarQube findings
+* Switch to CMake built-in toolchain for Apple devices
+* Improved support for new GCC versions on AmigaOS
+* Improved detection of ARM-based CPUs
+* Improved detection of MIPS-based CPUs
+
+* New supported platforms and compilers:
+  MSVC (AArch64) compiler on Windows
+  Clang compiler on Solaris (x86, x64)
+  Intel DPC++/C++ compiler (ICX) on Linux (x86, x64)
+  NVIDIA HPC SDK compilers as PGI on Linux (x64)
+  IBM Clang-based XL C compiler on Linux (PPC)
+  IBM Open XL compiler on Linux (PPC)
+  Clang and GCC compilers on Linux (s390x)
+  Clang compiler on AIX (PPC)
+  LCC compiler for Linux (Elbrus 2000)
+  GCC compiler for Linux (LoongArch)
+  Detection of ARMv9 architecture
+  Detection of MIPS-V architecture
+  Detection of RISC-V architecture
+  Clang-based compiler for OpenVMS 9.4 (x64) (#108)
+
+* New API
+  Allow to assign names to threads (#81)
+
+* CI/CD
+  AppVeyor: Update MinGW GCC7 to 7.3.0
+  AppVeyor: Add build with MinGW GCC 8.1.0
+  AppVeyor: Add builds with VS 2019
+  AppVeyor: Add builds with VS 2022
+  AppVeyor: Drop Cygwin x86 due to EOL
+  Migrate from Travis to Github Actions for Linux/macOS
+  Update support for modern Codecov versions
+  Update support for Coverity
+  Integrate SonarQube for code quality analysis
+
+* Fixes
+  Set CMP0063 policy to new behaviour (#101)
+  Set CMP0075 policy to new behaviour
+  Update support for MSYS
+  Update support for Cygwin
+  Update support for NetBSD
+  Update support for Haiku
+  Update support for Doxygen
+  Remove duplicate static declaration in AVL tree (#75)
+  Do not calculate hash value twice for hash tables (#83)
+  Do not use CMake binary directory for outputs (#76)
+  Avoid using deprecated readdir_r() on Android
+  Always link with -lthread for multi-threading on Solaris
+  Make script to run tests compatible with AmigaOS
+  Free resources related to library loader at exit
+  Do not rely on global interfaces for ELF and EClock on AmigaOS
+  Pass RTLD_MEMBER flag to dlopen() call on AIX
+  Allow opening shared library inside archive on AIX
+  Rename functions in memory table to avoid clashes with system macros
+  Disable warnings for compilers simulating MSVC
+  Fix compiler warnings when comparing enum values
+  Fix calculation of free space in shared memory buffer (#88)
+  Fix CPU detection macro for Apple M chips (#94)
+  Fix visibility attribute detection for GCC
+  Fix shared memory segments > 4GB on Windows (#106, #107)
+  Fix missing math library in tests on Tru64 with Compaq compiler
+  Fix typos in docs (#90)
+
 Changes in plibsys 0.0.4
 ========================
 
