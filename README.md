@@ -3,7 +3,6 @@
 [![](https://sonarcloud.io/api/project_badges/measure?project=saprykin_plibsys&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=saprykin_plibsys)
 [![](https://scan.coverity.com/projects/8333/badge.svg)](https://scan.coverity.com/projects/saprykin-plibsys)
 [![](https://codecov.io/gh/saprykin/plibsys/branch/coverage/graph/badge.svg)](https://codecov.io/gh/saprykin/plibsys)
-[![](https://codedocs.xyz/saprykin/plibsys.svg)](https://codedocs.xyz/saprykin/plibsys/)
 [![](https://img.shields.io/badge/license-MIT-ff69b4.svg)](https://opensource.org/licenses/MIT)
 
 ## About
