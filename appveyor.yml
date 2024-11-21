@@ -257,16 +257,19 @@ build_script:
                 }
 
                 If($env:USE_COVERITY -eq "1" -And $env:APPVEYOR_REPO_BRANCH -eq "appveyor_test") {
+                        Write-Host "Installing Coverity 2023.12.2..." -ForegroundColor Cyan;
                         $covPath = "$env:SYSTEMDRIVE\Tools\Coverity";
 
                         if (Test-Path $covPath) {
                                 Remove-Item -Path $covPath -Recurse -Force;
                         }
 
+                        Write-Host "Downloading Coverity...";
                         $covZip = "$env:TEMP\cov-analysis-win64-2023.12.2.zip";
                         $covUrl = "https://appveyordownloads.blob.core.windows.net/misc/cov-analysis-win64-2023.12.2.zip";
                         (New-Object Net.WebClient).DownloadFile($covUrl, $covZip);
 
+                        Write-Host "Unpacking Coverity...";
                         $tempPath = "$env:TEMP\Coverity";
                         & 7z x $covZip -o"$tempPath" | Out-Null;
 
@@ -275,6 +278,7 @@ build_script:
                         Remove-Item -Path $covZip -Force;
 
                         Add-Path "$covPath\bin";
+                        Write-Host "Coverity installed" -ForegroundColor Green;
 
                         & cmake '$CMAKE_GENERATOR_ARGS' $CMAKE_C_COMPILER $CMAKE_CXX_COMPILER ../plibsys;
 
