@@ -83,7 +83,7 @@ It should also work on other *nix systems with or without minimal efforts.
 
 plibsys was tested with the following compilers:
 
-* MSVC (x86, x64) 2003 and above
+* MSVC (x86, x64, AArch64) 2003 and above
 * MinGW (x86, x64)
 * Open Watcom (x86)
 * Borland (x86)
