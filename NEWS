@@ -10,6 +10,7 @@ Changes in plibsys 0.0.5
 * Improved detection of MIPS-based CPUs
 
 * New supported platforms and compilers:
+  Apple Clang compiler for visionOS
   MSVC (AArch64) compiler on Windows
   Clang compiler on Solaris (x86, x64)
   Intel DPC++/C++ compiler (ICX) on Linux (x86, x64)

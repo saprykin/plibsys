@@ -72,7 +72,7 @@ with unit tests and was tested on the following desktop platforms:
 
 plibsys also supports the following mobile platforms:
 
-* iOS, watchOS, tvOS
+* iOS, tvOS, visionOS, watchOS
 * Android
 * BlackBerry 10
 
