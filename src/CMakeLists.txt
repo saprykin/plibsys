@@ -29,7 +29,7 @@ include (CheckCSourceCompiles)
 include (CheckTypeSize)
 include (CheckIncludeFile)
 include (TestBigEndian)
-include (GNUInstallDirs)
+include (GNUInstallDirs OPTIONAL)
 include (CMakePackageConfigHelpers OPTIONAL RESULT_VARIABLE HAVE_PACKAGE_HELPER)
 
 if (HAVE_PACKAGE_HELPER STREQUAL "NOTFOUND")
@@ -831,6 +831,15 @@ add_library (plibsys SHARED ${PLIBSYS_SRCS} ${PLIBSYS_PLATFORM_SRCS} ${PLIBSYS_P
 
 if (PLIBSYS_BUILD_STATIC)
         add_library (plibsysstatic STATIC ${PLIBSYS_SRCS} ${PLIBSYS_PLATFORM_SRCS} ${PLIBSYS_PUBLIC_HDRS} ${PLIBSYS_PRIVATE_HDRS})
+endif()
+
+# Prepare installation dirs
+if (NOT CMAKE_INSTALL_LIBDIR)
+        set (CMAKE_INSTALL_LIBDIR "lib")
+endif()
+
+if (NOT CMAKE_INSTALL_INCLUDEDIR)
+        set (CMAKE_INSTALL_INCLUDEDIR "include")
 endif()
 
 set (PLIBSYS_INCL_INSTALL_DIR ${CMAKE_INSTALL_INCLUDEDIR}/plibsys)
